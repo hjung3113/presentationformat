@@ -23,6 +23,7 @@ The reference these specs are abstracted from: [`parserimprove/로그파서 개�
 | `design.md` | All HEX/px/radius tokens, components, diagram visuals, the **normative** semantic-color rule, anti-patterns, visual-reproduction checklist | Content/voice (→ `authoring-guide.md`), JS runtime/container (→ `runtime-spec.md`) |
 | `runtime-spec.md` | `.dc.html` structure, `<x-dc>`/`<helmet>`, `DCLogic` lifecycle, DOM contract (`#rprog`, `[data-navlink]`, section ids), runtime scripts, serving | Visual values (→ `design.md`), prose (→ `authoring-guide.md`) |
 | `template.dc.html` | A working, fill-in-the-blanks skeleton | — |
+| `design.tokens.md` | Machine-readable token mirror in [DESIGN.md-spec](https://github.com/google-labs-code/design.md) form, for AI/tooling consumption | Anything beyond colors/type/spacing/components — a **derived mirror** of `design.md`, not a source of truth (diagrams/voice/runtime aren't expressible in the schema) |
 
 **Single source of truth:** every HEX value lives in `design.md` only. The semantic-color invariant (AS-IS = slate+amber, TO-BE = indigo) is stated normatively once in `design.md §1.4`; other docs reference it.
 

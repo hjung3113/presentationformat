@@ -49,6 +49,8 @@ p, h1, h2, h3, div, span, li, a { word-break: keep-all; }
 
 ---
 
+> **Machine-readable mirror:** these tokens (colors, type, radius, spacing, core components) are also emitted in DESIGN.md-spec form in `design.tokens.md` for AI/tooling consumption. This file stays the source of truth — change a value here, then re-mirror.
+
 ## 1. Color Tokens
 
 ### 1.1 Accent — Indigo (target / improvement / emphasis / key)
