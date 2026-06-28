@@ -4,6 +4,9 @@
 > Any document built to this spec — **regardless of its subject** — should read as the work of the same author.
 > This file defines the **visual tokens**. For voice, content patterns, and when-to-use rules, see `authoring-guide.md`.
 >
+> **This doc owns:** all HEX/px/radius tokens, components, diagram geometry, anti-patterns, the visual checklist.
+> **This doc does NOT cover:** content/voice → `authoring-guide.md`; the document shell, JS, `<helmet>`, and naming contract → `runtime-spec.md`. Start a build from `template.dc.html`.
+>
 > **Format:** a single self-contained HTML page, read top→bottom (a "paper sheet" document, not a slide deck).
 > **Styling discipline:** inline styles only — no CSS classes, no shared stylesheet. Paste token values directly. The only global CSS allowed is what cannot be inlined (font loading, `word-break`, selection color, scrollbar).
 
@@ -22,11 +25,14 @@
 | Default body color | `#1E2233` |
 | Accent (brand) | **Indigo `#4338CA`** |
 
+Fonts load inside the `<helmet>` element (a real element, not a comment — see `runtime-spec.md §1`). Keep this exact order: Pretendard CSS → two `preconnect` hints → Google Fonts sheet. The `preconnect` links are required.
 ```html
-<!-- helmet, very top -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 ```
+> The full document shell (`<x-dc>` / `<helmet>` / `data-dc-script` / `DCLogic`) and the scroll-progress + active-nav scripts live in **`runtime-spec.md`** — they cannot be derived from visual tokens. Clone `template.dc.html` to get them assembled.
 ```css
 /* helmet <style> — only the things that cannot be inline */
 html { scroll-behavior: smooth; }
@@ -86,6 +92,12 @@ p, h1, h2, h3, div, span, li, a { word-break: keep-all; }
 | `border-row` | `#EDEEF4` · `#F0F1F6` | Table / list row rules. |
 | `border-fig` | `#EEF0F6` | Figure-panel border. |
 | `border-chip` | `#DDE1EA` | Chip border. |
+| `mono-tint` | `#F1F3F7` | **AS-IS monolith** box fill ("one tangled blob"). |
+| `mono-dashed` | `#B7BECC` | AS-IS monolith dashed border. |
+| `warm-tint` | `#F6F4F2` | AS-IS external/legacy annotation bar fill. |
+| `warm-dashed` | `#C9CDD8` | Legacy-annotation dashed border. |
+
+> `mono-tint`/`mono-dashed` are slate-family (AS-IS). `warm-tint`/`warm-dashed` mark a thing that is *external / not-ours / legacy* and sits apart. Both belong only in AS-IS zones.
 
 ### 1.4 Semantic accents (meaning colors)
 | Meaning | Token | HEX | Use |
@@ -129,6 +141,7 @@ Use the `font: {weight} {size}/{line-height} {family}` shorthand verbatim.
 - **Accent emphasis** (means "improvement/key"): `<b style="color:#4338CA">…</b>`.
 - **Highlight on dark backgrounds:** `border-bottom:2px solid rgba(255,255,255,.45)` or `box-shadow:inset 0 -8px 0 rgba(67,56,202,.12)`. Do **not** use `text-decoration:underline` or italics.
 - Max **1–2** bold emphases per paragraph. Acronyms: expand once, then abbreviate.
+- **Heading inline qualifier:** a trailing parenthetical/label inside a heading (e.g. `(현재)`, `UML Activity`, `무엇을`) drops to `font-weight:400; font-size:12–14px; color:#9AA0B2` — never the heading's weight. Pattern: `<h3>제목 <span style="font-weight:400;color:#9AA0B2;font-size:14px;">(보조)</span></h3>`.
 
 ---
 
@@ -162,6 +175,11 @@ Use the `font: {weight} {size}/{line-height} {family}` shorthand verbatim.
 | `gap-card` | `14–18px` | Card-grid gap |
 | `gap-node` | `8–12px` | Diagram-node gap |
 | Section rule | `border-top:1px solid #EAEBF2` | Top of each section (except first) |
+| `block-gap` | `18px` adjacent · `30–38px` distinct | Between stacked cards (18) vs distinct sub-blocks/diagrams within one section (30–38) |
+| Sheet top inset | `padding-top:8px` | Paper-sheet top padding |
+| First section | `padding:60px 0 56px`, **no** border-top | Slightly larger top pad; later sections `56px 0` + border-top |
+
+> The hero-to-first-title gap is fixed by three values together: sheet `−44px` overlap + sheet `padding-top:8px` + first section `~60px` top. Don't flatten the first section to 56px.
 
 ---
 
@@ -191,11 +209,15 @@ padding:8px 64px 100px;
 
 ### 4.3 Sticky nav + progress bar
 ```
-sticky bar: position:sticky; top:0; background:rgba(255,255,255,.86); backdrop-filter:blur(10px);
+sticky bar: position:sticky; top:0; z-index:50; background:rgba(255,255,255,.86); backdrop-filter:blur(10px);
             border-bottom:1px solid #E2E5F0; height:54px; inner max-width:1100px; pad 0 40px
-links: 500 13px; #8A91A6 (inactive) → #4338CA + 700 (active, via IntersectionObserver)
-progress: position:fixed top:0 height:3px; inner div width 0→100% bg #4338CA (scroll ratio)
+link row:   class="nav-scroll"; overflow-x:auto (scrollbar hidden via global .nav-scroll CSS, WebKit only)
+links: 500 13px; #8A91A6 (inactive) → #4338CA + 700 (active, set imperatively by the observer)
+ref link:  the appendix/glossary link is de-emphasized: color #B6BBCB + a 10px vertical-align:super "ref" superscript; never highlighted active
+brand:     <a href="#top"> to the hero (id="top"); smooth scroll via html{scroll-behavior:smooth}, no JS
+progress: position:fixed top:0 height:3px; z-index:60 (above nav); inner div id="rprog" width 0→100% bg #4338CA (scroll ratio)
 ```
+> The JS that drives the progress width and the active link (IntersectionObserver, `rootMargin:'-45% 0px -50% 0px'`) plus the `id="sN"` ↔ `data-navlink="sN"` naming contract live in **`runtime-spec.md §2–3`**. The values above are appearance only.
 
 ### 4.4 Section header (identical pattern every section)
 ```html
@@ -211,11 +233,18 @@ progress: position:fixed top:0 height:3px; inner div width 0→100% bg #4338CA (
 | Filled (soft) | `background:#F8F9FD; border-radius:12–13px; padding:16–22px;` |
 | Highlight | `border:1.5px solid #4338CA; border-radius:16px; background:linear-gradient(160deg,#F5F6FF,#fff);` |
 | Dark summary | `background:#15172B; border-radius:16px;` (text #D4D7E6, emphasis #fff, label #A8AEF5) |
+| Left-accent (risk) | `border:1px solid #E7E9F3; border-left:3px solid #4338CA; border-radius:0 12px 12px 0; padding:18px 20px;` — desc muted `#8A91A6`, then `→` mitigation `#5A6175`. Also the base for note/callout boxes. |
+| Subsection card (deep-dive) | `border:1px solid #E7E9F3; border-radius:16px; padding:26px 28px;` — wraps a whole `N.M` subsection; heading is `N.M Title` in `t-h3` (600 18px, **plain text, no chip**); the figure panel nests inside. |
+
+**Status-row card** (e.g. MVP "Now"): rows `display:flex; justify-content:space-between`; left label `600 13px`; right status `600 12px #4338CA` (core) or `400 12px #8A91A6` (minimal); core rows border `#DADEF8`, minimal rows border `#E7E9F3`.
+
+**Takeaway chip** (closes a card grid): `background:#EEF0FF; border:1px solid #DADEF8; border-radius:12px;` vertically centered, `500 12px #4338CA`, `→`-led one-line synthesis. No heading.
 
 ### 4.6 Badges / chips / tags
 | Element | Style |
 |---------|-------|
-| Number chip | `700 12px 'JetBrains Mono'; #4338CA; bg #EEF0FF; radius 6px; pad 6px 9px;` |
+| Number chip | `700 12px 'JetBrains Mono'; #4338CA; bg #EEF0FF; radius 6px; pad 6px 9px;` — for **peer enumerated items** in a grid (problems, findings). |
+| Circled numeral | `①②③…` as a `600 14px #4338CA` heading prefix — for **role/component lists**. Distinct texture from number chips; don't mix the two for one role. |
 | AS-IS badge | `700 11px 'JetBrains Mono'; letter-spacing .06em; #fff; bg #94A0B4; radius 6px; pad 6px 10px;` |
 | TO-BE badge | same but `bg #4338CA` |
 | Positive tag (pill) | `500 11px; radius 100px; pad 6px 11px; #4338CA; bg #EEF0FF;` |
@@ -246,7 +275,9 @@ Standalone comparison panels use `border:1px solid #E7E9F3; border-radius:16–1
 - **Data / store node:** `border:1px dashed #B9BEDB`.
 - **Vertical arrow:** centered `↓`, `#B6BBD6; font-size:13px; padding:5px 0;`; sub-label `11px #9AA0B2`.
 - **Bidirectional:** `↕` (#4338CA). **Horizontal flow:** `→` (indigo) or a 36px circular badge.
-- **Circular arrow badge:** `width:36px;height:36px;border-radius:50%;background:#4338CA;color:#fff;font-size:17px;` flex-centered.
+- **Circular arrow badge (primary):** `width:36px;height:36px;border-radius:50%;background:#4338CA;color:#fff;font-size:17px;` flex-centered — for primary before/after pivots only.
+- **Inline light arrow circle:** `width:28px;height:28px;border-radius:50%;background:#EEF0FF;color:#4338CA;font-size:14px;` — between row-flow boxes (lighter, secondary).
+- **Root/orchestrator node:** the primary indigo node may carry `box-shadow:0 6px 16px rgba(67,56,202,.2)` to read as elevated; **all other nodes are flat.**
 - **Merge/branch label:** `500 10.5px #9AA0B2`, e.g. `↓ merge ↓`.
 
 ### 5.2 Before / After comparison (signature pattern)
@@ -258,9 +289,12 @@ center (50px): arrow cell, align-self:center, 36px indigo circle "→"
 BEFORE column: header [slate badge][slate label]; slate/grey body; pain points in amber; 3 negative pills below.
 AFTER column:  header [indigo badge][ink label]; indigo body; 3 positive pills below.
 ```
+**AS-IS "monolith" wrapper (signature):** the BEFORE sub-grid is enclosed in one box = `background:#F1F3F7; border:1.5px dashed #B7BECC; border-radius:14px; padding:16px 14px;` with a centered caption (`600 12px #6A7187`, e.g. "현재 — 한 덩어리"); inner cells are white `1px solid #DDE1EA` radius 8. This "one tangled blob" enclosure is what makes AS-IS read as monolithic — don't render BEFORE cells as loose white boxes.
+**Legacy/external annotation bar:** a thing that is not-ours/legacy and sits apart = `background:#F6F4F2; border:1px dashed #C9CDD8; border-radius:9px; padding:9px 12px;` label `600 11px #8A91A6` + qualifier `400 11px #A8AEC0`.
 
 ### 5.3 Conditional / optional path
 - Conditional step = **dashed indigo box on lilac** (`bg #F3F1FE; border:1.5px dashed #4338CA;`) + a small qualifier badge ("only X").
+- **Qualifier badge (mini):** `700 8.5px/1 Pretendard; letter-spacing:.02em; color:#fff; background:#4338CA; border-radius:4px; padding:3px 6px;` — a solid mini-tag (NOT a pill), e.g. "비표준만". Far smaller than any type token; don't default to 10–11px or a pill shape.
 - The normal path = solid white box + a "passes straight through" sub-label.
 - Put both paths in a `1fr 1fr` row, then `↓ … merge … ↓` into the key node.
 
@@ -284,6 +318,8 @@ color: improved/AFTER #6B63D6 · peak #C9714F · low/BEFORE #C2C8D4
 labels: top-left [AS-IS slate / TO-BE indigo badge] + one-line state
 ```
 - BEFORE = one peak + rest low; AFTER = even heights.
+- **Paired AS-IS/TO-BE charts:** render the two states in `grid 1fr 1fr; gap:28px`; each gets a `[mono badge][≤1-line state]` header (`700 10px` badge); a panel title `600 13px #15172B` sits above both. Don't stack them or omit the badges.
+- **Single-series variant** (a quantity/distribution with no before/after baseline): all bars `accent-soft #6B63D6`, optionally one `peak #C9714F`; **no AS-IS/TO-BE badges.**
 
 ### 5.6 Gantt / roadmap
 ```
@@ -299,6 +335,9 @@ legend: three 12px dots (radius 3px) + 500 11px labels
 footnote: 400 11.5px #9AA0B2 — explain that bar length/position encodes *when × how-much*
 ```
 > Bars of the same kind must share identical left/width. Length encodes meaning, never random.
+
+- **k phases (generalize):** each header zone = `(100/k)%` wide; a bar in phase *i* (0-indexed) anchors at `left:(i·100/k + 1.5)%`. The 2-phase numbers above are this formula at k=2. Bars of the same kind across rows still share identical left/width.
+- **Empty phase is allowed:** a row may have a bar in only one phase — leave the other phase empty rather than inventing a filler bar. Empty ≠ minimal.
 
 ### 5.7 Flow / tree / log
 - Vertical flow: node → `↓` (sub-label) → node …; final/destination node `bg #EEF0FF; #4338CA`.
@@ -353,13 +392,54 @@ Density, type emphasis, color, and component mix shift with a page's role. Match
 
 ---
 
-## 7. Reproduction checklist
-1. Load Pretendard / Noto Serif KR / JetBrains Mono; set global `word-break:keep-all`.
+## 7. Content elements (lists · media · links · callouts · placeholders)
+
+The reference is a system-redesign with no images and few lists, so these are under-exercised there — but a different topic (research summary, product brief, process proposal) will need them. Specs here keep them on-fingerprint.
+
+### 7.1 Lists
+Default list = `ul { margin:0; padding-left:17–18px; display:flex; flex-direction:column; gap:10–11px; }`; each `li` at `t-body`/`t-body-sm`, formatted `<b ink>keyword</b> — explanation` (em-dash gloss). Never default browser bullets/indentation. (Lists are banned on the **cover** only — see `authoring-guide.md §4.1`.)
+
+### 7.2 Embedded media (images · screenshots · logos · charts)
+Images live **inside a figure panel** (`#FAFBFE`, `border:1px solid #EEF0F6`), `border-radius` matching `r-card-sm` (11–12px), `max-width:100%`. Optional `t-caption` below (prefix `*`). A screenshot/logo gets a 1px `#E7E9F3` hairline frame. **No full-bleed images** inside the sheet, no sharp corners, no full-saturation photos.
+
+### 7.3 Inline links
+`color:#4338CA`, no underline; optional `border-bottom:1px solid #C9CEF4`. Never blue + underline. (Nav links are styled separately — see §4.3.)
+
+### 7.4 Callout / note box
+Reuse the **Left-accent** card (§4.5): `background:#F8F9FD; border-left:3px solid #4338CA;`. A "warning/caution" callout still uses this indigo frame — **never amber fill**, because amber is reserved for AS-IS pain points. Color carries meaning; a note is not a problem.
+
+### 7.5 Placeholders & unknown values
+- A figure not yet quantified: use a placeholder glyph in **normal ink bold** (`O`, `OO`) immediately followed by a muted parenthetical `<span style="color:#9AA0B2;">(… 추후 확정)</span>`. **Never** flag missing data with amber/warn color — unknown ≠ problem.
+- A framing "stat" with no number: substitute a 1–2-char word (`MVP`, `단계`) still set in `t-stat`.
+
+---
+
+## 8. Responsive & anti-patterns
+
+### 8.1 Responsive
+Desktop-first reading document (~1100px). **No media queries by default** — mobile resilience comes only from intrinsic flex (hero stat tiles `flex:1; min-width:150px` in a `flex-wrap:wrap` row; nav row `overflow-x:auto`). If you must support narrow widths, the sanctioned minimum: below ~720px, `sheet-pad → 0 20px`; all `1fr 1fr` / `repeat(3,…)` grids collapse to one column; the comparison panel stacks (arrow rotates `↓`); the gantt label column shrinks. Don't improvise ad-hoc breakpoints — that's how "same author" breaks across docs.
+
+### 8.2 Anti-patterns (never do)
+- Indigo inside an AS-IS zone, or slate/amber inside a TO-BE zone (the strongest fingerprint).
+- Amber used for anything that isn't an AS-IS pain point (e.g. a warning callout, a missing number).
+- `text-decoration:underline` or italics for emphasis; > 2 bold per paragraph.
+- Decorative (meaningless) accent color — indigo always carries meaning.
+- Random/unequal heights or positions for same-kind bars or nodes.
+- Mixed radii within one diagram; sharp-corner or full-saturation images.
+- Punchy verdict/drama titles ("It's not X, it's Y!"); titles describe, never deliver verdicts.
+- Default browser bullets; full polite-register (`~합니다`) prose (see `authoring-guide.md §3`).
+- A diagram forced onto a plain enumerated list (problems/risks/glossary stay as card grids/tables — see §6.4 and the checklist).
+
+---
+
+## 9. Reproduction checklist
+1. Load Pretendard / Noto Serif KR / JetBrains Mono (via `<helmet>`); set global `word-break:keep-all`.
 2. Page bg `#EEF0F7`; hero (indigo gradient) → paper sheet (white, max 1100, −44 overlap).
 3. Sticky nav + 3px progress bar + IntersectionObserver active link.
 4. Every section: eyebrow (`NN · ENGLISH`, indigo) → h2 (Serif 34) → lead (16/1.85, max 760).
 5. Body `#5A6175`, headings `#15172B`, emphasis `#4338CA` or ink bold.
 6. BEFORE = slate + amber / AFTER = indigo — never mixed.
 7. Diagrams live in figure panels (`#FAFBFE`). Node radius 8–10, card 14–16, comparison panel 18.
-8. **Text (top) → related diagram (below)** in every subsection.
+8. **Text (top) → related diagram (below)** *when the content is diagrammable* (flow/contrast/hierarchy/schedule/quantity). Enumerated peer lists (problems, risks, open questions, glossary) stay as card grids/tables with **no** diagram. Tall-narrow diagrams may sit **text-left / diagram-right** in a `1fr 1fr` grid.
 9. Match the **page type** (§6) to its density, emphasis, and component mix.
+10. No amber outside AS-IS; no indigo inside AS-IS. Unknowns use ink placeholders + muted caveat, never warn color (§7.5, §8.2).
