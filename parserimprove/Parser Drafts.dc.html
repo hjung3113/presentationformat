@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <meta name="design_doc_mode" content="canvas">
+  <style>
+    @keyframes none-x { from{} to{} }
+  </style>
+</helmet>
+
+<!-- ============ DRAFT A — Engineering Blueprint (dark) ============ -->
+<div style="position:absolute; left:0; top:0; width:680px;">
+  <div data-drags-parent="1" style="font:600 13px/1.4 Pretendard, sans-serif; letter-spacing:.04em; color:#475569; margin-bottom:12px; padding-left:2px;">초안 A — Engineering Blueprint · 다크 / 스키매틱</div>
+  <div style="background:#0B1220; border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,.18); overflow:hidden; font-family:Pretendard, sans-serif; color:#CBD5E1;">
+
+    <!-- hero -->
+    <div style="position:relative; padding:64px 56px 56px; background:linear-gradient(180deg,#0B1220 0%,#0E1A2E 100%); background-image:linear-gradient(rgba(56,189,248,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(56,189,248,.05) 1px,transparent 1px); background-size:100% 100%, 34px 34px, 34px 34px;">
+      <div style="display:inline-flex; align-items:center; gap:8px; font:500 12px/1 'JetBrains Mono',monospace; letter-spacing:.12em; color:#38BDF8; border:1px solid rgba(56,189,248,.35); border-radius:3px; padding:7px 11px; margin-bottom:28px;">PROJECT_BRIEF // 실행 방향 공유</div>
+      <h1 style="font:700 38px/1.32 Pretendard,sans-serif; color:#F1F5F9; margin:0 0 18px; letter-spacing:-.01em;">반도체 설비<br>이벤트 로그파서<br>개선 프로젝트</h1>
+      <p style="font:400 15px/1.7 Pretendard,sans-serif; color:#94A3B8; margin:0 0 30px; max-width:480px;">오랜 기간 누적된 구조적·운영적 부채를 점진 수선하는 대신, <span style="color:#E2E8F0;">책임이 명확히 분리된 새 구조로 재설계</span>하여 장기적 유지보수성·확장성·운영 효율을 확보한다.</p>
+      <div style="display:flex; gap:0; border-top:1px solid rgba(148,163,184,.18); padding-top:20px;">
+        <div style="flex:1; padding-right:18px;"><div style="font:700 22px/1 'JetBrains Mono',monospace; color:#38BDF8;">5</div><div style="font:400 12px/1.5 Pretendard; color:#64748B; margin-top:6px;">독립 컴포넌트로 분리</div></div>
+        <div style="flex:1; padding:0 18px; border-left:1px solid rgba(148,163,184,.18);"><div style="font:700 22px/1 'JetBrains Mono',monospace; color:#38BDF8;">50+</div><div style="font:400 12px/1.5 Pretendard; color:#64748B; margin-top:6px;">정규화·보정 로직</div></div>
+        <div style="flex:1; padding-left:18px; border-left:1px solid rgba(148,163,184,.18);"><div style="font:700 22px/1 'JetBrains Mono',monospace; color:#38BDF8;">MVP</div><div style="font:400 12px/1.5 Pretendard; color:#64748B; margin-top:6px;">올해 핵심 경로 우선</div></div>
+      </div>
+    </div>
+
+    <!-- problem section -->
+    <div style="padding:48px 56px; border-top:1px solid rgba(148,163,184,.12);">
+      <div style="font:500 12px/1 'JetBrains Mono',monospace; letter-spacing:.1em; color:#64748B; margin-bottom:10px;">02 / CURRENT_ISSUES</div>
+      <h2 style="font:700 24px/1.35 Pretendard; color:#F1F5F9; margin:0 0 14px;">현재 파서의 문제점</h2>
+      <p style="font:400 14px/1.7 Pretendard; color:#94A3B8; margin:0 0 28px; max-width:500px;">성격이 다른 역할이 하나의 프로그램에 뒤섞여 있고, 테스트 코드조차 없어 수정과 배포가 개인의 경험에 의존한다.</p>
+      <div style="display:grid; gap:14px;">
+        <div style="border:1px solid rgba(56,189,248,.18); border-left:2px solid #38BDF8; border-radius:3px; padding:18px 20px; background:rgba(56,189,248,.03);"><div style="font:700 14px/1.4 Pretendard; color:#E2E8F0; margin-bottom:6px;">2.1 단일 프로그램에 과집중된 책임</div><div style="font:400 13px/1.65 Pretendard; color:#8FA0B5;">수집·삭제·표준/비표준 가공·Config가 한 프로그램에 뒤섞여, 한 영역의 변경이 다른 영역에 영향을 준다.</div></div>
+        <div style="border:1px solid rgba(56,189,248,.18); border-left:2px solid #38BDF8; border-radius:3px; padding:18px 20px; background:rgba(56,189,248,.03);"><div style="font:700 14px/1.4 Pretendard; color:#E2E8F0; margin-bottom:6px;">2.5 운영의 수작업 의존</div><div style="font:400 13px/1.65 Pretendard; color:#8FA0B5;">재처리·따라잡기 시나리오를 자동 처리하지 못해 사람이 DB를 직접 손대고, 실수가 잦다.</div></div>
+      </div>
+    </div>
+
+    <!-- architecture diagram -->
+    <div style="padding:48px 56px; border-top:1px solid rgba(148,163,184,.12); background:#0A0F1A;">
+      <div style="font:500 12px/1 'JetBrains Mono',monospace; letter-spacing:.1em; color:#64748B; margin-bottom:10px;">03 / TARGET_ARCH</div>
+      <h2 style="font:700 24px/1.35 Pretendard; color:#F1F5F9; margin:0 0 26px;">책임 분리 구조</h2>
+      <div style="background:#0E1A2E; border:1px solid rgba(56,189,248,.2); border-radius:4px; padding:26px 22px;">
+        <div style="text-align:center; font:600 13px/1.4 'JetBrains Mono',monospace; color:#0B1220; background:#38BDF8; border-radius:3px; padding:12px; margin-bottom:6px;">스케줄러 — 오케스트레이션</div>
+        <div style="text-align:center; font:400 10px/1 'JetBrains Mono',monospace; color:#475569; margin-bottom:14px;">│</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div style="text-align:center; font:500 12px/1.4 Pretendard; color:#CBD5E1; background:#0B1220; border:1px solid rgba(148,163,184,.25); border-radius:3px; padding:14px 8px;">파일 수집기</div>
+          <div style="text-align:center; font:500 12px/1.4 Pretendard; color:#CBD5E1; background:#0B1220; border:1px solid rgba(148,163,184,.25); border-radius:3px; padding:14px 8px;">컨버터<br><span style="font-size:10px;color:#64748B;">비표준→표준</span></div>
+          <div style="text-align:center; font:500 12px/1.4 Pretendard; color:#38BDF8; background:#0B1220; border:1px solid rgba(56,189,248,.45); border-radius:3px; padding:14px 8px;">표준 로그 파서<br><span style="font-size:10px;color:#64748B;">정규화·보정·병합</span></div>
+          <div style="text-align:center; font:500 12px/1.4 Pretendard; color:#CBD5E1; background:#0B1220; border:1px solid rgba(148,163,184,.25); border-radius:3px; padding:14px 8px;">Config 파서</div>
+        </div>
+        <div style="text-align:center; font:400 10px/1 'JetBrains Mono',monospace; color:#475569; margin:14px 0;">▼</div>
+        <div style="text-align:center; font:600 12px/1.4 'JetBrains Mono',monospace; color:#CBD5E1; background:#0B1220; border:1px dashed rgba(148,163,184,.4); border-radius:3px; padding:12px;">DB 서버 — 데이터 · 기준정보 · 상태(SSOT)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ DRAFT B — Consulting Report (editorial light) ============ -->
+<div style="position:absolute; left:770px; top:0; width:680px;">
+  <div data-drags-parent="1" style="font:600 13px/1.4 Pretendard, sans-serif; letter-spacing:.04em; color:#475569; margin-bottom:12px; padding-left:2px;">초안 B — Consulting Report · 에디토리얼 / 라이트</div>
+  <div style="background:#FBFAF7; border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,.1); overflow:hidden; font-family:Pretendard, sans-serif; color:#26211C;">
+
+    <!-- hero -->
+    <div style="padding:64px 60px 52px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:32px;">
+        <div style="width:34px; height:2px; background:#9A3B32;"></div>
+        <div style="font:500 12px/1 Pretendard; letter-spacing:.16em; color:#9A3B32;">실행 방향 공유 자료</div>
+      </div>
+      <h1 style="font:600 40px/1.3 'Noto Serif KR',serif; color:#1C1814; margin:0 0 22px; letter-spacing:-.01em;">반도체 설비 이벤트<br>로그파서 개선 프로젝트</h1>
+      <p style="font:400 16px/1.85 Pretendard; color:#5A5048; margin:0 0 36px; max-width:500px;">레거시를 점진적으로 수선하기보다, <span style="color:#1C1814; font-weight:600; box-shadow:inset 0 -8px 0 rgba(154,59,50,.12);">책임이 명확히 분리된 새 구조로 재설계</span>하여 장기적인 유지보수성·확장성·운영 효율을 확보하고자 한다.</p>
+      <div style="display:flex; gap:36px; border-top:1px solid #E4DED4; padding-top:24px;">
+        <div><div style="font:600 30px/1 'Noto Serif KR',serif; color:#9A3B32;">5</div><div style="font:400 13px/1.5 Pretendard; color:#8A8076; margin-top:7px;">독립 컴포넌트</div></div>
+        <div><div style="font:600 30px/1 'Noto Serif KR',serif; color:#9A3B32;">50+</div><div style="font:400 13px/1.5 Pretendard; color:#8A8076; margin-top:7px;">정규화·보정 로직</div></div>
+        <div><div style="font:600 30px/1 'Noto Serif KR',serif; color:#9A3B32;">MVP</div><div style="font:400 13px/1.5 Pretendard; color:#8A8076; margin-top:7px;">올해 핵심 경로</div></div>
+      </div>
+    </div>
+
+    <!-- problem section -->
+    <div style="padding:48px 60px; background:#F4F1EA; border-top:1px solid #E4DED4;">
+      <div style="font:500 13px/1 Pretendard; letter-spacing:.1em; color:#9A3B32; margin-bottom:12px;">02 — 현황</div>
+      <h2 style="font:600 26px/1.4 'Noto Serif KR',serif; color:#1C1814; margin:0 0 16px;">현재 파서의 문제점</h2>
+      <p style="font:400 15px/1.8 Pretendard; color:#5A5048; margin:0 0 30px; max-width:520px;">성격이 다른 역할이 하나의 프로그램에 뒤섞여 있고, 테스트 코드조차 없어 수정과 배포가 개인의 경험에 의존한다.</p>
+      <div style="display:grid; gap:0;">
+        <div style="display:flex; gap:20px; padding:22px 0; border-top:1px solid #E0D9CD;"><div style="font:600 14px/1.4 'Noto Serif KR',serif; color:#9A3B32; min-width:34px;">2.1</div><div><div style="font:600 15px/1.4 Pretendard; color:#1C1814; margin-bottom:6px;">단일 프로그램에 과집중된 책임</div><div style="font:400 14px/1.7 Pretendard; color:#6A6058;">수집·삭제·표준/비표준 가공·Config가 한 프로그램에 뒤섞여, 한 영역의 변경이 다른 영역에 영향을 준다.</div></div></div>
+        <div style="display:flex; gap:20px; padding:22px 0; border-top:1px solid #E0D9CD;"><div style="font:600 14px/1.4 'Noto Serif KR',serif; color:#9A3B32; min-width:34px;">2.5</div><div><div style="font:600 15px/1.4 Pretendard; color:#1C1814; margin-bottom:6px;">운영의 수작업 의존</div><div style="font:400 14px/1.7 Pretendard; color:#6A6058;">재처리·따라잡기 시나리오를 자동 처리하지 못해 사람이 DB를 직접 손대고, 실수가 잦다.</div></div></div>
+      </div>
+    </div>
+
+    <!-- architecture diagram -->
+    <div style="padding:48px 60px; border-top:1px solid #E4DED4;">
+      <div style="font:500 13px/1 Pretendard; letter-spacing:.1em; color:#9A3B32; margin-bottom:12px;">03 — 개선 방향</div>
+      <h2 style="font:600 26px/1.4 'Noto Serif KR',serif; color:#1C1814; margin:0 0 28px;">책임 분리 구조</h2>
+      <div>
+        <div style="text-align:center; font:600 14px/1.4 Pretendard; color:#FBFAF7; background:#9A3B32; border-radius:3px; padding:14px; margin-bottom:4px;">스케줄러 — 오케스트레이션</div>
+        <div style="text-align:center; color:#C9BFAF; font-size:14px; margin-bottom:10px;">↓</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div style="text-align:center; font:500 13px/1.4 Pretendard; color:#3A332C; background:#fff; border:1px solid #E0D9CD; border-radius:3px; padding:16px 8px;">파일 수집기</div>
+          <div style="text-align:center; font:500 13px/1.4 Pretendard; color:#3A332C; background:#fff; border:1px solid #E0D9CD; border-radius:3px; padding:16px 8px;">컨버터<br><span style="font-size:11px;color:#9A8F80;">비표준→표준</span></div>
+          <div style="text-align:center; font:600 13px/1.4 Pretendard; color:#9A3B32; background:#fff; border:1.5px solid #9A3B32; border-radius:3px; padding:16px 8px;">표준 로그 파서<br><span style="font-size:11px;color:#9A8F80;">정규화·보정·병합</span></div>
+          <div style="text-align:center; font:500 13px/1.4 Pretendard; color:#3A332C; background:#fff; border:1px solid #E0D9CD; border-radius:3px; padding:16px 8px;">Config 파서</div>
+        </div>
+        <div style="text-align:center; color:#C9BFAF; font-size:14px; margin:10px 0;">↓</div>
+        <div style="text-align:center; font:600 13px/1.4 Pretendard; color:#3A332C; background:#fff; border:1px dashed #B8AE9E; border-radius:3px; padding:14px;">DB 서버 — 데이터 · 기준정보 · 상태(SSOT)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ DRAFT C — Modern Product (bold light) ============ -->
+<div style="position:absolute; left:1540px; top:0; width:680px;">
+  <div data-drags-parent="1" style="font:600 13px/1.4 Pretendard, sans-serif; letter-spacing:.04em; color:#475569; margin-bottom:12px; padding-left:2px;">초안 C — Modern Product · 볼드 / 카드</div>
+  <div style="background:#FFFFFF; border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,.1); overflow:hidden; font-family:Pretendard, sans-serif; color:#0F172A;">
+
+    <!-- hero -->
+    <div style="padding:60px 56px 52px; background:#4338CA; color:#fff;">
+      <div style="display:inline-flex; align-items:center; gap:8px; font:600 12px/1 Pretendard; letter-spacing:.08em; color:#C7D2FE; background:rgba(255,255,255,.12); border-radius:100px; padding:8px 14px; margin-bottom:26px;">실행 방향 공유 자료</div>
+      <h1 style="font:800 42px/1.22 Pretendard; color:#fff; margin:0 0 20px; letter-spacing:-.02em;">반도체 설비 이벤트<br>로그파서 개선<br>프로젝트</h1>
+      <p style="font:400 16px/1.75 Pretendard; color:#DDD9FB; margin:0 0 34px; max-width:480px;">책임이 명확히 분리된 새 구조로 재설계하여 장기적 유지보수성·확장성·운영 효율을 확보한다.</p>
+      <div style="display:flex; gap:12px;">
+        <div style="flex:1; background:rgba(255,255,255,.1); border-radius:10px; padding:18px;"><div style="font:800 26px/1 Pretendard; color:#fff;">5</div><div style="font:400 12px/1.5 Pretendard; color:#C7D2FE; margin-top:6px;">독립 컴포넌트</div></div>
+        <div style="flex:1; background:rgba(255,255,255,.1); border-radius:10px; padding:18px;"><div style="font:800 26px/1 Pretendard; color:#fff;">50+</div><div style="font:400 12px/1.5 Pretendard; color:#C7D2FE; margin-top:6px;">정규화·보정 로직</div></div>
+        <div style="flex:1; background:rgba(255,255,255,.1); border-radius:10px; padding:18px;"><div style="font:800 26px/1 Pretendard; color:#fff;">MVP</div><div style="font:400 12px/1.5 Pretendard; color:#C7D2FE; margin-top:6px;">올해 핵심 경로</div></div>
+      </div>
+    </div>
+
+    <!-- problem section -->
+    <div style="padding:48px 56px;">
+      <div style="font:700 13px/1 Pretendard; letter-spacing:.06em; color:#4338CA; margin-bottom:12px;">02 · 현황</div>
+      <h2 style="font:800 27px/1.3 Pretendard; color:#0F172A; margin:0 0 16px; letter-spacing:-.01em;">현재 파서의 문제점</h2>
+      <p style="font:400 15px/1.75 Pretendard; color:#475569; margin:0 0 28px; max-width:520px;">성격이 다른 역할이 하나의 프로그램에 뒤섞여 있고, 테스트 코드조차 없어 수정과 배포가 개인의 경험에 의존한다.</p>
+      <div style="display:grid; gap:14px;">
+        <div style="background:#F1F5F9; border-radius:12px; padding:20px 22px;"><div style="display:inline-block; font:700 11px/1 Pretendard; color:#4338CA; background:#E0E7FF; border-radius:6px; padding:5px 9px; margin-bottom:10px;">2.1</div><div style="font:700 16px/1.4 Pretendard; color:#0F172A; margin-bottom:6px;">단일 프로그램에 과집중된 책임</div><div style="font:400 14px/1.7 Pretendard; color:#475569;">수집·삭제·표준/비표준 가공·Config가 한 프로그램에 뒤섞여, 한 영역의 변경이 다른 영역에 영향을 준다.</div></div>
+        <div style="background:#F1F5F9; border-radius:12px; padding:20px 22px;"><div style="display:inline-block; font:700 11px/1 Pretendard; color:#4338CA; background:#E0E7FF; border-radius:6px; padding:5px 9px; margin-bottom:10px;">2.5</div><div style="font:700 16px/1.4 Pretendard; color:#0F172A; margin-bottom:6px;">운영의 수작업 의존</div><div style="font:400 14px/1.7 Pretendard; color:#475569;">재처리·따라잡기 시나리오를 자동 처리하지 못해 사람이 DB를 직접 손대고, 실수가 잦다.</div></div>
+      </div>
+    </div>
+
+    <!-- architecture diagram -->
+    <div style="padding:48px 56px; background:#F8FAFC; border-top:1px solid #EEF2F6;">
+      <div style="font:700 13px/1 Pretendard; letter-spacing:.06em; color:#4338CA; margin-bottom:12px;">03 · 개선 방향</div>
+      <h2 style="font:800 27px/1.3 Pretendard; color:#0F172A; margin:0 0 26px; letter-spacing:-.01em;">책임 분리 구조</h2>
+      <div>
+        <div style="text-align:center; font:700 14px/1.4 Pretendard; color:#fff; background:#4338CA; border-radius:12px; padding:16px; margin-bottom:8px; box-shadow:0 6px 16px rgba(67,56,202,.25);">스케줄러 — 오케스트레이션</div>
+        <div style="text-align:center; color:#A5B4CF; font-size:16px; margin-bottom:10px;">↓</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div style="text-align:center; font:600 13px/1.4 Pretendard; color:#334155; background:#fff; border:1px solid #E2E8F0; border-radius:10px; padding:16px 8px;">파일 수집기</div>
+          <div style="text-align:center; font:600 13px/1.4 Pretendard; color:#334155; background:#fff; border:1px solid #E2E8F0; border-radius:10px; padding:16px 8px;">컨버터<br><span style="font-size:11px;color:#94A3B8;">비표준→표준</span></div>
+          <div style="text-align:center; font:700 13px/1.4 Pretendard; color:#4338CA; background:#EEF0FF; border:1.5px solid #4338CA; border-radius:10px; padding:16px 8px;">표준 로그 파서<br><span style="font-size:11px;color:#7C8AC4;">정규화·보정·병합</span></div>
+          <div style="text-align:center; font:600 13px/1.4 Pretendard; color:#334155; background:#fff; border:1px solid #E2E8F0; border-radius:10px; padding:16px 8px;">Config 파서</div>
+        </div>
+        <div style="text-align:center; color:#A5B4CF; font-size:16px; margin:10px 0;">↓</div>
+        <div style="text-align:center; font:700 13px/1.4 Pretendard; color:#334155; background:#fff; border:1px dashed #94A3B8; border-radius:10px; padding:14px;">DB 서버 — 데이터 · 기준정보 · 상태(SSOT)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+</body>
+</html>
