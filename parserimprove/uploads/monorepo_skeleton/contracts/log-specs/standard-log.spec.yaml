@@ -1,0 +1,33 @@
+# 표준 로그 스펙 (TSV) — 스켈레톤
+# 정본: 이 파일. 컨버터(.NET)가 이 형식으로 산출하고 표준파서(.NET)가 읽는다.
+# 실제 컬럼은 확정 필요(TBD). integration_contracts_design.md §4.1 "단일 소스" 규칙 준수.
+
+id: log-spec.standard
+description: 회사 표준 로그 양식 (실시간 동작 start/end·로봇·공정·랏·function·파라미터)
+owner: TBD
+version: 0.1.0
+
+format:
+  type: tsv            # 탭 구분 txt (S3/parquet 아님)
+  encoding: utf-8      # BOM 없음
+  newline: lf
+  null_representation: TBD   # 빈문자열 vs NULL 구분 규약
+
+columns:
+  # 예시 골격 — 실제 컬럼 확정 TBD
+  - name: timestamp
+    type: datetime      # 타임존·포맷은 integration_contracts_design §4.4
+    nullable: false
+  - name: equipment_id
+    type: string
+    nullable: false
+  - name: event_type
+    type: string        # start / end 등
+    nullable: false
+  # ... (동작·로봇·공정·랏·function·파라미터 등 추가 TBD)
+
+carryover:
+  description: start/end가 다른 파일에 나뉠 때 이월 정보. 저장위치·포맷 TBD (state 계약 참조)
+
+change_policy:
+  ref: ../../docs/01-contracts-and-change-policy.md   # breaking 판정 단일 정본
