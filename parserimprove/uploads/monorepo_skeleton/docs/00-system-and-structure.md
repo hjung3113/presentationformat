@@ -12,8 +12,8 @@
 |----------|------|------|------|
 | **스케줄러** | Python | 컨트롤타워. 시나리오 결정·구간 산정·CPU 기반 부하 평준화·상태(DB SSOT) 관리 | `../scheduler_design.md` |
 | **파일 수집기** | Python | 원본 확보·가용성 관리. 시나리오는 모름 | `../file_collector_design.md` |
-| **컨버터** | .NET | 비표준 로그 → 표준 로그 스펙 형식으로 변환 | (설계 예정) |
-| **표준 로그 파서** | .NET | 표준 로그 가공 (값 정규화·보정·start/end 병합 내부 포함) | (설계 예정) |
+| **컨버터** | .NET | 비표준 로그 → 표준 로그 스펙 형식으로 변환 | `../converter_design.md` |
+| **표준 로그 파서** | .NET | 표준 로그 가공 (값 정규화·보정·start/end 병합 내부 포함) | `../standard_parser_design.md` |
 | **Configuration 파서** | Python | 표준/비표준과 성격이 다른 설정 파일 가공 | (설계 예정) |
 
 > 컴포넌트 간 상호작용·데이터 계약은 `../integration_contracts_design.md`가 정본.
