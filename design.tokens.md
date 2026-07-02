@@ -50,6 +50,17 @@ colors:
   peak: "#C9714F"
   ok: "#1F8A5B"              # success / normal / end
   ok-bg: "#E6F5EE"
+  # On-accent / dark-surface text
+  on-accent-1: "#D9DCFF"     # eyebrow pill, divider part-label on indigo
+  on-accent-2: "#C7CAF5"     # hero stat label, matrix compare-header
+  label-on-dark: "#A8AEF5"   # dark card / stat-band label
+  muted-indigo: "#7C82B8"    # sub-text on pipeline / conditional nodes
+  leaf-text: "#7A8197"       # borderless tree-leaf chip text
+  # Extra surfaces / borders (slide-format components)
+  highlight-grad: "#F5F6FF"  # highlight card / pull-quote gradient stop
+  table-header-soft: "#F3F4FA"  # secondary table header
+  dashed-store: "#B9BEDB"    # data/DB store dashed border
+  dashed-rule: "#D7DAEC"     # gantt/lifeline dashed line
 typography:
   t-hero:        { fontFamily: "Noto Serif KR", fontWeight: 700, fontSize: "52px", lineHeight: "1.28", letterSpacing: "-0.02em" }
   t-h2:          { fontFamily: "Noto Serif KR", fontWeight: 600, fontSize: "34px", lineHeight: "1.34", letterSpacing: "-0.01em" }
@@ -68,6 +79,11 @@ typography:
   t-mono-num:    { fontFamily: "JetBrains Mono", fontWeight: 700, fontSize: "12px", lineHeight: "1" }
   t-mono-log:    { fontFamily: "JetBrains Mono", fontWeight: 500, fontSize: "11.5px", lineHeight: "1.5" }
   t-stat:        { fontFamily: "Noto Serif KR", fontWeight: 700, fontSize: "30px", lineHeight: "1" }
+  t-stat-lg:     { fontFamily: "Noto Serif KR", fontWeight: 700, fontSize: "44px", lineHeight: "1" }   # stat-card grid number
+  t-stat-band:   { fontFamily: "Noto Serif KR", fontWeight: 700, fontSize: "32px", lineHeight: "1" }   # dark stat-band number
+  t-kpi:         { fontFamily: "Noto Serif KR", fontWeight: 700, fontSize: "26px", lineHeight: "1" }   # KPI card value
+  t-metric-mid:  { fontFamily: "Noto Serif KR", fontWeight: 700, fontSize: "24px", lineHeight: "1" }   # donut center number
+  t-ring-num:    { fontFamily: "JetBrains Mono", fontWeight: 700, fontSize: "15px", lineHeight: "1" }  # progress-ring center %
 rounded:
   node: "8px"
   node-lg: "9px"
@@ -147,6 +163,38 @@ components:
   comparisonPanel:
     backgroundColor: "{colors.paper-tint}"
     rounded: "{rounded.panel}"
+  # Slide-format components (design.md §4.8–§4.14). Amber WARN/Don't is a sanctioned semantic use — see design.md §1.4-note.
+  calloutKey:
+    backgroundColor: "{colors.accent-050}"
+    textColor: "{colors.accent}"                # border-left 3px accent, rounded 0 10px 10px 0, see design.md §4.8
+  calloutOk:
+    backgroundColor: "{colors.ok-bg}"
+    textColor: "{colors.ok}"
+  calloutWarn:
+    backgroundColor: "#FBF3EC"
+    textColor: "{colors.warn}"                  # amber = semantic WARN (allowed), not an AS-IS-only color
+  calloutNote:
+    backgroundColor: "{colors.fill-50}"
+    textColor: "{colors.muted-500}"
+  processStep:
+    backgroundColor: "{colors.accent}"          # 38px number circle, #fff text; final step uses {colors.ok}
+    textColor: "{colors.white}"
+  pullQuote:
+    backgroundColor: "{colors.highlight-grad}"  # linear-gradient(160deg,#F5F6FF,#fff), border accent-line2
+    textColor: "{colors.ink-900}"
+    rounded: "{rounded.card}"
+  statBand:
+    backgroundColor: "{colors.ink-900}"         # dark band; number t-stat-band #fff, label label-on-dark
+    textColor: "{colors.white}"
+    rounded: "{rounded.card}"
+  sectionDivider:
+    backgroundColor: "{colors.accent}"          # actually the 155deg hero gradient; index rgba(#fff,.28), see design.md §4.12
+    textColor: "{colors.white}"
+    rounded: "{rounded.card}"
+  checkMatrix:
+    backgroundColor: "{colors.ink-900}"         # dark header; ✓ {colors.ok}, ✕ {colors.hairline}, partial {colors.warn-2}
+    textColor: "{colors.white}"
+    rounded: "{rounded.card-sm}"
 ---
 
 # Scroll Explainer Design System
@@ -167,11 +215,11 @@ A reusable system for single-page, vertical-scroll, self-contained HTML explaine
 
 ## Colors
 
-Token values are in the frontmatter `colors`. Three families: **accent** (indigo — target/key), **neutral** (ink/body/muted), **surface** (fills/borders), plus **semantic** meaning colors. The hard invariant (normative): **never put indigo in an AS-IS zone, never put slate/amber in a TO-BE zone.** A corollary: an unknown value or a warning is *not* a problem — never give it amber. Full table with per-token usage: `design.md §1`.
+Token values are in the frontmatter `colors`. Three families: **accent** (indigo — target/key), **neutral** (ink/body/muted), **surface** (fills/borders), plus **semantic** meaning colors. The hard invariant (normative): **never put indigo in an AS-IS zone, never put slate/amber in a TO-BE structural zone.** Amber (`warn`) has **two sanctioned uses**: an AS-IS pain point, or a semantic **WARN / Don't / regression** signal in the slide-format components (callout WARN, Don't rows, `▼` delta). It is never decorative and never marks a merely-unknown value (use an ink placeholder + muted caveat). Full table with per-token usage: `design.md §1` (scope rule in §1.4-note).
 
 ## Typography
 
-Body/UI font **Pretendard**; display/heading font **Noto Serif KR** (hero, section h2, some h3); mono **JetBrains Mono** (badges, eyebrow numbers, log/code, hero stat numbers). Korean line breaking uses global `word-break: keep-all` (mandatory). Full type scale with usage and emphasis rules: `design.md §2`. Acronym/number/register rules for Korean: `authoring-guide.md §3.1`.
+Body/UI font **Pretendard**; display/heading font **Noto Serif KR** 400;500;600;700 (hero, section h2, some h3, all **oversized numerals** — `t-stat`/`t-stat-lg`/`t-stat-band`/`t-kpi`/`t-metric-mid`); mono **JetBrains Mono** 400;500;600;700 (badges, eyebrow numbers, log/code, ring/hero stat numbers). Korean line breaking uses global `word-break: keep-all` (mandatory). Full type scale with usage and emphasis rules: `design.md §2`. Acronym/number/register rules for Korean: `authoring-guide.md §3.1`.
 
 ## Layout
 
@@ -187,13 +235,13 @@ Radius is fixed by element type (a consistency fingerprint): small nodes/chips 8
 
 ## Components
 
-Frontmatter `components` encodes the foundational set (cards, badges, chips, nodes, panels). The full component catalog — hero anatomy, sticky nav + progress, table variants, the AS-IS monolith box, risk left-accent card, status-row, takeaway chip, circled-numeral lists — and all **diagram conventions** (before/after panel, UML activity, bar chart, gantt, flow/tree/log) are in `design.md §4–§5`; their structure exceeds what this schema can hold, so the schema carries the tokens and `design.md` carries the geometry.
+Frontmatter `components` encodes the foundational set (cards, badges, chips, nodes, panels) **plus the slide-format components** (4-variant callout, process step, pull-quote, dark stat band, section divider, check matrix). The full catalog — hero anatomy, sticky nav + progress, table variants, AS-IS monolith box, risk left-accent card, status-row, takeaway chip, circled-numeral lists — plus the **chart/viz gallery** (vertical/horizontal/stacked bar, area/trend, donut, KPI+delta, progress rings, heatmap; all pure-CSS, no SVG) and the **UML library** (sequence, state machine, class, component, use case, swimlane, fork/join) live in `design.md §4–§5`. Their geometry exceeds what this schema can hold, so the schema carries the tokens and `design.md` carries the geometry + the "언제 쓰나" usage guidance.
 
 ## Do's and Don'ts
 
 **Do:** serif headings over sans body; indigo only where it means target/key; AS-IS = slate+amber; diagram only what's diagrammable (flow/contrast/hierarchy/schedule/quantity); text→diagram (or text-left/diagram-right) per subsection; uniform radii; same-kind bars/nodes share size & position; ≤1–2 bold per paragraph; `word-break:keep-all`; Korean `~한다` 문어체.
 
-**Don't:** indigo in an AS-IS zone or slate/amber in a TO-BE zone; amber for a warning or a missing value; underline/italic for emphasis; >2 bold per paragraph; decorative (meaningless) accent color; random/unequal same-kind bars or nodes; mixed radii in one diagram; sharp-corner or full-saturation images; punchy verdict/drama titles; default browser bullets; full polite-register `~합니다` prose; a diagram forced onto a plain enumerated list. Full anti-pattern gallery: `design.md §8.2`; voice bans: `authoring-guide.md §1`, `§3.1`.
+**Don't:** indigo in an AS-IS zone or slate/amber in a TO-BE structural zone; amber decoratively or for a merely-unknown value (amber IS fine for AS-IS pain or a semantic WARN/Don't/regression signal); underline/italic for emphasis; >2 bold per paragraph; decorative (meaningless) accent color; random/unequal same-kind bars or nodes; mixed radii in one diagram; sharp-corner or full-saturation images; punchy verdict/drama titles; default browser bullets; full polite-register `~합니다` prose; a diagram forced onto a plain enumerated list. Full anti-pattern gallery: `design.md §8.2`; voice bans: `authoring-guide.md §1`, `§3.1`.
 
 ---
 

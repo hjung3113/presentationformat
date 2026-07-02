@@ -132,6 +132,26 @@ Write: compact two-column term lists, muted styling, at the very end. Short defi
 | **System / topology** | Tree (parent→children→leaves) |
 | **Data / log example** | Mono-font box (start=green, end=amber) |
 | Plain many-to-many comparison | Table |
+| **Values across ≤8 items** | Vertical bar (§5.8-ref: `design.md §5.8`) / horizontal bar when labels long |
+| **Share of whole** (one big ratio) | Donut (`design.md §5.12`); many parts → stacked bar (`§5.10`) |
+| **Trend over time** (direction is the point) | Area / trend chart (`§5.11`) |
+| **Before/after single number** | KPI + delta (`§5.13`); a few headline numbers → stat grid (`§5.9`) or dark stat band (`§4.11`) |
+| **Progress / attainment** of 3–5 items | Progress rings (`§5.14`) or horizontal bars |
+| **2-D intensity** (when × where) | Heatmap (`§5.15`) |
+| **3–5 step procedure** | Process step row (`§4.9`) |
+| **Options × criteria verdict** | Check matrix (`§4.14`) |
+| **Who calls whom, in order** | UML sequence (`§5.17`) |
+| **Lifecycle / status transitions** | UML state machine (`§5.18`) |
+| **Code structure / inheritance** | UML class (`§5.19`) |
+| **Module provides/requires** | UML component (`§5.20`) |
+| **Actor → system functions** | UML use case (`§5.21`) |
+| **Flow by responsible party** | UML swimlane (`§5.22`) |
+| **Concurrent tasks that rejoin** | UML fork/join (`§5.23`) |
+| **One principle to imprint** | Pull quote (`§4.10`) |
+| **A caution / recommendation aside** | Callout box — KEY/OK/WARN/NOTE (`§4.8`) |
+| **Break a long doc into acts** | Section divider (`§4.12`) |
+
+> The full chart/viz gallery, UML library, and slide-format components each carry a **"언제 쓰나"** usage note in `design.md §5.8–§5.23 / §4.8–§4.14` — read it before reaching for one. Charts are pure CSS (no SVG/chart lib). Still obey "diagram only if diagrammable": a bare enumerated list stays a card grid/table.
 
 ### 5.2 Situation → color (intent → token name)
 
@@ -140,7 +160,8 @@ Map by intent; copy the **exact HEX from `design.md`** (the single source of tru
 | Intent | Token (see `design.md`) |
 |--------|-------------------------|
 | Current / legacy / problem (AS-IS) | `slate` (badge + bar) + ink body |
-| Pain point emphasis | `warn` (amber on `warn-bg`/`warn-line`) |
+| Pain point emphasis (AS-IS) | `warn` (amber on `warn-bg`/`warn-line`) |
+| Semantic WARN / Don't / regression | `warn` (amber) — WARN callout, Don't row, `▼` delta (`design.md §4.8`) |
 | Improvement / target / key (TO-BE) | `accent` (indigo) + `accent-050` |
 | Key component node | key-node (`accent-050` fill, 1.5px `accent` border, `accent` text) |
 | Data / store node | dashed `border` (store) |
@@ -151,7 +172,7 @@ Map by intent; copy the **exact HEX from `design.md`** (the single source of tru
 | Captions / footnotes | `muted-400` (prefix `*`) |
 | Low-priority section | `t-eyebrow-ref` grey eyebrow, muted heading |
 
-> **The semantic-color invariant is normative in `design.md §1.4`:** never indigo in an AS-IS zone, never slate/amber in a TO-BE zone. The color *is* the meaning. (Corollary: an unknown value or a warning callout is **not** a problem — never give it amber.)
+> **The semantic-color invariant is normative in `design.md §1.4`:** never indigo in an AS-IS zone, never slate/amber in a TO-BE **structural** zone. The color *is* the meaning. **Amber scope:** legitimate for an AS-IS pain point *or* a semantic WARN/Don't/regression signal (`design.md §1.4-note`, `§4.8`) — never decorative, and never for a merely-unknown value (that's an ink placeholder + muted caveat).
 
 ### 5.3 Emphasis choice
 - Ordinary keyword → `<b style="color:#15172B">` (or `#3A4255`).
@@ -169,7 +190,7 @@ This is the **content/voice** pre-ship list. For visual reproduction, also run `
 2. [ ] Reading titles only tells the whole story, like a TOC. ~6–9 sections + reference.
 3. [ ] Every section lead is 16px/1.85, max-width 760; lead flows long, cards stay short.
 4. [ ] **Korean register (§3.1):** all body in `~한다` 문어체 (no `~합니다`); chips/labels 개조식; AS-IS pain as flat capability gap.
-5. [ ] AS-IS = slate + amber, TO-BE = indigo — never violated. Unknowns/warnings never amber.
+5. [ ] AS-IS = slate + amber, TO-BE = indigo — never violated. Amber only for AS-IS pain or a semantic WARN/Don't/regression signal; never decorative, never for an unknown value.
 6. [ ] Diagrammable content is diagrammed; **enumerated peer lists (problems/risks/glossary) are NOT** — card grids/tables instead.
 7. [ ] Diagrammed subsections are "text → diagram (figure panel)" — top→below, or text-left/diagram-right for tall-narrow figures.
 8. [ ] `·` tight (no spaces); acronyms `한국어(ACRONYM)` once; numbers bold + counter; unknowns `O … (추후 확정)`.

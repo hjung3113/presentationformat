@@ -4,6 +4,8 @@ A reusable system for building single-page, vertical-scroll HTML "explainer" doc
 
 The reference these specs are abstracted from: [`parserimprove/로그파서 개선 설명자료 v2.dc.html`](parserimprove/로그파서%20개선%20설명자료%20v2.dc.html) — the canonical worked example. (The other two `.dc.html` files in that folder are earlier drafts; ignore them.)
 
+The **rendered answer key** — a live gallery of every token, component, chart, flowchart shape, data-viz and UML diagram this system defines — is [`examples/design-system.answerkey.dc.html`](examples/design-system.answerkey.dc.html). `design.md` is the written mirror of it; when the two disagree, the answer key wins and `design.md` is updated to match. Open it (served over http) to *see* what each spec value produces.
+
 ---
 
 ## Read in this order

@@ -30,7 +30,7 @@ Fonts load inside the `<helmet>` element (a real element, not a comment — see 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 ```
 > The full document shell (`<x-dc>` / `<helmet>` / `data-dc-script` / `DCLogic`) and the scroll-progress + active-nav scripts live in **`runtime-spec.md`** — they cannot be derived from visual tokens. Clone `template.dc.html` to get them assembled.
 ```css
@@ -110,7 +110,9 @@ p, h1, h2, h3, div, span, li, a { word-break: keep-all; }
 | Peak / spike | `peak` | `#C9714F` | Load-chart peak bar. |
 | **Success / normal / end** | `ok` | `#1F8A5B` · `#E6F5EE` | "yes" branch, "done", start-of-stream marker. |
 
-> **Hard rule:** never put indigo inside a "before/AS-IS" zone, and never put slate/amber inside a "target/TO-BE" zone. Color carries meaning.
+> **Hard rule:** never put indigo inside a "before/AS-IS" zone, and never put slate/amber inside a "target/TO-BE" **structural** zone (before/after AFTER column, target-flow nodes, TO-BE badges). Color carries meaning.
+>
+> **Amber scope (two legitimate uses).** Amber (`warn`) marks *either* (a) an **AS-IS pain point**, *or* (b) a **semantic WARN / negative / "Don't" / regression-delta signal** in the slide-format components — the WARN callout (§4.8), Don't rows (§4.13), a `▼` regression delta (§5.13), a "no/아니오" branch (§4.6). What amber must **never** be: decorative, an unknown/not-yet-measured value (that's ink placeholder + muted caveat, §7.5), or a fill inside a TO-BE structural zone.
 
 ---
 
@@ -137,6 +139,13 @@ Use the `font: {weight} {size}/{line-height} {family}` shorthand verbatim.
 | `t-mono-num` | `700 12px/1 'JetBrains Mono'`, `#4338CA` | Item number chip (e.g. 2.1) |
 | `t-mono-log` | `500 11.5px/1.5 'JetBrains Mono'` | Log/code line sample |
 | `t-stat` | `700 30px/1 'Noto Serif KR'`, `#fff` | Hero stat number |
+| `t-stat-lg` | `700 44px/1 'Noto Serif KR'`, `#4338CA` / `#15172B` | Stat-card grid number (§5.9) — the biggest numeral |
+| `t-stat-band` | `700 32px/1 'Noto Serif KR'`, `#fff` | Dark stat-band number (§4.11) |
+| `t-kpi` | `700 26px/1 'Noto Serif KR'`, `#15172B` | KPI card value (§5.13) |
+| `t-metric-mid` | `700 24px/1 'Noto Serif KR'`, `#4338CA` | Donut center number (§5.12) |
+| `t-ring-num` | `700 15px/1 'JetBrains Mono'` | Progress-ring center %, sequence/mono metric (§5.14) |
+
+> **Oversized numerals are always Serif KR** (`t-stat` family), never Pretendard — a big number is a display element. The mono `t-ring-num` is the one exception, used only inside the small progress-ring hole.
 
 ### Emphasis rules
 - **Bold emphasis:** `<b style="color:#15172B">…</b>` (ink) or `#3A4255` (soft ink) — key words only.
@@ -191,7 +200,7 @@ Use the `font: {weight} {size}/{line-height} {family}` shorthand verbatim.
 ```
 bg: linear-gradient(155deg,#4F46E5 0%,#3F35C4 55%,#372EAC 100%)
 overlay: radial-gradient(circle at 85% 15%, rgba(255,255,255,.10) 0%, transparent 42%)
-padding: 80px 40px 96px / inner max-width:1020px
+padding: 78px 40px 92px / inner max-width:1020px (h1 max-width:820px)
 eyebrow pill: bg rgba(255,255,255,.13), border rgba(255,255,255,.18), radius 100px, pad 9px 16px,
               600 12px, letter-spacing .1em, color #D9DCFF
 title: t-hero (Serif 52px, white)
@@ -263,6 +272,35 @@ rows: display:grid (set column ratios); border-top:1px solid #EDEEF4;
       body 400 13px/1.6 #5A6175; first column emphasized (accent or ink), optional bg #FAFBFE
 ```
 
+### 4.8 Callout / note box set (4 variants)
+Four semantic callouts, all `border-left:3px solid; border-radius:0 10px 10px 0; padding:14px 16px;` label `700 11px/1 Pretendard; letter-spacing:.04em;` body `400 13px/1.65; #3E4658`. One short sentence each; **1–2 per screen** max.
+| Variant | Fill | Left border + label |
+|---------|------|---------------------|
+| KEY (핵심) | `#EEF0FF` | `#4338CA` |
+| OK (권장) | `#E6F5EE` | `#1F8A5B` |
+| WARN (주의) | `#FBF3EC` | `#B4543F` |
+| NOTE (참고) | `#F8F9FD` | `#B6BBCB` (label `#8A91A6`, body `#5A6175`) |
+
+> **Amber scope (updated).** The WARN callout **legitimately uses amber** (`#B4543F` on `#FBF3EC`). Amber now marks *either* an AS-IS pain point *or* a semantic WARN/negative signal — see the revised rule in §1.4-note and §8.2. It is still never decorative, and never placed inside a TO-BE **structural** zone (before/after AFTER column, target-flow nodes).
+
+### 4.9 Process step row
+Horizontal numbered steps for a 3–5 stage procedure. `display:flex;` each step `flex:1; text-align:center;`. Number circle `width:38px; height:38px; border-radius:50%; background:#4338CA; color:#fff; font:700 15px/1 'JetBrains Mono';` → title `600 13.5px/1.4 #15172B` → body `400 12px/1.6 #5A6175`. Connectors between steps: `→` `flex:0 0 24px; color:#C7CCF2; font-size:18px;`. **Final (완료) step circle is green** `background:#1F8A5B` with `✓` (`700 14px`). 6+ steps → switch to a vertical flow.
+
+### 4.10 Pull quote
+`background:linear-gradient(160deg,#F5F6FF,#fff); border:1px solid #DADEF8; border-radius:14px; padding:24px 26px;` opening quote glyph `“` `700 40px/1 'Noto Serif KR'; color:#C9CEF4;` quote text `600 18px/1.55 'Noto Serif KR'; #15172B;` attribution `500 12px/1.4 #8A91A6`. For one message/principle set large, in serif.
+
+### 4.11 Dark stat band
+A compact dark cousin of the hero stat tiles, dropped between sections. `background:#15172B; border-radius:14px; padding:26px 30px; display:grid; grid-template-columns:repeat(4,1fr); gap:20px;` number `t-stat-band` (700 32px Serif `#fff`), label `400 12px/1.5 #A8AEF5`. 3–4 headline numbers.
+
+### 4.12 Section divider
+Same indigo gradient as the hero, boxed. `background:linear-gradient(155deg,#4F46E5 0%,#3F35C4 55%,#372EAC 100%); border-radius:14px; padding:40px 44px;` overlay `radial-gradient(circle at 88% 20%, rgba(255,255,255,.10) 0%, transparent 45%)`. Big index `700 56px/1 'JetBrains Mono'; color:rgba(255,255,255,.28);` (e.g. `03`) + part label `700 13px/1 Pretendard; letter-spacing:.1em; #D9DCFF;` (`PART 03`) + title `600 30px/1.3 'Noto Serif KR'; #fff`. Breaks a long document into acts (page-type §6.2).
+
+### 4.13 Do / Don't rows
+Paired guidance rows. Do: `background:#E6F5EE; border-radius:10px; padding:12px 14px;` mark `✓` `700 13px #1F8A5B`. Don't: `background:#FBF1EE;` mark `✕` `#B4543F`. Text `400 12.5px/1.6 #3E4658`. Don't-rows use amber per the updated amber scope (§4.8-note).
+
+### 4.14 Check / comparison matrix
+A verdict variant of the table (§4.7): dark header `#15172B` (comparison column label may be `#C7CAF5`); rows `border-top:1px solid #EDEEF4`, first cell `background:#FAFBFE; #1E2233`. Marks: `✓` `600 15px/1 #1F8A5B` (met) · `✕` `#C2C8D4` (not met) · partial = short text `600 13px #94724F` (e.g. "수작업"). Grey ✕ + green ✓ make the winning (new-structure) column visually dominate.
+
 ---
 
 ## 5. Diagram Conventions
@@ -307,7 +345,7 @@ AFTER column:  header [indigo badge][ink label]; indigo body; 3 positive pills b
 | End | pill `bg #1F8A5B; #fff;` prefixed `◉` |
 | Action | white box, radius 10px, `border:1px solid #E2E5F0` |
 | Key action | `bg #EEF0FF; border:1.5px solid #4338CA; #4338CA;` |
-| Decision | **diamond**: inside `position:relative`, an 84px square `transform:rotate(45deg)` + radius 10px + `border:1.5px solid #4338CA`; text in a separate upright centered div. container ~160×118 |
+| Decision | **diamond**: inside `position:relative`, a 70px square `transform:rotate(45deg)` + radius 9px + `border:1.5px solid #4338CA`; text (`600 11px #4338CA`) in a separate upright centered div. container ~118×96 |
 | Branches | left "yes" (green tag) / right "no" (amber tag) boxes, `bg #F8F9FD; border:1px solid #DDE1EA;` |
 | Merge | `▼ merge` `#B6BBD6; 12px` |
 - Width `max-width:560px; margin:0 auto`.
@@ -325,10 +363,10 @@ labels: top-left [AS-IS slate / TO-BE indigo badge] + one-line state
 
 ### 5.6 Gantt / roadmap
 ```
-row: display:grid; grid-template-columns:168px 1fr; align-items:center; padding:3px 0;
-     label (168px) 600 12px #1E2233 + track (position:relative; height:28px)
+row: display:grid; grid-template-columns:150px 1fr; align-items:center; padding:3px 0;
+     label (150px) 600 12px #1E2233 + track (position:relative; height:28px)
 phase divider: vertical dashed line at 50% inside track `border-left:1px dashed #D7DAEC` (top:-3px bottom:-3px)
-header zones: grid 168px 1fr 1fr — [Phase A #F1F2FB, indigo] [Phase B #F8F9FD, grey]
+header zones: grid 150px 1fr 1fr — [Phase A #F1F2FB, indigo] [Phase B #F8F9FD, grey]
 bar kinds (position:absolute; top:4px; bottom:4px; radius:6px; 600 10px; centered; overflow hidden):
   - core (Phase A full):   left:1.5%;  width:45%;   bg #4338CA; #fff
   - minimal (Phase A part):left:1.5%;  width:21%;   bg #C7CCF2; #312E81
@@ -347,6 +385,59 @@ footnote: 400 11.5px #9AA0B2 — explain that bar length/position encodes *when 
 - Tree (parent→children→leaves): indigo header box → white-node grid → `#EEF0F7` leaf chips.
 - Log sample: mono font; "start" lines in green `#1F8A5B`, "end" lines in amber `#B4543F`.
 
+> **All charts and diagrams below are pure CSS `div`s — no SVG, no chart library.** Bars are heights, rings/donuts are `conic-gradient`, trend areas are `clip-path`, heatmaps are `rgba` opacity. Every one sits in a figure panel (`#FAFBFE`) unless noted. Each is introduced by a **"언제 쓰나" usage chip**: `display:flex; gap:10px; background:#EEF0FF; border-radius:10px; padding:12px 15px;` label `700 11px/1.5 Pretendard; letter-spacing:.03em; #4338CA;` text `400 12.5px/1.6 #5A6175`. The color law holds across all of them: improved/target = indigo, current/low = slate, peak = amber.
+
+### 5.8 Horizontal bar chart
+Rows `display:grid; grid-template-columns:130px 1fr 44px; gap:14px; align-items:center;`. Label `500 12.5px/1.4 #3A4255`; track `height:20px; background:#EEF0F7; border-radius:5px; overflow:hidden;`; fill `border-radius:5px;`; value `700 12px/1 'JetBrains Mono'; text-align:right;`. Fill/value colors: high `#4338CA`; mid `#6B63D6`; **low / below-target `#C2C8D4`, value `#8A91A6`** (slate = 미달). Use for progress/achievement/share when items are many or labels long.
+
+### 5.9 Stat card grid
+`display:grid; grid-template-columns:repeat(3,1fr); gap:14px;`. Tile `background:#F8F9FD; border-radius:14px; padding:22px 24px;` number `t-stat-lg` (700 44px Serif, `#4338CA` or `#15172B`), sub `400 13px/1.6 #5A6175`. **Highlight tile** (the improvement metric): `background:linear-gradient(160deg,#EEF0FF,#F5F6FF); border:1px solid #DADEF8;` with unit suffix `%` at `700 20px`. Use when one or two numbers *are* the message.
+
+### 5.10 Composition / stacked bar
+`display:flex; height:30px; border-radius:8px; overflow:hidden;` segments largest-first, darkest-first: `#4338CA` → `#6B63D6` → `#C7CCF2` (3–4 segments max). Legend swatches `11px; border-radius:3px;`, values bold `#15172B`. Use for share-of-whole / 점유율.
+
+### 5.11 Area / trend chart
+Plot `position:relative; height:150px;`. Area fill `position:absolute; inset:0; clip-path:polygon(…points…, 100% 100%, 0% 100%); background:linear-gradient(180deg,rgba(67,56,202,.26),rgba(67,56,202,.03));`. Vertex markers `width:9px; height:9px; border-radius:50%; background:#4338CA; border:2px solid #fff;` placed at each `(left%,top%)`. Baseline `border-bottom:1.5px solid #E2E5F0;` x-labels `500 11.5px/1.4 #9AA0B2`. Single series = one indigo area; multiple series → use bars instead. Use when direction/累적 추세 is the message.
+
+### 5.12 Donut / ratio
+Ring `width:124px; height:124px; border-radius:50%; background:conic-gradient(#4338CA 0 {n}%, #E7E9F3 0);` center hole `width:86px; height:86px; background:#FAFBFE;` center number `t-metric-mid` (700 24px Serif `#4338CA`) + label `#9AA0B2`. **Max 2 segments** (핵심 vs 나머지). Legend: filled `#4338CA`, remainder `#E7E9F3`.
+
+### 5.13 KPI + delta
+Card `background:#FAFBFE; border:1px solid #EEF0F6; border-radius:11px; padding:16px 18px; display:flex; justify-content:space-between; align-items:center;`. Value `t-kpi` (700 26px Serif `#15172B`), label `#9AA0B2`. **Delta pill** `700 12px/1; border-radius:6px; padding:6px 9px;` — improvement `#1F8A5B` on `#E6F5EE` (`▲`), regression `#B4543F` on `#FBF1EE` (`▼`). Delta color follows *good vs bad*, not up vs down.
+
+### 5.14 Progress rings
+Each ring `width:92px; height:92px; border-radius:50%; background:conic-gradient({color} 0 {pct}%, #E7E9F3 0);` hole `width:66px; height:66px; background:#FAFBFE;` center `t-ring-num` (700 15px Mono). Fill color encodes priority: high `#4338CA` → mid `#6B63D6` → **low `#C7CCF2` (center text `#8A91A6`)** — lower value = paler indigo. 3–5 items compared.
+
+### 5.15 Heatmap / intensity grid
+`display:grid; grid-template-columns:70px repeat(7,1fr); gap:6px;`. Day headers `500 10px #9AA0B2`; row labels `500 11px #5A6175`; cells `height:26px; border-radius:5px; background:rgba(67,56,202,α);` — **intensity is indigo opacity only** (α ≈ .10→.95, single hue). **Mandatory legend** (low→high): swatches `rgba(67,56,202,.15/.45/.75/.95)` at `16×12px; border-radius:3px;`. Use for a 2-D intensity distribution (when × where).
+
+### 5.16 Flowchart shape library
+Supplements §5.1's node rules with the full node vocabulary:
+- **Basic node** white `1px solid #E2E5F0` r8 · **Key node** `#EEF0FF`/`1.5px #4338CA`/`#4338CA` (one per flow) · **Data/DB store** `1px dashed #B9BEDB` r9 · **Single/monolithic block** `#6B63D6; #fff;` r9.
+- **Start pill** `background:#15172B; color:#fff; border-radius:100px; padding:11px 20px;` prefixed `●`. **End pill** `background:#1F8A5B;` prefixed `◉`.
+- Arrows: horizontal `→` `#4338CA` 16–20px · vertical `↓` `#B6BBD6` · bidirectional `↕` `#4338CA` · 36px circle badge `#4338CA/#fff` for emphasized/transform links only. Pipeline final node `#EEF0FF/1.5px #4338CA` (sub-text `#7C82B8`). Tree leaf chips borderless `400 11px #7A8197` on `#EEF0F7`.
+
+### 5.17 UML — sequence
+Plot `position:relative; height:~214px; max-width:600px; margin:0 auto;`. Participant boxes across the top; lead actor `#fff` on `#4338CA`, key participant `#4338CA` on `#EEF0FF`/`1.5px #4338CA`, data/DB `#1E2233` on white `1px dashed #B9BEDB`. Lifelines dashed (`#C9CEF4` lead, `#D7DAEC` others). Activation bar `width:8px; background:#EEF0FF; border:1px solid #4338CA; border-radius:2px;`. **Call message**: label `500 10.5px #5A6175`, line `height:2px; background:#4338CA`, solid triangle arrowhead `border-left:7px solid #4338CA`. **Return message** (always dashed): label `#94A0B4`, line `border-top:2px dashed #94A0B4`, arrowhead `#94A0B4`. ≤4 participants, ≤6 messages.
+
+### 5.18 UML — state machine
+`display:flex; align-items:center; flex-wrap:wrap; gap:12px;`. **Start** `16px; border-radius:50%; background:#15172B;`. States `600 12.5px/1.3 #4338CA; background:#EEF0FF; border:1.5px solid #4338CA; border-radius:12px; padding:12px 18px;`. Transitions `→` `#B6BBD6 17px` with trigger label above `500 10px #9AA0B2`. **End** `24px circle; border:2px solid #1F8A5B;` with inner `12px #1F8A5B` dot. Retry/error = an arrow looping back to a prior state.
+
+### 5.19 UML — class
+Class box `border:1px solid #4338CA; border-radius:8px; overflow:hidden; min-width:150px;`. Name band `600 12px/1.3 #4338CA; background:#EEF0FF; padding:9px 12px; border-bottom:1px solid #C9CEF4;`. Attribute/method rows `500 10.5px/1.7 'JetBrains Mono'; #5A6175;` divided by `1px solid #E7E9F3`. Inheritance: `◁` `#4338CA 15px` + connector `26px×2px #C9CEF4`.
+
+### 5.20 UML — component
+Component box `background:#fff; border:1px solid #4338CA; border-radius:9px; padding:16px 22px; min-width:130px;` with a top-right component glyph (`15×11px` rect `1.5px #4338CA` + two `8×2px` bars), stereotype `500 9.5px #8A91A6; letter-spacing:.04em;` («component»), name `600 13px #4338CA`. **Provided interface (lollipop):** `15px circle, 2px #4338CA border, border-right-color:transparent` + `20×2px #4338CA` stem. **Required interface (socket):** `14px; border-radius:50%; border:2px solid #4338CA; background:#fff;` + stem.
+
+### 5.21 UML — use case
+**Actor (stick figure)** from absolutely-positioned `#4338CA` divs (13px head circle `2px #4338CA`, 2px bars for body/arms/legs, legs rotated ±22°), label `600 11.5px #5A6175`. Association line `36×2px #C9CEF4`. **System boundary** `border:1px solid #C9CEF4; border-radius:12px; padding:18px 22px; background:#fff;` title `600 10px #9AA0B2`. **Use-case ovals** `600 12px/1.3 #4338CA; background:#EEF0FF; border:1.5px solid #4338CA; border-radius:50%; padding:12px 26px;`.
+
+### 5.22 UML — swimlane / partition
+Container `border:1px solid #E7E9F3; border-radius:12px; overflow:hidden; display:grid; grid-template-columns:repeat(n,1fr);` lane dividers `border-right:1px solid #E7E9F3`. Lead lane header `600 11.5px/1.3 #4338CA; background:#F1F2FB;` other headers `#5A6175 on #F8F9FD`, all `padding:10px 8px; border-bottom:1px solid #E7E9F3`. Lane body `min-height:150px`; activity nodes white `1px solid #E2E5F0` r8; accent node `#4338CA on #EEF0FF/1px #C9CEF4`; cross-lane flow `↓` `#B6BBD6`. One subject per lane.
+
+### 5.23 UML — fork / join (parallel)
+`max-width:340px; margin:0 auto;`. **Sync bars** (fork and join) `height:6px; background:#4338CA; border-radius:3px;` (full-width). Between them, parallel branches `display:grid; grid-template-columns:1fr 1fr; gap:14px;` each branch node `500 11.5px/1.3 #4338CA; background:#EEF0FF; border:1px solid #C9CEF4; border-radius:8px;`. Surrounding nodes white `1px solid #E2E5F0`; terminal DB node `1px dashed #B9BEDB` r9; flow `↓` `#B6BBD6`. Use when tasks run concurrently and all must finish before proceeding.
+
 ---
 
 ## 6. Token usage by page type
@@ -359,7 +450,7 @@ Density, type emphasis, color, and component mix shift with a page's role. Match
 - Emphasis = white + translucent bottom-border highlight. No body-grey, no figure panels, no cards-with-borders.
 
 ### 6.2 Section divider (optional)
-- Large index number (mono or serif) + `t-h2` title on `#F8F9FD` or a tinted band. Almost no body. Used to break long documents into acts.
+- The **boxed indigo-gradient divider (§4.12)**: big mono index + serif title on the hero gradient. Almost no body. Used to break long documents into acts. (A lighter variant — large index + `t-h2` on `#F8F9FD` — is fine for a quieter break.)
 
 ### 6.3 Overview / Summary
 - **Goal:** orient, give the big picture. **Density:** low–medium, airy.
@@ -377,8 +468,8 @@ Density, type emphasis, color, and component mix shift with a page's role. Match
 - Strict semantic split: BEFORE = slate + amber; AFTER = indigo. Equal-height columns; negative vs positive pill rows.
 
 ### 6.6 Data / Metrics
-- **Goal:** quantify. Use bar charts (§5.5) or oversized serif numbers (`t-stat` scaled up, in ink or accent).
-- One idea per figure; label axes/states with small badges. Keep surrounding text minimal.
+- **Goal:** quantify. Pick from the chart/viz gallery (§5.8–5.15): vertical/horizontal bar, stacked bar, area/trend, donut, KPI+delta, progress rings, heatmap — or oversized serif numbers (stat-card grid §5.9, dark stat band §4.11).
+- One idea per figure; label axes/states with small badges; lead each with its "언제 쓰나" chip. Keep surrounding text minimal.
 
 ### 6.7 Roadmap / Timeline
 - **Goal:** show sequence over phases. Gantt (§5.6) with phase zones, consistent bar kinds, legend + footnote.
@@ -408,7 +499,7 @@ Images live **inside a figure panel** (`#FAFBFE`, `border:1px solid #EEF0F6`), `
 `color:#4338CA`, no underline; optional `border-bottom:1px solid #C9CEF4`. Never blue + underline. (Nav links are styled separately — see §4.3.)
 
 ### 7.4 Callout / note box
-Reuse the **Left-accent** card (§4.5): `background:#F8F9FD; border-left:3px solid #4338CA;`. A "warning/caution" callout still uses this indigo frame — **never amber fill**, because amber is reserved for AS-IS pain points. Color carries meaning; a note is not a problem.
+Use the **4-variant callout set (§4.8)** — KEY (indigo) · OK (green) · WARN (amber) · NOTE (grey). Pick by meaning: an emphasis/key point is KEY, a recommendation is OK, a genuine caution/risk is WARN (amber is legitimate here, per the updated amber scope in §1.4-note), a low-priority aside is NOTE. The plain indigo Left-accent card (§4.5) remains the base for inline note/risk boxes inside prose. **Still never amber for a merely-missing value** — an unknown is not a warning (§7.5).
 
 ### 7.5 Placeholders & unknown values
 - A figure not yet quantified: use a placeholder glyph in **normal ink bold** (`O`, `OO`) immediately followed by a muted parenthetical `<span style="color:#9AA0B2;">(… 추후 확정)</span>`. **Never** flag missing data with amber/warn color — unknown ≠ problem.
@@ -423,7 +514,7 @@ Desktop-first reading document (~1100px). **No media queries by default** — mo
 
 ### 8.2 Anti-patterns (never do)
 - Indigo inside an AS-IS zone, or slate/amber inside a TO-BE zone (the strongest fingerprint).
-- Amber used for anything that isn't an AS-IS pain point (e.g. a warning callout, a missing number).
+- Amber used **decoratively**, for a **missing/unknown value** (use ink placeholder + muted caveat, §7.5), or as a **fill inside a TO-BE structural zone**. Amber IS allowed for an AS-IS pain point and for a semantic WARN/Don't/regression signal (§1.4-note, §4.8).
 - `text-decoration:underline` or italics for emphasis; > 2 bold per paragraph.
 - Decorative (meaningless) accent color — indigo always carries meaning.
 - Random/unequal heights or positions for same-kind bars or nodes.
@@ -441,7 +532,7 @@ Desktop-first reading document (~1100px). **No media queries by default** — mo
 4. Every section: eyebrow (`NN · ENGLISH`, indigo) → h2 (Serif 34) → lead (16/1.85, max 760).
 5. Body `#5A6175`, headings `#15172B`, emphasis `#4338CA` or ink bold.
 6. BEFORE = slate + amber / AFTER = indigo — never mixed.
-7. Diagrams live in figure panels (`#FAFBFE`). Node radius 8–10, card 14–16, comparison panel 18.
+7. Diagrams, charts (§5.8–5.15) and UML (§5.17–5.23) live in figure panels (`#FAFBFE`), each led by its "언제 쓰나" chip. Node radius 8–10, card 14–16, comparison panel 18. Charts are pure CSS (bars/conic/clip-path/rgba) — no SVG or chart lib.
 8. **Text (top) → related diagram (below)** *when the content is diagrammable* (flow/contrast/hierarchy/schedule/quantity). Enumerated peer lists (problems, risks, open questions, glossary) stay as card grids/tables with **no** diagram. Tall-narrow diagrams may sit **text-left / diagram-right** in a `1fr 1fr` grid.
 9. Match the **page type** (§6) to its density, emphasis, and component mix.
-10. No amber outside AS-IS; no indigo inside AS-IS. Unknowns use ink placeholders + muted caveat, never warn color (§7.5, §8.2).
+10. No indigo inside AS-IS; no slate/amber inside a TO-BE structural zone. Amber = AS-IS pain **or** a semantic WARN/Don't/regression signal (§4.8, §1.4-note) — never decorative, never for an unknown value (ink placeholder + muted caveat, §7.5).
