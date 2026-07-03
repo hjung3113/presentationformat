@@ -12,7 +12,7 @@
 
 - **Genre:** a peer-to-peer **"direction / explainer" document**, not an approval request and not a slide deck. It says *"here is how we're thinking about this and where it's going,"* and explains rather than persuades.
 - **Reader:** a knowledgeable peer. Assume domain literacy → don't over-explain basics; push glossaries to a low-emphasis appendix.
-- **Density:** keep the substance plus the *necessary* elaboration. Trim secondary asides, not the core. (One-sentence compression ✗ / a tight 1–2 line paragraph ✓.) Rough budgets: lead 2–4 sentences (≤760px), card body ≤3 sentences, card grids 3–6 items, tables ≤7 rows.
+- **Density:** keep the substance plus the *necessary* elaboration. Trim secondary asides, not the core. (One-sentence compression ✗ / a tight 1–2 line paragraph ✓.) Rough budgets: lead 2–4 sentences (≤760px), card body ≤3 sentences, card grids 3–6 items, tables ≤7 rows. **Quantified per-section/per-viewport budgets, focal hierarchy, column-count and arrangement rules live in `composition-guide.md`** — consult it once page types are chosen, before placing components.
 - **Voice:** calm, explanatory, declarative. No drama, no suspense, no hype, no imperative punchlines. Titles describe; they don't deliver verdicts.
 - **Contrastive framing is allowed and encouraged** — delivered flatly, to *scope* a claim, not to build suspense: `A가 아니라 B`, `A일 뿐 B가 아니다`, `A를 넘어 B`. The reference opens on exactly this ("본 문서는 승인 요청서가 아니라 … 실행 방향 공유 자료이다"). What's banned is the *hype* version: suspenseful reveals ("놀랍게도", "X일까? 아니다"), exclamation, verdict punchlines.
 
