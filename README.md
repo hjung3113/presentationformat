@@ -11,9 +11,10 @@ The **rendered answer key** — a live gallery of every token, component, chart,
 ## Read in this order
 
 1. **`authoring-guide.md`** — *what to write and which device to reach for.* Voice, Korean register, document structure, page types, when-to-use decisions. Start here to plan the document.
-2. **`design.md`** — *exactly how it should look.* Visual tokens (color, type, spacing, radius), components, diagram geometry, anti-patterns. Copy exact values from here.
-3. **`runtime-spec.md`** — *the container and JS every document runs inside.* The `.dc.html` shell, `<helmet>`, the `data-dc-script` / `DCLogic` lifecycle, the scroll-progress + active-nav scripts, the DOM naming contract, serving requirements. **Without this the page does not render or behave correctly.**
-4. **`template.dc.html`** — *start here when building.* A topic-neutral, runnable skeleton: clone it and fill in content.
+2. **`composition-guide.md`** — *how much goes in a section and how to arrange it.* The middle layer between voice and pixels: density budgets per page type, in-section composition/layout, focal hierarchy, whitespace/rhythm, viewport pacing. Read after you've picked page types, before you place components.
+3. **`design.md`** — *exactly how it should look.* Visual tokens (color, type, spacing, radius), components, diagram geometry, anti-patterns. Copy exact values from here.
+4. **`runtime-spec.md`** — *the container and JS every document runs inside.* The `.dc.html` shell, `<helmet>`, the `data-dc-script` / `DCLogic` lifecycle, the scroll-progress + active-nav scripts, the DOM naming contract, serving requirements. **Without this the page does not render or behave correctly.**
+5. **`template.dc.html`** — *start here when building.* A topic-neutral, runnable skeleton: clone it and fill in content.
 
 ---
 
@@ -22,7 +23,8 @@ The **rendered answer key** — a live gallery of every token, component, chart,
 | Doc | Owns | Does NOT cover |
 |-----|------|----------------|
 | `authoring-guide.md` | Voice, Korean register, skeleton, page-type registry, situation→device table, color **intent→token-name** map, pre-ship content checklist | Exact HEX/px values (→ `design.md`), runtime/JS (→ `runtime-spec.md`) |
-| `design.md` | All HEX/px/radius tokens, components, diagram visuals, the **normative** semantic-color rule, anti-patterns, visual-reproduction checklist | Content/voice (→ `authoring-guide.md`), JS runtime/container (→ `runtime-spec.md`) |
+| `composition-guide.md` | Density budgets (elements per section/viewport), in-section composition/layout, focal hierarchy, whitespace/rhythm, viewport pacing, the density/composition checklist | Exact token values (→ `design.md`), voice/skeleton/page-type content (→ `authoring-guide.md`), runtime (→ `runtime-spec.md`) |
+| `design.md` | All HEX/px/radius tokens, components, diagram visuals, the **normative** semantic-color rule, anti-patterns, visual-reproduction checklist | Content/voice (→ `authoring-guide.md`), how-much/arrangement (→ `composition-guide.md`), JS runtime/container (→ `runtime-spec.md`) |
 | `runtime-spec.md` | `.dc.html` structure, `<x-dc>`/`<helmet>`, `DCLogic` lifecycle, DOM contract (`#rprog`, `[data-navlink]`, section ids), runtime scripts, serving | Visual values (→ `design.md`), prose (→ `authoring-guide.md`) |
 | `template.dc.html` | A working, fill-in-the-blanks skeleton | — |
 | `design.tokens.md` | Machine-readable token mirror in [DESIGN.md-spec](https://github.com/google-labs-code/design.md) form, for AI/tooling consumption | Anything beyond colors/type/spacing/components — a **derived mirror** of `design.md`, not a source of truth (diagrams/voice/runtime aren't expressible in the schema) |

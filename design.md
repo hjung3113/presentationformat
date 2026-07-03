@@ -444,6 +444,8 @@ Container `border:1px solid #E7E9F3; border-radius:12px; overflow:hidden; displa
 
 Density, type emphasis, color, and component mix shift with a page's role. Match the role.
 
+> **How *much* to put in each type, the per-viewport ceilings, focal-hierarchy and arrangement rules** are in `composition-guide.md` (density budgets §2, composition §3, focal/whitespace §4, pacing §5). This section names the *role and component mix*; that guide quantifies the *amount and layout*.
+
 ### 6.1 Cover / Title
 - **Goal:** identity + one-line thesis. **Density:** very low.
 - Full-bleed **indigo gradient**; white text; `t-hero` serif; eyebrow pill; lead 18px; 3–4 stat tiles.
