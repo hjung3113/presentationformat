@@ -1,6 +1,6 @@
 ---
 has-as-is: false
-metrics-mode: none
+metrics-mode: absent
 act-structure: flat
 source-ref: docs/source.md@abc123
 ---

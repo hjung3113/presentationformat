@@ -62,7 +62,8 @@ Before drafting the TOC, decide:
 - **No or partial metrics.** If the source has no measurable numbers, or only some, do not
   fabricate a chart's worth of figures. Plan to drop any standalone Data/Metrics section content
   and instead note where a deferred-quantification footnote belongs (mirrors authoring-guide
-  §4.6). Set `metrics-mode` to `absent` or `partial` accordingly; only use `present` when the
+  §4.6's Method/Validation no-metrics guidance — there is no dedicated Data/Metrics page type).
+  Set `metrics-mode` to `absent` or `partial` accordingly; only use `present` when the
   source genuinely carries measurable figures.
 
 Carry these decisions into every later step — they change what questions get asked and what

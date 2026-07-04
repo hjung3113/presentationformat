@@ -1,5 +1,4 @@
 const HEADER_KEYS = ['has-as-is', 'metrics-mode', 'act-structure', 'source-ref'];
-const SECTION_KEYS = ['intent', 'payload', 'figure-data', 'source-span'];
 
 export function parsePlan(md) {
   const fm = md.match(/^---\n([\s\S]*?)\n---\n/);

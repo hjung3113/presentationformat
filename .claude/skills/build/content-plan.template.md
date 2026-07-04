@@ -1,6 +1,6 @@
 ---
 has-as-is: <true | false — is there a current/old state to contrast? see spec §5 header keys; drives whether the dormant slate+amber half of the palette is used at /build time>
-metrics-mode: <present | absent | partial — are there measurable numbers? see spec §5 header keys; drives whether /build creates a standalone Data/Metrics section, cf. authoring-guide §4.6>
+metrics-mode: <present | absent | partial — are there measurable numbers? see spec §5 header keys; drives whether /build creates a standalone Data/Metrics section, cf. authoring-guide §4.6 (Method/Validation's no-metrics guidance — no dedicated Data/Metrics page type exists)>
 act-structure: <flat | act-grouped — flat for ~6-9 sections; act-grouped with dividers once section count exceeds ~9, cf. authoring-guide §2>
 source-ref: <path/to/source.md@hash-or-mtime — every source doc consumed, with a staleness fingerprint; see spec §5 header keys>
 ---

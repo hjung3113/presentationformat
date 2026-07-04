@@ -24,7 +24,7 @@ function main() {
   for (const c of r.checks) console.log(`${c.ok ? 'PASS' : 'FAIL'}  ${c.name}  ${c.detail}`);
   if (!r.ok) { console.error('GATE FAILED'); process.exit(1); }
   if (!hasHeadlessChrome()) { console.log('VISUAL: UNVERIFIED (no headless browser)'); return; }
-  console.log('VISUAL: render available — see /build step for serve+screenshot');
+  console.log('VISUAL: headless browser available — serve the doc over http and eyeball density/layout/color against the style\'s answer key');
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) main();
