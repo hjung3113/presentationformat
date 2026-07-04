@@ -42,9 +42,9 @@ The gate itself is zero-dependency Node under `.claude/lib/`:
 
 ## Host-neutral install
 
-The harness must run co-equally on **Claude Code** and **opencode** — sensitive work is done in
-opencode because Claude Code is not permitted on sensitive data at this company, so opencode is a
-first-class host here, not a fallback.
+The harness must run co-equally on **Claude Code** and **opencode** — both are treated as
+first-class hosts, and the harness is designed to run identically on each, so nothing here may
+depend on Claude-Code-only behavior.
 
 ### Claude Code
 
