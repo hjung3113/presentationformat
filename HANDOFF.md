@@ -2,15 +2,15 @@
 
 > 인수인계 문서. 이 세션에서 진행한 두 갈래 작업(① 반도체 설비 로그파서 개선 프로젝트의 설계 문서군, ② 그 문서를 발표자료로 만들기 위한 스크롤형 발표 시스템의 확장)의 현재 상태·위치·결정사항·후속을 정리한다.
 >
-> 최종 갱신: 2026-07-04 · 작업 브랜치: `claude/parser-v2-docs-nnbjum` (전 작업 `main`에 머지 완료, PR #1~#6)
+> 최종 갱신: 2026-07-04 · 발표 시스템 **다중 스타일 재구조 완료**(`main` 머지, 아래 §6).
 
 ---
 
 ## 0. 한눈에
 
-- **무엇**: 레거시 로그파서를 책임 분리된 새 구조로 재설계하는 프로젝트의 설계 문서군을 아키텍처/계약 레벨로 작성했고, 이를 발표자료로 찍어내기 위한 발표 시스템(이 레포)의 간극을 적대적 리뷰로 찾아 확장 스펙 + 파일럿을 만들었다.
+- **무엇**: 레거시 로그파서를 책임 분리된 새 구조로 재설계하는 프로젝트의 설계 문서군을 아키텍처/계약 레벨로 작성했고, 이를 발표자료로 찍어내기 위한 발표 시스템(이 레포)의 간극을 적대적 리뷰로 찾아 확장 스펙 + 파일럿을 만들었다. 이후 발표 시스템 자체를 **다중 스타일 지원 구조로 재편**했다(§6).
 - **원칙**: 모든 설계 문서는 **아키텍처/계약 레벨의 골격**이다. 세부 구현(컬럼·필드·알고리즘)은 변경 가능성이 커서 의도적으로 비워 뒀다 — 실제 값은 사내에서 채운다.
-- **상태**: 5대 컴포넌트 중 4개 설계서 완료, Configuration 파서만 미작성(차후 고도화 영역). 발표 시스템 확장 스펙 + 파일럿 1편 완료.
+- **상태**: 5대 컴포넌트 중 4개 설계서 완료, Configuration 파서만 미작성. 발표 시스템: 확장 스펙 + 파일럿 완료 + **`core/`+`styles/<style>/` 다중 스타일 레이아웃 전환 완료**.
 
 ---
 
@@ -103,3 +103,44 @@
 | #6 | 발표 시스템 확장 스펙 + 컨버터 파일럿 |
 
 > 리뷰는 서브에이전트/워크플로우로 오케스트레이션했고, 본 세션은 총괄·저작·병합을 맡았다. 모든 설계 문서는 "세부 구현은 변경 가능하므로 골격만" 원칙을 지킨다 — 실제 값은 사내에서 채운다.
+
+---
+
+## 6. 발표 시스템 다중 스타일 재구조 (2026-07-04, `main` 머지)
+
+### 배경·목표
+발표 시스템을 **여러 디자인 스타일**로 확장 가능하게 재편. 스타일 불가지 구조(런타임·셸·DOM계약)와 스타일별 외형(토큰·색·기하·보이스·밀도)을 물리적으로 분리.
+
+### 절차
+설계 초안(`migration_design.md`) → **적대적 5-전문가 서브에이전트 채점**(design-system-architect / information-architect / migration-risk-engineer / extensibility-skeptic / authoring-ux). 결과: **만장일치 NO_GO, 가중평균 3.44/10**. 치명 결함 = ① `core/ 제로 HEX` 불변식이 첫날부터 거짓(runtime-spec에 인디고 등 6종 박힘) ② support.js 단일본이 서빙 계약 위반(빌드 스텝 없음). → 리뷰어 권고대로 **축소 실행**.
+
+### 최종 레이아웃
+```
+core/runtime-spec.md              스타일 불가지, HEX 0 (⟨accent⟩ 등 크롬 토큰만)
+styles/indigo-serif/              현 유일 스타일 SSOT
+  design.md · design.tokens.md · authoring-guide.md(미분할)
+  composition-guide.md · template.dc.html · design-system.answerkey.dc.html
+  style.md(매니페스트) · support.js(사이드카)
+examples/                         feedbackops + support.js
+reference/parserimprove/          참고자료(제품 아님)
+README.md                         진입점 + 스타일 레지스트리
+```
+
+### 결정 (D1~D6)
+- D1 시맨틱 색규칙 = `styles/indigo-serif/design.md §1.4` 유지(단일 정규).
+- D2 authoring-guide **분할 안 함**(깨끗한 seam 없음) — 2번째 스타일 시로 연기.
+- D3 support.js **단일본 폐기**, 각 `.dc.html` 옆 물리 사이드카(빌드 스텝 없음) — 연기.
+- D4 `styles/indigo-serif/`로 rename.
+- D5 전체 재구조 조기 → **축소 실행**.
+- D6 참조 재작성 + 스타일 폴더 경로 하드코딩 금지 규칙(core는 "active style's" 지칭).
+
+### 커밋 (3개, 되돌림 가능하게 분리)
+`cfd9315` 런타임 크롬색 토큰화 · `c8059de` 폴더 이동 · `d242177` 상호참조+레지스트리+매니페스트 → `780dace` merge(--no-ff).
+
+### 스모크 테스트 (통과)
+원격 레포 **ForgeRoom** `Docs/`(overview·architecture·glossary·phase-1-mvp) → `styles/indigo-serif` 스펙 + `core/` 런타임만으로 MVP 설계 발표자료 제작. headless Chrome 렌더 육안 검증 완료(8+ref 섹션, 색법칙 준수). 산출물은 세션 scratchpad에만 있음(레포 미반영 — 사용자 선택 B).
+
+### 다음(연기 항목 재개 조건)
+- **2번째 스타일 실제 등장 시**: D2 authoring-guide 분할 seam 재검토, D3 support.js dedup(빌드 스텝 도입 여부).
+- `reference/parserimprove/uploads/spec_extensions.md` → 코어/스타일 스펙 병합(§4).
+- 신규 스타일 추가법: `styles/indigo-serif/` 복제 → 토큰·voice·template 교체 → README 레지스트리 등록. `core/` 무손. 불변식은 `CLAUDE.md` 참조.
