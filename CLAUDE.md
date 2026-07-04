@@ -85,3 +85,11 @@ the `.dc.html`, allow outbound network (fonts + React UMD). Details in `core/run
   style-agnostic (token names, no HEX, no style-folder paths) so every style inherits it.
 - `reference/parserimprove/uploads/spec_extensions.md` is a **proposal** — not yet merged into
   core specs. Don't treat it as authoritative until merged.
+
+---
+
+> **Non-normative pointer (not part of the product spec).** This repo also ships an authoring
+> harness under `.claude/` — a `/plan` → `/build` skill pipeline plus a mechanical exit gate that
+> helps produce a spec-conforming `.dc.html`. It is tooling, not a spec doc: it owns none of the
+> invariants above, and if it ever disagrees with `core/` or a style's `design.md`, this file and
+> the style specs win. See `.claude/README.md`.

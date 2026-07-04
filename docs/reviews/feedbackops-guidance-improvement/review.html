@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FeedbackOps Guidance Improvement Review</title>
+<style>
+  :root { --ink:#15172B; --body:#3E4658; --muted:#6B7280; --line:#E7E9F3; --bg:#EEF0F7; --accent:#4338CA; --soft:#F8F9FD; }
+  body { margin:0; background:var(--bg); color:var(--body); font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Segoe UI",sans-serif; line-height:1.72; }
+  main { max-width:1040px; margin:40px auto; background:#fff; border:1px solid var(--line); border-radius:18px; padding:44px 56px 64px; box-shadow:0 20px 60px rgba(30,34,70,.08); }
+  h1 { color:var(--ink); font-size:34px; line-height:1.25; margin:0 0 18px; letter-spacing:-.01em; }
+  h2 { color:var(--ink); font-size:23px; margin:38px 0 12px; padding-top:24px; border-top:1px solid var(--line); }
+  h3 { color:var(--ink); font-size:18px; margin:28px 0 8px; }
+  h4 { color:var(--ink); font-size:15px; margin:20px 0 6px; }
+  p { margin:0 0 14px; }
+  ul, ol { margin:0 0 18px 22px; padding:0; }
+  li { margin:5px 0; }
+  code { background:#EEF0FF; color:#312E81; border:1px solid #DADEF8; border-radius:5px; padding:1px 5px; font-size:.92em; }
+  pre { background:#15172B; color:#F8F9FD; border-radius:12px; padding:18px; overflow:auto; }
+  pre code { background:transparent; color:inherit; border:0; padding:0; }
+  blockquote { margin:18px 0; padding:14px 18px; background:#F8F9FD; border-left:4px solid var(--accent); color:var(--ink); }
+  .table-wrap { overflow:auto; margin:16px 0 24px; border:1px solid var(--line); border-radius:12px; }
+  table { width:100%; border-collapse:collapse; font-size:14px; min-width:760px; }
+  th, td { padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:top; text-align:left; }
+  th { background:#F6F7FB; color:var(--ink); font-weight:700; }
+  tr:last-child td { border-bottom:0; }
+  .source { color:var(--muted); font-size:13px; margin-bottom:28px; }
+</style>
+</head>
+<body>
+<main>
+<div class="source">Source: docs/reviews/feedbackops-guidance-improvement/review.md</div>
+<h1>FeedbackOps Brief Guidance Improvement Review</h1>
+<p>Date: 2026-07-04 Target artifact: <code>examples/feedbackops-design-brief.dc.html</code> Scope: project instructions, authoring skills, verification gates, and clarification prompts that could prevent recurrence. Non-goal: mobile/narrow viewport support. The user clarified this document is expected to be read on company computers.</p>
+<h2>Verdict</h2>
+<p>The major failures are not caused by missing visual tokens or Korean voice rules. They come from three weaker control points:</p>
+<ol>
+<li>Existing composition rules are not enforced before or after generation.</li>
+<li>Diagram-selection guidance is present, but too generic for branching workflow, relationship schema, UI surface, and ownership matrix cases.</li>
+<li>When the user asks for more content, use cases, or decision-maker framing, the workflow appends cards instead of forcing a re-slot/split decision or asking a clarifying question.</li>
+</ol>
+<p>So this is partly a documentation problem, but not because the docs are empty. It is mostly a compliance/gate problem plus a few specific mapping-table gaps.</p>
+<h2>What Is Not Really A Guidance Gap</h2>
+<h3>Section overload</h3>
+<p><code>s1</code> carries before/after context, three use cases, and three executive points. <code>s5</code> carries workflow, rule notes, review states, and three use cases. <code>s7</code> carries principles, use cases, and role surfaces.</p>
+<p>The project already says one section should have one thesis, one focal anchor, limited top-level blocks, and role-based density. This failure is therefore not primarily "missing instruction." It is a failure to run a section-budget preflight after the content expanded.</p>
+<p>Improvement: promote the existing rule into a required preflight and review gate.</p>
+<h3>Card-heavy visual structure</h3>
+<p>The docs already distinguish diagrammable content from peer enumerations, and already warn against competing focal anchors. The artifact still used stacked grids because the generation process treated "more density" as "append another grid."</p>
+<p>Improvement: add a hard negative rule: do not answer density requests by appending grids under a valid figure.</p>
+<h3>Decision ask placement</h3>
+<p>The decision ask appears inside a small card in the MVP section. The docs already describe Scope/Plan and open questions, but they do not force decision asks into a visible decision block.</p>
+<p>Improvement: make decision placement mandatory, not stylistic.</p>
+<h2>Real Guidance And Gate Gaps</h2>
+<h3>1. Diagram selection needs a stronger mapping table</h3>
+<p>The current situation-to-diagram table is useful, but it is not specific enough for product/design briefs where several visual forms look superficially similar.</p>
+<p>Add this table to <code>authoring-guide.md</code> or a build skill:</p>
+<div class="table-wrap"><table><thead><tr><th>Content shape</th><th>Use</th><th>Do not use</th><th>Reviewer question</th></tr></thead><tbody><tr><td>Linear happy path only</td><td>Process step row</td><td>UML activity</td><td>Are there no branch states, bypass paths, or loops?</td></tr><tr><td>Workflow with optional synthesis, bypass, approval, rejection, or needs-more-evidence</td><td>UML activity or swimlane</td><td>Flat process row</td><td>Does every terminal/loop state have a visible path?</td></tr><tr><td>Actor-specific operational flow</td><td>Swimlane</td><td>Generic card grid</td><td>Can the reader see who acts next?</td></tr><tr><td>Lifecycle/status transitions</td><td>State machine</td><td>Status chips under a process row</td><td>Are allowed transitions visible?</td></tr><tr><td>Bounded systems plus optional integration layer</td><td>Layered architecture map</td><td>Tree of boxes only</td><td>Are ownership, optionality, and connectors visible?</td></tr><tr><td>Ownership across domain objects</td><td>Matrix</td><td>Equal cards</td><td>Are rows/columns carrying distinct meanings?</td></tr><tr><td>Entity link as conceptual centralization</td><td>Hub-and-spoke</td><td>Table</td><td>Is the point centralization rather than schema detail?</td></tr><tr><td>Entity link relation names/cardinality/rules</td><td>Table or matrix</td><td>Decorative relation chips</td><td>Are relation names schema facts?</td></tr><tr><td>UI principles by user role</td><td>Surface map or lane map</td><td>Principle cards only</td><td>Can the reader see screen, action, and handoff per role?</td></tr><tr><td>Executive decision</td><td>Decision block or open-question table</td><td>Peer mini-card</td><td>Is the ask visually impossible to miss?</td></tr></tbody></table></div>
+<h3>2. Add a diagram-selection preflight</h3>
+<p>Before writing HTML, require a compact table:</p>
+<div class="table-wrap"><table><thead><tr><th>Section</th><th>Page type</th><th>Claim type</th><th>Primary device</th><th>Why not cards/table?</th><th>Expected count</th><th>Figure budget</th></tr></thead><tbody><tr><td>05 실행 흐름</td><td>Direction / workflow</td><td>Branching process</td><td>UML activity</td><td>Review outcomes branch and loop</td><td>4 decisions</td><td>1 figure</td></tr></tbody></table></div>
+<p>Hard fail conditions:</p>
+<ul>
+<li><code>claim type = branching process</code> with <code>primary device = process row</code>.</li>
+<li><code>claim type = ownership</code> with only equal cards.</li>
+<li><code>claim type = UI operation</code> with no UI surface or role lane.</li>
+<li>Figure requires the word "and" to explain its reading task.</li>
+</ul>
+<h3>3. Add a density-change protocol</h3>
+<p>When the user says "more detail", "more use cases", "why it is good", or similar, do not append by default.</p>
+<p>Protocol:</p>
+<ol>
+<li>Classify each new item as <code>core</code>, <code>support</code>, or <code>aside</code>.</li>
+<li>If it is <code>core</code>, promote it to the outline or split the section.</li>
+<li>If it is <code>support</code>, keep it only if the section stays within block budget.</li>
+<li>If it is <code>aside</code>, move it to footnote/reference or delete it.</li>
+<li>Re-read the title sequence after the change. If the lens changed, rewrite the outline before HTML edits.</li>
+</ol>
+<p>Hard rule: preserving section count is not a default goal. It is valid only if the governing lens has not changed.</p>
+<h3>4. Add narrative-lens declaration</h3>
+<p>Before a build, write one line:</p>
+<p><code>narrative lens: architecture-first | use-case-first | decision-first</code></p>
+<p>Rules:</p>
+<ul>
+<li>If <code>use-case-first</code>, the first numbered sections must follow actor/scenario/journey. Architecture supports the journey later.</li>
+<li>If <code>decision-first</code>, the opening must state the decision ask and the deck proves it.</li>
+<li>If <code>architecture-first</code>, use cases are examples, not the main spine.</li>
+<li>If the user changes the lens mid-task, ask whether to reorganize the outline or only add examples.</li>
+</ul>
+<h3>5. Add clarification prompts for ambiguous user requests</h3>
+<p>Add these to the authoring/build skill as stop-questions:</p>
+<ol>
+<li>"Should this persuade decision-makers first, walk through user scenarios first, or explain architecture first?"</li>
+<li>"When you say use-case centered, should I reorganize the whole outline around actors/scenarios, or only add examples inside the existing architecture outline?"</li>
+<li>"Is the decision ask a final approval request, an open question list, or a subtle recommendation?"</li>
+<li>"For more content, should I add depth to the same sections, add new sections, or replace low-value overview blocks with concrete scenarios?"</li>
+<li>"Which audience is primary: executive sponsor, product/operator, developer/reviewer, or mixed peer review?"</li>
+<li>"If this section already has a diagram, should the new material replace the diagram, become a new section, or move to appendix?"</li>
+</ol>
+<p>Ask only when the answer changes structure. If the answer only changes wording, proceed without interruption.</p>
+<h3>6. Clarify desktop-only support</h3>
+<p>Mobile is out of scope for this project lane. The docs should say that directly, because the runtime currently says desktop-first but still talks about intrinsic mobile resilience.</p>
+<p>Recommended wording:</p>
+<blockquote>Supported reading target is desktop/company-computer view. Minimum review viewport is 1366x768; preferred review viewport is 1440x900 or wider. Narrow/mobile overflow is not a release blocker unless explicitly requested for a given artifact.</blockquote>
+<p>This does not mean visual verification can be skipped. It means verification should check desktop composition rather than mobile responsiveness.</p>
+<h3>7. Improve verification gates</h3>
+<p>Current <code>verify-doc.mjs</code> is structural. It checks shell-level facts but not composition quality. Keep those checks, then add a desktop visual/composition tier.</p>
+<p>Recommended checks:</p>
+<ul>
+<li>Serve over HTTP and capture at <code>1366x768</code> and <code>1440x900</code>.</li>
+<li>Report section heights and number of visible meaning blocks per viewport.</li>
+<li>Flag 3+ stacked grids in one section.</li>
+<li>Flag a figure panel that contains multiple unrelated card grids.</li>
+<li>Flag text-card grids with <code>repeat(4,1fr)</code> except stat tiles.</li>
+<li>Flag sections where primary figure is absent despite plan labels such as <code>workflow</code>, <code>map</code>, <code>matrix</code>, <code>state</code>, or <code>surface</code>.</li>
+<li>Flag decision ask text if it appears only inside a low-emphasis peer card.</li>
+</ul>
+<p>These should start as warnings, not hard failures, until the project has two or three known-good artifacts to calibrate against.</p>
+<h2>Responsibility Split</h2>
+<div class="table-wrap"><table><thead><tr><th>Issue</th><th>Primary cause</th><th>Preventable by docs/skill?</th><th>Recommended fix</th></tr></thead><tbody><tr><td>Section role overload</td><td>User/editorial expansion handled additively</td><td>Yes</td><td>Density-change protocol and section-budget preflight</td></tr><tr><td>Decision ask too late</td><td>Late-added executive framing</td><td>Yes</td><td>Decision block rule and narrative-lens declaration</td></tr><tr><td>Architecture-first after use-case request</td><td>Lens changed but outline stayed fixed</td><td>Yes</td><td>Stop-question: reorganize outline or add examples?</td></tr><tr><td>Wrong workflow diagram</td><td>Existing mapping too generic and unenforced</td><td>Yes</td><td>Branching workflow mapping + hard fail</td></tr><tr><td>System map too decorative</td><td>Mapping under-specific</td><td>Yes</td><td>Layered architecture map rule</td></tr><tr><td>Ownership cards instead of matrix</td><td>Content plan said matrix but HTML ignored it</td><td>Yes</td><td>Preflight: claim type ownership -&gt; matrix</td></tr><tr><td>UI section lacks UI surface</td><td>Device mapping gap</td><td>Yes</td><td>UI operation -&gt; surface/lane map</td></tr><tr><td>Mobile overflow</td><td>Out of scope</td><td>No for this lane</td><td>Explicit desktop-only support statement</td></tr></tbody></table></div>
+<h2>Concrete Patch Targets</h2>
+<ol>
+<li><code>styles/indigo-serif/authoring-guide.md</code></li>
+</ol>
+<ul>
+<li>Add the expanded mapping table.</li>
+<li>Add narrative-lens declaration.</li>
+<li>Add decision ask placement rule.</li>
+<li>Add clarification prompts.</li>
+</ul>
+<ol>
+<li><code>styles/indigo-serif/composition-guide.md</code></li>
+</ol>
+<ul>
+<li>Add density-change protocol.</li>
+<li>Add hard negative rule against appending grids below a valid diagram.</li>
+<li>Add section preflight table example.</li>
+</ul>
+<ol>
+<li><code>core/runtime-spec.md</code></li>
+</ol>
+<ul>
+<li>Replace ambiguous mobile-resilience wording with explicit desktop-only support bounds for this style/project lane, or defer the support target to style docs if core must remain style-agnostic.</li>
+</ul>
+<ol>
+<li><code>.claude/lib/verify-doc.mjs</code></li>
+</ol>
+<ul>
+<li>Add warning-only desktop composition tier.</li>
+<li>Keep current structural checks as hard failures.</li>
+</ul>
+<h2>Bottom Line</h2>
+<p>The best fix is not "add more design taste." The project needs a small authoring control loop:</p>
+<ol>
+<li>Declare narrative lens.</li>
+<li>Preflight each section's job and primary device.</li>
+<li>Use the stronger mapping table.</li>
+<li>When new content arrives, re-budget instead of appending.</li>
+<li>Run a desktop composition verifier that catches stacked grids and missing diagrams.</li>
+</ol>
+<p>That would have prevented most of the FeedbackOps brief issues without requiring mobile support.</p>
+
+</main>
+</body>
+</html>

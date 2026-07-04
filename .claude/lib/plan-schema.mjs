@@ -1,0 +1,53 @@
+const HEADER_KEYS = ['has-as-is', 'metrics-mode', 'act-structure', 'source-ref'];
+
+export function parsePlan(md) {
+  const fm = md.match(/^---\n([\s\S]*?)\n---\n/);
+  const header = {};
+  if (fm) for (const line of fm[1].split('\n')) {
+    const m = line.match(/^([\w-]+):\s*(.*)$/);
+    if (m) header[m[1]] = m[2].trim();
+  }
+  const body = fm ? md.slice(fm[0].length) : md;
+  const sections = [];
+  const blocks = body.split(/^##\s+/m).slice(1);
+  for (const b of blocks) {
+    const title = b.split('\n')[0].trim();
+    const field = (k) => {
+      const m = b.match(new RegExp(`^-\\s*${k}:\\s*(.*)$`, 'm'));
+      return m ? m[1].trim() : '';
+    };
+    sections.push({
+      title,
+      intent: field('intent'),
+      payload: field('payload'),
+      figureData: field('figure-data'),
+      sourceSpan: field('source-span'),
+    });
+  }
+  return {
+    header: {
+      hasAsIs: header['has-as-is'] === 'true',
+      metricsMode: header['metrics-mode'] || '',
+      actStructure: header['act-structure'] || '',
+      sourceRef: header['source-ref'] || '',
+    },
+    sections,
+  };
+}
+
+export function validatePlan(md) {
+  const errors = [];
+  const fm = md.match(/^---\n([\s\S]*?)\n---\n/);
+  if (!fm) errors.push('missing YAML header block');
+  else for (const k of HEADER_KEYS)
+    if (!new RegExp(`^${k}:`, 'm').test(fm[1])) errors.push(`header missing key: ${k}`);
+  const { sections } = parsePlan(md);
+  if (sections.length === 0) errors.push('no sections found');
+  sections.forEach((s, i) => {
+    for (const k of ['intent', 'payload', 'source-span']) {
+      const key = k === 'source-span' ? 'sourceSpan' : k;
+      if (!s[key]) errors.push(`section ${i + 1} (${s.title || '?'}) missing ${k}`);
+    }
+  });
+  return { ok: errors.length === 0, errors };
+}

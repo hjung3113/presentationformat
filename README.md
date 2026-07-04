@@ -39,6 +39,14 @@ The **rendered answer key** — a live gallery of every token, component, chart,
 
 ---
 
+## Authoring harness
+
+There is an optional `/plan` → `/build` skill pipeline (plus a Node-based exit gate) that helps
+produce a spec-conforming document — see [`.claude/README.md`](.claude/README.md). It is tooling
+only, separate from the product spec above; it runs co-equally on Claude Code and opencode.
+
+---
+
 ## What each doc owns (and explicitly excludes)
 
 | Doc | Owns | Does NOT cover |
