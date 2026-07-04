@@ -3,7 +3,9 @@
 > The host container and JavaScript every document runs inside. A document built only from `design.md` (visual values) and `authoring-guide.md` (voice) **will not render or behave correctly** without the scaffold and scripts on this page.
 >
 > **This doc owns:** the `.dc.html` document shell, the `<x-dc>` / `<helmet>` elements, the `data-dc-script` / `DCLogic` lifecycle, the two runtime scripts (scroll-progress + active-nav), the DOM naming contract (`id="sN"` ↔ `data-navlink`), and serving requirements.
-> **This doc does NOT cover:** visual values (→ `design.md`), voice/content (→ `authoring-guide.md`). For a ready-to-fill skeleton, copy `template.dc.html`.
+> **This doc does NOT cover:** visual values (→ the active style's `design.md`), voice/content (→ the active style's authoring guide). For a ready-to-fill skeleton, copy the active style's `template.dc.html`.
+>
+> **Style-agnostic:** this file is shared by every style and contains **no hardcoded colors**. The runtime touches exactly six *chrome tokens* (§0.1); the snippets below reference them by name (`⟨accent⟩`, …). When you build, paste the concrete HEX for each from your active style's `design.md`. The one place those values physically live is the style's `template.dc.html`.
 
 ---
 
@@ -22,7 +24,24 @@ Consequences a spec-only author would not predict:
 
 ---
 
-## 1. Document shell (required, copy verbatim)
+## 0.1 Chrome tokens (the only style-scoped values the runtime touches)
+
+The shell and the two runtime scripts color exactly six slots. This file names them; the active style's `design.md` supplies the HEX. Substitute when you copy the snippets below.
+
+| Token | Slot | Value = this token in the active style's `design.md` |
+|-------|------|------------------------------------------------------|
+| `⟨bg-canvas⟩` | page + wrapper background | Page background (`design.md §0`) |
+| `⟨ink⟩` | default body text | `ink-800` |
+| `⟨selection⟩` | text selection highlight | `on-accent` (selection variant) |
+| `⟨accent⟩` | scroll-progress bar, active nav link | `accent` |
+| `⟨nav-idle⟩` | inactive nav link | `muted-500` |
+| `⟨nav-ref⟩` | de-emphasized reference/appendix link | `muted-300` |
+
+> `support.js` is a generated third-party runtime and carries its own internal HEX; it is **not** style-scoped and is exempt from the "no hardcoded colors in shared runtime" rule.
+
+---
+
+## 1. Document shell (required — copy, substituting the §0.1 chrome tokens)
 
 ```html
 <!DOCTYPE html>
@@ -41,14 +60,14 @@ Consequences a spec-only author would not predict:
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
       html { scroll-behavior: smooth; }
-      body { margin:0; background:#EEF0F7; word-break: keep-all; overflow-wrap: break-word; text-wrap: pretty; }
+      body { margin:0; background:⟨bg-canvas⟩; word-break: keep-all; overflow-wrap: break-word; text-wrap: pretty; }
       p, h1, h2, h3, div, span, li, a { word-break: keep-all; }
-      *::selection { background:#C7D2FE; }
+      *::selection { background:⟨selection⟩; }
       .nav-scroll::-webkit-scrollbar { height:0; }
     </style>
   </helmet>
 
-  <div style="font-family:Pretendard,sans-serif; color:#1E2233; background:#EEF0F7; min-height:100vh;">
+  <div style="font-family:Pretendard,sans-serif; color:⟨ink⟩; background:⟨bg-canvas⟩; min-height:100vh;">
     <!-- progress bar, sticky nav, hero, paper sheet, sections … (see template.dc.html) -->
   </div>
 </x-dc>
@@ -95,7 +114,7 @@ Page-level interaction JS lives in `componentDidMount`; teardown handles go on `
 Markup (fixed, above the nav — `z-index:60` vs nav `z-index:50`):
 ```html
 <div style="position:fixed; top:0; left:0; right:0; height:3px; background:transparent; z-index:60;">
-  <div id="rprog" style="height:100%; width:0%; background:#4338CA;"></div>
+  <div id="rprog" style="height:100%; width:0%; background:⟨accent⟩;"></div>
 </div>
 ```
 Script:
@@ -120,7 +139,7 @@ const secs = Object.keys(byId).map(id => document.getElementById(id)).filter(Boo
 const setActive = (id) => {
   links.forEach(l => {
     const on = l.getAttribute('data-navlink') === id;
-    l.style.color = on ? '#4338CA' : '#8A91A6';
+    l.style.color = on ? '⟨accent⟩' : '⟨nav-idle⟩';
     l.style.fontWeight = on ? '700' : '500';
   });
 };
@@ -132,8 +151,8 @@ secs.forEach(s => io.observe(s));
 this._cleanup = () => { window.removeEventListener('scroll', onScroll); io.disconnect(); };
 ```
 - `rootMargin: '-45% 0px -50% 0px'` makes "active" mean "section is in the middle band of the viewport." Do not change it — a default rootMargin highlights at the wrong scroll position.
-- Active styling is applied **imperatively** (`l.style.color`/`fontWeight`), overriding each link's inline `#8A91A6` / weight 500.
-- The de-emphasized reference link (`#B6BBCB`) is also driven by this loop — when inactive it returns to `#8A91A6`; if you want it to stay muted, exclude it from the observed set.
+- Active styling is applied **imperatively** (`l.style.color`/`fontWeight`), overriding each link's inline `⟨nav-idle⟩` / weight 500.
+- The de-emphasized reference link (`⟨nav-ref⟩`) is also driven by this loop — when inactive it returns to `⟨nav-idle⟩`; if you want it to stay muted, exclude it from the observed set.
 
 ---
 
