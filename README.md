@@ -23,6 +23,8 @@ Pick a style, then jump straight to its two most-opened files:
 
 > **Adding a style:** copy `styles/indigo-serif/` to `styles/<new>/`, swap its tokens / voice / template, register it in the table above. `core/` stays untouched — that is the whole point of the split. (See `CLAUDE.md` for the invariants a new style must hold.)
 
+> **Using this from an agent host:** Claude Code and opencode pick up the `/plan → /build` skills on clone. For **Codex**, run `./install.sh` then restart. See [`AGENTS.md`](AGENTS.md).
+
 Worked examples live in [`examples/`](examples/) — start with [`examples/feedbackops.dc.html`](examples/feedbackops.dc.html). (The indigo-serif specs were originally abstracted from an older design reference now frozen under [`archive/parserimprove/`](archive/parserimprove/); it is historical provenance only, not part of this project.)
 
 The **rendered answer key** — a live gallery of every token, component, chart, flowchart shape, data-viz and UML diagram a style defines — is that style's `design-system.answerkey.dc.html`. `design.md` is the written mirror of it; when the two disagree, the answer key wins and `design.md` is updated to match. Open it (served over http) to *see* what each spec value produces.

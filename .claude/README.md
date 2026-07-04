@@ -93,3 +93,29 @@ and no file-format adaptation. `SKILL.md` loads as-is.
 If a future opencode version changes this behavior (e.g. requires `.opencode/skill/` instead),
 re-run `opencode debug skill` from the repo root to check the `location` values, and update this
 section — do not assume parity without re-verifying.
+
+### Codex
+
+Codex (a skills-capable build; checked at `codex-cli 0.142.5`) does **not** scan the project's
+`.claude/skills/`. It discovers skills by directory scan of `$CODEX_HOME/skills/<name>/`
+(default `~/.codex/skills`). Install with `./install.sh` (symlinks the two skill dirs there),
+then **restart Codex**.
+
+#### Verified under Codex
+
+- **Discovery mechanism:** directory scan of `$CODEX_HOME/skills`, following symlinks.
+  `config.toml`'s `[[skills.config]]` table is a disable/override registry, **not** a discovery
+  allowlist — no entry is required to enable a skill (confirmed: `~/.codex/skills/chronicle/` is
+  discovered with no config entry).
+- **Verification command** (from the repo root, after `./install.sh`):
+  ```bash
+  codex debug prompt-input
+  ```
+- **Result:** both `plan` and `build` appear in the model-visible skill list, each with its full
+  name + description and the resolved symlink target
+  `(file: <repo>/.claude/skills/<name>/SKILL.md)` — i.e. Codex followed the symlink and loaded
+  the harness skills.
+
+If a future Codex version changes discovery (e.g. requires explicit registration), re-run
+`codex debug prompt-input` from the repo root to confirm `plan`/`build` are present, and update
+this section — do not assume parity without re-verifying.
