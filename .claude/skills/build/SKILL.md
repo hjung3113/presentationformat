@@ -102,10 +102,15 @@ node .claude/lib/verify-doc.mjs <doc.dc.html> --accent <style-accent-hex> --cano
 
 The gate runs two tiers:
 
-- A **mechanical hard gate** that always runs without a browser (semantic color split present,
-  `word-break: keep-all` present, inline-styles-only, unique section ids with intact nav-link
-  targets, `support.js` sidecar byte-identical to the canonical file). This must pass — exit 0 —
-  for the document to count as built.
+- A **mechanical hard gate** that always runs without a browser: accent color *present* somewhere
+  in the document (a substring check, not a zone check), `word-break: keep-all` present,
+  inline-styles-only, unique section ids with intact nav-link targets, `support.js` sidecar
+  byte-identical to the canonical file. This must pass — exit 0 — for the document to count as
+  built. **This gate does not verify semantic-color-split correctness** — it cannot tell whether
+  slate/amber stayed in AS-IS/problem zones and indigo stayed in TO-BE/target zones per the color
+  law. That correctness depends on following Step 4's state→color mapping and is checked, if at
+  all, by the visual render tier below or by eyeballing against the style's answer key — never
+  claim the mechanical gate guarantees color-zone correctness.
 - A **visual render check** that only runs if a headless browser is available. If one is not
   available, the gate reports the visual check as unverified rather than silently skipping it —
   treat that as an honest "not checked," not a pass.
