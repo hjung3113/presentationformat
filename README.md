@@ -21,7 +21,7 @@ Pick a style, then jump straight to its two most-opened files:
 
 - **indigo-serif** — build from [`styles/indigo-serif/template.dc.html`](styles/indigo-serif/template.dc.html); see it rendered in [`styles/indigo-serif/design-system.answerkey.dc.html`](styles/indigo-serif/design-system.answerkey.dc.html).
 
-> **Adding a style:** copy `styles/indigo-serif/` to `styles/<new>/`, swap its tokens / voice / template, register it in the table above. `core/` stays untouched — that is the whole point of the split. (See `CLAUDE.md` for the invariants a new style must hold.)
+> **Adding a style:** copy `styles/indigo-serif/` to `styles/<new>/`, swap its tokens / voice / template, register it in the table above. `core/` stays untouched — that is the whole point of the split. **Full procedure + invariant gate: [`ADDING-A-STYLE.md`](ADDING-A-STYLE.md).**
 
 > **Using this from an agent host:** Claude Code and opencode pick up the `/plan → /build` skills on clone. For **Codex**, run `./install.sh` then restart. See [`AGENTS.md`](AGENTS.md).
 

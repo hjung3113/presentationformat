@@ -22,6 +22,7 @@ folder**, never by forking `core/`.
 | Path | Owns |
 |------|------|
 | `README.md` | Entry point + **style registry** + read order + doc-ownership table |
+| `ADDING-A-STYLE.md` | **Adding a style** — consolidated clone procedure + invariant gate (process doc; points at SSOT, owns no values) |
 | `core/runtime-spec.md` | `.dc.html` shell, `<helmet>`, `DCLogic` lifecycle, DOM contract, serving, the six **chrome-token** slots. Style-agnostic, **no HEX** |
 | `core/support.js` reference | The generated runtime; a byte-identical copy sits beside every `.dc.html` (see Requirements) |
 | `styles/indigo-serif/design.md` | **All** HEX/px/radius tokens, components, diagram geometry, anti-patterns. This style's visual SSOT |
