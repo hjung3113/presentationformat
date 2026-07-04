@@ -71,9 +71,12 @@ Carry these decisions into every later step — they change what questions get a
 ### Step 3 — Propose the TOC (Gate 1)
 
 Propose a full section sequence as noun-phrase titles only (no content yet) — a table of
-contents draft. Use the standard skeleton as a checklist of typical roles (background, problems,
-direction, deep-dive, method/validation, mapping/outcome, risks, scope/plan, reference) but
-adapt freely to what the source actually supports; don't force a role the source doesn't back.
+contents draft. Use a generic narrative arc as a checklist — roughly context → problem →
+proposed direction → detail/deep-dive → validation → outcome → risk → plan → reference — but
+adapt freely to what the source actually supports; don't force a beat the source doesn't back.
+This arc is a content-sequencing aid only, not a page-type taxonomy — which page type each
+section renders as is decided later at `/build` time from the chosen style's own skeleton (see
+its authoring-guide).
 
 - **Validate the count**: target roughly 6–9 numbered sections plus a reference appendix.
   - Below that range, merge thin rows — don't pad with a section the source can't support.
