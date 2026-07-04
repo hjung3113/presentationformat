@@ -1,0 +1,6 @@
+{
+  "enabledPlugins": {
+    "playground@claude-plugins-official": true,
+    "playwright@claude-plugins-official": true
+  }
+}
