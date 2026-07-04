@@ -4,7 +4,7 @@
 > 전제: 이 문서는 슬라이드 덱이 아니라 **위→아래로 읽는 종이**다. 아래의 "밴드/뷰포트" 규칙은 페이지 나눔이 아니라 **스크롤 리듬의 예산 단위**다 — 스크롤 문서에는 슬라이드 경계도, 작업기억 리셋도 없다.
 >
 > **This doc owns:** density budgets (섹션·뷰포트당 요소 상한), in-section composition/layout (배열·열 수·도해 배치), focal hierarchy (무게중심), whitespace/rhythm, viewport-level pacing (스크롤 전반의 밀도 교대).
-> **This doc does NOT cover:** exact HEX/px token values → `design.md` (§3 spacing, §6 density); voice·skeleton·page-type content → `authoring-guide.md` (§1/§2/§4); 컨테이너·JS·런타임 → `runtime-spec.md`. 값은 여기서 재진술하지 않고 참조만 한다.
+> **This doc does NOT cover:** exact HEX/px token values → `design.md` (§3 spacing, §6 density); voice·skeleton·page-type content → `authoring-guide.md` (§1/§2/§4); 컨테이너·JS·런타임 → `../../core/runtime-spec.md`. 값은 여기서 재진술하지 않고 참조만 한다.
 
 ---
 
@@ -208,7 +208,7 @@ eyebrow → h2 → lead(≤760px) → [무게중심 블록] → (보조 블록)
 
 ## 7. 워크드 비평 — FeedbackOps 예제 (do/don't)
 
-`examples/feedbackops.dc.html`를 이 가이드로 읽는다. 밴드 예산은 대체로 잘 지켜 **과밀 섹션은 드물다** — 결함은 밀도가 아니라 **무게중심·향 무결성·역할 오용**에 몰린다.
+`../../examples/feedbackops.dc.html`를 이 가이드로 읽는다. 밴드 예산은 대체로 잘 지켜 **과밀 섹션은 드물다** — 결함은 밀도가 아니라 **무게중심·향 무결성·역할 오용**에 몰린다.
 
 ### 잘한 것 (DO)
 

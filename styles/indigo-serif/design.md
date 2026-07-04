@@ -5,7 +5,7 @@
 > This file defines the **visual tokens**. For voice, content patterns, and when-to-use rules, see `authoring-guide.md`.
 >
 > **This doc owns:** all HEX/px/radius tokens, components, diagram geometry, anti-patterns, the visual checklist.
-> **This doc does NOT cover:** content/voice → `authoring-guide.md`; the document shell, JS, `<helmet>`, and naming contract → `runtime-spec.md`. Start a build from `template.dc.html`.
+> **This doc does NOT cover:** content/voice → `authoring-guide.md`; the document shell, JS, `<helmet>`, and naming contract → `../../core/runtime-spec.md`. Start a build from `template.dc.html`.
 >
 > **Format:** a single self-contained HTML page, read top→bottom (a "paper sheet" document, not a slide deck).
 > **Styling discipline:** inline styles only — no CSS classes, no shared stylesheet. Paste token values directly. The only global CSS allowed is what cannot be inlined (font loading, `word-break`, selection color, scrollbar).
@@ -25,14 +25,14 @@
 | Default body color | `#1E2233` |
 | Accent (brand) | **Indigo `#4338CA`** |
 
-Fonts load inside the `<helmet>` element (a real element, not a comment — see `runtime-spec.md §1`). Keep this exact order: Pretendard CSS → two `preconnect` hints → Google Fonts sheet. The `preconnect` links are required.
+Fonts load inside the `<helmet>` element (a real element, not a comment — see `../../core/runtime-spec.md §1`). Keep this exact order: Pretendard CSS → two `preconnect` hints → Google Fonts sheet. The `preconnect` links are required.
 ```html
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 ```
-> The full document shell (`<x-dc>` / `<helmet>` / `data-dc-script` / `DCLogic`) and the scroll-progress + active-nav scripts live in **`runtime-spec.md`** — they cannot be derived from visual tokens. Clone `template.dc.html` to get them assembled.
+> The full document shell (`<x-dc>` / `<helmet>` / `data-dc-script` / `DCLogic`) and the scroll-progress + active-nav scripts live in **`../../core/runtime-spec.md`** — they cannot be derived from visual tokens. Clone `template.dc.html` to get them assembled.
 ```css
 /* helmet <style> — only the things that cannot be inline */
 html { scroll-behavior: smooth; }
@@ -228,7 +228,7 @@ ref link:  the appendix/glossary link is de-emphasized: color #B6BBCB + a 10px v
 brand:     <a href="#top"> to the hero (id="top"); smooth scroll via html{scroll-behavior:smooth}, no JS
 progress: position:fixed top:0 height:3px; z-index:60 (above nav); inner div id="rprog" width 0→100% bg #4338CA (scroll ratio)
 ```
-> The JS that drives the progress width and the active link (IntersectionObserver, `rootMargin:'-45% 0px -50% 0px'`) plus the `id="sN"` ↔ `data-navlink="sN"` naming contract live in **`runtime-spec.md §2–3`**. The values above are appearance only.
+> The JS that drives the progress width and the active link (IntersectionObserver, `rootMargin:'-45% 0px -50% 0px'`) plus the `id="sN"` ↔ `data-navlink="sN"` naming contract live in **`../../core/runtime-spec.md §2–3`**. The values above are appearance only.
 
 ### 4.4 Section header (identical pattern every section)
 ```html

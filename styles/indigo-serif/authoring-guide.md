@@ -4,7 +4,7 @@
 > This file governs **voice, structure, content patterns, and when-to-use decisions.** For exact visual values, see `design.md`. The two are meant to be used together: this guide tells you *what to write and which device to reach for*; `design.md` tells you *exactly how it should look*.
 >
 > **This doc owns:** voice (incl. Korean register, §3), skeleton, the page-type registry (§4), situation→device tables, and the color **intent→token-name** map (§5.2).
-> **This doc does NOT cover:** exact HEX/px values → `design.md`; the document shell + JS + naming contract → `runtime-spec.md`. Start a build from `template.dc.html`; read `README.md` for the doc map.
+> **This doc does NOT cover:** exact HEX/px values → `design.md`; the document shell + JS + naming contract → `../../core/runtime-spec.md`. Start a build from `template.dc.html`; read `README.md` for the doc map.
 
 ---
 
@@ -203,6 +203,6 @@ This is the **content/voice** pre-ship list. For visual reproduction, also run `
 ## 7. Quick start for a new document
 1. Write the **title sequence first** (one noun-phrase title per section). Read them back as a TOC; revise until they tell the story alone. Aim for ~6–9 sections + reference (§2).
 2. Lay out the skeleton (§2) and decide each page's **type** (§4 / `design.md` §6). If the topic is greenfield (no AS-IS) or metric-less, read §4.4 / §4.6 first.
-3. **Clone `template.dc.html`** (it carries the shell + runtime JS from `runtime-spec.md`). For each section: lead paragraph → core content → **decide if it's diagrammable (§5.1)** → build the figure.
+3. **Clone `template.dc.html`** (it carries the shell + runtime JS from `../../core/runtime-spec.md`). For each section: lead paragraph → core content → **decide if it's diagrammable (§5.1)** → build the figure.
 4. Apply color/emphasis by intent (§5.2–5.3); copy exact visual values from `design.md`. Write in the §3.1 Korean register.
 5. Run the §6 content checklist **and** `design.md §9` visual checklist before shipping.
