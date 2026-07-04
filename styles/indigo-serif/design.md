@@ -512,6 +512,8 @@ Use the **4-variant callout set (§4.8)** — KEY (indigo) · OK (green) · WARN
 ## 8. Responsive & anti-patterns
 
 ### 8.1 Responsive
+Supported reading target: desktop/company-computer view. Minimum review viewport is **1366×768**; preferred review viewport is **1440×900** or wider. Narrow/mobile overflow is not a release blocker unless explicitly requested for a given artifact.
+
 Desktop-first reading document (~1100px). **No media queries by default** — mobile resilience comes only from intrinsic flex (hero stat tiles `flex:1; min-width:150px` in a `flex-wrap:wrap` row; nav row `overflow-x:auto`). If you must support narrow widths, the sanctioned minimum: below ~720px, `sheet-pad → 0 20px`; all `1fr 1fr` / `repeat(3,…)` grids collapse to one column; the comparison panel stacks (arrow rotates `↓`); the gantt label column shrinks. Don't improvise ad-hoc breakpoints — that's how "same author" breaks across docs.
 
 ### 8.2 Anti-patterns (never do)

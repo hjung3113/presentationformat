@@ -90,6 +90,26 @@ cover 최저 → overview 낮음 → deep-dive/table 최고 → reference 압축
 | Table (§4.7) | 1.5–2.0 | 1 | table 1 | 표 | 행 ≤7, 열 ≤4 |
 | Reference (§4.10) | 1.0–1.5 | — | 0 | 없음 (균질 저강도) | 용어 6–10, 2열 |
 
+### 2.3 밀도 변경 프로토콜 (detail request gate)
+
+사용자가 "더 자세히", "use case를 더", "좋은 이유를 더", "의사결정 관점으로"처럼 내용을 늘리라고 하면 바로 카드나 문단을 붙이지 않는다. 먼저 아래 표를 짧게 작성한다.
+
+| New item | Role (`core`/`support`/`aside`) | Target action | Budget impact |
+|---|---|---|---|
+| 예: 승인 반려 후 재요청 흐름 | `core` | workflow 섹션 분할 또는 UML activity로 승격 | branch + loop 추가, figure 1개 유지 |
+
+판정 규칙:
+- `core` = 논지나 렌즈를 바꾸는 내용. outline에 승격하거나 섹션을 쪼갠다. Deep-dive라면 새 서브섹션(N.M)이 가능하지만, 같은 뷰포트 안에 그리드를 조용히 쌓지 않는다.
+- `support` = 현재 섹션의 논지를 보강하는 내용. 의미 블록 ≤2/뷰포트, 최상위 블록 ≤3/섹션, 잉크 원소 ≤18/밴드를 유지할 때만 같은 섹션에 둔다.
+- `aside` = 읽기 보조·예외·보류 범위. footnote, reference, appendix, NOTE callout로 낮춘다.
+
+Hard fail:
+- 추가 후 의미 블록 >2/뷰포트, 최상위 블록 >3/섹션, 잉크 원소 >18/밴드가 된다.
+- `narrative lens`가 바뀌었는데 title sequence/outline을 다시 쓰지 않는다.
+- support를 넣으려고 기존 primary figure 아래에 peer card grid를 덧붙인다.
+
+섹션 수 보존은 기본 목표가 아니다. governing lens가 그대로일 때만 유지해도 된다.
+
 ---
 
 ## 3. 섹션 내 구성 (In-section composition)
@@ -155,6 +175,8 @@ eyebrow → h2 → lead(≤760px) → [무게중심 블록] → (보조 블록)
 - **cover/overview** → h1 / lead 문단이 무게중심.
 
 > 판정 순서: 타입이 위계형인데 지배 요소가 없으면 결함. 열거형인데 한 카드만 강조해도 결함. **둘 다 잡는다.**
+>
+> **Density request negative rule:** 섹션에 claim에 맞는 primary figure가 이미 있으면, "더 자세히" 요청을 peer card grid를 아래에 붙이는 방식으로 처리하지 않는다. figure를 교체/주석화하거나, 표·matrix로 승격하거나, 섹션을 분리하거나, appendix/reference로 낮춘다. 이 규칙은 모든 support block을 금지하는 것이 아니라, **valid figure 아래에 동급 그리드를 덧대는 additive response**를 금지한다.
 
 ### 4.2 지배 요소의 시각 지분
 
@@ -189,11 +211,25 @@ eyebrow → h2 → lead(≤760px) → [무게중심 블록] → (보조 블록)
 
 `authoring-guide §6`(내용/보이스)와 `design.md §9`(시각 재현)에 더해 실행한다.
 
+### 6.0 Section preflight
+
+HTML을 쓰기 전에 모든 numbered section에 대해 아래 표를 채운다. 이 프리플라이트는 authoring/build 단계의 hard gate다. 자동 verifier는 calibration 전까지 warning만 낸다.
+
+| Section | Page type | Claim type | Primary device | Why not cards/table? | Expected count | Figure budget |
+|---|---|---|---|---|---:|---:|
+| 05 실행 흐름 | Direction / workflow | Branching process | UML activity | Review outcomes branch and loop | 4 decisions | 1 figure |
+
+Hard fail:
+- `claim type = branching process`인데 `primary device = process row`.
+- `claim type = ownership`인데 equal cards만 있다.
+- `claim type = UI operation`인데 UI surface, role lane, or screen/action map이 없다.
+- figure의 판독 과제를 설명하려면 "and" / "그리고"가 필요하다. figure당 한 아이디어(P2) 위반이다.
+
 1. [ ] **섹션 세로 1.0–3.0밴드.** 2.5 초과면 분할 검토, 3.0(≈2700px) 초과면 서브섹션/divider로 강제 분할.
 2. [ ] **뷰포트당 동시 의미 블록 ≤2**, 섹션당 최상위 블록 ≤3(권장 1–2). 3번째는 구분 간격으로 다음 밴드로.
 3. [ ] **밴드당 잉크 원소 ≤18**, 병렬 묶음 ≤6(7+는 표로).
 4. [ ] **컴포넌트 종류 ≤3/섹션.**
-5. [ ] **무게중심:** 위계형은 지배 요소 1개(폭 ≥70%, 리드 직후 착지) · 열거형은 균질 그리드 + 리드/칩 프레이밍. **동급 그리드 2개 금지.**
+5. [ ] **무게중심:** 위계형은 지배 요소 1개(폭 ≥70%, 리드 직후 착지) · 열거형은 균질 그리드 + 리드/칩 프레이밍. **동급 그리드 2개 금지.** Valid primary figure 아래에 detail용 peer grid를 덧붙이지 않았다.
 6. [ ] **정보 향:** 리드가 명시한 수 = figure가 인도하는 수.
 7. [ ] **주 figure ≤2/섹션**, figure당 아이디어 1개.
 8. [ ] **도해 배치:** 기본 top→below 단일 컬럼. 좌우 `1fr 1fr`은 종횡비 ≥1.3 **AND** 폭 ≤480px일 때만. 가로형(process/gantt/before-after)은 좌우 분할 금지.

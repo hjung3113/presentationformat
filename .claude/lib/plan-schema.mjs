@@ -1,4 +1,4 @@
-const HEADER_KEYS = ['has-as-is', 'metrics-mode', 'act-structure', 'source-ref'];
+const HEADER_KEYS = ['has-as-is', 'metrics-mode', 'act-structure', 'narrative-lens', 'source-ref'];
 
 export function parsePlan(md) {
   const fm = md.match(/^---\n([\s\S]*?)\n---\n/);
@@ -29,6 +29,7 @@ export function parsePlan(md) {
       hasAsIs: header['has-as-is'] === 'true',
       metricsMode: header['metrics-mode'] || '',
       actStructure: header['act-structure'] || '',
+      narrativeLens: header['narrative-lens'] || '',
       sourceRef: header['source-ref'] || '',
     },
     sections,
