@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    html { scroll-behavior: smooth; }
+    body { margin:0; background:#EEF0F7; word-break: keep-all; overflow-wrap: break-word; text-wrap: pretty; }
+    p, h1, h2, h3, div, span, li, a { word-break: keep-all; }
+    *::selection { background:#C7D2FE; }
+    .nav-scroll::-webkit-scrollbar { height:0; }
+  </style>
+</helmet>
+
+<div style="font-family:Pretendard,sans-serif; color:#1E2233; background:#EEF0F7; min-height:100vh;">
+
+  <div style="position:fixed; top:0; left:0; right:0; height:3px; background:transparent; z-index:60;">
+    <div id="rprog" style="height:100%; width:0%; background:#4338CA;"></div>
+  </div>
+
+  <div style="position:sticky; top:0; z-index:50; background:rgba(255,255,255,.86); backdrop-filter:blur(10px); border-bottom:1px solid #E2E5F0;">
+    <div style="max-width:1100px; margin:0 auto; padding:0 40px; display:flex; align-items:center; gap:20px; height:54px;">
+      <a href="#top" style="text-decoration:none; font:700 14px/1 Pretendard; color:#15172B; white-space:nowrap; letter-spacing:-.01em;">컨버터 <span style="color:#4338CA;">설계</span></a>
+      <div class="nav-scroll" style="display:flex; gap:18px; overflow-x:auto; margin-left:auto;">
+        <a data-navlink="s1" href="#s1" style="text-decoration:none; font:500 13px/1 Pretendard; color:#8A91A6; white-space:nowrap;">개요</a>
+        <a data-navlink="s2" href="#s2" style="text-decoration:none; font:500 13px/1 Pretendard; color:#8A91A6; white-space:nowrap;">경계</a>
+        <a data-navlink="s3" href="#s3" style="text-decoration:none; font:500 13px/1 Pretendard; color:#8A91A6; white-space:nowrap;">원칙</a>
+        <a data-navlink="s4" href="#s4" style="text-decoration:none; font:500 13px/1 Pretendard; color:#8A91A6; white-space:nowrap;">계약</a>
+        <a data-navlink="s5" href="#s5" style="text-decoration:none; font:500 13px/1 Pretendard; color:#8A91A6; white-space:nowrap;">구조</a>
+        <a data-navlink="s6" href="#s6" style="text-decoration:none; font:500 13px/1 Pretendard; color:#8A91A6; white-space:nowrap;">범위</a>
+        <a data-navlink="sref" href="#sref" style="text-decoration:none; font:500 13px/1 Pretendard; color:#B6BBCB; white-space:nowrap;">용어<span style="font-size:10px; vertical-align:super;">ref</span></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div id="top" style="background:linear-gradient(155deg,#4F46E5 0%,#3F35C4 55%,#372EAC 100%); color:#fff; padding:78px 40px 92px; position:relative; overflow:hidden;">
+    <div style="position:absolute; inset:0; background-image:radial-gradient(circle at 85% 15%, rgba(255,255,255,.10) 0%, transparent 42%); pointer-events:none;"></div>
+    <div style="max-width:1020px; margin:0 auto; position:relative;">
+      <div style="display:inline-flex; align-items:center; gap:9px; font:600 12px/1 Pretendard; letter-spacing:.1em; color:#D9DCFF; background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.18); border-radius:100px; padding:9px 16px; margin-bottom:30px;">PARSER V2 · 컴포넌트 설계</div>
+      <h1 style="font:700 52px/1.28 'Noto Serif KR',serif; margin:0 0 24px; letter-spacing:-.02em; max-width:820px;">컨버터 — 비표준 로그를<br>표준 형식으로 변환</h1>
+      <p style="font:400 18px/1.85 Pretendard; color:#E2E3FB; margin:0 0 14px; max-width:700px;">컨버터는 설비사별 비표준 로그를 회사 표준 로그 스펙 형식으로 <span style="color:#fff; font-weight:600; border-bottom:2px solid rgba(255,255,255,.45);">'형식만'</span> 맞춘다. 값 정규화·보정은 하지 않는다 — 그것은 표준 로그 파서의 책임이다.</p>
+      <p style="font:400 14px/1.7 Pretendard; color:#B8BBF0; margin:0 0 40px; max-width:700px;">본 문서는 아키텍처·계약 레벨의 골격이며, 세부 구현은 변경될 수 있어 생략한다.</p>
+      <div style="display:flex; flex-wrap:wrap; gap:14px;">
+        <div style="flex:1; min-width:150px; background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.14); border-radius:14px; padding:20px 22px;"><div style="font:700 30px/1 'Noto Serif KR',serif; color:#fff;">.NET</div><div style="font:400 13px/1.5 Pretendard; color:#C7CAF5; margin-top:8px;">구현 언어<br>(CPU 바운드 가공)</div></div>
+        <div style="flex:1; min-width:150px; background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.14); border-radius:14px; padding:20px 22px;"><div style="font:700 30px/1 'Noto Serif KR',serif; color:#fff;">MVP</div><div style="font:400 13px/1.5 Pretendard; color:#C7CAF5; margin-top:8px;">올해 범위<br>신규 핵심 경로</div></div>
+        <div style="flex:1; min-width:150px; background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.14); border-radius:14px; padding:20px 22px;"><div style="font:700 30px/1 'Noto Serif KR',serif; color:#fff;">형식</div><div style="font:400 13px/1.5 Pretendard; color:#C7CAF5; margin-top:8px;">변환만 담당<br>정규화·보정 제외</div></div>
+        <div style="flex:1; min-width:150px; background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.14); border-radius:14px; padding:20px 22px;"><div style="font:700 30px/1 'Noto Serif KR',serif; color:#fff;">일원화</div><div style="font:400 13px/1.5 Pretendard; color:#C7CAF5; margin-top:8px;">표준 파서 하나로<br>모든 가공 수렴</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAPER SHEET -->
+  <div style="max-width:1100px; margin:-44px auto 0; background:#fff; border-radius:22px 22px 0 0; box-shadow:0 -24px 60px rgba(30,34,70,.10); padding:8px 64px 100px; position:relative;">
+
+    <!-- provenance masthead (B.4) -->
+    <div style="border-left:3px solid #C9CEF4; background:#F8F9FD; border-radius:0 10px 10px 0; padding:14px 18px; margin-top:26px;">
+      <p style="font:400 12.5px/1.7 Pretendard; color:#5A6175; margin:0;"><b style="color:#3A4255;">근거</b> — 상위 문서 <span style="color:#4338CA;">parser_project_revised.md §3.1④</span>, 짝 문서 file_collector·scheduler·integration_contracts 설계서. <b style="color:#3A4255;">충돌 시</b> 상위 문서를 우선한다.</p>
+    </div>
+
+    <!-- 01 OVERVIEW -->
+    <section id="s1" data-screen-label="01 개요" style="padding:52px 0 56px;">
+      <div style="font:700 13px/1 Pretendard; letter-spacing:.08em; color:#4338CA; margin-bottom:14px;">01 · OVERVIEW</div>
+      <h2 style="font:600 34px/1.34 'Noto Serif KR',serif; color:#15172B; margin:0 0 12px; letter-spacing:-.01em;">정의·배경 — 파서 일원화의 앞단</h2>
+      <p style="font:400 16px/1.85 Pretendard; color:#3E4658; margin:0 0 30px; max-width:760px;">설비사마다 로그 양식이 달라, 비표준 로그를 활용하려면 각각 변환 로직이 필요하다. 컨버터는 이 비표준 로그를 표준 로그 스펙 형식으로 바꿔, 표준 로그 파서가 표준 로그와 <b style="color:#15172B;">똑같이</b> 다룰 수 있게 한다. 기존 비표준 파서는 레거시라, 좋은 품질의 컨버터로 새로 만들어 장기적으로 파서를 하나로 일원화한다.</p>
+
+      <div style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:24px;">
+        <div style="display:flex; gap:10px; background:#EEF0FF; border-radius:10px; padding:12px 15px; margin-bottom:18px;"><span style="font:700 11px/1.5 Pretendard; letter-spacing:.03em; color:#4338CA;">언제 쓰나</span><span style="font:400 12.5px/1.6 Pretendard; color:#5A6175;">비표준 로그의 처리 흐름 — 수집·변환·가공이 어떻게 이어지는지.</span></div>
+        <div style="display:flex; align-items:center; gap:0; flex-wrap:wrap;">
+          <div style="flex:1; min-width:130px; text-align:center; font:600 13px/1.35 Pretendard; color:#1E2233; background:#fff; border:1px solid #E2E5F0; border-radius:9px; padding:14px 10px;">파일 수집기<div style="font:400 11px/1.4 Pretendard; color:#9AA0B2; margin-top:3px;">원본 확보</div></div>
+          <div style="flex:0 0 34px; text-align:center; color:#4338CA; font-size:18px;">→</div>
+          <div style="flex:1.1; min-width:140px; text-align:center; font:700 13px/1.35 Pretendard; color:#4338CA; background:#EEF0FF; border:1.5px solid #4338CA; border-radius:9px; padding:14px 10px; position:relative;"><span style="position:absolute; top:7px; right:8px; font:700 9.5px/1 'JetBrains Mono',monospace; letter-spacing:.04em; color:#4338CA; background:#fff; border:1px solid #C9CEF4; border-radius:5px; padding:3px 6px;">.NET</span>컨버터<div style="font:400 11px/1.4 Pretendard; color:#7C82B8; margin-top:3px;">표준 형식으로 변환</div></div>
+          <div style="flex:0 0 34px; text-align:center; color:#4338CA; font-size:18px;">→</div>
+          <div style="flex:1; min-width:130px; text-align:center; font:600 13px/1.35 Pretendard; color:#1E2233; background:#fff; border:1px solid #E2E5F0; border-radius:9px; padding:14px 10px;">표준 로그 파서<div style="font:400 11px/1.4 Pretendard; color:#9AA0B2; margin-top:3px;">정규화·보정·가공</div></div>
+        </div>
+        <p style="font:400 11.5px/1.5 Pretendard; color:#9AA0B2; margin:16px 0 0;">* 컨버터 산출물은 "형식은 표준, 값은 아직 원상태"인 로그다 — 정규화·보정은 다음 단계에서.</p>
+      </div>
+    </section>
+
+    <!-- 02 SCOPE — B.1 In/Out-of-Scope 컴포넌트 (핵심 시연) -->
+    <section id="s2" data-screen-label="02 책임 경계" style="padding:56px 0; border-top:1px solid #EAEBF2;">
+      <div style="font:700 13px/1 Pretendard; letter-spacing:.08em; color:#4338CA; margin-bottom:14px;">02 · SCOPE</div>
+      <h2 style="font:600 34px/1.34 'Noto Serif KR',serif; color:#15172B; margin:0 0 12px; letter-spacing:-.01em;">책임 경계 — 형식 변환만</h2>
+      <p style="font:400 16px/1.85 Pretendard; color:#3E4658; margin:0 0 30px; max-width:760px;">컨버터의 경계는 날카롭다. 값의 <b style="color:#15172B;">의미</b>를 고치지 않고 <b style="color:#4338CA;">표현 형식</b>만 표준에 맞춘다. 정규화·보정·병합은 표준/비표준 공통이라 표준 파서로 일원화하며, 컨버터가 손대면 로직이 다시 분산된다.</p>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+        <!-- IN-SCOPE (indigo) -->
+        <div style="border:1px solid #DADEF8; border-radius:14px; padding:20px 22px; background:linear-gradient(160deg,#F5F6FF,#fff);">
+          <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="width:20px; height:20px; border-radius:50%; background:#4338CA; color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:11px;">●</span><span style="font:600 13.5px/1 Pretendard; color:#4338CA;">하는 일 (In-Scope)</span></div>
+          <div style="display:flex; flex-direction:column; gap:11px;">
+            <div style="font:500 13px/1.6 Pretendard; color:#3E4658;"><span style="color:#4338CA; font-weight:700;">· </span><b style="color:#15172B;">형식 변환</b> — 설비사·모델별 비표준 양식을 표준 로그 스펙(TSV)으로 맞춤</div>
+            <div style="font:500 13px/1.6 Pretendard; color:#3E4658;"><span style="color:#4338CA; font-weight:700;">· </span><b style="color:#15172B;">변환 선택</b> — 원본의 설비/모델/메이커에 맞는 변환 로직 적용</div>
+            <div style="font:500 13px/1.6 Pretendard; color:#3E4658;"><span style="color:#4338CA; font-weight:700;">· </span><b style="color:#15172B;">스펙 준수 산출</b> — 컬럼·구분자·인코딩이 표준 스펙을 만족하도록 보장</div>
+          </div>
+        </div>
+        <!-- OUT-OF-SCOPE (중립 그레이 — 앰버/그린 금지) -->
+        <div style="border:1px solid #E7E9F3; border-radius:14px; padding:20px 22px; background:#F8F9FD;">
+          <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="width:20px; height:20px; border-radius:50%; background:#fff; border:1.5px solid #B6BBCB; color:#8A91A6; display:inline-flex; align-items:center; justify-content:center; font-size:11px;">○</span><span style="font:600 13.5px/1 Pretendard; color:#8A91A6;">하지 않는 일 (Out-of-Scope)</span></div>
+          <div style="display:flex; flex-direction:column; gap:11px;">
+            <div style="font:500 13px/1.6 Pretendard; color:#5A6175;">값 정규화·보정 <span style="font:400 12px/1.5 Pretendard; color:#9AA0B2;">→ 표준 로그 파서</span></div>
+            <div style="font:500 13px/1.6 Pretendard; color:#5A6175;">start/end 병합·carryover <span style="font:400 12px/1.5 Pretendard; color:#9AA0B2;">→ 표준 로그 파서</span></div>
+            <div style="font:500 13px/1.6 Pretendard; color:#5A6175;">원본 수집·존재 확인 <span style="font:400 12px/1.5 Pretendard; color:#9AA0B2;">→ 파일 수집기</span></div>
+            <div style="font:500 13px/1.6 Pretendard; color:#5A6175;">시나리오 판단(live/rework) <span style="font:400 12px/1.5 Pretendard; color:#9AA0B2;">→ 스케줄러</span></div>
+          </div>
+        </div>
+      </div>
+      <div style="background:#EEF0FF; border:1px solid #DADEF8; border-radius:12px; padding:12px 16px; margin-top:16px; display:flex; align-items:center;"><span style="font:500 12px/1.5 Pretendard; color:#4338CA;">→ 산출물 정의: "형식은 표준, 값은 아직 원상태" — out-of-scope는 '못 하는 것'이 아니라 다른 컴포넌트의 몫이다.</span></div>
+    </section>
+
+    <!-- 03 PRINCIPLES -->
+    <section id="s3" data-screen-label="03 설계 원칙" style="padding:56px 0; border-top:1px solid #EAEBF2;">
+      <div style="font:700 13px/1 Pretendard; letter-spacing:.08em; color:#4338CA; margin-bottom:14px;">03 · PRINCIPLES</div>
+      <h2 style="font:600 34px/1.34 'Noto Serif KR',serif; color:#15172B; margin:0 0 12px; letter-spacing:-.01em;">설계 원칙 — 네 가지</h2>
+      <p style="font:400 16px/1.85 Pretendard; color:#5A6175; margin:0 0 30px; max-width:760px;">컨버터가 지켜야 할 원칙은 <b style="color:#15172B;">네 가지</b>다. 모두 "형식만 바꾸고, 시나리오는 모른다"는 경계에서 파생된다.</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+        <div style="border:1px solid #E7E9F3; border-radius:14px; padding:20px 22px;"><div style="display:flex; align-items:center; gap:10px; margin-bottom:9px;"><span style="font:700 12px/1 'JetBrains Mono',monospace; color:#4338CA; background:#EEF0FF; border-radius:6px; padding:6px 9px;">01</span><span style="font:600 15px/1.35 Pretendard; color:#15172B;">형식 변환만</span></div><div style="font:400 13.5px/1.7 Pretendard; color:#5A6175;">값의 의미를 고치지 않는다. 표현 형식만 표준에 맞춘다.</div></div>
+        <div style="border:1px solid #E7E9F3; border-radius:14px; padding:20px 22px;"><div style="display:flex; align-items:center; gap:10px; margin-bottom:9px;"><span style="font:700 12px/1 'JetBrains Mono',monospace; color:#4338CA; background:#EEF0FF; border-radius:6px; padding:6px 9px;">02</span><span style="font:600 15px/1.35 Pretendard; color:#15172B;">어댑터 구조</span></div><div style="font:400 13.5px/1.7 Pretendard; color:#5A6175;">공통 파이프라인 + 설비사·모델별 변환 어댑터. 신규 설비사는 어댑터만 추가한다.</div></div>
+        <div style="border:1px solid #E7E9F3; border-radius:14px; padding:20px 22px;"><div style="display:flex; align-items:center; gap:10px; margin-bottom:9px;"><span style="font:700 12px/1 'JetBrains Mono',monospace; color:#4338CA; background:#EEF0FF; border-radius:6px; padding:6px 9px;">03</span><span style="font:600 15px/1.35 Pretendard; color:#15172B;">시나리오 불가지</span></div><div style="font:400 13.5px/1.7 Pretendard; color:#5A6175;">live/rework 개념이 코드에 등장하지 않는다. 주어진 입력을 변환할 뿐이다.</div></div>
+        <div style="border:1px solid #E7E9F3; border-radius:14px; padding:20px 22px;"><div style="display:flex; align-items:center; gap:10px; margin-bottom:9px;"><span style="font:700 12px/1 'JetBrains Mono',monospace; color:#4338CA; background:#EEF0FF; border-radius:6px; padding:6px 9px;">04</span><span style="font:600 15px/1.35 Pretendard; color:#15172B;">멱등·테스트 가능</span></div><div style="font:400 13.5px/1.7 Pretendard; color:#5A6175;">같은 입력 → 같은 표준형 출력. 작은 함수·의존성 주입으로 골든테스트 가능하게.</div></div>
+      </div>
+    </section>
+
+    <!-- 04 INTERFACE -->
+    <section id="s4" data-screen-label="04 입출력 계약" style="padding:56px 0; border-top:1px solid #EAEBF2;">
+      <div style="font:700 13px/1 Pretendard; letter-spacing:.08em; color:#4338CA; margin-bottom:14px;">04 · INTERFACE</div>
+      <h2 style="font:600 34px/1.34 'Noto Serif KR',serif; color:#15172B; margin:0 0 12px; letter-spacing:-.01em;">입출력 — 계약 레벨</h2>
+      <p style="font:400 16px/1.85 Pretendard; color:#5A6175; margin:0 0 28px; max-width:760px;">컨버터는 파일 기반으로 표준 파서와 핸드오프한다(객체 직접 전달 아님). 산출 위치·네이밍은 표준 파서가 표준 로그와 동일 규칙으로 찾도록 통일한다.</p>
+      <div style="border:1px solid #E7E9F3; border-radius:14px; overflow:hidden;">
+        <div style="display:grid; grid-template-columns:120px 1fr 1.1fr; background:#15172B;">
+          <div style="font:600 13px/1 Pretendard; color:#fff; padding:14px 18px;">구분</div>
+          <div style="font:600 13px/1 Pretendard; color:#fff; padding:14px 18px;">내용</div>
+          <div style="font:600 13px/1 Pretendard; color:#C7CAF5; padding:14px 18px;">계약(단일 소스)</div>
+        </div>
+        <div style="display:grid; grid-template-columns:120px 1fr 1.1fr; border-top:1px solid #EDEEF4;">
+          <div style="font:600 13px/1.6 Pretendard; color:#4338CA; padding:14px 18px; background:#FAFBFE;">입력</div>
+          <div style="font:400 13px/1.6 Pretendard; color:#5A6175; padding:14px 18px;">비표준 원본 파일(수집기가 확보), 설비/모델/메이커 식별</div>
+          <div style="font:400 13px/1.6 Pretendard; color:#5A6175; padding:14px 18px;">경로·네이밍 규약 <span style="color:#9AA0B2;">(integration §2②)</span></div>
+        </div>
+        <div style="display:grid; grid-template-columns:120px 1fr 1.1fr; border-top:1px solid #EDEEF4;">
+          <div style="font:600 13px/1.6 Pretendard; color:#4338CA; padding:14px 18px; background:#FAFBFE;">출력</div>
+          <div style="font:400 13px/1.6 Pretendard; color:#5A6175; padding:14px 18px;">표준 로그 스펙 형식의 파일(TSV)</div>
+          <div style="font:400 13px/1.6 Pretendard; color:#5A6175; padding:14px 18px;">표준 로그 스펙 <span style="color:#9AA0B2;">(contracts/log-specs)</span></div>
+        </div>
+        <div style="display:grid; grid-template-columns:120px 1fr 1.1fr; border-top:1px solid #EDEEF4;">
+          <div style="font:600 13px/1.6 Pretendard; color:#4338CA; padding:14px 18px; background:#FAFBFE;">의존 계약</div>
+          <div style="font:400 13px/1.6 Pretendard; color:#5A6175; padding:14px 18px;">변환에 매핑이 필요하면 기준정보 참조</div>
+          <div style="font:400 13px/1.6 Pretendard; color:#5A6175; padding:14px 18px;">기준정보 <span style="color:#9AA0B2;">(contracts/reference-data)</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 INTERNALS -->
+    <section id="s5" data-screen-label="05 내부 구조" style="padding:56px 0; border-top:1px solid #EAEBF2;">
+      <div style="font:700 13px/1 Pretendard; letter-spacing:.08em; color:#4338CA; margin-bottom:14px;">05 · INTERNALS</div>
+      <h2 style="font:600 34px/1.34 'Noto Serif KR',serif; color:#15172B; margin:0 0 12px; letter-spacing:-.01em;">내부 구조 — 개념 골격</h2>
+      <p style="font:400 16px/1.85 Pretendard; color:#3E4658; margin:0 0 30px; max-width:760px;">외부에서는 하나의 컨버터로 호출되지만, 내부는 판별 → 어댑터 변환 → 형식 검증의 단계로 나뉜다. 신규 설비사는 <b style="color:#4338CA;">어댑터만 추가</b>한다. 세부 어댑터 인터페이스는 구현 시 확정한다.</p>
+      <div style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:26px 24px;">
+        <div style="display:flex; align-items:flex-start;">
+          <div style="flex:1; text-align:center;"><div style="width:38px; height:38px; margin:0 auto 10px; border-radius:50%; background:#4338CA; color:#fff; display:flex; align-items:center; justify-content:center; font:700 15px/1 'JetBrains Mono',monospace;">1</div><div style="font:600 13.5px/1.4 Pretendard; color:#15172B; margin-bottom:4px;">비표준 원본</div><div style="font:400 12px/1.6 Pretendard; color:#5A6175;">수집기가 확보한 입력</div></div>
+          <div style="flex:0 0 24px; text-align:center; color:#C7CCF2; font-size:18px; padding-top:8px;">→</div>
+          <div style="flex:1; text-align:center;"><div style="width:38px; height:38px; margin:0 auto 10px; border-radius:50%; background:#4338CA; color:#fff; display:flex; align-items:center; justify-content:center; font:700 15px/1 'JetBrains Mono',monospace;">2</div><div style="font:600 13.5px/1.4 Pretendard; color:#15172B; margin-bottom:4px;">설비사/모델 판별</div><div style="font:400 12px/1.6 Pretendard; color:#5A6175;">어댑터 선택</div></div>
+          <div style="flex:0 0 24px; text-align:center; color:#C7CCF2; font-size:18px; padding-top:8px;">→</div>
+          <div style="flex:1; text-align:center;"><div style="width:38px; height:38px; margin:0 auto 10px; border-radius:50%; background:#4338CA; color:#fff; display:flex; align-items:center; justify-content:center; font:700 15px/1 'JetBrains Mono',monospace;">3</div><div style="font:600 13.5px/1.4 Pretendard; color:#15172B; margin-bottom:4px;">어댑터 변환</div><div style="font:400 12px/1.6 Pretendard; color:#5A6175;">형식 맞추기</div></div>
+          <div style="flex:0 0 24px; text-align:center; color:#C7CCF2; font-size:18px; padding-top:8px;">→</div>
+          <div style="flex:1; text-align:center;"><div style="width:38px; height:38px; margin:0 auto 10px; border-radius:50%; background:#4338CA; color:#fff; display:flex; align-items:center; justify-content:center; font:700 15px/1 'JetBrains Mono',monospace;">4</div><div style="font:600 13.5px/1.4 Pretendard; color:#15172B; margin-bottom:4px;">형식 검증</div><div style="font:400 12px/1.6 Pretendard; color:#5A6175;">스펙 만족 확인</div></div>
+          <div style="flex:0 0 24px; text-align:center; color:#C7CCF2; font-size:18px; padding-top:8px;">→</div>
+          <div style="flex:1; text-align:center;"><div style="width:38px; height:38px; margin:0 auto 10px; border-radius:50%; background:#1F8A5B; color:#fff; display:flex; align-items:center; justify-content:center; font:700 14px/1 Pretendard;">✓</div><div style="font:600 13.5px/1.4 Pretendard; color:#15172B; margin-bottom:4px;">표준형 TSV</div><div style="font:400 12px/1.6 Pretendard; color:#5A6175;">표준 파서로 전달</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 SCOPE & TESTS -->
+    <section id="s6" data-screen-label="06 범위" style="padding:56px 0; border-top:1px solid #EAEBF2;">
+      <div style="font:700 13px/1 Pretendard; letter-spacing:.08em; color:#4338CA; margin-bottom:14px;">06 · SCOPE &amp; TESTS</div>
+      <h2 style="font:600 34px/1.34 'Noto Serif KR',serif; color:#15172B; margin:0 0 12px; letter-spacing:-.01em;">테스트·범위 — MVP와 차후</h2>
+      <p style="font:400 16px/1.85 Pretendard; color:#5A6175; margin:0 0 28px; max-width:760px;">검증의 핵심은 <b style="color:#15172B;">골든 파일 동등성 테스트</b>다. 실제 비표준 로그를 넣어 컨버터 출력과 기대 표준형을 diff한다. 올해는 신규 핵심 경로를 좁게 시작한다.</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px;">
+        <div style="border:1px solid #DADEF8; border-radius:14px; padding:20px 22px; background:linear-gradient(160deg,#F5F6FF,#fff);">
+          <div style="font:700 11px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#4338CA; margin-bottom:10px;">올해 · MVP</div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #DADEF8; padding-bottom:8px;"><span style="font:600 13px/1.4 Pretendard; color:#15172B;">핵심 변환 경로</span><span style="font:600 12px/1 Pretendard; color:#4338CA;">신규 구축</span></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #E7E9F3; padding-bottom:8px;"><span style="font:600 13px/1.4 Pretendard; color:#15172B;">대상 설비사·모델</span><span style="font:400 12px/1 Pretendard; color:#8A91A6;">좁게 시작</span></div>
+            <div style="display:flex; justify-content:space-between; align-items:center;"><span style="font:600 13px/1.4 Pretendard; color:#15172B;">골든테스트</span><span style="font:600 12px/1 Pretendard; color:#4338CA;">1급 검증</span></div>
+          </div>
+        </div>
+        <div style="border:1px solid #E7E9F3; border-radius:14px; padding:20px 22px;">
+          <div style="font:700 11px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#8A91A6; margin-bottom:10px;">차후 · 고도화</div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="font:500 13px/1.6 Pretendard; color:#5A6175;">· 어댑터 커버리지 확대</div>
+            <div style="font:500 13px/1.6 Pretendard; color:#5A6175;">· 레거시 비표준 파서 완전 대체</div>
+            <div style="font:500 13px/1.6 Pretendard; color:#5A6175;">· 설비사·모델별 데이터 기반 테스트 확장</div>
+          </div>
+        </div>
+      </div>
+      <div style="border-left:3px solid #4338CA; background:#EEF0FF; border-radius:0 10px 10px 0; padding:14px 16px; margin-top:18px;">
+        <div style="font:700 11px/1 Pretendard; letter-spacing:.04em; color:#4338CA; margin-bottom:6px;">미정 (KEY)</div>
+        <div style="font:400 13px/1.65 Pretendard; color:#3E4658;">어댑터 인터페이스·규칙 표현 방식, MVP 대상 범위, 변환에 기준정보가 필요한 범위는 구현 시 확정한다.</div>
+      </div>
+    </section>
+
+    <!-- REFERENCE -->
+    <section id="sref" data-screen-label="용어 (Reference)" style="padding:56px 0; border-top:1px solid #EAEBF2;">
+      <div style="font:700 12px/1 Pretendard; letter-spacing:.08em; color:#B6BBCB; margin-bottom:14px;">REFERENCE</div>
+      <h2 style="font:600 22px/1.4 'Noto Serif KR',serif; color:#6A7187; margin:0 0 18px;">용어</h2>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:0 40px;">
+        <div style="padding:9px 0; border-bottom:1px solid #F0F1F6;"><span style="font:600 12.5px/1.5 Pretendard; color:#5A6175;">표준 로그 스펙</span> <span style="font:400 12px/1.55 Pretendard; color:#9AA0B2;">— 회사 내부 표준 로그 양식. TSV(txt). 컨버터 산출의 목표 형식.</span></div>
+        <div style="padding:9px 0; border-bottom:1px solid #F0F1F6;"><span style="font:600 12.5px/1.5 Pretendard; color:#5A6175;">어댑터</span> <span style="font:400 12px/1.55 Pretendard; color:#9AA0B2;">— 설비사·모델별 변환 규칙 단위. 신규 설비사 = 어댑터 추가.</span></div>
+        <div style="padding:9px 0; border-bottom:1px solid #F0F1F6;"><span style="font:600 12.5px/1.5 Pretendard; color:#5A6175;">값 정규화·보정</span> <span style="font:400 12px/1.55 Pretendard; color:#9AA0B2;">— 제각각 표현 정렬 + 결함 메움. 컨버터가 아닌 표준 파서 책임.</span></div>
+        <div style="padding:9px 0; border-bottom:1px solid #F0F1F6;"><span style="font:600 12.5px/1.5 Pretendard; color:#5A6175;">골든 파일 테스트</span> <span style="font:400 12px/1.55 Pretendard; color:#9AA0B2;">— 실제 입력에 대해 출력을 기대값과 diff해 의도치 않은 차이를 검출.</span></div>
+      </div>
+      <div style="border-top:1px solid #EAEBF2; padding-top:20px; margin-top:28px;"><p style="font:400 12px/1.6 Pretendard; color:#9AA0B2; margin:0;">* 본 문서는 아키텍처 골격이며, 표준 로그 스펙이 확정되면 산출 정의를 실제 스펙과 정합화한다. — 스펙 확장 팩(spec_extensions.md)의 컴포넌트 문서 arc·책임경계 컴포넌트를 적용한 파일럿.</p></div>
+    </section>
+
+  </div>
+</div>
+</x-dc>
+
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() {
+    const bar = document.getElementById('rprog');
+    const onScroll = () => {
+      const h = document.documentElement;
+      const sc = h.scrollTop || document.body.scrollTop || 0;
+      const max = (h.scrollHeight - h.clientHeight) || 1;
+      if (bar) bar.style.width = Math.min(100, Math.max(0, sc / max * 100)) + '%';
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    const links = Array.from(document.querySelectorAll('[data-navlink]'));
+    const byId = {};
+    links.forEach(l => { byId[l.getAttribute('data-navlink')] = l; });
+    const secs = Object.keys(byId).map(id => document.getElementById(id)).filter(Boolean);
+    const setActive = (id) => {
+      links.forEach(l => {
+        const on = l.getAttribute('data-navlink') === id;
+        l.style.color = on ? '#4338CA' : '#8A91A6';
+        l.style.fontWeight = on ? '700' : '500';
+      });
+    };
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id); });
+    }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+    secs.forEach(s => io.observe(s));
+
+    this._cleanup = () => { window.removeEventListener('scroll', onScroll); io.disconnect(); };
+  }
+  componentWillUnmount() { if (this._cleanup) this._cleanup(); }
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
