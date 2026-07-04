@@ -3,7 +3,7 @@
 > 이 레포(발표 시스템)의 인수인계 문서. 파서 프로젝트 세션의 옛 핸드오프는 이 프로젝트와 무관해
 > `archive/HANDOFF-parserimprove.md`로 이관됨. 이 문서는 **제품(발표 시스템 + 저작 하네스)** 상태만 다룬다.
 >
-> 최종 갱신: 2026-07-04 · 다중 호스트 install 브릿지 완료(`main` 머지 + push).
+> 최종 갱신: 2026-07-04 · 스타일 추가 지침 단일 문서화(`ADDING-A-STYLE.md`) 완료(`main` 머지 + push).
 
 ---
 
@@ -29,6 +29,7 @@ examples/                     워크드 예시 (feedbackops, feedbackops-design-
   README.md(하네스 개요 + 3-호스트 install 증거)
 archive/                      동결 참고자료 (parserimprove — 제품 아님, provenance만)
 docs/superpowers/             spec + plan 문서
+ADDING-A-STYLE.md             스타일 추가 절차 + 불변식 게이트 (프로세스 문서, 값 미소유)
 README.md · CLAUDE.md · AGENTS.md
 ```
 
@@ -53,6 +54,13 @@ README.md · CLAUDE.md · AGENTS.md
 - **실증**: `codex debug prompt-input`에 plan+build 둘 다 model-visible 로드 확인 (심링크 타겟까지 해석). opencode `debug skill` 선례 미러.
 - 문서: `docs/superpowers/specs/2026-07-04-multi-host-install-design.md` + `.../plans/2026-07-04-multi-host-install.md`.
 
+### 2.4 스타일 추가 지침 단일 문서화 (`ADDING-A-STYLE.md`)
+- **문제**: "스타일 추가" 지침이 4곳 흩어짐 — `CLAUDE.md`(불변식) · `README.md:24`(한 줄) · `styles/indigo-serif/style.md`(매니페스트) · `HANDOFF.md`(D2 seam). 실행자가 6-파일 SSOT 경계 + 불변식 직접 기억해야 함.
+- **`ADDING-A-STYLE.md`** (root, HANDOFF와 peer): 파일별 rewrite 표 + 9-스텝 절차 + 8-항목 불변식 게이트. **프로세스 문서** — SSOT 지목만, 값 복제 0.
+- **실제 style 보고 보강**(README 한 줄 누락분): ① 새 스타일이 core에 6 크롬 토큰 슬롯 공급 필수 ② `design.tokens.md` 재-미러 ③ 시맨틱 split 재정의(1회 규범 명시, 문서 내 혼용 금지) ④ `support.js` 사이드카 두 `.dc.html` 모두.
+- 배선: `README.md` 포인터 + `CLAUDE.md` repo-map 행.
+- **스킬화 판단 → 지금 아니오**: 빈도 극저(평생 몇 번) + 재사용 경계 미검증. n=1에서 스킬 = 조기 추상화. 트리거: **2번째 스타일 손으로 추가 → 절차 안정 실증 후** 3번째에서 재검토. 문서에 트리거 명시.
+
 ### 2.3 스타일 문서 분리 검토 → 연기
 - 큰 파일: `design.md`(559줄), `design-system.answerkey.dc.html`(1087줄).
 - **결정**: 분리 **안 함**. 이유: answerkey는 단일 렌더 문서라 분리 불가(제품 전제). design.md는 §5 다이어그램 카탈로그(~150줄)만 깔끔한 seam이나, 각 문서는 이미 책임 하나씩(design=토큰·컴포넌트, authoring=보이스, composition=밀도)이고 큰 건 내용량 탓. HANDOFF 옛 D2("깨끗한 seam 없음, 2번째 스타일까지 연기") 논리 유지. 재사용 경계가 실증되기 전 분리는 조기 최적화.
@@ -76,7 +84,7 @@ README.md · CLAUDE.md · AGENTS.md
 - [ ] `support.js`의 `cssToObj` data-URI 맹글링 수정 (SVG 엣지 예외 개방 선행조건) — 트리거 있을 때.
 
 ### 스타일 시스템
-- [ ] **2번째 스타일 추가 시**: `styles/indigo-serif/` 복제 → 토큰·voice·template 교체 → README 레지스트리 등록. `core/` 무손. 이때 D2(문서 분리 seam) 재검토.
+- [ ] **2번째 스타일 추가 시**: 절차 = `ADDING-A-STYLE.md`(복제 → 토큰·voice·template 교체 → 크롬 토큰 6슬롯 배선 → README 등록 → 8-항목 게이트). `core/` 무손. 이때 D2(문서 분리 seam) + 스킬화 트리거 재검토.
 
 ---
 
@@ -87,5 +95,6 @@ README.md · CLAUDE.md · AGENTS.md
 | `4b93de1` | parserimprove 아카이브 + install spec/plan |
 | `250aca3` | 다중 호스트 install 브릿지 (install.sh + AGENTS.md + 테스트 + 증거) |
 | `76bf3ce` | merge → main (push 완료) |
+| `0962807` | 스타일 추가 지침 단일 문서화 (`ADDING-A-STYLE.md` + README/CLAUDE 배선, ff-merge → main push) |
 
 > 적대적 리뷰 1회(Explore 서브에이전트) GO-WITH-CHANGES 5개 must-fix 전부 반영: C1(심링크 discovery 실증), M1(재시작 안내), M2(repo-scoped 문서화), M3(AGENTS 호스트 문구 정정), config 등록 회피.
