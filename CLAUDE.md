@@ -30,13 +30,13 @@ folder**, never by forking `core/`.
 | `styles/indigo-serif/composition-guide.md` | Density budgets, in-section layout, focal hierarchy, whitespace/pacing |
 | `styles/indigo-serif/template.dc.html` | Runnable fill-in-the-blanks skeleton — start builds here (support.js sidecar next to it) |
 | `styles/indigo-serif/design-system.answerkey.dc.html` | Rendered answer key — live gallery; **wins** vs `design.md` on conflict |
-| `examples/feedbackops.dc.html` | Second worked example (support.js sidecar in `examples/`) |
-| `reference/parserimprove/` | Reference material only — **not** the product |
+| `examples/feedbackops.dc.html` | Worked example (support.js sidecar in `examples/`) |
+| `examples/feedbackops-design-report/` | Second worked example + desktop/mobile renders |
+| `archive/parserimprove/` | **Archived.** Old design reference (semiconductor log-parser docs). Not part of this project — kept only for provenance |
 
-Canonical worked example: `reference/parserimprove/로그파서 개선 설명자료 v2.dc.html`. Other
-`.dc.html` under `reference/` are old drafts (ignore). `reference/parserimprove/uploads/` holds
-domain design docs + `spec_extensions.md` (proposed spec extensions, not yet merged) +
-`converter_pilot.dc.html`. See `HANDOFF.md`.
+Worked examples live in `examples/`. `archive/parserimprove/` is a frozen historical
+reference the indigo-serif specs were originally abstracted from; it is **not** the product and
+carries no live TODOs.
 
 ## Core rules
 
@@ -83,8 +83,8 @@ the `.dc.html`, allow outbound network (fonts + React UMD). Details in `core/run
   mirror → verify against that style's answer key.
 - When extending structure (new runtime behavior, DOM contract): put it in `core/`, keep it
   style-agnostic (token names, no HEX, no style-folder paths) so every style inherits it.
-- `reference/parserimprove/uploads/spec_extensions.md` is a **proposal** — not yet merged into
-  core specs. Don't treat it as authoritative until merged.
+- `archive/parserimprove/` is frozen historical reference only — not authoritative, no live
+  work items. Don't merge or cite it as product spec.
 
 ---
 
