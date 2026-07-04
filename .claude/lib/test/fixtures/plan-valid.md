@@ -2,6 +2,7 @@
 has-as-is: true
 metrics-mode: present
 act-structure: flat
+narrative-lens: architecture-first
 source-ref: docs/source.md@abc123
 ---
 ## 1. 현행 수집 경로

@@ -2,6 +2,7 @@
 has-as-is: false
 metrics-mode: absent
 act-structure: flat
+narrative-lens: architecture-first
 source-ref: docs/source.md@abc123
 ---
 ## 1. 개요

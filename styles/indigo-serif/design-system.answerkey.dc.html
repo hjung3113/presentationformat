@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
 <script src="./support.js"></script>
 </head>
 <body>
@@ -24,6 +25,22 @@
     p, h1, h2, h3, div, span, li, a { word-break: keep-all; }
     *::selection { background:#C7D2FE; }
     .nav-scroll::-webkit-scrollbar { height:0; }
+    @media (max-width: 820px) {
+      html, body { max-width:100vw; overflow-x:hidden; }
+      .nav-scroll { min-width:0; flex:1 1 auto; }
+      .nav-scroll a { flex:0 0 auto; }
+      div[style*="padding:8px 64px 100px"] { padding:8px 22px 72px !important; margin-top:-32px !important; }
+      div[style*="grid-template-columns:1fr 1fr"],
+      div[style*="grid-template-columns:1.2fr 1fr"],
+      div[style*="grid-template-columns:repeat(3,1fr)"],
+      div[style*="grid-template-columns:repeat(4,1fr)"],
+      div[style*="grid-template-columns:repeat(5,1fr)"],
+      div[style*="grid-template-columns:150px"],
+      div[style*="grid-template-columns:130px"],
+      div[style*="grid-template-columns:1.2fr .8fr .8fr 1.1fr"] { grid-template-columns:1fr !important; }
+      div[style*="display:flex; align-items:center; justify-content:center"],
+      div[style*="display:flex; align-items:center;"] { flex-wrap:wrap !important; }
+    }
   </style>
 </helmet>
 
@@ -35,9 +52,9 @@
 
   <!-- sticky nav -->
   <div style="position:sticky; top:0; z-index:50; background:rgba(255,255,255,.86); backdrop-filter:blur(10px); border-bottom:1px solid #E2E5F0;">
-    <div style="max-width:1100px; margin:0 auto; padding:0 40px; display:flex; align-items:center; gap:20px; height:54px;">
-      <a href="#top" style="text-decoration:none; font:700 14px/1 Pretendard; color:#15172B; white-space:nowrap; letter-spacing:-.01em;">Design <span style="color:#4338CA;">System</span></a>
-      <div class="nav-scroll" style="display:flex; gap:18px; overflow-x:auto; margin-left:auto;">
+    <div style="max-width:1100px; margin:0 auto; padding:0 40px; display:flex; align-items:center; gap:20px; height:54px; min-width:0;">
+      <a href="#top" style="text-decoration:none; font:700 14px/1 Pretendard; color:#15172B; white-space:nowrap; letter-spacing:-.01em; flex:0 0 auto;">Design <span style="color:#4338CA;">System</span></a>
+      <div class="nav-scroll" style="display:flex; gap:18px; overflow-x:auto; margin-left:auto; min-width:0; flex:1 1 auto;">
         <a data-navlink="s1" href="#s1" style="text-decoration:none; font:500 13px/1 Pretendard; color:#8A91A6; white-space:nowrap;">기초</a>
         <a data-navlink="s2" href="#s2" style="text-decoration:none; font:500 13px/1 Pretendard; color:#8A91A6; white-space:nowrap;">색상</a>
         <a data-navlink="s3" href="#s3" style="text-decoration:none; font:500 13px/1 Pretendard; color:#8A91A6; white-space:nowrap;">타이포</a>
@@ -49,6 +66,7 @@
         <a data-navlink="s9" href="#s9" style="text-decoration:none; font:500 13px/1 Pretendard; color:#8A91A6; white-space:nowrap;">데이터 시각화</a>
         <a data-navlink="s10" href="#s10" style="text-decoration:none; font:500 13px/1 Pretendard; color:#8A91A6; white-space:nowrap;">레이아웃·양식</a>
         <a data-navlink="s11" href="#s11" style="text-decoration:none; font:500 13px/1 Pretendard; color:#8A91A6; white-space:nowrap;">UML</a>
+        <a data-navlink="s12" href="#s12" style="text-decoration:none; font:500 13px/1 Pretendard; color:#8A91A6; white-space:nowrap;">복합 도식</a>
       </div>
     </div>
   </div>
@@ -824,6 +842,72 @@
             <div style="font:600 12px/1.3 Pretendard; color:#1E2233; background:#fff; border:1px dashed #B9BEDB; border-radius:9px; padding:10px; text-align:center;">DB 적재</div>
           </div>
           <div style="display:flex; gap:10px; margin-top:14px; background:#EEF0FF; border-radius:10px; padding:12px 15px;"><span style="font:700 11px/1.5 Pretendard; letter-spacing:.03em; color:#4338CA; white-space:nowrap;">언제 쓰나</span><span style="font:400 12.5px/1.6 Pretendard; color:#5A6175;">여러 작업이 동시에 진행되고 모두 끝나야 다음으로 갈 때. 굵은 바로 갈라지고(fork) 다시 모인다(join).</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12. COMPLEX WORKFLOW DIAGRAMS -->
+    <section id="s12" data-screen-label="12 복합 도식" style="padding:56px 0; border-top:1px solid #EAEBF2;">
+      <div style="font:700 13px/1 Pretendard; letter-spacing:.08em; color:#4338CA; margin-bottom:14px;">12 · COMPLEX WORKFLOWS</div>
+      <h2 style="font:600 34px/1.34 'Noto Serif KR',serif; color:#15172B; margin:0 0 12px; letter-spacing:-.01em;">복합 운영 도식</h2>
+      <p style="font:400 16px/1.85 Pretendard; color:#5A6175; margin:0 0 30px; max-width:760px;">운영 시스템 소개에서 자주 필요한 분기형 도식 모음. "항상 다음 단계로 간다"는 오해를 막기 위해, 반려·보류·실행 안 함·금지 경로를 도식 안에 같은 위계로 둔다.</p>
+
+      <div style="border:1px solid #E7E9F3; border-radius:14px; padding:24px 26px; margin-bottom:18px;">
+        <div style="font:600 16px/1.4 Pretendard; color:#15172B; margin-bottom:4px;">12.1 터미널 결과가 여러 개인 액티비티</div>
+        <p style="font:400 13.5px/1.7 Pretendard; color:#5A6175; margin:0 0 20px; max-width:720px;">Task로 가는 경로와 가지 않는 경로가 모두 정상인 경우. no-op이나 반려를 footnote가 아니라 결과 카드로 둔다.</p>
+        <div style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:24px;">
+          <div style="font:600 12px/1.3 Pretendard; color:#4338CA; background:#EEF0FF; border:1.5px solid #4338CA; border-radius:8px; padding:11px; text-align:center; max-width:240px; margin:0 auto;">Source Record</div>
+          <div style="text-align:center; color:#B6BBD6; font-size:13px; padding:5px 0;">↓</div>
+          <div style="width:82px; height:82px; margin:0 auto; position:relative; display:flex; align-items:center; justify-content:center;"><div style="position:absolute; inset:9px; background:#EEF0FF; border:1.5px solid #4338CA; border-radius:9px; transform:rotate(45deg);"></div><div style="position:relative; z-index:1; font:700 11px/1.35 Pretendard; color:#4338CA; text-align:center;">검토<br>결정</div></div>
+          <div style="text-align:center; color:#B6BBD6; font-size:13px; padding:5px 0;">↓</div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px;">
+            <div style="font:600 12px/1.35 Pretendard; color:#1E2233; background:#fff; border:1px solid #E2E5F0; border-radius:8px; padding:11px 10px; text-align:center;">정보 요청<br><span style="font-weight:400; color:#9AA0B2;">대기</span></div>
+            <div style="font:600 12px/1.35 Pretendard; color:#4338CA; background:#EEF0FF; border:1.5px solid #4338CA; border-radius:8px; padding:11px 10px; text-align:center;">실행 요청<br><span style="font-weight:400; color:#7C82B8;">검토 큐</span></div>
+            <div style="font:600 12px/1.35 Pretendard; color:#1E2233; background:#fff; border:1px solid #E2E5F0; border-radius:8px; padding:11px 10px; text-align:center;">공개 업데이트<br><span style="font-weight:400; color:#9AA0B2;">Task 없음</span></div>
+            <div style="font:600 12px/1.35 Pretendard; color:#B4543F; background:#FBF1EE; border:1px solid #F0D7CF; border-radius:8px; padding:11px 10px; text-align:center;">실행 안 함<br><span style="font-weight:400; color:#94724F;">reason + audit</span></div>
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:14px; background:#EEF0FF; border-radius:10px; padding:12px 15px;"><span style="font:700 11px/1.5 Pretendard; letter-spacing:.03em; color:#4338CA; white-space:nowrap;">언제 쓰나</span><span style="font:400 12.5px/1.6 Pretendard; color:#5A6175;">분기 이후 일부는 실행으로 가고 일부는 대기·종결되는 경우. 핵심은 모든 terminal outcome을 보이게 하는 것.</span></div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:18px;">
+        <div style="border:1px solid #E7E9F3; border-radius:14px; padding:24px 26px;">
+          <div style="font:600 16px/1.4 Pretendard; color:#15172B; margin-bottom:4px;">12.2 금지 경로 + 대체 경로</div>
+          <p style="font:400 13.5px/1.7 Pretendard; color:#5A6175; margin:0 0 20px;">금지된 변환을 경고만 하지 말고, 허용되는 대체 경로를 같이 보여준다.</p>
+          <div style="display:grid; grid-template-columns:1fr 34px 1fr; gap:10px; align-items:center;">
+            <div style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:16px;">
+              <div style="font:700 10px/1 'JetBrains Mono',monospace; color:#fff; background:#4338CA; display:inline-block; border-radius:6px; padding:6px 9px; margin-bottom:10px;">ALLOWED</div>
+              <div style="display:grid; gap:8px;"><div style="font:600 12px/1.35 Pretendard; color:#4338CA; background:#EEF0FF; border:1.5px solid #4338CA; border-radius:8px; padding:10px; text-align:center;">Evidence</div><div style="font:600 12px/1.35 Pretendard; color:#4338CA; background:#EEF0FF; border:1.5px solid #4338CA; border-radius:8px; padding:10px; text-align:center;">Finding</div></div>
+            </div>
+            <div style="font:700 18px/1 Pretendard; color:#B4543F; text-align:center;">≠</div>
+            <div style="background:#FFF8F6; border:1px solid #F0D7CF; border-radius:12px; padding:16px;">
+              <div style="font:700 10px/1 'JetBrains Mono',monospace; color:#fff; background:#B4543F; display:inline-block; border-radius:6px; padding:6px 9px; margin-bottom:10px;">FORBIDDEN</div>
+              <div style="font:600 12px/1.35 Pretendard; color:#B4543F; background:#FBF1EE; border:1px solid #F0D7CF; border-radius:8px; padding:10px; text-align:center;">Source → New Record</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="border:1px solid #E7E9F3; border-radius:14px; padding:24px 26px;">
+          <div style="font:600 16px/1.4 Pretendard; color:#15172B; margin-bottom:4px;">12.3 병렬 상태 머신</div>
+          <p style="font:400 13.5px/1.7 Pretendard; color:#5A6175; margin:0 0 20px;">서로 가까운 두 상태가 자동으로 매핑되지 않는다는 점을 보여준다.</p>
+          <div style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:16px;">
+            <div style="font:700 10px/1 'JetBrains Mono',monospace; color:#fff; background:#4338CA; display:inline-block; border-radius:6px; padding:6px 9px; margin-bottom:10px;">INTERNAL</div>
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;"><div style="font:600 12px/1.3 Pretendard; color:#4338CA; background:#EEF0FF; border:1.5px solid #4338CA; border-radius:12px; padding:10px 14px;">Doing</div><div style="color:#B6BBD6;">→</div><div style="font:600 12px/1.3 Pretendard; color:#4338CA; background:#EEF0FF; border:1.5px solid #4338CA; border-radius:12px; padding:10px 14px;">Released</div></div>
+            <div style="font:700 10px/1 'JetBrains Mono',monospace; color:#fff; background:#94A0B4; display:inline-block; border-radius:6px; padding:6px 9px; margin:16px 0 10px;">PUBLIC</div>
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;"><div style="font:600 12px/1.3 Pretendard; color:#4338CA; background:#EEF0FF; border:1.5px solid #4338CA; border-radius:12px; padding:10px 14px;">처리 중</div><div style="color:#B6BBD6;">→</div><div style="font:600 12px/1.3 Pretendard; color:#4338CA; background:#EEF0FF; border:1.5px solid #4338CA; border-radius:12px; padding:10px 14px;">해결됨</div></div>
+          </div>
+          <div style="margin-top:12px; background:#FBF3EC; border:1px solid #F0D7CF; border-radius:10px; padding:12px 14px; font:500 12.5px/1.6 Pretendard; color:#94724F;">자동 매핑 금지. 내부 상태는 공개 상태 검토 후보만 만든다.</div>
+        </div>
+      </div>
+
+      <div style="border:1px solid #E7E9F3; border-radius:14px; padding:24px 26px;">
+        <div style="font:600 16px/1.4 Pretendard; color:#15172B; margin-bottom:4px;">12.4 Recovery decision table</div>
+        <p style="font:400 13.5px/1.7 Pretendard; color:#5A6175; margin:0 0 20px;">큐 포함 여부가 정책·권한·해소 상태의 조합으로 결정될 때. Flowchart보다 table이 낫다.</p>
+        <div style="border:1px solid #E7E9F3; border-radius:12px; overflow:hidden;">
+          <div style="display:grid; grid-template-columns:1.2fr .8fr .8fr 1.1fr; background:#15172B;"><div style="font:600 13px/1.4 Pretendard; color:#fff; padding:13px 16px;">조건</div><div style="font:600 13px/1.4 Pretendard; color:#fff; padding:13px 16px;">후속</div><div style="font:600 13px/1.4 Pretendard; color:#fff; padding:13px 16px;">권한</div><div style="font:600 13px/1.4 Pretendard; color:#C7CAF5; padding:13px 16px;">결과</div></div>
+          <div style="display:grid; grid-template-columns:1.2fr .8fr .8fr 1.1fr; border-top:1px solid #EDEEF4;"><div style="font:400 13px/1.55 Pretendard; color:#3E4658; padding:13px 16px;">정책상 후속 필요</div><div style="font:400 13px/1.55 Pretendard; color:#3E4658; padding:13px 16px;">없음</div><div style="font:400 13px/1.55 Pretendard; color:#3E4658; padding:13px 16px;">가능</div><div style="font:600 13px/1.55 Pretendard; color:#4338CA; padding:13px 16px;">Active queue</div></div>
+          <div style="display:grid; grid-template-columns:1.2fr .8fr .8fr 1.1fr; border-top:1px solid #EDEEF4;"><div style="font:400 13px/1.55 Pretendard; color:#3E4658; padding:13px 16px;">권한 부족</div><div style="font:400 13px/1.55 Pretendard; color:#3E4658; padding:13px 16px;">없음</div><div style="font:400 13px/1.55 Pretendard; color:#3E4658; padding:13px 16px;">requestable</div><div style="font:600 13px/1.55 Pretendard; color:#94724F; padding:13px 16px;">Safe summary</div></div>
+          <div style="display:grid; grid-template-columns:1.2fr .8fr .8fr 1.1fr; border-top:1px solid #EDEEF4;"><div style="font:400 13px/1.55 Pretendard; color:#3E4658; padding:13px 16px;">no-follow-up 결정</div><div style="font:400 13px/1.55 Pretendard; color:#3E4658; padding:13px 16px;">reason 있음</div><div style="font:400 13px/1.55 Pretendard; color:#3E4658; padding:13px 16px;">허용</div><div style="font:600 13px/1.55 Pretendard; color:#1F8A5B; padding:13px 16px;">History</div></div>
         </div>
       </div>
     </section>

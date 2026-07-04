@@ -161,4 +161,4 @@ this._cleanup = () => { window.removeEventListener('scroll', onScroll); io.disco
 - Serve over **http(s)**, not `file://`. `support.js` does `fetch(location.href)` to re-parse the live template and `fetch('./<Name>.dc.html')` for sibling components; `file://` breaks these.
 - The page needs **outbound network**: React/ReactDOM UMD (unpkg), Pretendard (jsdelivr), Google Fonts. `support.js` injects React itself — do not add your own React tags.
 - Filename must end **`.dc.html`**; `support.js` must sit in the same directory.
-- **No media queries.** Mobile resilience comes only from intrinsic flex: hero stat tiles `flex:1; min-width:150px` inside a `flex-wrap:wrap` row, and the nav row `overflow-x:auto`. This is a desktop-first reading document (~1100px). See the active style's `design.md` responsive note before adding any breakpoint.
+- **No media queries in the shared runtime shell.** The runtime provides only intrinsic baseline behavior: wrapped flex rows and horizontally scrollable nav. Supported review viewports, narrow-width acceptance, and breakpoint rules belong to the active style's docs.

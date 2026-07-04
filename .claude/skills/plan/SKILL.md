@@ -69,6 +69,19 @@ Before drafting the TOC, decide:
 Carry these decisions into every later step — they change what questions get asked and what
 `payload`/`figure-data` content is legitimate to plan.
 
+### Step 2.5 — Declare the narrative lens
+
+Before drafting the TOC, choose and record one narrative lens:
+
+- `architecture-first` — the outline explains structure first; use cases are supporting examples.
+- `use-case-first` — the outline follows actors/scenarios/journeys first; architecture supports the journey later.
+- `decision-first` — the opening states the decision context, recommendation tradeoffs, or open questions; this is decision framing, not a hidden approval request.
+
+Ask the user only if the source or request is ambiguous enough that the lens would change section
+order. If the user later asks for "more use cases", "decision-maker framing", "more detail", or
+similar expansion that would change this lens, stop and ask whether to reorganize the outline or
+only add examples inside the existing outline.
+
 ### Step 3 — Propose the TOC (Gate 1)
 
 Propose a full section sequence as noun-phrase titles only (no content yet) — a table of
@@ -83,6 +96,9 @@ its authoring-guide).
   - Below that range, merge thin rows — don't pad with a section the source can't support.
   - Above roughly 9, plan for act-grouped structure (dividers grouping sections into acts) and
     set `act-structure: act-grouped`; otherwise `act-structure: flat`.
+- Check the sequence against the narrative lens from Step 2.5. A `use-case-first` lens must put
+  actors/scenarios/journey before architecture detail; a `decision-first` lens must surface the
+  decision context early, not bury it in the final section.
 - Present the TOC to the user and **stop — this is Gate 1**. Do not draft section content until
   the user has reviewed and agreed on the TOC (adding, dropping, renaming, or reordering rows as
   they like). Re-propose and re-gate if they request changes.
@@ -130,6 +146,7 @@ determined in Steps 1–2:
 - `has-as-is` — true only if a real current/old state exists in source.
 - `metrics-mode` — `present` / `partial` / `absent`, matching Step 2's detection.
 - `act-structure` — `flat` or `act-grouped`, matching the Step 3 count check.
+- `narrative-lens` — `architecture-first`, `use-case-first`, or `decision-first`, matching Step 2.5.
 - `source-ref` — every source doc consumed, with a path and a hash or mtime, so `/build` can
   detect if the source has since changed (staleness guard) without re-reading it.
 

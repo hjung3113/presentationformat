@@ -57,15 +57,25 @@ the plan never states these choices itself:
   current state maps to a Background/Problems-shaped page; an intent describing a proposed model
   maps to a Direction/Approach-shaped page. Follow that page type's own density and structure
   rules (composition-guide) once chosen.
-- **`figure-data` → diagram device.** Use the style's situation→device table to pick the concrete
-  figure (before/after panel, flow, bar chart, gantt, matrix, etc.) that matches the shape of the
-  data the plan carried — not a device picked for visual variety. A section with no `figure-data`
-  gets no figure; don't invent one to fill space, and don't leave a diagrammable shape as bare
-  prose either.
+- **`figure-data` → diagram device.** Use the style's situation→device table and reviewer-question
+  column to pick the concrete figure (before/after panel, flow, bar chart, gantt, matrix, UML
+  activity, swimlane, state machine, lane/surface map, etc.) that matches the shape of the data
+  the plan carried — not a device picked for visual variety. A section with no `figure-data` gets
+  no figure; don't invent one to fill space, and don't leave a diagrammable shape as bare prose
+  either. A branching workflow is not a process row; ownership is not equal cards; UI operation
+  needs a screen/surface/role map; decision asks need a visible decision block or open-question
+  table.
 - **State → semantic color.** Use the plan's `has-as-is` header and each section's content to
   decide which parts are current/old/problem state versus target/new/improved state, then apply
   the style's semantic color law accordingly. Never mix the two halves of that law inside one
   structural zone.
+
+Before writing HTML, create the composition-guide section preflight for every numbered section:
+`Section | Page type | Claim type | Primary device | Why not cards/table? | Expected count |
+Figure budget`. Treat the preflight hard-fail cases as build blockers even though the automated
+visual tier only reports warnings for now. If the plan's `narrative-lens` is missing because it
+was produced by an older `/plan`, infer it from the confirmed TOC and keep the inference explicit
+in your build notes.
 
 ## Step 5 — Render the voice
 
@@ -83,6 +93,11 @@ section a distinct element with a unique id, and keeping every nav link's target
 real section id in the document. Keep to the style's inline-styles-only discipline: no CSS
 classes, no shared stylesheet, values pasted directly as inline styles, matching the template's
 existing pattern.
+
+When adding detail during assembly, follow the composition-guide density-change protocol: classify
+new material as `core`, `support`, or `aside`; split/promote `core`; keep `support` only if the
+viewport and section budgets still hold; demote `aside` to footnote/reference/callout. Do not
+answer a density request by appending a peer card grid under an already-valid primary figure.
 
 ## Step 7 — Copy the support.js sidecar
 
@@ -111,11 +126,16 @@ The gate runs two tiers:
   law. That correctness depends on following Step 4's state→color mapping and is checked, if at
   all, by the visual render tier below or by eyeballing against the style's answer key — never
   claim the mechanical gate guarantees color-zone correctness.
-- A **visual render check** that only runs if a headless browser is available. If one is not
-  available, the gate reports the visual check as unverified rather than silently skipping it —
-  treat that as an honest "not checked," not a pass.
+- A **warning-only desktop composition tier** that only runs if a headless browser is available.
+  It serves the document over localhost and evaluates desktop viewports `1366x768` and `1440x900`
+  for section height, stacked grids, 4-column text grids, missing primary figures, low-emphasis
+  decision asks, meaning-block count, and desktop overflow. These rows print as `WARN` and do
+  **not** change the exit code until the warnings have been calibrated against accepted artifacts.
+  If a headless browser is not available, the gate reports the visual check as unverified rather
+  than silently skipping it — treat that as an honest "not checked," not a pass.
 
 **Treat any non-zero exit from the gate as "not built."** Read every check the gate prints; if any
 mechanical check fails, fix the document and rerun the gate — do not hand the document to the user
 as finished while a check is failing. Do not report success on the strength of the visual line
-alone, and do not claim the visual check passed when it reports unverified.
+alone, and do not claim the visual/composition tier passed when it reports unverified. Do read and
+summarize any `WARN` rows for the user; warnings are not failures, but they are review evidence.

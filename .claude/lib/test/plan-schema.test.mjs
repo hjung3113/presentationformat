@@ -11,6 +11,7 @@ test('valid plan passes and parses all fields', () => {
   assert.equal(res.ok, true, res.errors.join('; '));
   const p = parsePlan(md);
   assert.equal(p.header.hasAsIs, true);
+  assert.equal(p.header.narrativeLens, 'architecture-first');
   assert.equal(p.sections.length, 2);
   assert.ok(p.sections[0].sourceSpan.length > 0);
 });

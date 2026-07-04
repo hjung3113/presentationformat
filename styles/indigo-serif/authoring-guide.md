@@ -10,7 +10,7 @@
 
 ## 1. Document DNA (applies to any topic)
 
-- **Genre:** a peer-to-peer **"direction / explainer" document**, not an approval request and not a slide deck. It says *"here is how we're thinking about this and where it's going,"* and explains rather than persuades.
+- **Genre:** a peer-to-peer **"direction / explainer" document**, not a slide deck. It says *"here is how we're thinking about this and where it's going,"* and explains rather than persuades. A document may be **decision-framed** when the source asks for it, but that means visible decision context / open questions / recommendation tradeoffs — not a hidden approval request dressed as an explainer.
 - **Reader:** a knowledgeable peer. Assume domain literacy → don't over-explain basics; push glossaries to a low-emphasis appendix.
 - **Density:** keep the substance plus the *necessary* elaboration. Trim secondary asides, not the core. (One-sentence compression ✗ / a tight 1–2 line paragraph ✓.) Rough budgets: lead 2–4 sentences (≤760px), card body ≤3 sentences, card grids 3–6 items, tables ≤7 rows. **Quantified per-section/per-viewport budgets, focal hierarchy, column-count and arrangement rules live in `composition-guide.md`** — consult it once page types are chosen, before placing components.
 - **Voice:** calm, explanatory, declarative. No drama, no suspense, no hype, no imperative punchlines. Titles describe; they don't deliver verdicts.
@@ -109,7 +109,7 @@ Write: a 3-column matrix (e.g. problem / fix / effect). Then split outcomes into
 Write: risk cards with a left indigo accent border — each = risk name + (muted) description + `→` mitigation. Keep symmetrical.
 
 ### 4.9 Scope / Plan
-Write: paired "Now (MVP)" highlight card + "Later" outline card, then a **roadmap/Gantt** encoding *when × how-much*, then an open-questions table (item / current direction / needs-decision).
+Write: paired "Now (MVP)" highlight card + "Later" outline card, then a **roadmap/Gantt** encoding *when × how-much*, then an open-questions table (item / current direction / needs-decision). If the document has a decision ask, it must appear as a visible **decision block** or open-question table in this section or the opening decision-framed section. It must never live only inside a peer mini-card.
 
 ### 4.10 Reference
 Write: compact two-column term lists, muted styling, at the very end. Short definitions only.
@@ -119,37 +119,47 @@ Write: compact two-column term lists, muted styling, at the very end. Short defi
 ## 5. Decision tables
 
 ### 5.1 Situation → diagram (if it's diagrammable, diagram it)
-| Situation | Device |
-|-----------|--------|
-| Current vs target **structure** | Before/After comparison panel |
-| A multi-step **procedure** | Vertical flow (nodes + ↓) |
-| A procedure with a **branch/condition** | UML activity (diamond) or a conditional dashed box |
-| **Transform / converge** (X becomes Y, paths merge) | Horizontal flow (→, merge label) |
-| **Centralization** (scattered → one) | Before (scattered chips) → After (single hub box) |
-| **Quantities / load / time** | Bar chart |
-| **Schedule / phased plan** | Gantt roadmap |
-| **Hierarchy / partition** of roles | 3-up card grid |
-| **System / topology** | Tree (parent→children→leaves) |
-| **Data / log example** | Mono-font box (start=green, end=amber) |
-| Plain many-to-many comparison | Table |
-| **Values across ≤8 items** | Vertical bar (§5.8-ref: `design.md §5.8`) / horizontal bar when labels long |
-| **Share of whole** (one big ratio) | Donut (`design.md §5.12`); many parts → stacked bar (`§5.10`) |
-| **Trend over time** (direction is the point) | Area / trend chart (`§5.11`) |
-| **Before/after single number** | KPI + delta (`§5.13`); a few headline numbers → stat grid (`§5.9`) or dark stat band (`§4.11`) |
-| **Progress / attainment** of 3–5 items | Progress rings (`§5.14`) or horizontal bars |
-| **2-D intensity** (when × where) | Heatmap (`§5.15`) |
-| **3–5 step procedure** | Process step row (`§4.9`) |
-| **Options × criteria verdict** | Check matrix (`§4.14`) |
-| **Who calls whom, in order** | UML sequence (`§5.17`) |
-| **Lifecycle / status transitions** | UML state machine (`§5.18`) |
-| **Code structure / inheritance** | UML class (`§5.19`) |
-| **Module provides/requires** | UML component (`§5.20`) |
-| **Actor → system functions** | UML use case (`§5.21`) |
-| **Flow by responsible party** | UML swimlane (`§5.22`) |
-| **Concurrent tasks that rejoin** | UML fork/join (`§5.23`) |
-| **One principle to imprint** | Pull quote (`§4.10`) |
-| **A caution / recommendation aside** | Callout box — KEY/OK/WARN/NOTE (`§4.8`) |
-| **Break a long doc into acts** | Section divider (`§4.12`) |
+
+Use the content shape, not visual variety, to pick the device.
+
+| Content shape | Use | Do not use | Reviewer question |
+|---|---|---|---|
+| Current vs target **structure** | Before/After comparison panel | Two unrelated card grids | Is the AS-IS/TO-BE contrast the claim? |
+| Linear happy path only, 3–5 steps | Process step row or vertical flow | UML activity | Are there no branch states, bypass paths, or loops? |
+| Workflow with optional synthesis, bypass, approval, rejection, or needs-more-evidence | UML activity, conditional dashed box, or swimlane | Flat process row | Does every terminal/loop state have a visible path? |
+| Actor-specific operational flow | UML swimlane | Generic card grid | Can the reader see who acts next? |
+| Lifecycle/status transitions | UML state machine | Status chips under a process row | Are allowed transitions visible? |
+| One source with several valid terminal outcomes, including "do nothing" | UML activity with decision diamond + terminal outcome cards | Single happy-path pipeline | Are the non-Task / no-op / rejected outcomes visible as first-class outcomes? |
+| A forbidden conversion alongside allowed alternatives | Forbidden-path comparison (allowed panel + amber blocked panel) | Footnote-only warning | Can the reader see both what is forbidden and what replaces it? |
+| Two independent state machines that must not auto-map | Parallel state-machine lanes + explicit "no automatic mapping" callout | One merged status row | Is the independence of the two lifecycles impossible to miss? |
+| Recovery / queue inclusion logic | Decision table / check matrix | Flowchart | Are policy, visibility, and resolution conditions compared row-by-row? |
+| Transform / converge (X becomes Y, paths merge) | Horizontal flow with merge label | Equal cards | Is the merge/convergence the point? |
+| Bounded systems plus optional integration layer | Layered architecture map or component map | Tree of boxes only | Are ownership, optionality, and connectors visible? |
+| Hierarchy / partition without operational handoff | Tree or 3-up role grid | Swimlane | Is it just grouping, not action ownership? |
+| Ownership across domain objects | Matrix | Equal cards | Are rows/columns carrying distinct meanings? |
+| Entity link as conceptual centralization | Hub-and-spoke or before scattered chips → after hub | Table | Is the point centralization rather than schema detail? |
+| Entity link relation names/cardinality/rules | Table or matrix | Decorative relation chips | Are relation names schema facts? |
+| UI principles by user role | Surface map or lane map | Principle cards only | Can the reader see screen, action, and handoff per role? |
+| System / topology | Tree (parent→children→leaves) | Layered map | Is optionality/connectors not the main claim? |
+| Data / log example | Mono-font box (start=green, end=amber) | Decorative screenshot | Is the exact example text the evidence? |
+| Plain many-to-many comparison | Table | Peer cards | Do rows and columns each carry meaning? |
+| Quantities / load / time | Bar chart | Stat cards only | Does length/height encode the claim? |
+| Values across ≤8 items | Vertical bar (`design.md §5.8`) / horizontal bar when labels long | Table | Is comparison by magnitude the point? |
+| Share of whole (one big ratio) | Donut (`design.md §5.12`); many parts → stacked bar (`§5.10`) | Pie with many slices | Is it one ratio, not a catalog? |
+| Trend over time (direction is the point) | Area / trend chart (`§5.11`) | Point-in-time stat grid | Does the slope matter? |
+| Before/after single number | KPI + delta (`§5.13`); a few headline numbers → stat grid (`§5.9`) or dark stat band (`§4.11`) | Full chart | Is the number itself the message? |
+| Progress / attainment of 3–5 items | Progress rings (`§5.14`) or horizontal bars | Checklist cards | Is attainment level visible? |
+| 2-D intensity (when × where) | Heatmap (`§5.15`) | Two separate bar charts | Do both axes matter at once? |
+| Options × criteria verdict | Check matrix (`§4.14`) | Narrative cards | Can the reader compare options column-by-column? |
+| Who calls whom, in order | UML sequence (`§5.17`) | Process row | Are participants and message order both important? |
+| Code structure / inheritance | UML class (`§5.19`) | Tree | Are attributes/methods or inheritance the claim? |
+| Module provides/requires | UML component (`§5.20`) | System topology tree | Are interfaces the claim? |
+| Actor → system functions | UML use case (`§5.21`) | Feature cards | Are actor boundaries the claim? |
+| Concurrent tasks that rejoin | UML fork/join (`§5.23`) | Parallel cards | Must all branches complete before proceeding? |
+| Executive decision | Decision block or open-question table | Peer mini-card | Is the ask visually impossible to miss? |
+| One principle to imprint | Pull quote (`§4.10`) | Callout grid | Is this one message, not a list? |
+| A caution / recommendation aside | Callout box — KEY/OK/WARN/NOTE (`§4.8`) | Primary content grid | Is it truly aside content? |
+| Break a long doc into acts | Section divider (`§4.12`) | Empty section | Does the reader need a pacing reset? |
 
 > The full chart/viz gallery, UML library, and slide-format components each carry a **"언제 쓰나"** usage note in `design.md §5.8–§5.23 / §4.8–§4.14` — read it before reaching for one. Charts are pure CSS (no SVG/chart lib). Still obey "diagram only if diagrammable": a bare enumerated list stays a card grid/table.
 
@@ -201,8 +211,20 @@ This is the **content/voice** pre-ship list. For visual reproduction, also run `
 ---
 
 ## 7. Quick start for a new document
-1. Write the **title sequence first** (one noun-phrase title per section). Read them back as a TOC; revise until they tell the story alone. Aim for ~6–9 sections + reference (§2).
-2. Lay out the skeleton (§2) and decide each page's **type** (§4 / `design.md` §6). If the topic is greenfield (no AS-IS) or metric-less, read §4.4 / §4.6 first.
-3. **Clone `template.dc.html`** (it carries the shell + runtime JS from `../../core/runtime-spec.md`). For each section: lead paragraph → core content → **decide if it's diagrammable (§5.1)** → build the figure.
-4. Apply color/emphasis by intent (§5.2–5.3); copy exact visual values from `design.md`. Write in the §3.1 Korean register.
-5. Run the §6 content checklist **and** `design.md §9` visual checklist before shipping.
+1. Declare the **narrative lens**: `architecture-first` | `use-case-first` | `decision-first`. If `use-case-first`, the first numbered sections follow actor/scenario/journey and architecture supports the journey later. If `decision-first`, the opening states the decision context and the deck proves it through tradeoffs/open questions. If `architecture-first`, use cases are examples, not the main spine.
+2. Write the **title sequence first** (one noun-phrase title per section). Read them back as a TOC; revise until they tell the story alone. Aim for ~6–9 sections + reference (§2).
+3. Lay out the skeleton (§2) and decide each page's **type** (§4 / `design.md` §6). If the topic is greenfield (no AS-IS) or metric-less, read §4.4 / §4.6 first.
+4. **Clone `template.dc.html`** (it carries the shell + runtime JS from `../../core/runtime-spec.md`). For each section: lead paragraph → core content → **decide if it's diagrammable (§5.1)** → build the figure.
+5. Apply color/emphasis by intent (§5.2–5.3); copy exact visual values from `design.md`. Write in the §3.1 Korean register.
+6. Run the §6 content checklist **and** `design.md §9` visual checklist before shipping.
+
+### 7.1 Stop questions for structural ambiguity
+
+Ask these only when the answer changes the outline, page type, primary device, or section budget. If the answer only changes wording, proceed without interruption.
+
+1. Should this persuade decision-makers first, walk through user scenarios first, or explain architecture first?
+2. When you say use-case centered, should the whole outline reorganize around actors/scenarios, or should examples be added inside the existing architecture outline?
+3. Is the decision ask a final recommendation, an open question list, or a subtle direction-setting note?
+4. For more content, should depth be added to the same sections, new sections added, or low-value overview blocks replaced with concrete scenarios?
+5. Which audience is primary: executive sponsor, product/operator, developer/reviewer, or mixed peer review?
+6. If this section already has a diagram, should the new material replace/annotate the diagram, become a new section, or move to appendix/reference?
