@@ -26,7 +26,9 @@
 
 ---
 
-## 2. 문서 위치 (전부 `parserimprove/uploads/`)
+## 2. 문서 위치 (§2.1–2.3 전부 `reference/parserimprove/uploads/`)
+
+> ⚠️ 2026-07-04 재구조: 발표 시스템이 `core/` + `styles/indigo-serif/`로 분리됐고 `parserimprove/`는 `reference/`로 이관됨. 아래 경로는 그에 맞춰 갱신.
 
 ### 2.1 프로젝트 설계 문서군
 | 문서 | 내용 | 상태 |
@@ -51,8 +53,12 @@
 | `spec_extensions.md` | 발표 시스템 확장 스펙(색법칙 결정·새 컴포넌트·도식·페이지타입·mermaid매핑·문서군 규칙·토큰 거버넌스) |
 | `converter_pilot.dc.html` | `converter_design.md`를 실제 발표자료로 만든 파일럿(실행 가능) |
 
-### 2.4 발표 시스템 스펙 라이브러리 (레포 루트 — 이 레포의 본체)
-`README.md` · `authoring-guide.md`(보이스·구조·페이지타입) · `design.md`(토큰·컴포넌트·도식) · `composition-guide.md`(밀도) · `runtime-spec.md`(셸·JS) · `template.dc.html`(스켈레톤) · `design.tokens.md`(토큰 미러). 캐노니컬 예시: `parserimprove/로그파서 개선 설명자료 v2.dc.html`.
+### 2.4 발표 시스템 스펙 라이브러리 (이 레포의 본체 — 스타일별 분리)
+- **`core/`** (스타일 불가지): `runtime-spec.md`(셸·JS·DOM계약·서빙, HEX 없음).
+- **`styles/indigo-serif/`** (현 스타일 SSOT): `design.md`(토큰·컴포넌트·도식) · `authoring-guide.md`(보이스·구조·페이지타입, 미분할) · `composition-guide.md`(밀도) · `design.tokens.md`(토큰 미러) · `template.dc.html`(스켈레톤+support.js) · `design-system.answerkey.dc.html`(정답지).
+- **`README.md`**: 진입점 + 스타일 레지스트리.
+
+캐노니컬 예시: `reference/parserimprove/로그파서 개선 설명자료 v2.dc.html`.
 
 ---
 
@@ -76,7 +82,8 @@
 - [ ] rework 재적재 방식·carryover 저장 방식(상위 문서 §10 미정)
 
 ### 발표 시스템
-- [ ] `spec_extensions.md`를 코어 스펙(design.md·authoring-guide.md·composition-guide.md)에 실제 병합
+- [x] **다중 스타일 폴더 분리** (2026-07-04): `core/`(불가지) + `styles/indigo-serif/`(SSOT) + `reference/`. 적대적 5-리뷰어 채점(3.44/10, NO_GO) → 축소 실행: 런타임 크롬색 토큰화 + rename + 스타일 레지스트리. authoring 분할·support.js dedup은 2번째 스타일 시로 연기.
+- [ ] `reference/parserimprove/uploads/spec_extensions.md`를 코어/스타일 스펙(styles/indigo-serif/design.md·authoring-guide.md·composition-guide.md)에 실제 병합
 - [ ] 토큰 CSS 변수화 + allowlist 린터 + range→단일값 확정, 캐노니컬 v2 오프토큰(`#A8AEC4`·`#C0A8E0`) 정정
 - [ ] `converter_pilot.dc.html`을 **브라우저 렌더링해 밀도/레이아웃 육안 검증**(현재는 정적 정합성만)
 - [ ] `integration_contracts_design.md`로 **두 번째 파일럿** 제작 → N×N 매트릭스·계약 카드·체크리스트 실사용 검증

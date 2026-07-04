@@ -1,6 +1,6 @@
 # RUNTIME SPEC — Container & interaction layer
 
-> The host container and JavaScript every document runs inside. A document built only from `design.md` (visual values) and `authoring-guide.md` (voice) **will not render or behave correctly** without the scaffold and scripts on this page.
+> The host container and JavaScript every document runs inside. A document built only from a style's `design.md` (visual values) and `authoring-guide.md` (voice) **will not render or behave correctly** without the scaffold and scripts on this page.
 >
 > **This doc owns:** the `.dc.html` document shell, the `<x-dc>` / `<helmet>` elements, the `data-dc-script` / `DCLogic` lifecycle, the two runtime scripts (scroll-progress + active-nav), the DOM naming contract (`id="sN"` ↔ `data-navlink`), and serving requirements.
 > **This doc does NOT cover:** visual values (→ the active style's `design.md`), voice/content (→ the active style's authoring guide). For a ready-to-fill skeleton, copy the active style's `template.dc.html`.
@@ -68,7 +68,7 @@ The shell and the two runtime scripts color exactly six slots. This file names t
   </helmet>
 
   <div style="font-family:Pretendard,sans-serif; color:⟨ink⟩; background:⟨bg-canvas⟩; min-height:100vh;">
-    <!-- progress bar, sticky nav, hero, paper sheet, sections … (see template.dc.html) -->
+    <!-- progress bar, sticky nav, hero, paper sheet, sections … (see the active style's template.dc.html) -->
   </div>
 </x-dc>
 
@@ -161,4 +161,4 @@ this._cleanup = () => { window.removeEventListener('scroll', onScroll); io.disco
 - Serve over **http(s)**, not `file://`. `support.js` does `fetch(location.href)` to re-parse the live template and `fetch('./<Name>.dc.html')` for sibling components; `file://` breaks these.
 - The page needs **outbound network**: React/ReactDOM UMD (unpkg), Pretendard (jsdelivr), Google Fonts. `support.js` injects React itself — do not add your own React tags.
 - Filename must end **`.dc.html`**; `support.js` must sit in the same directory.
-- **No media queries.** Mobile resilience comes only from intrinsic flex: hero stat tiles `flex:1; min-width:150px` inside a `flex-wrap:wrap` row, and the nav row `overflow-x:auto`. This is a desktop-first reading document (~1100px). See `design.md` responsive note before adding any breakpoint.
+- **No media queries.** Mobile resilience comes only from intrinsic flex: hero stat tiles `flex:1; min-width:150px` inside a `flex-wrap:wrap` row, and the nav row `overflow-x:auto`. This is a desktop-first reading document (~1100px). See the active style's `design.md` responsive note before adding any breakpoint.

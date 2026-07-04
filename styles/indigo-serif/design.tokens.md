@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: Scroll Explainer Design System
-description: Machine-readable token surface for the scroll-style same-author HTML explainer system. Conforms to the DESIGN.md spec (google-labs-code/design.md). Derived mirror of design.md, which stays the single source of truth for values and usage semantics; the parts this schema cannot express (diagram geometry, page-type roles, voice, runtime) live in design.md / authoring-guide.md / runtime-spec.md.
+description: Machine-readable token surface for the scroll-style same-author HTML explainer system. Conforms to the DESIGN.md spec (google-labs-code/design.md). Derived mirror of design.md, which stays the single source of truth for values and usage semantics; the parts this schema cannot express (diagram geometry, page-type roles, voice, runtime) live in design.md / authoring-guide.md / ../../core/runtime-spec.md.
 colors:
   # Accent — indigo = target / improvement / key (never in an AS-IS zone)
   accent: "#4338CA"
@@ -204,7 +204,7 @@ components:
 > **No content lives only here.** Diagram geometry, page-type roles, the Korean voice, and the runtime/JS layer are not representable in the DESIGN.md schema and remain in the additional docs — nothing was dropped to fit this format:
 > - `design.md` — full visual spec (components, diagram conventions §5, page types §6, anti-patterns §8). Canonical for usage semantics.
 > - `authoring-guide.md` — voice, Korean register, content patterns, page-type registry.
-> - `runtime-spec.md` — `<x-dc>` shell, `<helmet>`, `data-dc-script`/`DCLogic`, the scroll-progress + active-nav scripts, the DOM naming contract.
+> - `../../core/runtime-spec.md` — `<x-dc>` shell, `<helmet>`, `data-dc-script`/`DCLogic`, the scroll-progress + active-nav scripts, the DOM naming contract.
 > - `template.dc.html` — runnable skeleton. `README.md` — the doc map.
 >
 > **Filename note.** The DESIGN.md spec expects the literal filename `DESIGN.md`. On a case-insensitive filesystem (macOS) that collides with `design.md`, so this file is `design.tokens.md`. When feeding a tool that requires the literal name, symlink or copy it: `ln -s design.tokens.md DESIGN.md`.
@@ -227,7 +227,7 @@ Full-bleed indigo hero → white paper sheet (`max-width: 1100px`, `−44px` ove
 
 ## Elevation & Depth
 
-Mostly flat. The only shadows: the paper sheet (`0 -24px 60px rgba(30,34,70,.10)`), the primary/root indigo node (`0 6px 16px rgba(67,56,202,.2)` — all other nodes flat), and inset text-highlight on dark backgrounds. Sticky nav `z-index:50`; scroll-progress bar `z-index:60` (above nav). Details: `design.md §4.2`, `§5.1`, `runtime-spec.md §3`.
+Mostly flat. The only shadows: the paper sheet (`0 -24px 60px rgba(30,34,70,.10)`), the primary/root indigo node (`0 6px 16px rgba(67,56,202,.2)` — all other nodes flat), and inset text-highlight on dark backgrounds. Sticky nav `z-index:50`; scroll-progress bar `z-index:60` (above nav). Details: `design.md §4.2`, `§5.1`, `../../core/runtime-spec.md §3`.
 
 ## Shapes
 
