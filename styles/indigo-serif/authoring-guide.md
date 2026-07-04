@@ -129,6 +129,10 @@ Use the content shape, not visual variety, to pick the device.
 | Workflow with optional synthesis, bypass, approval, rejection, or needs-more-evidence | UML activity, conditional dashed box, or swimlane | Flat process row | Does every terminal/loop state have a visible path? |
 | Actor-specific operational flow | UML swimlane | Generic card grid | Can the reader see who acts next? |
 | Lifecycle/status transitions | UML state machine | Status chips under a process row | Are allowed transitions visible? |
+| One source with several valid terminal outcomes, including "do nothing" | UML activity with decision diamond + terminal outcome cards | Single happy-path pipeline | Are the non-Task / no-op / rejected outcomes visible as first-class outcomes? |
+| A forbidden conversion alongside allowed alternatives | Forbidden-path comparison (allowed panel + amber blocked panel) | Footnote-only warning | Can the reader see both what is forbidden and what replaces it? |
+| Two independent state machines that must not auto-map | Parallel state-machine lanes + explicit "no automatic mapping" callout | One merged status row | Is the independence of the two lifecycles impossible to miss? |
+| Recovery / queue inclusion logic | Decision table / check matrix | Flowchart | Are policy, visibility, and resolution conditions compared row-by-row? |
 | Transform / converge (X becomes Y, paths merge) | Horizontal flow with merge label | Equal cards | Is the merge/convergence the point? |
 | Bounded systems plus optional integration layer | Layered architecture map or component map | Tree of boxes only | Are ownership, optionality, and connectors visible? |
 | Hierarchy / partition without operational handoff | Tree or 3-up role grid | Swimlane | Is it just grouping, not action ownership? |

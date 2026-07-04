@@ -438,6 +438,23 @@ Container `border:1px solid #E7E9F3; border-radius:12px; overflow:hidden; displa
 ### 5.23 UML — fork / join (parallel)
 `max-width:340px; margin:0 auto;`. **Sync bars** (fork and join) `height:6px; background:#4338CA; border-radius:3px;` (full-width). Between them, parallel branches `display:grid; grid-template-columns:1fr 1fr; gap:14px;` each branch node `500 11.5px/1.3 #4338CA; background:#EEF0FF; border:1px solid #C9CEF4; border-radius:8px;`. Surrounding nodes white `1px solid #E2E5F0`; terminal DB node `1px dashed #B9BEDB` r9; flow `↓` `#B6BBD6`. Use when tasks run concurrently and all must finish before proceeding.
 
+### 5.24 Complex branch / terminal-outcome activity
+For workflows where not every path continues to execution, render the decision as a first-class activity diagram, not a linear process row. Start/key node at top → `diamond` (§5.4) → outcome cards in `grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px;`.
+
+- Normal outcomes: white node.
+- Preferred/target outcomes: key node (`#EEF0FF / #4338CA`).
+- Valid "no execution" or rejection outcomes: amber semantic node `color:#B4543F; background:#FBF1EE; border:1px solid #F0D7CF;` with a reason/audit sub-line.
+- Keep terminal outcomes visually equal height. Do not hide "no follow-up", "rejected", or "needs more evidence" as footnotes when they are valid states.
+
+### 5.25 Forbidden path with allowed alternatives
+Use when the reader must understand a prohibited conversion and the sanctioned replacement. Layout `display:grid; grid-template-columns:1fr 44px 1fr; gap:14px; align-items:center;` with the left panel for allowed paths and the right panel for the blocked path. The blocked panel uses the sanctioned WARN palette: `background:#FFF8F6; border:1px solid #F0D7CF;`, blocked nodes `#FBF1EE / #B4543F`. The center connector may be `↔` or `≠`; never use the same indigo treatment on the forbidden side.
+
+### 5.26 Parallel state machines
+Use when two lifecycles run near each other but must not auto-map. Place two figure panels in a `1fr 1fr` grid. Each panel has a small mono badge (`TASK STATUS`, `REPORTER STATUS`, etc.) and its own state machine (§5.18). Add a WARN callout below: `background:#FBF3EC; border:1px solid #F0D7CF; color:#94724F;` stating the forbidden automatic mapping. Do not draw a direct arrow between the two lanes unless it represents a review candidate, not a state mutation.
+
+### 5.27 Recovery / decision table
+Use a decision table when queue inclusion depends on policy, link presence, visibility, and resolution status. Container is the table/check-matrix base (§4.7/§4.14), but rows should be `grid-template-columns:1.2fr .8fr .8fr 1.1fr` by default: `condition / follow-up / visibility / result`. Header is dark `#15172B`; result cells may use concise labels like `Active queue`, `History`, `Safe summary`, `Hidden`. Decision tables are better than flowcharts when the row conditions are independent and comparable.
+
 ---
 
 ## 6. Token usage by page type

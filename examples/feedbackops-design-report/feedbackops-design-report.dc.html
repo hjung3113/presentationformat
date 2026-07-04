@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:#EEF0F7; word-break:keep-all; overflow-wrap:break-word; text-wrap:pretty; }
+    p, h1, h2, h3, div, span, li, a { word-break:keep-all; box-sizing:border-box; }
+    *::selection { background:#C7D2FE; }
+    .nav-scroll::-webkit-scrollbar { height:0; }
+    .sheet { max-width:1100px; margin:-44px auto 0; background:#fff; border-radius:22px 22px 0 0; box-shadow:0 -24px 60px rgba(30,34,70,.10); padding:8px 64px 100px; position:relative; }
+    .section { padding:56px 0; border-top:1px solid #EAEBF2; }
+    .section.first { padding-top:60px; border-top:0; }
+    .eyebrow { font:700 13px/1 Pretendard; letter-spacing:.08em; color:#4338CA; margin-bottom:14px; }
+    .title { font:600 34px/1.34 'Noto Serif KR',serif; color:#15172B; margin:0 0 12px; letter-spacing:0; }
+    .lead { font:400 16px/1.85 Pretendard; color:#3E4658; margin:0 0 30px; max-width:760px; }
+    .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+    .card { border:1px solid #E7E9F3; border-radius:12px; padding:20px 22px; background:#fff; }
+    .soft { background:#F8F9FD; border-color:#EEF0F6; }
+    .card h3 { font:600 16px/1.35 Pretendard; color:#15172B; margin:0 0 8px; }
+    .card p { font:400 14px/1.72 Pretendard; color:#5A6175; margin:0; }
+    .num { font:700 12px/1 'JetBrains Mono',monospace; color:#4338CA; background:#EEF0FF; border-radius:6px; padding:6px 9px; display:inline-block; margin-right:10px; }
+    .panel { background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:24px; }
+    .node { font:600 12.5px/1.35 Pretendard; color:#1E2233; background:#fff; border:1px solid #E2E5F0; border-radius:8px; padding:11px 10px; text-align:center; }
+    .key { color:#4338CA; background:#EEF0FF; border:1.5px solid #4338CA; }
+    .store { border-style:dashed; color:#5A6175; }
+    .muted { color:#8A91A6; }
+    .arrow { color:#B6BBD6; text-align:center; font-size:18px; align-self:center; }
+    .pill { display:inline-flex; align-items:center; border-radius:100px; padding:6px 11px; font:500 11px/1 Pretendard; color:#4338CA; background:#EEF0FF; }
+    .warnpill { color:#94724F; background:#FBF3EC; }
+    .ok { color:#1F8A5B; background:#E6F5EE; }
+    .table { border:1px solid #E7E9F3; border-radius:12px; overflow:hidden; }
+    .row { display:grid; grid-template-columns:1.1fr 1.6fr 1.2fr; border-top:1px solid #EDEEF4; }
+    .row:first-child { border-top:0; background:#15172B; }
+    .cell { font:400 13px/1.55 Pretendard; color:#3E4658; padding:13px 16px; }
+    .row:first-child .cell { color:#fff; font-weight:600; }
+    .workflow-row { display:grid; grid-template-columns:1fr 28px 1fr 28px 1fr 28px 1fr 28px 1fr; align-items:start; }
+    .branch-grid { display:grid; grid-template-columns:1fr 44px 1fr; gap:14px; align-items:center; }
+    .diamond { width:82px; height:82px; margin:0 auto; position:relative; display:flex; align-items:center; justify-content:center; }
+    .diamond::before { content:""; position:absolute; inset:9px; background:#EEF0FF; border:1.5px solid #4338CA; border-radius:9px; transform:rotate(45deg); }
+    .diamond span { position:relative; z-index:1; font:700 11px/1.35 Pretendard; color:#4338CA; text-align:center; max-width:62px; }
+    .state-row { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+    .state { font:600 12.5px/1.3 Pretendard; color:#4338CA; background:#EEF0FF; border:1.5px solid #4338CA; border-radius:12px; padding:12px 16px; text-align:center; }
+    .blocked { color:#B4543F; background:#FBF1EE; border-color:#F0D7CF; }
+    .decision-row { display:grid; grid-template-columns:1.2fr .8fr .8fr 1.1fr; border-top:1px solid #EDEEF4; }
+    .decision-row:first-child { border-top:0; background:#15172B; }
+    .decision-row:first-child .cell { color:#fff; font-weight:600; }
+    @media (max-width: 820px) {
+      .sheet { padding:8px 22px 72px; margin-top:-32px; }
+      .grid2, .grid3 { grid-template-columns:1fr; }
+      .title { font-size:28px; }
+      .row, .decision-row { grid-template-columns:1fr; }
+      .branch-grid { grid-template-columns:1fr; }
+      .nav-scroll { min-width:0; flex:1 1 auto; }
+      .nav-scroll a { flex:0 0 auto; }
+      .workflow-row { grid-template-columns:1fr; gap:8px; }
+      .workflow-row .arrow { transform:rotate(90deg); justify-self:center; }
+    }
+  </style>
+</helmet>
+
+<div style="font-family:Pretendard,sans-serif; color:#1E2233; background:#EEF0F7; min-height:100vh;">
+  <div style="position:fixed; top:0; left:0; right:0; height:3px; background:transparent; z-index:60;">
+    <div id="rprog" style="height:100%; width:0%; background:#4338CA;"></div>
+  </div>
+
+  <div style="position:sticky; top:0; z-index:50; background:rgba(255,255,255,.86); backdrop-filter:blur(10px); border-bottom:1px solid #E2E5F0;">
+    <div style="max-width:1100px; margin:0 auto; padding:0 40px; display:flex; align-items:center; gap:20px; height:54px; min-width:0;">
+      <a href="#top" style="text-decoration:none; font:700 14px/1 Pretendard; color:#15172B; white-space:nowrap; flex:0 0 auto;">FeedbackOps <span style="color:#4338CA;">설계 보고</span></a>
+      <div class="nav-scroll" style="display:flex; gap:18px; overflow-x:auto; margin-left:auto; min-width:0; flex:1 1 auto;">
+        <a data-navlink="s1" href="#s1" style="text-decoration:none; font:500 13px/1 Pretendard; color:#8A91A6; white-space:nowrap;">필요성</a>
+        <a data-navlink="s2" href="#s2" style="text-decoration:none; font:500 13px/1 Pretendard; color:#8A91A6; white-space:nowrap;">사용시점</a>
+        <a data-navlink="s3" href="#s3" style="text-decoration:none; font:500 13px/1 Pretendard; color:#8A91A6; white-space:nowrap;">시스템</a>
+        <a data-navlink="s4" href="#s4" style="text-decoration:none; font:500 13px/1 Pretendard; color:#8A91A6; white-space:nowrap;">연결</a>
+        <a data-navlink="s5" href="#s5" style="text-decoration:none; font:500 13px/1 Pretendard; color:#8A91A6; white-space:nowrap;">흐름</a>
+        <a data-navlink="s6" href="#s6" style="text-decoration:none; font:500 13px/1 Pretendard; color:#8A91A6; white-space:nowrap;">VOC분기</a>
+        <a data-navlink="s7" href="#s7" style="text-decoration:none; font:500 13px/1 Pretendard; color:#8A91A6; white-space:nowrap;">설문</a>
+        <a data-navlink="s8" href="#s8" style="text-decoration:none; font:500 13px/1 Pretendard; color:#8A91A6; white-space:nowrap;">요청</a>
+        <a data-navlink="s9" href="#s9" style="text-decoration:none; font:500 13px/1 Pretendard; color:#8A91A6; white-space:nowrap;">상태</a>
+        <a data-navlink="s10" href="#s10" style="text-decoration:none; font:500 13px/1 Pretendard; color:#8A91A6; white-space:nowrap;">복구</a>
+        <a data-navlink="s11" href="#s11" style="text-decoration:none; font:500 13px/1 Pretendard; color:#8A91A6; white-space:nowrap;">권한</a>
+        <a data-navlink="s12" href="#s12" style="text-decoration:none; font:500 13px/1 Pretendard; color:#8A91A6; white-space:nowrap;">운영</a>
+        <a data-navlink="s13" href="#s13" style="text-decoration:none; font:500 13px/1 Pretendard; color:#8A91A6; white-space:nowrap;">범위</a>
+        <a data-navlink="sref" href="#sref" style="text-decoration:none; font:500 13px/1 Pretendard; color:#B6BBCB; white-space:nowrap;">용어<span style="font-size:10px; vertical-align:super;">ref</span></a>
+      </div>
+    </div>
+  </div>
+
+  <div id="top" style="background:linear-gradient(155deg,#4F46E5 0%,#3F35C4 55%,#372EAC 100%); color:#fff; padding:78px 40px 92px; position:relative; overflow:hidden;">
+    <div style="position:absolute; inset:0; background-image:radial-gradient(circle at 86% 14%, rgba(255,255,255,.10) 0%, transparent 42%); pointer-events:none;"></div>
+    <div style="max-width:1020px; margin:0 auto; position:relative;">
+      <div style="display:inline-flex; align-items:center; gap:9px; font:600 12px/1 Pretendard; letter-spacing:.1em; color:#D9DCFF; background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.18); border-radius:100px; padding:9px 16px; margin-bottom:30px;">DESIGN BRIEF · 프로젝트 소개 보고 자료</div>
+      <h1 style="font:700 52px/1.28 'Noto Serif KR',serif; margin:0 0 24px; letter-spacing:0; max-width:840px;">FeedbackOps<br>피드백에서 실행까지 이어지는 운영 시스템</h1>
+      <p style="font:400 18px/1.85 Pretendard; color:#E2E3FB; margin:0 0 14px; max-width:720px;">FeedbackOps는 내부 VOC·설문·Finding·Task·결과 검증을 하나의 거대한 워크플로로 합치지 않고, 각 시스템이 독립적으로 동작하면서 필요한 순간 <span style="color:#fff; font-weight:600; border-bottom:2px solid rgba(255,255,255,.45);">근거·결정·실행 이력</span>을 연결하게 한다. 프로젝트의 핵심은 새 도구 하나가 아니라, 흩어진 피드백 운영의 궤적을 복원 가능한 운영 자산으로 만드는 것이다.</p>
+      <p style="font:400 14px/1.7 Pretendard; color:#B8BBF0; margin:0 0 40px; max-width:720px;">본 문서는 외부 소개용 마케팅 자료가 아니라, 프로젝트 필요성·사용 시점·시스템 연결 방식을 설명하는 설계 보고 자료이다.</p>
+      <div style="display:flex; flex-wrap:wrap; gap:14px;">
+        <div style="flex:1; min-width:150px; background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.14); border-radius:14px; padding:20px 22px;"><div style="font:700 30px/1 'Noto Serif KR',serif; color:#fff;">AD</div><div style="font:400 13px/1.5 Pretendard; color:#C7CAF5; margin-top:8px;">내부 인증 Actor<br>기본 User</div></div>
+        <div style="flex:1; min-width:150px; background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.14); border-radius:14px; padding:20px 22px;"><div style="font:700 30px/1 'Noto Serif KR',serif; color:#fff;">MS</div><div style="font:400 13px/1.5 Pretendard; color:#C7CAF5; margin-top:8px;">Managed System<br>범위·권한 기준</div></div>
+        <div style="flex:1; min-width:150px; background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.14); border-radius:14px; padding:20px 22px;"><div style="font:700 30px/1 'Noto Serif KR',serif; color:#fff;">TR</div><div style="font:400 13px/1.5 Pretendard; color:#C7CAF5; margin-top:8px;">Task Request<br>백로그 보호 장치</div></div>
+        <div style="flex:1; min-width:150px; background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.14); border-radius:14px; padding:20px 22px;"><div style="font:700 30px/1 'Noto Serif KR',serif; color:#fff;">Link</div><div style="font:400 13px/1.5 Pretendard; color:#C7CAF5; margin-top:8px;">entity_links<br>교차 이력 정본</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sheet">
+    <section id="s1" data-screen-label="01 필요성" class="section first">
+      <div class="eyebrow">01 · BACKGROUND</div>
+      <h2 class="title">필요성 — 피드백과 실행 사이의 끊어진 궤적</h2>
+      <p class="lead">피드백 운영에서 가장 큰 비용은 VOC를 받는 일이 아니라, 그 VOC가 어떤 근거로 묶였고 어떤 실행으로 이어졌으며 실제 효과가 있었는지를 나중에 설명하는 일이다. 기존 도구 조합은 인테이크·설문·이슈·결과 확인을 각각 처리하지만, 그 사이의 연결은 사람이 기억·회의록·수동 링크에 의존한다. FeedbackOps는 이 구간을 <b style="color:#4338CA;">감사 가능한 연결</b>로 만든다.</p>
+      <div class="grid3">
+        <div class="card soft"><h3>흩어진 인테이크</h3><p>VOC와 Survey Response가 다른 표면에서 들어오고, 중복·유사·원인 판단이 개인 기억에 의존한다.</p></div>
+        <div class="card soft"><h3>설명되지 않는 실행</h3><p>Task는 존재하지만 왜 시작됐는지, 어떤 증거가 있었는지, 어떤 사용자 문제와 연결되는지 추적하기 어렵다.</p></div>
+        <div class="card soft"><h3>닫히지 않는 검증</h3><p>Task Done이 곧 사용자 문제 해결을 뜻하지 않는다. Reporter 대면 상태와 Outcome Survey가 별도 검토를 요구한다.</p></div>
+      </div>
+    </section>
+
+    <section id="s2" data-screen-label="02 사용시점" class="section">
+      <div class="eyebrow">02 · USE CASE</div>
+      <h2 class="title">사용 시점 — 피드백이 운영 업무로 전환되는 순간</h2>
+      <p class="lead">FeedbackOps는 모든 대화를 저장하는 범용 CRM이 아니다. 내부 AD 인증 Actor가 관리 대상 시스템에 대한 피드백·검증·후속 실행을 운영해야 할 때 사용한다. 핵심 사용자는 PM, CX·CS Ops Manager, VOC Manager, Product Ops, Workspace Admin이며 Developer와 Survey Operator는 실행·검증 흐름에서 함께 사용한다.</p>
+      <div class="grid2">
+        <div class="card"><span class="num">2.1</span><h3 style="display:inline;">VOC가 들어왔을 때</h3><p style="margin-top:10px;">Reporter가 Managed System을 선택해 VOC를 등록한다. Admin 또는 same-scope Developer가 Inbox와 Triage에서 owner·severity·category·Analytics Area·follow-up path를 결정한다.</p></div>
+        <div class="card"><span class="num">2.2</span><h3 style="display:inline;">증거를 묶어야 할 때</h3><p style="margin-top:10px;">단일 VOC의 조치가 명확하면 Task Request로 바로 간다. 여러 VOC·Survey 결과·수동 분석을 합쳐 판단해야 하면 Finding을 만든다.</p></div>
+        <div class="card"><span class="num">2.3</span><h3 style="display:inline;">실행 후보를 검토해야 할 때</h3><p style="margin-top:10px;">VOC나 Finding은 Task를 직접 만들지 않는다. Task Request가 증거 요약·요청 결과·Managed System 범위를 들고 검토 큐에 들어간다.</p></div>
+        <div class="card"><span class="num">2.4</span><h3 style="display:inline;">후속 공백을 찾아야 할 때</h3><p style="margin-top:10px;">Dashboard와 Integration은 모든 미연결 항목을 문제로 보지 않는다. 정책·severity·workflow 설정이 기대한 링크나 후속 결정이 없을 때만 recovery item으로 보여준다.</p></div>
+      </div>
+    </section>
+
+    <section id="s3" data-screen-label="03 시스템" class="section">
+      <div class="eyebrow">03 · SYSTEM MAP</div>
+      <h2 class="title">시스템 지도 — 독립 시스템과 선택적 통합 계층</h2>
+      <p class="lead">FeedbackOps의 설계는 VOC·Task·Survey를 한 시스템으로 합치는 것이 아니라, 각각 독립적으로 완료 가능한 업무 시스템으로 둔 뒤 필요한 순간 Finding·Evidence·Entity Link·Action Dashboard가 연결하게 한다. 이 분리는 제품을 작게 시작하게 하고, 동시에 운영 이력을 잃지 않게 한다.</p>
+      <div class="panel">
+        <div class="node key" style="max-width:280px; margin:0 auto 12px;">Core Platform<br><span class="muted" style="font-weight:400;">Workspace · Actor · Managed System · Permission</span></div>
+        <div class="grid3" style="margin-bottom:16px;">
+          <div class="node">VOC System<br><span class="muted" style="font-weight:400;">Inbox · Triage · Cluster · Public Update</span></div>
+          <div class="node">Survey System<br><span class="muted" style="font-weight:400;">Builder · Response · Result · Outcome</span></div>
+          <div class="node">Task System<br><span class="muted" style="font-weight:400;">Task Request · Task · Board · Milestone</span></div>
+        </div>
+        <div class="node key" style="max-width:520px; margin:0 auto 14px;">FeedbackOps Integration Layer<br><span class="muted" style="font-weight:400;">Finding · Evidence Highlight · Entity Linking · Coverage · Action Dashboard</span></div>
+        <div class="grid2">
+          <div class="node store">Permission / Access<br><span class="muted" style="font-weight:400;">Role Level · Capability · Scope · Explicit Deny</span></div>
+          <div class="node store">Admin / Configuration<br><span class="muted" style="font-weight:400;">Managed System Registry · Analytics Area · Policy</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="s4" data-screen-label="04 연결" class="section">
+      <div class="eyebrow">04 · CONNECTION</div>
+      <h2 class="title">연결 방식 — 강한 소유와 느슨한 링크의 분리</h2>
+      <p class="lead">각 레코드는 Primary Managed System을 직접 가진다. 반면 교차 시스템 관계는 직접 외래키를 무한히 늘리지 않고 <b style="color:#4338CA;">entity_links</b>로 표현한다. 이 구조는 VOC·Finding·Task·Survey가 서로를 강제로 소유하지 않게 하면서도, 필요한 연결과 visibility를 감사 가능한 행으로 남긴다.</p>
+      <div class="grid2" style="align-items:stretch;">
+        <div class="panel">
+          <div style="font:700 11px/1 'JetBrains Mono',monospace; color:#fff; background:#94A0B4; display:inline-block; border-radius:6px; padding:6px 10px; margin-bottom:16px;">DIRECT OWNERSHIP</div>
+          <div class="node key">Workspace</div>
+          <div class="arrow">↓</div>
+          <div class="node key">Primary Managed System</div>
+          <div class="arrow">↓</div>
+          <div class="grid2">
+            <div class="node">VOC</div>
+            <div class="node">Finding</div>
+            <div class="node">Task Request</div>
+            <div class="node">Survey</div>
+          </div>
+        </div>
+        <div class="panel">
+          <div style="font:700 11px/1 'JetBrains Mono',monospace; color:#fff; background:#4338CA; display:inline-block; border-radius:6px; padding:6px 10px; margin-bottom:16px;">LOOSE LINKING</div>
+          <div class="node key">core.entity_links</div>
+          <div class="arrow">relation_type · visibility · created_by</div>
+          <div class="grid2">
+            <div class="node">VOC → Finding<br><span class="muted" style="font-weight:400;">created_finding</span></div>
+            <div class="node">Finding → Task Request<br><span class="muted" style="font-weight:400;">requested_task</span></div>
+            <div class="node">Task Request → Task<br><span class="muted" style="font-weight:400;">converted_to</span></div>
+            <div class="node">Survey → Finding<br><span class="muted" style="font-weight:400;">generated_finding</span></div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:18px;"><span class="pill">Survey Response → VOC 금지</span><span class="pill">Task Done ≠ Reporter 해결</span><span class="pill">Task Request가 Backlog 보호</span><span class="pill warnpill">모든 미연결이 장애는 아님</span></div>
+    </section>
+
+    <section id="s5" data-screen-label="05 흐름" class="section">
+      <div class="eyebrow">05 · WORKFLOW</div>
+      <h2 class="title">대표 흐름 — 접수에서 검증까지</h2>
+      <p class="lead">좋은 사용 방식은 먼저 소스 시스템에서 자연스럽게 일을 끝내고, 통합이 필요한 순간만 연결하는 것이다. 단일 VOC 조치가 명확하면 Finding 없이 Task Request로 간다. 여러 근거를 합쳐야 하면 Finding이 증거와 판단을 압축한다.</p>
+      <div class="panel">
+        <div class="workflow-row">
+          <div class="node key">1. VOC / Survey<br><span class="muted" style="font-weight:400;">접수·응답·결과</span></div>
+          <div class="arrow">→</div>
+          <div class="node">2. Evidence / Finding<br><span class="muted" style="font-weight:400;">필요할 때만 종합</span></div>
+          <div class="arrow">→</div>
+          <div class="node key">3. Task Request<br><span class="muted" style="font-weight:400;">검토 가능한 실행 후보</span></div>
+          <div class="arrow">→</div>
+          <div class="node">4. Task<br><span class="muted" style="font-weight:400;">Backlog · Todo · Doing · Released</span></div>
+          <div class="arrow">→</div>
+          <div class="node key">5. Public Update / Outcome<br><span class="muted" style="font-weight:400;">상태 검토·효과 확인</span></div>
+        </div>
+      </div>
+      <div class="table" style="margin-top:22px;">
+        <div class="row"><div class="cell">상황</div><div class="cell">좋은 사용 방식</div><div class="cell">피해야 할 해석</div></div>
+        <div class="row"><div class="cell">단일 VOC 조치 명확</div><div class="cell">VOC에서 Task Request를 만들고 리뷰 후 Backlog Task로 전환한다.</div><div class="cell">모든 VOC에 Finding을 강제하지 않는다.</div></div>
+        <div class="row"><div class="cell">여러 근거 종합 필요</div><div class="cell">VOC Cluster·Survey Result·수동 분석을 Finding으로 요약한다.</div><div class="cell">Survey Response를 새 VOC로 만들지 않는다.</div></div>
+        <div class="row"><div class="cell">Task Released</div><div class="cell">Reporter-facing status review 후보와 Public Update를 검토한다.</div><div class="cell">Task Done을 VOC 해결로 자동 매핑하지 않는다.</div></div>
+      </div>
+    </section>
+
+    <section id="s6" data-screen-label="06 VOC 분기" class="section">
+      <div class="eyebrow">06 · VOC BRANCH</div>
+      <h2 class="title">VOC 분기 — Task까지 가지 않는 경로</h2>
+      <p class="lead">VOC는 Task를 만들기 위한 입력 양식이 아니다. 트리아지 결과에 따라 정보 요청, 공개 업데이트, Finding 생성, Task Request 생성, no-follow-up-needed 결정으로 갈라진다. 실행하지 않는 결정도 이유와 감사 이력을 가진 명시적 운영 결정이다.</p>
+      <div class="panel">
+        <div class="node key" style="max-width:260px; margin:0 auto;">VOC 접수</div>
+        <div class="arrow">↓</div>
+        <div class="diamond"><span>트리아지<br>결정</span></div>
+        <div class="arrow">↓</div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px;">
+          <div class="node">정보 부족<br><span class="muted" style="font-weight:400;">Reporter Reply 요청</span></div>
+          <div class="node">안내 충분<br><span class="muted" style="font-weight:400;">Public Update only</span></div>
+          <div class="node key">종합 필요<br><span class="muted" style="font-weight:400;">Finding 생성</span></div>
+          <div class="node key">실행 명확<br><span class="muted" style="font-weight:400;">Task Request</span></div>
+          <div class="node blocked">실행 안 함<br><span style="font-weight:400; color:#94724F;">no-follow-up + reason</span></div>
+        </div>
+      </div>
+      <div class="grid2" style="margin-top:18px;">
+        <div class="card"><h3>Task 없이 닫히는 경우</h3><p>단순 안내, 중복 접수, 정책상 처리하지 않음, 추가 정보 대기처럼 실행 backlog가 필요 없는 항목은 Task로 가지 않는다.</p></div>
+        <div class="card"><h3>Finding을 거치는 경우</h3><p>여러 VOC·Survey 결과·수동 분석을 합쳐 root cause, scope, severity, confidence를 설명해야 할 때 Finding을 먼저 만든다.</p></div>
+      </div>
+    </section>
+
+    <section id="s7" data-screen-label="07 설문 경로" class="section">
+      <div class="eyebrow">07 · SURVEY PATH</div>
+      <h2 class="title">Survey 경로 — VOC 생성 금지와 대체 연결</h2>
+      <p class="lead">Survey Response는 새 VOC를 만들지 않는다. 설문 결과는 Survey System 안에서 해석되고, 필요한 경우 Evidence Highlight, Finding, Task Request, 기존 VOC 근거 연결로 이어진다. 익명·신원보호 응답은 safe summary를 거쳐야 한다.</p>
+      <div class="branch-grid">
+        <div class="panel">
+          <div class="node key">Survey Result</div>
+          <div class="arrow">↓</div>
+          <div class="grid2">
+            <div class="node">Evidence Highlight</div>
+            <div class="node key">Finding</div>
+            <div class="node key">Task Request</div>
+            <div class="node">기존 VOC에 근거 연결</div>
+          </div>
+        </div>
+        <div class="arrow">↔</div>
+        <div class="panel" style="background:#FFF8F6; border-color:#F0D7CF;">
+          <div class="node blocked">금지 경로</div>
+          <div class="arrow" style="color:#B4543F;">↓</div>
+          <div class="node blocked">Survey Response → New VOC</div>
+          <div style="font:400 12px/1.6 Pretendard; color:#94724F; margin-top:12px; text-align:center;">생성 fallback도 제공하지 않는다.</div>
+        </div>
+      </div>
+      <div class="table" style="margin-top:22px;">
+        <div class="row"><div class="cell">설문 상황</div><div class="cell">허용 경로</div><div class="cell">해소 기준</div></div>
+        <div class="row"><div class="cell">Discovery 결과</div><div class="cell">Finding 또는 Evidence Highlight로 문제 패턴을 보존한다.</div><div class="cell">근거가 붙거나 실행 불필요 결정</div></div>
+        <div class="row"><div class="cell">Outcome 결과 나쁨</div><div class="cell">Finding, Task Request, linked execution work, no-follow-up-needed 중 하나로 결정한다.</div><div class="cell">근거 연결만으로는 follow-up gap 해소 아님</div></div>
+        <div class="row"><div class="cell">기존 VOC 보강</div><div class="cell">attach_evidence_to_existing_voc로 기존 VOC에 safe summary를 붙인다.</div><div class="cell">VOC 자동 reopen 없음</div></div>
+      </div>
+    </section>
+
+    <section id="s8" data-screen-label="08 요청 상태" class="section">
+      <div class="eyebrow">08 · TASK REQUEST</div>
+      <h2 class="title">Task Request 상태 — 승인과 실행의 분리</h2>
+      <p class="lead">Task Request는 Task 생성 전 검토 버퍼다. 승인·반려·증거 보강 요청은 Task row를 만들지 않는다. 승인된 요청은 새 Backlog Task로 전환되거나, 이미 적절한 Task가 있으면 기존 Task에 연결된다.</p>
+      <div class="panel">
+        <div class="state-row" style="justify-content:center;">
+          <div style="width:16px; height:16px; border-radius:50%; background:#15172B;"></div>
+          <div class="arrow">→</div>
+          <div class="state">pending_review</div>
+          <div class="arrow">→</div>
+          <div class="state">approved</div>
+          <div class="arrow">→</div>
+          <div class="state">converted</div>
+          <div style="width:24px; height:24px; border-radius:50%; border:2px solid #1F8A5B; display:flex; align-items:center; justify-content:center;"><div style="width:12px; height:12px; border-radius:50%; background:#1F8A5B;"></div></div>
+        </div>
+        <div class="grid3" style="margin-top:20px;">
+          <div class="node blocked">reject<br><span style="font-weight:400; color:#94724F;">pending/needs_more → rejected</span></div>
+          <div class="node">request-more-evidence<br><span class="muted" style="font-weight:400;">pending → needs_more_evidence</span></div>
+          <div class="node key">link existing Task<br><span class="muted" style="font-weight:400;">approved → converted</span></div>
+        </div>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:18px;"><span class="pill">승인 ≠ Task 생성</span><span class="pill">전환 시 실행 필드 확정</span><span class="pill">기존 Task 연결 가능</span><span class="pill warnpill">self-approval은 별도 capability + reason</span></div>
+    </section>
+
+    <section id="s9" data-screen-label="09 상태 분리" class="section">
+      <div class="eyebrow">09 · STATUS</div>
+      <h2 class="title">상태 분리 — Task Done은 Reporter 해결이 아니다</h2>
+      <p class="lead">내부 실행 상태와 Reporter 대면 VOC 상태는 서로 다른 상태 기계다. Task가 Released에 도달하면 Reporter-facing status review 후보가 생길 수 있지만, VOC 상태는 자동으로 해결됨으로 바뀌지 않는다.</p>
+      <div class="grid2">
+        <div class="panel">
+          <div style="font:700 11px/1 'JetBrains Mono',monospace; color:#fff; background:#4338CA; display:inline-block; border-radius:6px; padding:6px 10px; margin-bottom:16px;">TASK STATUS</div>
+          <div class="state-row"><div class="state">Backlog</div><div class="arrow">→</div><div class="state">Todo</div><div class="arrow">→</div><div class="state">Doing</div><div class="arrow">→</div><div class="state">Review</div><div class="arrow">→</div><div class="state">Done</div><div class="arrow">→</div><div class="state">Released</div></div>
+        </div>
+        <div class="panel">
+          <div style="font:700 11px/1 'JetBrains Mono',monospace; color:#fff; background:#94A0B4; display:inline-block; border-radius:6px; padding:6px 10px; margin-bottom:16px;">REPORTER-FACING VOC</div>
+          <div class="state-row"><div class="state">접수됨</div><div class="arrow">→</div><div class="state">검토 중</div><div class="arrow">→</div><div class="state">처리 중</div><div class="arrow">→</div><div class="state">해결 준비 중</div><div class="arrow">→</div><div class="state">해결됨</div></div>
+        </div>
+      </div>
+      <div style="margin-top:20px; background:#FBF3EC; border:1px solid #F0D7CF; border-radius:12px; padding:15px 18px; font:500 13px/1.65 Pretendard; color:#94724F;">자동 매핑 금지: Task Done, Task Released, Reporter Reply, cluster bulk candidate는 Reporter-facing VOC Status를 직접 바꾸지 않는다. 상태 변경은 per-VOC 감사 결정이다.</div>
+    </section>
+
+    <section id="s10" data-screen-label="10 복구 큐" class="section">
+      <div class="eyebrow">10 · RECOVERY</div>
+      <h2 class="title">Dashboard 복구 큐 — 모든 미연결이 장애는 아니다</h2>
+      <p class="lead">Dashboard와 Integration은 링크가 없는 모든 객체를 문제로 보지 않는다. workspace policy, Managed System rule, severity rule, cluster state, explicit workflow configuration이 기대한 후속 조치가 없을 때만 active recovery item으로 만든다.</p>
+      <div class="table">
+        <div class="decision-row"><div class="cell">조건</div><div class="cell">후속 존재</div><div class="cell">권한/visibility</div><div class="cell">표시 결과</div></div>
+        <div class="decision-row"><div class="cell">High Severity VOC + follow-up 기대</div><div class="cell">없음</div><div class="cell">actor가 처리 가능</div><div class="cell">Active queue + next action</div></div>
+        <div class="decision-row"><div class="cell">Finding actionable</div><div class="cell">Task Request/Task 없음</div><div class="cell">summary만 가능</div><div class="cell">safe summary + request access</div></div>
+        <div class="decision-row"><div class="cell">Outcome Survey poor</div><div class="cell">Evidence attach만 있음</div><div class="cell">개인 응답 숨김</div><div class="cell">follow-up gap 유지</div></div>
+        <div class="decision-row"><div class="cell">no-follow-up-needed</div><div class="cell">reason + audit 있음</div><div class="cell">허용됨</div><div class="cell">Active queue 제거, history 보존</div></div>
+      </div>
+    </section>
+
+    <section id="s11" data-screen-label="11 권한" class="section">
+      <div class="eyebrow">11 · ACCESS</div>
+      <h2 class="title">권한과 신뢰 — 내부 기본 접근을 낮게 둔다</h2>
+      <p class="lead">MVP 사용자는 모두 AD 인증 Actor이지만, 로그인 자체가 민감 기능 접근을 뜻하지 않는다. 기본 Role Level은 User이며, Backstage Task·개인 Survey 응답·Export·Admin 기능은 capability와 Managed System scope가 있어야 한다. Reporter는 역할이 아니라 특정 VOC를 제출한 Actor를 뜻한다.</p>
+      <div class="grid3">
+        <div class="card"><h3>User</h3><p>본인 VOC 작성·상태 확인, 할당 Survey 응답이 기본이다. Task 내부 댓글과 Backstage에는 접근하지 못한다.</p></div>
+        <div class="card"><h3>Developer</h3><p>허용된 Managed System scope 안에서 VOC triage, Finding, Task Request, Task, Integration queue를 다룬다.</p></div>
+        <div class="card"><h3>Admin</h3><p>Permission Request, Admin configuration, workspace-wide 관리 기능을 다룬다. Explicit Deny는 일반 Allow보다 우선한다.</p></div>
+      </div>
+      <div style="margin-top:20px; background:#EEF0FF; border:1px solid #DADEF8; border-radius:12px; padding:16px 18px; font:500 13px/1.65 Pretendard; color:#4338CA;">권한이 막힌 링크나 next action은 빈 실패가 아니라 요청 경로를 보여준다. 승인 후 사용자는 가능하면 원래 막혔던 객체나 action으로 돌아간다.</div>
+    </section>
+
+    <section id="s12" data-screen-label="12 운영" class="section">
+      <div class="eyebrow">12 · OPERATION</div>
+      <h2 class="title">운영 화면 — 리스트 우선, 다음 행동 우선</h2>
+      <p class="lead">UI는 빠르고 밀도 높은 운영 도구를 기본으로 한다. 주요 객체는 List에서 스캔하고 Right Detail Panel에서 검사한다. Home은 내가 지금 할 일을, Dashboard는 Managed System이나 workspace가 어디서 막혔는지를, Integration은 근거·종합·실행·검증 연결이 어디서 끊겼는지를 답한다.</p>
+      <div class="grid2">
+        <div class="card"><span class="num">Home</span><h3 style="display:inline;">개인 실행 큐</h3><p style="margin-top:10px;">현재 Actor가 지금 직접 처리할 수 있는 recovery item과 assigned work를 보여준다.</p></div>
+        <div class="card"><span class="num">Dashboard</span><h3 style="display:inline;">운영 병목 큐</h3><p style="margin-top:10px;">Managed System별 현황, follow-up gap, coverage를 보여준다. 차트는 분석보다 queue navigation을 돕는다.</p></div>
+        <div class="card"><span class="num">Integration</span><h3 style="display:inline;">연결 복구 큐</h3><p style="margin-top:10px;">source evidence, synthesis, execution, validation이 설정된 정책대로 연결되지 않은 지점을 보여준다.</p></div>
+        <div class="card"><span class="num">Admin</span><h3 style="display:inline;">운영 기준 설정</h3><p style="margin-top:10px;">Managed System Registry, Analytics Area, Permission Request, workspace policy를 관리한다.</p></div>
+      </div>
+    </section>
+
+    <section id="s13" data-screen-label="13 범위" class="section">
+      <div class="eyebrow">13 · SCOPE</div>
+      <h2 class="title">범위 — MVP가 하는 일과 하지 않는 일</h2>
+      <p class="lead">MVP는 피드백 운영의 핵심 루프를 먼저 닫는다. 고급 자동화와 외부 도구 연동은 나중 단계로 둔다. 이 범위 설정은 제품을 작게 만들기 위한 축소가 아니라, 시스템 간 연결 규칙을 먼저 안정화하기 위한 선택이다.</p>
+      <div class="grid2">
+        <div class="card" style="border-left:3px solid #4338CA; border-radius:0 12px 12px 0;"><h3>MVP 포함</h3><p>AD Login, Workspace, Managed System Registry, VOC 등록·Triage, Basic Task, Finding, Task Request, Survey Type, Entity Link, Action Dashboard 기본형을 포함한다.</p></div>
+        <div class="card" style="border-left:3px solid #B4543F; border-radius:0 12px 12px 0;"><h3>MVP 제외</h3><p>Survey Response → VOC conversion, full automatic clustering, custom workflow builder, advanced BI, external/customer-contact login, external tool integrations를 제외한다.</p></div>
+      </div>
+      <div class="panel" style="margin-top:24px;">
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px;">
+          <div class="node key">Alpha<br><span class="muted" style="font-weight:400;">Core · VOC · Basic Task · Entity Link</span></div>
+          <div class="node key">MVP<br><span class="muted" style="font-weight:400;">Finding · Task Request · Survey 연결 · Action Dashboard</span></div>
+          <div class="node">Phase 1<br><span class="muted" style="font-weight:400;">Outcome Survey · 권한 고도화 · Coverage 고도화</span></div>
+          <div class="node">Phase 2<br><span class="muted" style="font-weight:400;">자동 요약 · 외부 연동 · Executive Report</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sref" data-screen-label="용어 (Reference)" class="section">
+      <div style="font:700 12px/1 Pretendard; letter-spacing:.08em; color:#B6BBCB; margin-bottom:14px;">REFERENCE</div>
+      <h2 style="font:600 22px/1.4 'Noto Serif KR',serif; color:#6A7187; margin:0 0 18px;">핵심 용어</h2>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:0 40px;">
+        <div style="padding:9px 0; border-bottom:1px solid #F0F1F6;"><span style="font:600 12.5px/1.5 Pretendard; color:#5A6175;">Actor</span> <span style="font:400 12px/1.55 Pretendard; color:#9AA0B2;">— AD 인증 내부 사용자</span></div>
+        <div style="padding:9px 0; border-bottom:1px solid #F0F1F6;"><span style="font:600 12.5px/1.5 Pretendard; color:#5A6175;">Managed System</span> <span style="font:400 12px/1.55 Pretendard; color:#9AA0B2;">— 피드백과 개선 업무의 MVP 범위 기준</span></div>
+        <div style="padding:9px 0; border-bottom:1px solid #F0F1F6;"><span style="font:600 12.5px/1.5 Pretendard; color:#5A6175;">Reporter</span> <span style="font:400 12px/1.55 Pretendard; color:#9AA0B2;">— 특정 VOC를 제출한 Actor, Role 아님</span></div>
+        <div style="padding:9px 0; border-bottom:1px solid #F0F1F6;"><span style="font:600 12.5px/1.5 Pretendard; color:#5A6175;">Finding</span> <span style="font:400 12px/1.55 Pretendard; color:#9AA0B2;">— 근거를 실행 판단으로 압축한 객체</span></div>
+        <div style="padding:9px 0; border-bottom:1px solid #F0F1F6;"><span style="font:600 12.5px/1.5 Pretendard; color:#5A6175;">Task Request</span> <span style="font:400 12px/1.55 Pretendard; color:#9AA0B2;">— Task 전환 전 검토되는 실행 후보</span></div>
+        <div style="padding:9px 0; border-bottom:1px solid #F0F1F6;"><span style="font:600 12.5px/1.5 Pretendard; color:#5A6175;">Entity Link</span> <span style="font:400 12px/1.55 Pretendard; color:#9AA0B2;">— 관계 유형과 visibility를 가진 교차 시스템 링크</span></div>
+      </div>
+      <div style="border-top:1px solid #EAEBF2; padding-top:20px; margin-top:28px;"><p style="font:400 12px/1.6 Pretendard; color:#9AA0B2; margin:0;">* 본 보고 자료는 FeedbackOps 설계문서를 바탕으로 한 소개용 요약이며, 구현 권위는 원천 설계문서와 ADR에 둔다.</p></div>
+    </section>
+  </div>
+</div>
+</x-dc>
+
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() {
+    const bar = document.getElementById('rprog');
+    const onScroll = () => {
+      const h = document.documentElement;
+      const sc = h.scrollTop || document.body.scrollTop || 0;
+      const max = (h.scrollHeight - h.clientHeight) || 1;
+      if (bar) bar.style.width = Math.min(100, Math.max(0, sc / max * 100)) + '%';
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    const links = Array.from(document.querySelectorAll('[data-navlink]'));
+    const byId = {};
+    links.forEach(l => { byId[l.getAttribute('data-navlink')] = l; });
+    const secs = Object.keys(byId).map(id => document.getElementById(id)).filter(Boolean);
+    const setActive = (id) => {
+      links.forEach(l => {
+        const on = l.getAttribute('data-navlink') === id;
+        l.style.color = on ? '#4338CA' : '#8A91A6';
+        l.style.fontWeight = on ? '700' : '500';
+      });
+    };
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id); });
+    }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+    secs.forEach(s => io.observe(s));
+    this._cleanup = () => { window.removeEventListener('scroll', onScroll); io.disconnect(); };
+  }
+  componentWillUnmount() { if (this._cleanup) this._cleanup(); }
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
