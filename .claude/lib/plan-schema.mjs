@@ -52,3 +52,32 @@ export function validatePlan(md) {
   });
   return { ok: errors.length === 0, errors };
 }
+
+// CLI: `node plan-schema.mjs <content-plan.md>` — exits non-zero with the error list if the
+// plan is malformed, so /plan and /build can fail-fast before rendering. Mirrors the
+// import.meta.url guard used by verify-doc.mjs.
+async function main() {
+  const path = process.argv[2];
+  if (!path) {
+    console.error('usage: node plan-schema.mjs <content-plan.md>');
+    process.exit(2);
+  }
+  const { readFileSync } = await import('node:fs');
+  let md;
+  try {
+    md = readFileSync(path, 'utf8');
+  } catch (e) {
+    console.error(`cannot read plan: ${path} (${e.code || e.message})`);
+    process.exit(2);
+  }
+  const { ok, errors } = validatePlan(md);
+  if (ok) {
+    console.log(`content-plan OK: ${path}`);
+    process.exit(0);
+  }
+  console.error(`content-plan INVALID: ${path}`);
+  for (const err of errors) console.error(`  - ${err}`);
+  process.exit(1);
+}
+
+if (import.meta.url === `file://${process.argv[1]}`) main();

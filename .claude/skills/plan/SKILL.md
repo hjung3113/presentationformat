@@ -150,6 +150,17 @@ determined in Steps 1–2:
 - `source-ref` — every source doc consumed, with a path and a hash or mtime, so `/build` can
   detect if the source has since changed (staleness guard) without re-reading it.
 
+Before presenting it, mechanically self-check the emitted plan so no placeholder or missing field
+reaches the user (this is the same shape gate `/build` runs at ingest, run here first):
+
+```
+node .claude/lib/plan-schema.mjs <content-plan.md>
+```
+
+Exit `0` = shaped correctly, go to Step 7. Exit `1` = the CLI lists the header keys or per-section
+fields still missing — fill them in and re-run before Gate 2. (Repo-relative path — run from the
+repo root; if `node` cannot find `.claude/lib/`, this skill is running outside its repo.)
+
 ### Step 7 — Confirm before handoff (Gate 2)
 
 Present the completed `content-plan.md` — every section's `intent`, `payload`, and `figure-data`

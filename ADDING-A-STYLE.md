@@ -74,13 +74,41 @@ From `CLAUDE.md §"Core rules"`. A new style is not done until every line is tru
 
 ---
 
-## After the second style: revisit doc-split (HANDOFF D2)
+## After the second style (`teal-sans`, added) — decisions recorded
 
-The single-style repo deferred splitting the two large files (`design.md` ~559 lines,
-`design-system.answerkey.dc.html` ~1087 lines) until a real reuse boundary is proven. Adding the
-second style **is** that moment: if cloning shows a clean seam (e.g. the §5 diagram catalog
-splitting cleanly, or shared vs style-specific content diverging), revisit the split then — with
-evidence, not speculation. Until proven, do not split.
+The second style, **`teal-sans`** (internal-engineering docs: IBM Plex superfamily, teal accent,
+slate+red vs teal split), has been added. What the clone proved, and the resulting decisions:
 
-If the clone procedure itself proves stable and repeatable across two styles, that is the trigger
-to promote this doc into a `/add-style` skill — not before.
+### The clone is largely *deterministic* — capture the technique, not a script
+Because the whole system is **inline-styles-only with literal HEX**, cloning is dominated by a
+mechanical, table-driven substitution rather than free re-authoring:
+
+1. **Extract** every unique HEX + font string from the source style
+   (`grep -rhoiE '#[0-9a-f]{6}' styles/<src>/`).
+2. **Map** each source token to its target: swap the two *hue families* (indigo→teal,
+   amber→red), keep the neutral gray ramp intact to preserve its layered hierarchy, keep/nudge
+   the success green so it stays distinct from the accent, swap the three font families, and
+   tighten radii (scoped to `border-radius:` only).
+3. **Apply** the map to `design.md`, `template.dc.html`, the answer key, and `design.tokens.md`
+   on disk (a ~40-line Node script), leaving `support.js` byte-identical.
+4. **Hand-edit only the prose the map can't touch:** the §0 signatures, §1.4 semantic law, the
+   type-scale notes, `style.md`, and any label that *names* a hue/typeface in words.
+5. **Render** the answer key over http, verify visually, then run the invariant gate below.
+
+This keeps the proven neutral hierarchy and layout grammar exactly, so the new style reads as a
+different author purely through hue + typeface + geometry. The mapping table itself is bespoke
+per style pair, so it is **not** committed as a reusable file — the *technique* above is the
+reusable asset.
+
+### Skill-ification (`/add-style`) — **deferred to a 3rd style**
+The procedure is now proven repeatable, but the irreducibly-human part (choosing the palette,
+fonts, and semantic split — here grounded in a research pass) can't be scripted; a skill would
+mostly wrap this doc plus the transform technique. Given how rarely a style is added, building a
+bespoke skill for n=2 is premature. **Trigger: build `/add-style` only if a 3rd style is
+requested** — by then the frequency justifies it and the technique above is the spec to encode.
+
+### Doc-split (HANDOFF D2) — **still deferred, now with evidence**
+Cloning `teal-sans` showed **no clean seam**: the table-driven transform treats `design.md` and
+the answer key as single units, and splitting either would have complicated the mapping without
+benefit. The large files are large by content volume, not by tangled responsibility. Do not split
+until a clone actually surfaces a clean boundary.

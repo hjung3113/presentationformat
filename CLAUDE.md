@@ -14,8 +14,9 @@ The system is split on two axes so **multiple styles** can coexist:
 - **`styles/<style>/`** — one style's self-contained SSOT (tokens, components, geometry,
   density, voice, template, answer key).
 
-Today there is exactly one style, `indigo-serif`. A second style is added by **copying the
-folder**, never by forking `core/`.
+Today there are two styles, `indigo-serif` (default) and `teal-sans` (internal-engineering docs).
+A further style is added by **copying the folder**, never by forking `core/` — see
+`ADDING-A-STYLE.md`.
 
 ## Repo map
 

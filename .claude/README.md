@@ -25,8 +25,11 @@ The gate itself is zero-dependency Node under `.claude/lib/`:
 - `.claude/lib/verify-doc.mjs` — CLI entry that runs the gate against a `.dc.html`, checks the
   `support.js` sidecar is byte-identical to the canonical copy, and reports a `VISUAL:` line
   (see below).
-- `.claude/lib/plan-schema.mjs` — schema/shape checks for `content-plan.md`.
-- `.claude/lib/test/*.test.mjs` — the test suite for the above (`node --test`).
+- `.claude/lib/plan-schema.mjs` — schema/shape checks for `content-plan.md`. CLI entry
+  (`node .claude/lib/plan-schema.mjs <content-plan.md>`): exit `0` valid, `1` malformed (lists the
+  missing header keys / per-section fields), `2` usage or read error. `/plan` runs it to self-check
+  its emitted plan before Gate 2; `/build` runs it as a fail-fast at Step 1 ingest.
+- `.claude/lib/test/*.test.mjs` — the test suite for the above (`node --test .claude/lib/test/*.test.mjs`).
 
 ## Prerequisites
 

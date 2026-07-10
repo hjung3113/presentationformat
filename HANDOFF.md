@@ -3,15 +3,15 @@
 > 이 레포(발표 시스템)의 인수인계 문서. 파서 프로젝트 세션의 옛 핸드오프는 이 프로젝트와 무관해
 > `archive/HANDOFF-parserimprove.md`로 이관됨. 이 문서는 **제품(발표 시스템 + 저작 하네스)** 상태만 다룬다.
 >
-> 최종 갱신: 2026-07-04 · 스타일 추가 지침 단일 문서화(`ADDING-A-STYLE.md`) 완료(`main` 머지 + push).
+> 최종 갱신: 2026-07-11 · **2번째 스타일 `teal-sans` 추가** + 하네스 위생 정리(plan-schema 배선). `ADDING-A-STYLE` 절차를 처음으로 태워 실증.
 
 ---
 
 ## 0. 한눈에
 
-- **무엇**: 어떤 문서든 같은 저자의 작품처럼 읽히는 재사용 스크롤형 HTML 발표 시스템. `core/`(스타일 불가지) + `styles/<style>/`(스타일별 SSOT)로 분리. 현재 스타일 하나: `indigo-serif`.
+- **무엇**: 어떤 문서든 같은 저자의 작품처럼 읽히는 재사용 스크롤형 HTML 발표 시스템. `core/`(스타일 불가지) + `styles/<style>/`(스타일별 SSOT)로 분리. **스타일 둘**: `indigo-serif`(기본) · `teal-sans`(내부 엔지니어링 문서).
 - **저작 하네스**: `.claude/`에 `/plan → /build` 2-스킬 파이프라인 + zero-dep Node 종료 게이트. 3개 에이전트 호스트(Claude Code · opencode · Codex)에서 host-neutral 동작.
-- **상태**: 제품·하네스 모두 **완성**. 하네스 테스트 10/10. 3-호스트 install 검증 완료.
+- **상태**: 제품·하네스 모두 **완성**. 하네스 테스트 **13/13**(plan-schema CLI 3건 추가). 3-호스트 install 검증 완료. 2번째 스타일로 클론 절차(`ADDING-A-STYLE`) 실증 완료.
 
 ---
 
@@ -19,10 +19,12 @@
 
 ```
 core/runtime-spec.md          스타일 불가지 (셸·DOM계약·서빙, HEX 0, 크롬 토큰만)
-styles/indigo-serif/          현 유일 스타일 SSOT
-  design.md(559줄, 시각 SSOT) · design.tokens.md(미러) · authoring-guide.md
-  composition-guide.md · style.md · template.dc.html · design-system.answerkey.dc.html(1087줄)
+styles/indigo-serif/          기본 스타일 SSOT (serif+indigo)
+  design.md(시각 SSOT) · design.tokens.md(미러) · authoring-guide.md
+  composition-guide.md · style.md · template.dc.html · design-system.answerkey.dc.html
   support.js(사이드카)
+styles/teal-sans/             2번째 스타일 SSOT (IBM Plex 슈퍼패밀리 + teal accent + slate/red vs teal)
+  ↳ 같은 8-파일 구조. indigo-serif 복제 → 결정론적 매핑 변환 + 프로세 편집으로 생성
 examples/                     워크드 예시 (feedbackops, feedbackops-design-report)
 .claude/                      저작 하네스 (비규범 tooling)
   skills/{plan,build}/SKILL.md · lib/{gate,plan-schema,verify-doc}.mjs + test/
@@ -37,7 +39,28 @@ README.md · CLAUDE.md · AGENTS.md
 
 ---
 
-## 2. 이 세션 작업 (2026-07-04)
+## 2. 이 세션 작업 (2026-07-11)
+
+### 2A. 하네스 위생 정리 (A)
+- **문제**: `plan-schema.mjs`(validatePlan/parsePlan)가 `content-plan.template.md`와 필드 1:1 일치하는데도 **어느 SKILL.md에서도 호출 안 됨**(만들고 안 이은 orphan). build/SKILL.md의 `.claude/lib` 경로는 repo-relative라 Codex 전역 노출 시 깨질 수 있음.
+- **결정**: "내부용 명시"가 아니라 **배선**. 필드가 정확히 일치 = stale 아님.
+- `plan-schema.mjs`에 **CLI 부착**(verify-doc.mjs 패턴): exit 0 valid / 1 malformed(누락필드 나열) / 2 usage·read. 검증 **로직 무손**.
+- `/build` Step 1에 **fail-fast 플랜 검증** 배선 + `/plan` Step 6 self-validate(대칭). Inputs 헤더키 드리프트(`narrative-lens` 누락) 수정. Step 8에 repo-relative 경로 주의 + fast-fail 안내.
+- `.claude/README.md` 정정, CLI 스모크 테스트 3건 추가 → **테스트 13/13**.
+- scope creep(placeholder 검출)은 각괄호 정상콘텐츠 false-positive 위험으로 제거.
+
+### 2B. 2번째 스타일 `teal-sans` (B)
+- **맥락**: 내부 엔지니어링/기술 문서용. 모던 sans(serif인 indigo-serif와 대비). deep-research로 근거(22소스·87 claim: Primer/Carbon/Geist/Tailwind/IBM Plex/USWDS) 수집 → 디자인 브리프 합성.
+- **정체성**(사용자 승인): **IBM Plex 슈퍼패밀리**(Plex Sans 본문+제목, Plex Mono) · accent=**teal `#0F766E`** · 시맨틱 split = 현재/구=slate + 문제=**red** vs 목표/개선=**teal**, 성공=green(teal와 구별).
+- **생성 방식**(핵심 자산): 인라인-HEX 전용이라 **매핑테이블 결정론적 변환**이 최적. indigo→teal 21 HEX, amber→red 9, green 유지, 폰트 3종, radius 타이트닝을 스크립트로 `design.md`·`template`·`answerkey`·`tokens`에 적용(support.js 무손) → 프로세만 손편집. **중립 그레이 램프는 유지**해 검증된 계층 보존.
+- **게이트 8/8 통과**. `core/` 무손(git 확인). answerkey Playwright 렌더 검증(teal 그라디언트·red 문제·green 성공·Plex 렌더·한국어 OK). README 레지스트리 등록.
+- `ADDING-A-STYLE.md` "After the second style" 섹션을 **결정 기록**으로 갱신: 변환 기법 문서화 · 스킬화는 **3번째 스타일로 연기** · D2 문서분리는 **깨끗한 seam 없음 → 계속 연기**.
+
+> **비고**: deep-research 워크플로 synthesis가 stub(`"Test"`) 반환하는 버그 발견 — **Claude Code 하네스 빌트인** 이슈라 이 레포와 무관(드롭). 리서치 데이터는 journal.jsonl에서 복구.
+
+---
+
+## 2-old. 이전 세션 작업 (2026-07-04)
 
 ### 2.1 parserimprove 아카이브
 - `reference/parserimprove/` → `archive/parserimprove/` (git rename, 히스토리 보존). 파서 프로젝트의 디자인 참고자료였을 뿐 이 제품과 무관.
@@ -78,23 +101,27 @@ README.md · CLAUDE.md · AGENTS.md
 ## 4. 후속 작업
 
 ### 하네스 (비규범, 선택적 하드닝)
-- [ ] `build/SKILL.md`의 `.claude/lib/` 경로를 cwd-robust하게(또는 fast-fail 메시지) — Codex 전역 노출 시 repo 밖 호출 대비. 현재는 문서화(repo-scoped)로 갈음.
-- [ ] `plan-schema.mjs`가 어느 SKILL.md에서도 호출 안 됨(`grep` 결과 verify-doc.mjs만 참조). `/plan`이 content-plan 검증에 써야 하는지 확인 or 내부용 명시.
-- [ ] 토큰 CSS 변수화 + allowlist 린터 (인라인 토큰 드리프트 방지) — 필요 생길 때.
+- [x] ~~`build/SKILL.md`의 `.claude/lib/` 경로 cwd-robust~~ — **완료(2A)**: repo-relative 명시 + fast-fail 안내 문서화.
+- [x] ~~`plan-schema.mjs` orphan~~ — **완료(2A)**: CLI 부착 + `/plan`·`/build` 양쪽 배선.
+- [ ] 토큰 CSS 변수화 + allowlist 린터 (인라인 토큰 드리프트 방지) — 필요 생길 때. **teal-sans 추가로 스타일이 둘 → 토큰 드리프트 감시 가치 소폭 상승**(여전히 트리거 대기).
 - [ ] `support.js`의 `cssToObj` data-URI 맹글링 수정 (SVG 엣지 예외 개방 선행조건) — 트리거 있을 때.
 
 ### 스타일 시스템
-- [ ] **2번째 스타일 추가 시**: 절차 = `ADDING-A-STYLE.md`(복제 → 토큰·voice·template 교체 → 크롬 토큰 6슬롯 배선 → README 등록 → 8-항목 게이트). `core/` 무손. 이때 D2(문서 분리 seam) + 스킬화 트리거 재검토.
+- [x] ~~2번째 스타일 추가~~ — **완료: `teal-sans`**. 절차(`ADDING-A-STYLE.md`) 실증, 게이트 8/8.
+- [ ] **3번째 스타일 요청 시**: (a) `ADDING-A-STYLE`의 매핑테이블 변환 기법 재사용 (b) 이때 **`/add-style` 스킬화 재검토**(빈도가 정당화하면 그 기법이 스펙) (c) D2 문서분리 seam 재검토.
+- [ ] **teal-sans 실사용**: 아직 워크드 예시(`examples/`)가 indigo-serif뿐 → teal-sans로 실제 문서 하나 `/plan → /build` 해보면 voice/composition 가이드의 엔지니어링 레지스터가 실전 검증됨(현재는 스펙만 존재).
 
 ---
 
-## 5. 커밋 (이 세션, `main`)
+## 5. 커밋
 
+### 이 세션 (2026-07-11)
+- **A(하네스 위생) + B(teal-sans) 한 커밋** — `.claude/lib` plan-schema CLI·배선·테스트, `styles/teal-sans/` 신규, README/CLAUDE/ADDING-A-STYLE/HANDOFF 갱신. 브랜치에서 작업 후 통합.
+
+### 이전 세션 (2026-07-04)
 | 커밋 | 내용 |
 |------|------|
 | `4b93de1` | parserimprove 아카이브 + install spec/plan |
 | `250aca3` | 다중 호스트 install 브릿지 (install.sh + AGENTS.md + 테스트 + 증거) |
 | `76bf3ce` | merge → main (push 완료) |
 | `0962807` | 스타일 추가 지침 단일 문서화 (`ADDING-A-STYLE.md` + README/CLAUDE 배선, ff-merge → main push) |
-
-> 적대적 리뷰 1회(Explore 서브에이전트) GO-WITH-CHANGES 5개 must-fix 전부 반영: C1(심링크 discovery 실증), M1(재시작 안내), M2(repo-scoped 문서화), M3(AGENTS 호스트 문구 정정), config 등록 회피.

@@ -15,11 +15,13 @@ A document picks **one** style and never mixes two.
 
 | Style | Identity | Folder |
 |-------|----------|--------|
-| **indigo-serif** *(default, only style today)* | Serif display headings (Noto Serif KR) over sans body (Pretendard); single indigo `#4338CA` accent; semantic slate+amber (as-is) vs indigo (to-be) split. | [`styles/indigo-serif/`](styles/indigo-serif/) |
+| **indigo-serif** *(default)* | Serif display headings (Noto Serif KR) over sans body (Pretendard); single indigo `#4338CA` accent; semantic slate+amber (as-is) vs indigo (to-be) split. | [`styles/indigo-serif/`](styles/indigo-serif/) |
+| **teal-sans** | One IBM Plex superfamily (Plex Sans body+headings, Plex Mono); single teal `#0F766E` accent; semantic slate (old) + red (problem) vs teal (target) split. For internal engineering / technical docs. | [`styles/teal-sans/`](styles/teal-sans/) |
 
 Pick a style, then jump straight to its two most-opened files:
 
 - **indigo-serif** — build from [`styles/indigo-serif/template.dc.html`](styles/indigo-serif/template.dc.html); see it rendered in [`styles/indigo-serif/design-system.answerkey.dc.html`](styles/indigo-serif/design-system.answerkey.dc.html).
+- **teal-sans** — build from [`styles/teal-sans/template.dc.html`](styles/teal-sans/template.dc.html); see it rendered in [`styles/teal-sans/design-system.answerkey.dc.html`](styles/teal-sans/design-system.answerkey.dc.html).
 
 > **Adding a style:** copy `styles/indigo-serif/` to `styles/<new>/`, swap its tokens / voice / template, register it in the table above. `core/` stays untouched — that is the whole point of the split. **Full procedure + invariant gate: [`ADDING-A-STYLE.md`](ADDING-A-STYLE.md).**
 

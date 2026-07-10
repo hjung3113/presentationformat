@@ -16,12 +16,26 @@ document that has not passed the gate is not "built," regardless of how the HTML
 ## Inputs
 
 - `content-plan.md` — the seam contract from `/plan`. Style-agnostic: header (`has-as-is`,
-  `metrics-mode`, `act-structure`, `source-ref`) plus, per section, `title`, `intent`, `payload`
-  (structured notes, not prose), `figure-data`, `source-span`.
+  `metrics-mode`, `act-structure`, `narrative-lens`, `source-ref`) plus, per section, `title`,
+  `intent`, `payload` (structured notes, not prose), `figure-data`, `source-span`.
 - `--style <id>` — which style to render into. Only `indigo-serif` exists today; if asked for any
   other id, say so and stop rather than guessing at a style that doesn't exist.
 
 ## Step 1 — Read the plan and the style's specs
+
+**Fail-fast on a malformed plan first.** Before reading anything else, mechanically validate that
+the `content-plan.md` has the required header keys and that every section carries `intent`,
+`payload`, and `source-span`:
+
+```
+node .claude/lib/plan-schema.mjs <content-plan.md>
+```
+
+Exit `0` = the plan is shaped correctly; proceed. Exit `1` = the plan is malformed (the CLI prints
+each missing field) — do not build; send the user back to `/plan` to fix it, or fix the plan if
+the fix is unambiguous. Exit `2` = usage/read error (wrong path). A plan that fails this check is
+not buildable, the same way a document that fails the exit gate (Step 8) is not built. (This
+`node .claude/lib/…` path is repo-relative — see the note at Step 8 if `node` cannot find it.)
 
 Read the full `content-plan.md`. Then read the chosen style's own specs, in this order:
 `authoring-guide.md` (voice, page-type registry §4, situation→device §5.1, color intent→token map
@@ -114,6 +128,15 @@ the path to its canonical `support.js`:
 ```
 node .claude/lib/verify-doc.mjs <doc.dc.html> --accent <style-accent-hex> --canonical-support <path/to/canonical/support.js>
 ```
+
+**Repo-relative path — run from the repo root.** Both `node .claude/lib/…` invocations in this
+skill (this gate and the Step 1 plan check) resolve `.claude/lib/` relative to the current working
+directory, which assumes you are at the repo root. When this skill is exposed globally (e.g.
+symlinked into a Codex `$CODEX_HOME/skills/`) and invoked from an unrelated cwd, `node` will fail
+with `Cannot find module '.../.claude/lib/verify-doc.mjs'`. That error means the skill is running
+outside its repo, **not** that the document failed — `cd` to the presentation-system repo root
+(the one containing this `.claude/` tree) and rerun. This harness is repo-scoped by design; it
+does not self-locate its library.
 
 The gate runs two tiers:
 
