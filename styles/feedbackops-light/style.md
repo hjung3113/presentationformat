@@ -10,7 +10,7 @@
 | **when to use** | FeedbackOps project reports, status updates, design/architecture briefs, and any internal operations document that should look like it came out of the FeedbackOps console. |
 | **display font** | Inter + Pretendard (600–700 weight) |
 | **body font** | Inter + Pretendard (Hangul falls through to Pretendard per glyph — same order as FeedbackOps `--font-sans`) |
-| **mono font** | JetBrains Mono |
+| **mono font** | JetBrains Mono — stack `'JetBrains Mono',Pretendard,monospace` (Hangul falls back to the body font) |
 | **accent** | `#1428A0` |
 | **page bg** | `#F3F7FE` |
 | **source of values** | FeedbackOps `docs/frontend/tokens.md` + `packages/ui/src/styles/tokens.css`. Steps FeedbackOps does not define are interpolated on the same cool-gray ramp (see `design.md §0`). |

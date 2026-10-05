@@ -37,6 +37,8 @@ The shell and the two runtime scripts color exactly six slots. This file names t
 | `⟨nav-idle⟩` | inactive nav link | `muted-500` |
 | `⟨nav-ref⟩` | de-emphasized reference/appendix link | `muted-300` |
 
+> **`⟨nav-ref⟩` belongs to the English-label convention.** In a document with `labels: en` the appendix link is de-emphasized — `⟨nav-ref⟩` plus a superscript `ref` mark. In a document with `labels: ko` (executive / user audience, `components.md §4` "Label language") the appendix link is a **plain** nav link: `⟨nav-idle⟩`, no superscript, no `⟨nav-ref⟩` — its label is just `부록` (or a short Korean title such as `근거`).
+
 > `support.js` is a generated third-party runtime and carries its own internal HEX; it is **not** style-scoped and is exempt from the "no hardcoded colors in shared runtime" rule.
 
 ---

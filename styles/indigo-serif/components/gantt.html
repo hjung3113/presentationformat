@@ -27,6 +27,12 @@ HOW TO FILL
        병행 운영처럼 기간이 겹치면 "겹침 행" 변형: 두 막대에 grid-row:1 을 주고 legacy 는 위(align-self:start), 새 체제는 아래(align-self:end)에
        반 높이로 쌓는다. 겹침 행은 막대 글자를 비우고 min-height:36px(작업명이 두 줄이면 행이 늘어난다).
   5. 마일스톤은 ◆ 행: grid-column: k+1 (그 기간 칸 하나). 기존 체제를 끄고 신규 체제로 넘어가는 시점은 어두운 알약 변형 "◆ 컷오버"(cutover).
+     행 라벨 슬롯 ⟦주요 시점⟧ 은 중립 기본이다(영문 labels: en 문서는 "Milestones" 도 된다). "마일스톤"이라는 말이 독자에게 낯설면 쓰지 않는다.
+     이름이 한 기간 칸보다 길면 "넓은 마일스톤" 변형(자기 행): 라벨 칸을 n개 기간에 걸치고 ◆ 는 k번째 기간의 끝(선 k+2)에 놓는다.
+       grid-column: (k+1) / (k+1+n) · justify-self:start · margin-left: n=2 → calc(50% - 5px), n=3 → calc(33.333% - 5px), n=4 → calc(25% - 5px)
+       (margin-left 는 칸 묶음 폭의 1/n 만큼 밀어 ◆ 가 선 위에 앉게 하는 값이다 — 계산하지 말고 표에서 고른다.) 글자는 ◆ 오른쪽으로 이어지며(nowrap)
+       n−1개 기간 폭 안에 들어가게 n 을 고른다. 이 행에는 다른 마일스톤을 같은 칸에 두지 않는다.
+       예) P=6, 첫 기간 끝에 "2주 점검 — 운영 8주 승인 요청" → grid-column:2 / 4 + margin-left:calc(50% - 5px).
   6. (선택) 현재 기간 헤더를 강조색 글자로.
   7. figure-data 의 시작–끝 은 기간 이름이 아니라 기간 번호 또는 이름 둘 다 허용한다(예: P1–P2, 1월–2월).
   8. 범례(맨 아래 줄)의 항목 이름은 ⟦슬롯⟧이다. 예시 문구(확정 범위·최소 범위·이후 예정·지연 위험·기존 체제)를 그대로 두지 말고
@@ -37,12 +43,12 @@ HOW TO FILL
   <!-- header: 150px repeat(P,1fr) -->
   <div style="display:grid; grid-template-columns:150px repeat(6,1fr); margin-bottom:4px;">
     <div></div>
-    <div style="font:600 11px/1 'JetBrains Mono',monospace; color:#8A91A6; text-align:center; padding:6px 0;">⟦기간 1⟧</div>
-    <div style="font:600 11px/1 'JetBrains Mono',monospace; color:#8A91A6; text-align:center; padding:6px 0;">⟦기간 2⟧</div>
-    <div style="font:600 11px/1 'JetBrains Mono',monospace; color:#8A91A6; text-align:center; padding:6px 0;">⟦기간 3⟧</div>
-    <div style="font:700 11px/1 'JetBrains Mono',monospace; color:#4338CA; text-align:center; padding:6px 0;">⟦기간 4 ▾⟧</div>
-    <div style="font:600 11px/1 'JetBrains Mono',monospace; color:#8A91A6; text-align:center; padding:6px 0;">⟦기간 5⟧</div>
-    <div style="font:600 11px/1 'JetBrains Mono',monospace; color:#8A91A6; text-align:center; padding:6px 0;">⟦기간 6⟧</div>
+    <div style="font:600 11px/1 'JetBrains Mono',Pretendard,monospace; color:#6A7187; text-align:center; padding:6px 0;">⟦기간 1⟧</div>
+    <div style="font:600 11px/1 'JetBrains Mono',Pretendard,monospace; color:#6A7187; text-align:center; padding:6px 0;">⟦기간 2⟧</div>
+    <div style="font:600 11px/1 'JetBrains Mono',Pretendard,monospace; color:#6A7187; text-align:center; padding:6px 0;">⟦기간 3⟧</div>
+    <div style="font:700 11px/1 'JetBrains Mono',Pretendard,monospace; color:#4338CA; text-align:center; padding:6px 0;">⟦기간 4 ▾⟧</div>
+    <div style="font:600 11px/1 'JetBrains Mono',Pretendard,monospace; color:#6A7187; text-align:center; padding:6px 0;">⟦기간 5⟧</div>
+    <div style="font:600 11px/1 'JetBrains Mono',Pretendard,monospace; color:#6A7187; text-align:center; padding:6px 0;">⟦기간 6⟧</div>
   </div>
   <!-- body: vertical period lines only over the bar area (padding-left = label width) -->
   <div style="padding-left:150px; background-image:linear-gradient(90deg, #E7E9F3 1px, transparent 1px); background-size:calc(100% / 6) 100%; background-origin:content-box; background-clip:content-box; border-top:1px solid #E7E9F3; border-bottom:1px solid #E7E9F3; padding-top:6px; padding-bottom:6px;">
@@ -79,10 +85,15 @@ HOW TO FILL
     </div>
     <!-- milestone row: ◆ in one period cell (grid-column: k+1) -->
     <div style="display:grid; grid-template-columns:150px repeat(6,1fr); margin-left:-150px; align-items:center; box-sizing:border-box; min-height:30px; padding:4px 0;">
-      <div style="font:600 12px/1.3 Pretendard,sans-serif; color:#8A91A6; padding-right:10px;">⟦마일스톤⟧</div>
+      <div style="font:600 12px/1.3 Pretendard,sans-serif; color:#6A7187; padding-right:10px;">⟦주요 시점⟧</div>
       <div style="grid-column:4; justify-self:center; font:600 10.5px/1.2 Pretendard,sans-serif; color:#1E2233; white-space:nowrap;"><span style="color:#4338CA;">◆</span> ⟦마일스톤 A⟧</div>
       <!-- VARIANT cutover milestone (switch from the existing system to the new one) -->
       <div style="grid-column:6; justify-self:center; font:700 10.5px/1 Pretendard,sans-serif; color:#FFFFFF; background:#15172B; border-radius:5px; padding:4px 7px; white-space:nowrap;">◆ ⟦컷오버⟧</div>
+    </div>
+    <!-- VARIANT wide milestone (own row): the label is longer than one period — it spans n columns (here n=2: grid-column k+1 / k+1+n), the ◆ sits at the END of period k (margin-left from the lookup: n=2 50%, n=3 33.333%, n=4 25%, minus 5px), the text runs on to the right -->
+    <div style="display:grid; grid-template-columns:150px repeat(6,1fr); margin-left:-150px; align-items:center; box-sizing:border-box; min-height:30px; padding:4px 0;">
+      <div></div>
+      <div style="grid-column:2 / 4; justify-self:start; margin-left:calc(50% - 5px); font:600 10.5px/1.2 Pretendard,sans-serif; color:#1E2233; white-space:nowrap;"><span style="color:#4338CA;">◆</span> ⟦긴 마일스톤 이름⟧</div>
     </div>
   </div>
   <!-- legend: ▼ REPEAT per bar kind actually used — rename every ⟦label⟧ for this document, delete unused kinds -->

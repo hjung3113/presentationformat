@@ -5,7 +5,7 @@ import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { validatePlan, parsePlan, parseCoverTokens } from '../plan-schema.mjs';
+import { validatePlan, parsePlan, parseCoverTokens, labelLanguage } from '../plan-schema.mjs';
 import { listTemplates } from '../components.mjs';
 
 const read = (f) => readFileSync(new URL(`./fixtures/${f}`, import.meta.url), 'utf8');
@@ -98,6 +98,26 @@ test('header: `eyebrow` is optional, kept verbatim, and rejected only as a templ
   assert.equal(parsePlan(plan([sec(1, 'none')], { eyebrow: 'PROPOSAL · 관리자용' })).header.eyebrow, 'PROPOSAL · 관리자용');
   assert.equal(run('').ok, true); // empty = absent (the fallback applies), not an error
   assert.match(run('<DOC-TYPE> · <audience>').errors.join('\n'), /header eyebrow is still a template placeholder/);
+});
+
+test('header: `labels` is an optional en | ko enum; labelLanguage() defaults from audience and honours the override', () => {
+  const run = (v) => validatePlan(plan([sec(1, 'none')], { labels: v }), { templates });
+  assert.equal(run(null).ok, true); // key absent
+  assert.equal(run('').ok, true); // empty = absent (the audience default applies), not an error
+  for (const ok of ['en', 'ko']) assert.equal(run(ok).ok, true, ok);
+  assert.match(run('fr').errors.join('\n'), /header labels "fr" is not one of: en, ko/);
+  assert.match(run('<en | ko>').errors.join('\n'), /header labels is still a template placeholder/);
+  assert.equal(parsePlan(plan([sec(1, 'none')], { labels: 'ko' })).header.labels, 'ko');
+  assert.equal(parsePlan(plan([sec(1, 'none')], { labels: null })).header.labels, '');
+  const lang = (over) => labelLanguage(parsePlan(plan([sec(1, 'none')], over)).header);
+  assert.equal(lang({ audience: 'developer' }), 'en'); // engineering docs keep English category labels
+  assert.equal(lang({ audience: 'executive' }), 'ko');
+  assert.equal(lang({ audience: 'user' }), 'ko');
+  assert.equal(lang({ audience: 'executive', labels: 'en' }), 'en'); // the key overrides the audience default
+  assert.equal(lang({ audience: 'developer', labels: 'ko' }), 'ko');
+  // the plan template carries the optional key, as a placeholder (so an unfilled template stays invalid)
+  const tpath = fileURLToPath(new URL('../../skills/build/content-plan.template.md', import.meta.url));
+  assert.match(readFileSync(tpath, 'utf8'), /^labels: <optional — en \| ko/m);
 });
 
 test('section ids: numbered titles → sN, an unnumbered title → sref; duplicates are an error', () => {

@@ -254,7 +254,7 @@ determined in the earlier steps:
   can detect if the source has since changed without re-reading it.
 - `title` — the hero title. `eyebrow` — optional: the hero eyebrow pill, printed verbatim (e.g.
   `PROPOSAL · 관리자용`); leave the key out and `/build` writes `<DOC-TYPE in English caps> · <audience in
-  Korean>` — nothing else. `thesis` — the one-sentence hero thesis (may end with a citation such
+  Korean>` (`labels: ko` documents: `<문서 종류> · <대상>`) — nothing else. `thesis` — the one-sentence hero thesis (may end with a citation such
   as `[F03]`); it may be written in **any register** (notes, `~합니다`, bare nouns) — `/build` always
   renders the page in the style's register (`~한다`), so don't spend effort on polish here.
   `cover-tokens` — 2–4 hero tokens, `값=라벨 [cite]` separated by `;`, **each with a
@@ -262,7 +262,9 @@ determined in the earlier steps:
   fills the hero **only** from these, so a framing token with no source is not planned. A token need
   not be a number (`MVP=출시 단계 [F02]`).
 - `facts` — path to `facts.md`, relative to the plan (required for `pitch`). `as-of` — `YYYY-MM-DD`,
-  the date printed in the hero meta line.
+  the date printed in the hero meta line. `labels` — optional `en` | `ko`: the language of the document's eyebrows, appendix
+  label and component badges. Leave it out: `/build` takes `en` for `audience: developer` and `ko` for `executive` / `user`
+  (an executive or user document reads `01 · 요약` and `지금 / 목표`, not `01 · SUMMARY` and `AS-IS / TO-BE`). Write it only to override.
 
 Before presenting it, mechanically self-check the emitted plan so no placeholder or missing field
 reaches the user (this is the same shape gate `/build` runs at ingest, run here first):

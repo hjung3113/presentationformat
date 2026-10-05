@@ -168,10 +168,39 @@ a first section that is not `headline-metric` or `decision`, or a last section t
   whose color follows its shape (copy a cell of that shape).
 - **Numbers come from the plan.** Every number visible in the document appears in the plan's
   `payload`/`figure-data`/cover tokens (or its facts ledger). A template example is not a value; if the
-  plan has no number for a slot, use the `O … (추후 확정)` placeholder.
+  plan has no number for a slot, use the `O … (추후 확정)` placeholder. A **number chip** (the `card-grid`
+  item badge) is a bare integer — 1, 2, 3 in card order — never a `2.1` / `5.3` section.item decimal; the gate's
+  `numbers-traced` reads a decimal as a number the plan never supplied.
 - **What the gate reads in pasted figures** (`verify-doc`): `no-role-placeholders`, `palette` (with
   `--style`: every color literal must be in the style's `design.md` — no invented colors),
   `grid-consistency`, and `numbers-traced` (with `--plan`).
+- **Text-safe muted ink.** Small informative text — a sub-line under a number or node, a footnote (`*`), legend and
+  axis labels, a footer or field label, a state chip, the `(추정)` / `(추후 확정)` suffixes — is set in the style's
+  text-safe muted role `⟨muted-text⟩` (≥4.5:1 on white). The faint roles `⟨muted-500⟩` / `⟨muted-400⟩` / `⟨muted-300⟩` are for
+  decoration and disabled marks only: arrow glyphs, `—` not-applicable cells, hairlines, dashed outlines, text on a dark fill.
+  Informative text in a faint role is a defect even when it looks tidy. The role's value and its measured contrast live in
+  the active style's `design.md` (§1.2) — this rule is stated here once and the templates apply it.
+- **Label language (`labels: en | ko`).** One document uses one label language for every fixed label — the section
+  eyebrow, the appendix label, the badge and kicker text inside components. Default by plan `audience`: `developer` → `en`
+  (English category labels, the engineering-doc convention); `executive` / `user` → `ko`. The plan's optional
+  `labels:` header key overrides the default. Body prose, titles and nav labels are Korean in both modes.
+  Every fixed component label is a `⟦slot⟧` whose example is the `en` text; under `ko` replace it with the row below.
+
+  | Where | `labels: en` (default) | `labels: ko` |
+  |---|---|---|
+  | Section eyebrow (`NN · …`) | `01 · SUMMARY` — English category, upper case | `01 · 요약` — Korean category, 1–3 words |
+  | Cover eyebrow when the plan has no `eyebrow:` | `PROPOSAL · 관리자용` | `제안서 · 관리자용` |
+  | Appendix eyebrow · nav link | `REFERENCE` · faint link with a superscript `ref` | `부록` · a plain nav link, no mark |
+  | `before-after` badges | AS-IS · TO-BE | 지금 · 목표 |
+  | `decision-block` | DECISION · DUE · OWNER · IF UNDECIDED · 권고 | 결정 · 기한 · 결정 주체 · 미결정 시 · 권고 |
+  | `layer-map` | LAYER A · EXTERNAL · AS-IS | 층 A · 외부 · 지금 |
+  | `decision-table` | IF · THEN | 조건 · 결과 |
+  | `hub-spoke` | HUB | 허브 |
+  | `screen-map` | TOP BAR · SIDEBAR · LIST · DETAIL … | 상단 바 · 사이드바 · 목록 · 상세 … |
+  | `sequence` frames | ALT · OPT · LOOP | 분기 · 선택 · 반복 |
+
+  The labels change; the colors, geometry and the semantic split do not (a `지금` badge is still the AS-IS color).
+  Never mix: an executive document with `01 · SUMMARY` eyebrows and a `지금` badge is half-converted.
 - **Lookup, don't compute geometry.** Every spanning connector uses the same table: span S columns →
   `margin:0 X%` with S=2 → 25%, 3 → 16.667%, 4 → 12.5%, 5 → 10%. Gantt bars: period k starts at grid
   line k+1. Bar heights: value ÷ max × 100.
@@ -184,8 +213,8 @@ a first section that is not `headline-metric` or `decision`, or a last section t
 - **A not-built thing never gets the built look (cross-component rule).** Anything the source calls
   planned, designed-only, not yet built or not decided — a module, a pipeline node, a tree child or leaf, a
   timeline item, an ALT/OPT frame of messages — is drawn in the **shared planned look**: muted dashed
-  outline (on the soft fill where it is a box), muted text, plus a small state chip carrying the source's own word (예정·계획·
-  미설계·미구현·대기). Its figure-data carries the marker `[planned]` right after it. Components with the
+  outline (on the soft fill where it is a box), muted text, plus a state chip carrying the source's own word (예정·계획·
+  미설계·미구현·대기). The chip is **11px bold in the text-safe muted ink** — a 9px faint badge cannot be read. Its figure-data carries the marker `[planned]` right after it. Components with the
   variant: `layer-map`, `pipeline`, `tree`, `timeline`, `sequence`; any other figure draws a planned thing
   the same way. A planned thing is never given the key-node, accent or success look — passing a design off as
   an existing system is the most common overstatement a diagram makes.
@@ -193,7 +222,7 @@ a first section that is not `headline-metric` or `decision`, or a last section t
   `pipeline`, `process-row`, …) may use the glyphs `→ ⇢ ↻` or ASCII: `->` for a request or transition,
   two hyphens followed by `>` for a response, `(self)` for internal processing. The plan validator
   accepts both. Per-component markers (state `●`/`◉` and `[ok]`/`[retry]`/`[negative]`/`[neutral]`, layer
-  `[key]`/`[optional]`/`[external]`/`[legacy]`, swimlane `◇`/`→[라벨]`/`↓`, gantt `(legacy) + (core)`, screen-map
+  `[key]`/`[optional]`/`[external]`/`[legacy]`, layer-or-module `[state: 텍스트]` (built, but on sample data or with a caveat — chip text is the source's own words, e.g. 가짜 데이터), swimlane `◇`/`→[라벨]`/`↓`, gantt `(legacy) + (core)`, screen-map
   `[above]`/`[below]` for the 5th–6th region, and `[planned]` on layer, pipeline, tree, timeline and sequence items)
   are documented in each template's `@data` line and HOW TO FILL header (`components/README.md`).
 
@@ -284,7 +313,8 @@ ledger (`[Fnn]`) — an estimate or an owner statement renders with "(추정)" /
 `designed` or `planned` fact is never written as if it already exists. Write **one plan per audience**
 (`executive`, `user`, `developer`) from the same `facts.md`; an executive plan keeps ≤7 numbered sections
 (merge 1+2, fold 3 into 2, drop 4 or 8 when the source has nothing) and still opens with the metrics
-and ends with the request.
+and ends with the request. An executive or user pitch uses `labels: ko` (Korean eyebrows and component labels, see §4) and the
+style template's compact hero, so the first section's lead and its first figure row are visible without scrolling.
 
 Recipes set the default shape per section; the narrative lens and the source decide the final
 outline.

@@ -23,6 +23,7 @@ colors:
   muted-400: "#98A2B3"
   muted-300: "#B8C4D6"
   hairline: "#CBD6E6"
+  muted-text: "#5D6679"   # text-safe muted ink: informative small text (sub-lines, footnotes, legend, labels), >=4.5:1 on white. muted-500/400/300 are decorative / disabled only
   # Surface — fills / borders
   white: "#FFFFFF"
   page-bg: "#F3F7FE"
@@ -62,11 +63,12 @@ colors:
   dashed-store: "#AEBBD3"    # data/DB store dashed border
   dashed-rule: "#D5E0F4"     # gantt/lifeline dashed line
 fontStacks:
-  # CSS font-family stacks pasted verbatim into inline styles (design.md §0). Consumed by the
-  # component generator (.claude/lib/components.mjs) to fill ⟨f:body⟩ / ⟨f:display⟩ / ⟨f:mono⟩.
+  # CSS font-family stacks pasted verbatim into inline styles (design.md §0). Consumed by the component
+  # generator (.claude/lib/components.mjs) to fill ⟨f:body⟩ / ⟨f:display⟩ / ⟨f:mono⟩. The mono stack ends in the
+  # style's Korean body font before the generic family, so Hangul in a mono badge never falls back to a system font.
   body: "Inter,Pretendard,sans-serif"
   display: "Inter,Pretendard,sans-serif"
-  mono: "'JetBrains Mono',monospace"
+  mono: "'JetBrains Mono',Pretendard,monospace"
 typography:
   t-hero:        { fontFamily: "Inter", fontWeight: 700, fontSize: "44px", lineHeight: "1.22", letterSpacing: "-0.02em" }
   t-h2:          { fontFamily: "Inter", fontWeight: 600, fontSize: "28px", lineHeight: "1.32", letterSpacing: "-0.01em" }

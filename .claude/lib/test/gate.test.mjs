@@ -19,6 +19,15 @@ test('duplicate section id fails', () => {
   assert.ok(r.checks.find(c => c.name === 'unique-ids' && !c.ok));
 });
 
+test('an id inside an HTML comment is not a duplicate (a leftover commented template variant is harmless)', () => {
+  const clean = read('doc-pass.dc.html');
+  assert.match(clean, /\bid="s1"/); // the fixture has a real s1
+  const withComment = clean.replace('</body>', '<!-- VARIANT: <section id="s1" data-navlink="s1"></section> -->\n</body>');
+  assert.notEqual(withComment, clean);
+  const r = runGate(withComment, opts);
+  assert.ok(r.checks.find(c => c.name === 'unique-ids' && c.ok), JSON.stringify(r.checks.filter(c => !c.ok)));
+});
+
 test('missing keep-all fails', () => {
   const r = runGate(read('doc-no-keepall.dc.html'), opts);
   assert.equal(r.ok, false);

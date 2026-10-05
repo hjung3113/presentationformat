@@ -66,7 +66,7 @@ Diagrams are chosen by **content shape**, not by taste, and built by **pasting**
 There is an optional `/plan` → `/build` skill pipeline (plus a Node-based exit gate) that helps
 produce a spec-conforming document — see [`.claude/README.md`](.claude/README.md). It is tooling
 only, separate from the product spec above; it runs co-equally on Claude Code and opencode.
-`/plan` records each document's `doc-type`, `audience`, hero text (`title`, optional `eyebrow`, `thesis`, `cover-tokens`)
+`/plan` records each document's `doc-type`, `audience`, optional `labels: en|ko` (label language: English category labels for engineering docs, Korean for executive/user), hero text (`title`, optional `eyebrow`, `thesis`, `cover-tokens`)
 and, for a `pitch`, a `facts.md` ledger so every claim and number traces to a source; `/build` counts a
 document as built only when its exit gate — `node .claude/lib/verify-doc.mjs <doc> --canonical-support
 styles/<id>/support.js --style <id> --plan <content-plan.md>` — prints the `GATE PASSED` line.
@@ -78,7 +78,7 @@ styles/<id>/support.js --style <id> --plan <content-plan.md>` — prints the `GA
 | Doc | Owns | Does NOT cover |
 |-----|------|----------------|
 | `core/runtime-spec.md` | `.dc.html` structure, `<x-dc>`/`<helmet>`, `DCLogic` lifecycle, DOM contract (`#rprog`, `[data-navlink]`, section ids, the print hooks), runtime scripts, the print block, serving, the six chrome-token slots | Visual values (→ a style's `design.md`), prose (→ a style's `authoring-guide.md`) — **and no colors** |
-| `core/components.md` | Content-shape vocabulary, shape→component mapping, classification procedure, gate hard-fail pairs, paste/fill contract, document recipes | Values (→ a style's `design.md`), component geometry (→ `core/components/`) — **no colors** |
+| `core/components.md` | Content-shape vocabulary, shape→component mapping, classification procedure, gate hard-fail pairs, paste/fill contract (incl. the text-safe muted-ink rule and the `labels: en\|ko` label-language table), document recipes | Values (→ a style's `design.md`), component geometry (→ `core/components/`) — **no colors** |
 | `core/components/*.html` | Style-agnostic component templates: structure, role placeholders (`⟨accent⟩`), `⟦slot⟧` markers, fill instructions; `README.md` there is a generated index | Values — a template names roles, never HEX |
 | `styles/<style>/components/` + `components.gallery.dc.html` | **Generated** paste-ready components with this style's literal values, and their rendered gallery (`node .claude/lib/components.mjs build`) | Anything hand-written — never edit; change the template or the style's tokens |
 | `styles/<style>/authoring-guide.md` | Voice, Korean register, skeleton, page-type registry, color **intent→token-name** map, pre-ship content checklist (situation→figure points at `core/components.md`) | Exact HEX/px values (→ `design.md`), runtime/JS (→ `core/runtime-spec.md`) |

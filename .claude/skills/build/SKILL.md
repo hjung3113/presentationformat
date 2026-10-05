@@ -17,7 +17,7 @@ document that has not passed the gate is not "built," regardless of how the HTML
 
 - `content-plan.md` — the seam contract from `/plan`. Style-agnostic: header (`doc-type`, `audience`,
   `reader-action`, `has-as-is`, `metrics-mode`, `act-structure`, `narrative-lens`, `source-ref`, and
-  the hero keys `title`, `thesis`, `cover-tokens`, optional `eyebrow`, `facts`, `as-of`) plus, per section
+  the hero keys `title`, `thesis`, `cover-tokens`, optional `eyebrow`, `labels`, `facts`, `as-of`) plus, per section
   (`## N. 제목` → `sN`, an unnumbered `##` → `sref`), `intent`, `shape`, `payload` (structured notes,
   not prose), `figure-data`, `source-span`.
 - `--style <id>` — which style to render into: a folder under `styles/` (today `indigo-serif`,
@@ -72,23 +72,45 @@ template already carries the shell + runtime contract; only its text and section
 to be replaced. Every piece of template text is a `⟦…⟧` slot (hero, nav, section stubs, closing
 line), so a leftover fails the gate.
 
+**Make two choices from the plan header before filling anything — never from taste:**
+
+1. **Label language (`labels: en | ko`).** Use the plan's optional `labels:` key when it is present; otherwise
+   `audience: developer` → `en`, `audience: executive | user` → `ko` (the same rule is `labelLanguage()` in
+   `.claude/lib/plan-schema.mjs`). It fixes every category label in the document, and the whole document uses one language:
+   - `en` (engineering docs) — section eyebrows `NN · ENGLISH` with an English category (`01 · SUMMARY`); appendix eyebrow
+     `REFERENCE` and the faint nav link with the superscript `ref`; component badges as the slots show (AS-IS / TO-BE,
+     DECISION · DUE · OWNER · IF UNDECIDED, LAYER A · EXTERNAL, IF · THEN, HUB …).
+   - `ko` (executive / user) — section eyebrows `NN · 한글 범주` (`01 · 요약`); appendix eyebrow `부록` in the text-safe muted ink
+     and a **plain** nav link (no `ref` mark, no faint color); every component badge from the table in `core/components.md §4`
+     "Label language" (지금 · 목표, 결정 · 기한 · 결정 주체 · 미결정 시, 층 A · 외부 · 지금, 조건 · 결과, 허브 …).
+   Never `01 · SUMMARY` next to a `지금` badge. Colors and geometry do not depend on the language. When you paste a component,
+   its fixed labels are `⟦slot⟧`s whose example text is the `en` form — replace them with the `ko` row under `labels: ko`.
+2. **Hero size.** Use the template's commented `VARIANT compact hero` block — and the first section's `padding:36px 0 48px` with
+   the lead's `margin-bottom:22px` — when the plan's `doc-type` is `pitch` or its `audience` is `executive`, so the sheet starts
+   higher and the first section's lead plus its first figure row are visible at 1366×900. Every other document keeps the default
+   hero. Replace the default hero block with the variant (or delete the variant); never leave both.
+
 **Fill the hero only from the plan header — never invent it:**
 
 - the hero eyebrow pill ← the plan's optional `eyebrow:` header key, verbatim. If the plan has none, write
-  `<DOC-TYPE in English caps> · <audience in Korean>` — e.g. `PROPOSAL · 관리자용`, `FEATURE GUIDE · 사용자용`
-  (`audience` executive → 관리자용, user → 사용자용, developer → 개발자용; a hyphen in the doc-type becomes a
-  space) — and nothing else: no invented subtitle, no tagline;
+  `<doc type> · <audience in Korean>` and nothing else: no invented subtitle, no tagline. Under `labels: en` the doc type is the
+  English caps of the `doc-type` (a hyphen becomes a space) — `PROPOSAL · 관리자용`, `FEATURE GUIDE · 사용자용`; under `labels: ko`
+  it is the Korean doc type — explainer 설명서, status-report 상태 보고, proposal 제안서, feature-guide 기능 소개, analysis 분석,
+  pitch 제안서 — `제안서 · 관리자용`, `기능 소개 · 사용자용`. The audience word is `audience` executive → 관리자용, user → 사용자용,
+  developer → 개발자용;
 - the hero title ← `title`; the thesis paragraph ← `thesis` (compose it in the style's voice and register
   — the plan's thesis may be in any register, the page never is — but keep its meaning and keep its
   citation out of the visible text);
 - each hero token (value + label) ← one entry of `cover-tokens`, in order; delete the unused token
   boxes — never pad to four and never add a token the plan lacks;
 - the hero meta line ← `as-of` (e.g. 기준 YYYY-MM-DD) and nothing else; delete the line if the plan
-  has no `as-of`. Delete the optional purpose line unless `reader-action` is worth a sentence there;
+  has no `as-of`. Delete the optional purpose line unless `reader-action` is worth a sentence there (the compact hero has none);
 - the sticky-nav brand ← the title (short form).
 
 **Nav labels come from the section titles** — one link per numbered section, each label the
-section's title cut to a Korean 2–4-character keyword (the appendix gets the muted `ref` link). Section
+section's title cut to a Korean 2–4-character keyword (the appendix: under `labels: en` the muted `ref` link, under `labels: ko` a plain
+link with no mark — `부록` or a short Korean title such as `근거`). Section eyebrows follow the label language chosen above
+(`01 · SUMMARY` / `01 · 요약`) and `data-screen-label` keeps the Korean title. Section
 ids are `s1…sN` in plan order and `sref` for the appendix; keep every `data-screen-label`, nav
 `data-navlink` and `href` in agreement. **Act dividers** (documents above ~9 sections) are a `<div>`,
 never a `<section>` — a `<section>` breaks the section count the gate checks against the plan.
@@ -111,7 +133,9 @@ first block in the sheet and `margin:8px 0 0` after a section; the **first secti
    names (column count — the same N in **every** `repeat(N,1fr)` and `calc(100% / N)` — a
    `grid-column`, a percentage slot together with its label, or a margin from its lookup table).
    **A thing the plan marks `[planned]` (or whose fact is `designed`/`planned`) is drawn with the component's
-   planned variant** — muted dashed outline + state chip — never the built look (`core/components.md` §4).
+   planned variant** — muted dashed outline + state chip (11px bold) — never the built look (`core/components.md` §4). A `[state: 텍스트]`
+   marker (layer-map: built, but on sample data — e.g. `[state: 가짜 데이터]`) keeps the built look and adds the state chip with the plan's own words.
+   A `card-grid` number chip is a bare integer 1, 2, 3 — never `2.1` (the gate's `numbers-traced` reads a decimal as an untraced number).
    **A `text-table` section pastes the `table` component and fills it from the section's figure-data**
    (`columns: … | rows: …` — those columns and those rows, nothing added or dropped). A table in the
    reference appendix (`sref`), or a secondary table that follows another figure, uses the table's **soft

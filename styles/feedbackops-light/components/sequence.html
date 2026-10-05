@@ -31,6 +31,8 @@ HOW TO FILL
        참여자 이름과 메시지 라벨은 한 줄에 한글 약 14자 이하, 두 줄까지만 쓴다(참여자 상자는 약 12자에서 줄이 바뀐다).
        두 줄을 넘는 설명은 라벨이 아니라 그림 아래 각주("* 3 — …")로 옮기고, 라벨에는 번호와 핵심어만 남긴다.
        그래도 넘치면 참여자를 4명 이하로 줄이거나 그림을 둘로 나눈다.
+  8. 프레임 키워드 ⟦ALT⟧ · ⟦OPT⟧(반복은 LOOP)는 슬롯이다. 예시는 UML 영문 키워드 기본(labels: en)이다. labels: ko 문서(사용자용)는
+     "분기" · "선택" · "반복" 으로 바꾼다(core/components.md §4 "라벨 언어"). 프레임 라벨은 11px 이상으로 읽히게 둔다.
 -->
 <div data-component="sequence" style="background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:24px 24px 20px;">
   <!-- lifelines: background-size = calc(100% / N) -->
@@ -45,35 +47,35 @@ HOW TO FILL
     <!-- message 1 — call →, participant 1 to 2 (grid-column 1 / 3, S=2 → margin 0 25%) -->
     <div style="display:grid; grid-template-columns:repeat(3,1fr); padding:6px 0;">
       <div style="grid-column:1 / 3; margin:0 25%;">
-        <div style="text-align:center; margin-bottom:3px;"><span style="font:500 11px/1.4 Inter,Pretendard,sans-serif; color:#374151; background:#F7FAFE; padding:0 5px;"><b style="font:700 10px/1 'JetBrains Mono',monospace; color:#1428A0;">1</b> ⟦요청 1⟧</span></div>
+        <div style="text-align:center; margin-bottom:3px;"><span style="font:500 11px/1.4 Inter,Pretendard,sans-serif; color:#374151; background:#F7FAFE; padding:0 5px;"><b style="font:700 10px/1 'JetBrains Mono',Pretendard,monospace; color:#1428A0;">1</b> ⟦요청 1⟧</span></div>
         <div style="display:flex; align-items:center;"><div style="flex:1; height:2px; background:#1428A0;"></div><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:8px solid #1428A0;"></div></div>
       </div>
     </div>
     <!-- message 2 — call →, participant 2 to 3 -->
     <div style="display:grid; grid-template-columns:repeat(3,1fr); padding:6px 0;">
       <div style="grid-column:2 / 4; margin:0 25%;">
-        <div style="text-align:center; margin-bottom:3px;"><span style="font:500 11px/1.4 Inter,Pretendard,sans-serif; color:#374151; background:#F7FAFE; padding:0 5px;"><b style="font:700 10px/1 'JetBrains Mono',monospace; color:#1428A0;">2</b> ⟦요청 2⟧</span></div>
+        <div style="text-align:center; margin-bottom:3px;"><span style="font:500 11px/1.4 Inter,Pretendard,sans-serif; color:#374151; background:#F7FAFE; padding:0 5px;"><b style="font:700 10px/1 'JetBrains Mono',Pretendard,monospace; color:#1428A0;">2</b> ⟦요청 2⟧</span></div>
         <div style="display:flex; align-items:center;"><div style="flex:1; height:2px; background:#1428A0;"></div><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:8px solid #1428A0;"></div></div>
       </div>
     </div>
     <!-- message 3 — return ← (dashed), participant 3 to 2 -->
     <div style="display:grid; grid-template-columns:repeat(3,1fr); padding:6px 0;">
       <div style="grid-column:2 / 4; margin:0 25%;">
-        <div style="text-align:center; margin-bottom:3px;"><span style="font:500 11px/1.4 Inter,Pretendard,sans-serif; color:#667083; background:#F7FAFE; padding:0 5px;"><b style="font:700 10px/1 'JetBrains Mono',monospace; color:#667083;">3</b> ⟦응답 2⟧</span></div>
+        <div style="text-align:center; margin-bottom:3px;"><span style="font:500 11px/1.4 Inter,Pretendard,sans-serif; color:#5D6679; background:#F7FAFE; padding:0 5px;"><b style="font:700 10px/1 'JetBrains Mono',Pretendard,monospace; color:#5D6679;">3</b> ⟦응답 2⟧</span></div>
         <div style="display:flex; align-items:center;"><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-right:8px solid #94A3B8;"></div><div style="flex:1; border-top:2px dashed #94A3B8;"></div></div>
       </div>
     </div>
     <!-- self / internal processing on participant 2 -->
     <div style="display:grid; grid-template-columns:repeat(3,1fr); padding:6px 0;">
-      <div style="grid-column:2; justify-self:center; max-width:94%; font:500 11px/1.35 Inter,Pretendard,sans-serif; color:#0F1E78; background:#E7EFFC; border:1px solid #B9C9F7; border-radius:4px; padding:5px 10px; text-align:center;"><b style="font:700 10px/1 'JetBrains Mono',monospace; color:#1428A0;">4</b> ↻ ⟦내부 처리⟧</div>
+      <div style="grid-column:2; justify-self:center; max-width:94%; font:500 11px/1.35 Inter,Pretendard,sans-serif; color:#0F1E78; background:#E7EFFC; border:1px solid #B9C9F7; border-radius:4px; padding:5px 10px; text-align:center;"><b style="font:700 10px/1 'JetBrains Mono',Pretendard,monospace; color:#1428A0;">4</b> ↻ ⟦내부 처리⟧</div>
     </div>
     <!-- ALT block: wrap conditional message rows -->
     <div style="border:1px dashed #B9C9F7; border-radius:6px; margin:6px 0;">
-      <div style="display:inline-block; font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.04em; color:#1428A0; background:#E7EFFC; padding:5px 8px; border-radius:6px 0 6px 0;">ALT ⟦조건⟧</div>
+      <div style="display:inline-block; font:700 11px/1 'JetBrains Mono',Pretendard,monospace; letter-spacing:.04em; color:#1428A0; background:#E7EFFC; padding:5px 8px; border-radius:6px 0 6px 0;">⟦ALT⟧ ⟦조건⟧</div>
       <!-- message 5 — return ← (dashed), participant 2 to 1 -->
       <div style="display:grid; grid-template-columns:repeat(3,1fr); padding:2px 0 8px;">
         <div style="grid-column:1 / 3; margin:0 25%;">
-          <div style="text-align:center; margin-bottom:3px;"><span style="font:500 11px/1.4 Inter,Pretendard,sans-serif; color:#667083; background:#F7FAFE; padding:0 5px;"><b style="font:700 10px/1 'JetBrains Mono',monospace; color:#667083;">5</b> ⟦오류 응답⟧</span></div>
+          <div style="text-align:center; margin-bottom:3px;"><span style="font:500 11px/1.4 Inter,Pretendard,sans-serif; color:#5D6679; background:#F7FAFE; padding:0 5px;"><b style="font:700 10px/1 'JetBrains Mono',Pretendard,monospace; color:#5D6679;">5</b> ⟦오류 응답⟧</span></div>
           <div style="display:flex; align-items:center;"><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-right:8px solid #94A3B8;"></div><div style="flex:1; border-top:2px dashed #94A3B8;"></div></div>
         </div>
       </div>
@@ -81,17 +83,17 @@ HOW TO FILL
     <!-- message 6 — return ← (dashed), participant 2 to 1 -->
     <div style="display:grid; grid-template-columns:repeat(3,1fr); padding:6px 0;">
       <div style="grid-column:1 / 3; margin:0 25%;">
-        <div style="text-align:center; margin-bottom:3px;"><span style="font:500 11px/1.4 Inter,Pretendard,sans-serif; color:#667083; background:#F7FAFE; padding:0 5px;"><b style="font:700 10px/1 'JetBrains Mono',monospace; color:#667083;">6</b> ⟦최종 응답⟧</span></div>
+        <div style="text-align:center; margin-bottom:3px;"><span style="font:500 11px/1.4 Inter,Pretendard,sans-serif; color:#5D6679; background:#F7FAFE; padding:0 5px;"><b style="font:700 10px/1 'JetBrains Mono',Pretendard,monospace; color:#5D6679;">6</b> ⟦최종 응답⟧</span></div>
         <div style="display:flex; align-items:center;"><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-right:8px solid #94A3B8;"></div><div style="flex:1; border-top:2px dashed #94A3B8;"></div></div>
       </div>
     </div>
     <!-- VARIANT planned frame (OPT 예정·미구현, [planned]): the messages inside are not built — muted dashed frame + muted label chip + muted call arrow -->
     <div style="border:1px dashed #B8C4D6; border-radius:6px; margin:6px 0;">
-      <div style="display:inline-block; font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.04em; color:#667083; background:#F3F7FE; padding:5px 8px; border-radius:6px 0 6px 0;">OPT ⟦예정·미구현⟧</div>
+      <div style="display:inline-block; font:700 11px/1 'JetBrains Mono',Pretendard,monospace; letter-spacing:.04em; color:#5D6679; background:#F3F7FE; padding:5px 8px; border-radius:6px 0 6px 0;">⟦OPT⟧ ⟦예정·미구현⟧</div>
       <!-- message 7 — planned call → (muted solid), participant 2 to 3 -->
       <div style="display:grid; grid-template-columns:repeat(3,1fr); padding:2px 0 8px;">
         <div style="grid-column:2 / 4; margin:0 25%;">
-          <div style="text-align:center; margin-bottom:3px;"><span style="font:500 11px/1.4 Inter,Pretendard,sans-serif; color:#667083; background:#F7FAFE; padding:0 5px;"><b style="font:700 10px/1 'JetBrains Mono',monospace; color:#667083;">7</b> ⟦예정 요청⟧</span></div>
+          <div style="text-align:center; margin-bottom:3px;"><span style="font:500 11px/1.4 Inter,Pretendard,sans-serif; color:#5D6679; background:#F7FAFE; padding:0 5px;"><b style="font:700 10px/1 'JetBrains Mono',Pretendard,monospace; color:#5D6679;">7</b> ⟦예정 요청⟧</span></div>
           <div style="display:flex; align-items:center;"><div style="flex:1; height:2px; background:#B8C4D6;"></div><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:8px solid #B8C4D6;"></div></div>
         </div>
       </div>
@@ -100,5 +102,5 @@ HOW TO FILL
     <div style="display:flex; align-items:center;"><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-right:8px solid #1428A0;"></div><div style="flex:1; height:2px; background:#1428A0;"></div></div>
     -->
   </div>
-  <div style="font:400 11.5px/1.55 Inter,Pretendard,sans-serif; color:#98A2B3; margin-top:10px;">* 실선 = 요청 · 점선 = 응답 · ↻ = 참여자 내부 처리</div>
+  <div style="font:400 11.5px/1.55 Inter,Pretendard,sans-serif; color:#5D6679; margin-top:10px;">* 실선 = 요청 · 점선 = 응답 · ↻ = 참여자 내부 처리</div>
 </div>

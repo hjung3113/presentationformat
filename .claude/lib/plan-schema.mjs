@@ -6,6 +6,11 @@ import { listTemplates, shapeMap } from './components.mjs';
 // Header contract: see the content-plan template (.claude/skills/build/content-plan.template.md).
 export const DOC_TYPES = ['explainer', 'status-report', 'proposal', 'feature-guide', 'analysis', 'pitch'];
 export const AUDIENCES = ['executive', 'user', 'developer'];
+// Label language of eyebrows, the appendix label and component badges (core/components.md §4 "Label language").
+export const LABELS = ['en', 'ko'];
+// Default when the optional `labels:` header key is absent: engineering audience → English categories, the others → Korean.
+export const labelLanguage = (header) =>
+  LABELS.includes(header.labels) ? header.labels : (header.audience === 'developer' ? 'en' : 'ko');
 const ENUMS = {
   'doc-type': DOC_TYPES,
   audience: AUDIENCES,
@@ -13,9 +18,11 @@ const ENUMS = {
   'metrics-mode': ['present', 'absent', 'partial'],
   'act-structure': ['flat', 'act-grouped'],
   'narrative-lens': ['architecture-first', 'use-case-first', 'decision-first'],
+  labels: LABELS,
 };
 // Optional header keys (not in REQUIRED): `facts` (required for doc-type pitch), `as-of`, `eyebrow` (the hero
-// eyebrow, verbatim; any non-placeholder text — /build writes `DOC-TYPE · 대상` when it is absent).
+// eyebrow, verbatim; any non-placeholder text — /build writes `DOC-TYPE · 대상` when it is absent), `labels` (en | ko,
+// overrides the audience-derived label language — see labelLanguage()).
 const REQUIRED = ['doc-type', 'audience', 'reader-action', 'has-as-is', 'metrics-mode', 'act-structure',
   'narrative-lens', 'source-ref', 'title', 'thesis', 'cover-tokens'];
 const EXEC_BANNED_SHAPES = ['code-structure', 'interaction', 'entity-relations', 'rule-table'];
@@ -100,6 +107,7 @@ export function parsePlan(md) {
       readerAction: raw['reader-action'] || '',
       title: raw.title || '',
       eyebrow: raw.eyebrow || '', // optional: the hero eyebrow verbatim; /build falls back to `DOC-TYPE · 대상` when empty
+      labels: raw.labels || '', // optional enum en | ko; empty → labelLanguage() derives it from audience
       thesis: raw.thesis || '',
       coverTokens: parseCoverTokens(raw['cover-tokens']),
       facts: raw.facts || '',

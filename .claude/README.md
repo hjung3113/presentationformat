@@ -41,7 +41,9 @@ The gate itself is zero-dependency Node under `.claude/lib/`:
 - `.claude/lib/test/*.test.mjs` — the test suite for the above (`node --test .claude/lib/test/*.test.mjs`),
   including: generated outputs up to date, every template renders in every style with no unresolved
   token, `core/` carries zero HEX, `core/components.md` §1 matches the templates' `@shape` metadata,
-  each template's first `@data` key matches the figure-data contract, the three CLIs run from a
+  each template's first `@data` key matches the figure-data contract, no template hard-codes an English label
+  outside a `⟦slot⟧` (label language), informative text uses `⟨muted-text⟩` and every style's `muted-text` is ≥4.5:1 on
+  white with a mono stack that ends in its Korean body font, the optional `labels: en|ko` plan key, the three CLIs run from a
   path with spaces/Korean and through a symlink (they once exited 0 without running), and the worked
   example (`test/fixtures/example-brief/`) passes every plan-aware check.
 
@@ -73,7 +75,7 @@ Every check is hard-fail unless marked non-blocking.
 | `keep-all` | `word-break: keep-all` is present |
 | `accent-present` | the accent hex appears (case-insensitive) |
 | `sidecar-present` | `support.js` beside the doc is byte-identical to the canonical copy |
-| `unique-ids` · `navlink-integrity` | no duplicate `id`; every `data-navlink` resolves |
+| `unique-ids` · `navlink-integrity` | no duplicate `id`; every `data-navlink` resolves (HTML comments are ignored — a leftover commented template variant is harmless) |
 | `inline-only` | no class selector in any `<style>` — including `.a, .b {` lists, `div.x {` and rules inside `@media`. Attribute/element/pseudo selectors, `@font-face`, `::selection` and `::-webkit-scrollbar` stay allowed |
 | `slots-filled` · `no-role-placeholders` | no `⟦…⟧` slot and no `⟨role⟩` token left outside HTML comments |
 | `palette` (`--style`) | every `#RGB` / `#RRGGBB` in a `style` attribute (or `fill`/`stroke`/… attribute) or `<style>` text is in the style's `design.md` (case-insensitive, `#abc` = `#AABBCC`). Comments, `<script>`, `&#…;` entities, `href`/`id` fragments and `url(#…)` are ignored |
@@ -110,7 +112,9 @@ INVALID.
   `narrative-lens`, `source-ref`, `title`, `thesis`, `cover-tokens`. `facts: <path>` is required for
   `pitch` (the file must exist relative to the plan) and read by `numbers-traced` whenever present;
   `as-of: YYYY-MM-DD` is optional, and so is `eyebrow` (the hero eyebrow, printed verbatim; without it `/build`
-  writes `<DOC-TYPE> · <audience>`). Enums are validated; any value that is still a template
+  writes `<DOC-TYPE> · <audience>`) and `labels: en|ko` (the language of section eyebrows, the appendix label and
+  component badges; without it `/build` uses `en` for `audience: developer` and `ko` for `executive|user` —
+  `labelLanguage()` in `plan-schema.mjs`, table in `core/components.md §4`). Enums are validated; any value that is still a template
   placeholder (`<…>`) is rejected; `cover-tokens` is 2–4 items `값=라벨 [cite]` separated by `;`.
   Keys and enums are defined in the figure-data contract — `core/components.md` and the
   `content-plan.template.md` the skills carry.

@@ -10,7 +10,7 @@
 | **when to use** | Internal engineering / technical documentation — design notes, architecture briefs, before→after system redesigns, RFCs. A precise, dense, "same-author" engineering voice. |
 | **display font** | IBM Plex Sans (600–700 weight) |
 | **body font** | IBM Plex Sans (Korean via IBM Plex Sans KR → Noto Sans KR) |
-| **mono font** | IBM Plex Mono |
+| **mono font** | IBM Plex Mono — stack `'IBM Plex Mono','IBM Plex Sans KR',monospace` (Hangul falls back to the body font) |
 | **accent** | `#0F766E` |
 | **page bg** | `#EDF2F1` |
 

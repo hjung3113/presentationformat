@@ -164,11 +164,13 @@ export function runGate(html, opts) {
   add('accent-present', html.toLowerCase().includes(String(opts.accentHex).toLowerCase()), opts.accentHex);
   add('sidecar-present', opts.sidecarPresent === true);
 
-  const ids = [...html.matchAll(/\bid=["']([^"']+)["']/g)].map(m => m[1]);
+  // ids and nav links are read from the live markup: a commented-out block (the template's `VARIANT compact hero`)
+  // is not in the DOM, so an `id="top"` inside it must not collide with the real one.
+  const ids = [...live.matchAll(/\bid=["']([^"']+)["']/g)].map(m => m[1]);
   const dup = ids.filter((id, i) => ids.indexOf(id) !== i);
   add('unique-ids', dup.length === 0, dup.join(','));
 
-  const navTargets = [...html.matchAll(/data-navlink=["']([^"']+)["']/g)].map(m => m[1]);
+  const navTargets = [...live.matchAll(/data-navlink=["']([^"']+)["']/g)].map(m => m[1]);
   const dangling = navTargets.filter(t => !ids.includes(t));
   add('navlink-integrity', dangling.length === 0, dangling.join(','));
 

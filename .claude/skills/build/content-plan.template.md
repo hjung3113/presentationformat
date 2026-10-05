@@ -8,7 +8,8 @@ act-structure: <flat | act-grouped — flat for ~6-9 sections; act-grouped with 
 narrative-lens: <architecture-first | use-case-first | decision-first — controls whether the section sequence explains structure, scenarios, or decision context first>
 source-ref: <repo@sha or path@mtime for every source consumed, comma separated — a staleness fingerprint; several repos are listed one by one>
 title: <the document title printed in the hero — a noun phrase, 1-2 lines>
-eyebrow: <optional — the hero eyebrow printed verbatim, e.g. PROPOSAL · 관리자용; delete this line to get the default "DOC-TYPE in English caps · audience in Korean">
+eyebrow: <optional — the hero eyebrow printed verbatim, e.g. PROPOSAL · 관리자용; delete this line to get the default "DOC-TYPE in English caps · audience in Korean" (labels en) or "문서 종류 · 대상" (labels ko)>
+labels: <optional — en | ko: the language of section eyebrows, the appendix label and component badges. Delete this line to get the default from audience: developer → en (01 · SUMMARY, AS-IS), executive or user → ko (01 · 요약, 지금). Set it only to override that default>
 thesis: <the one-sentence hero thesis, in any register (notes, ~합니다 …) — /build renders it in the style's register; may end with a citation such as [F03]>
 cover-tokens: <2-4 hero tokens written 값=라벨 [cite] and separated by semicolons — every token cites a fact id [F07] or a source span [PRODUCT.md L12]; a token with no source is not planned>
 facts: <path to facts.md, relative to this plan — required for doc-type pitch; delete this line when there is no ledger>

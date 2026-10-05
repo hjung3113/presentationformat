@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { listTemplates, listStyles, buildStyle, staleFiles, shapeMap, parseMeta, parseDataKeys, CORE_DIR } from '../components.mjs';
+import { listTemplates, listStyles, buildStyle, staleFiles, shapeMap, parseMeta, parseDataKeys, loadTokens, CORE_DIR } from '../components.mjs';
 
 const CORE = join(CORE_DIR, '..');
 
@@ -104,4 +104,44 @@ test('variant markers promised in HOW TO FILL are in the @data line /plan reads 
   const by = Object.fromEntries(listTemplates().map(t => [t.meta.component, t.meta.data]));
   for (const [id, marks] of Object.entries({ 'state-machine': ['[neutral]'], 'screen-map': ['[above]', '[below]'], matrix: ['—', '✓ 한정어'] }))
     for (const m of marks) assert.ok(by[id].includes(m), `${id} @data lacks ${m}`);
+});
+
+// ---- label language: every fixed label is a ⟦slot⟧, so a Korean document can replace it (core/components.md §4) ----
+const bodyOf = (src) => src.replace(/^<!--[\s\S]*?-->\s*/, '');
+test('no template carries a hard-coded English label outside a ⟦slot⟧ (label language is a choice, not baked in)', () => {
+  for (const t of listTemplates()) {
+    const body = bodyOf(t.src).replace(/<!--[\s\S]*?-->/g, '');
+    for (const m of body.matchAll(/>([^<>]+)</g)) {
+      const text = m[1].replace(/⟦[^⟧]*⟧/g, '').replace(/&#?\w+;/g, '').trim();
+      assert.doesNotMatch(text, /[A-Za-z]{2,}/, `${t.file}: hard-coded English text "${text}" — make it a ⟦slot⟧ with the English default as its example`);
+    }
+  }
+});
+
+// ---- text-safe muted ink (core/components.md §4): informative text never uses a faint muted role ----
+const luminance = (hex) => {
+  const [r, g, b] = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255).map(v => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+const contrast = (a, b) => { const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x); return (hi + 0.05) / (lo + 0.05); };
+
+test('templates set informative text in ⟨muted-text⟩; the faint roles carry only n/a dashes and spacers', () => {
+  for (const t of listTemplates()) {
+    for (const m of bodyOf(t.src).matchAll(/(?<![-\w])color:⟨muted-(?:400|500)⟩;[^"]*">([^<]*)/g))
+      assert.match(m[1], /^(⟦—⟧|&nbsp;)/, `${t.file}: faint muted text color on "${m[1].slice(0, 30)}" — use ⟨muted-text⟩`);
+  }
+});
+
+test('every style defines muted-text at >=4.5:1 on white, and its mono stack falls back to the style\'s Korean body font', () => {
+  for (const style of listStyles()) {
+    const { colors, fontStacks } = loadTokens(style);
+    assert.ok(colors['muted-text'], `${style}: no muted-text color`);
+    const ratio = contrast(colors['muted-text'], colors.white);
+    assert.ok(ratio >= 4.5, `${style}: muted-text ${colors['muted-text']} is ${ratio.toFixed(2)}:1 on white (<4.5)`);
+    // the Korean body font is the last named family of the body stack before the generic one
+    const families = (s) => s.split(',').map(f => f.trim().replace(/^'|'$/g, '')).filter(f => !/^(sans-serif|serif|monospace)$/.test(f));
+    const korean = families(fontStacks.body).at(-1);
+    assert.ok(families(fontStacks.mono).includes(korean), `${style}: mono stack ${fontStacks.mono} lacks the Korean body font ${korean}`);
+    assert.match(fontStacks.mono, /,monospace$/, `${style}: mono stack must end in the generic family`);
+  }
 });
