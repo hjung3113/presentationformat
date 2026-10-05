@@ -1,0 +1,45 @@
+<!-- GENERATED for style "indigo-serif" from core/components/forbidden-path.html by .claude/lib/components.mjs — do not edit here.
+     Paste the <div data-component="forbidden-path"> block into a section, then replace EVERY ⟦…⟧ (the exit gate fails on any left over). -->
+<!--
+@component forbidden-path
+@kind figure
+@order 140
+@shape forbidden-path
+@title 금지 경로와 허용 대안
+@use "A를 B로 바로 바꾸면 안 된다, 대신 C로 간다"가 주장이다. 금지된 자동 변환·지름길과 그것을 대신하는 정식 경로를 함께 보여 준다.
+@avoid 여러 조건에 따른 허용 여부 표 → decision-table. 단순 주의 한 줄 → callout(WARN).
+@limits 허용 경로 1–4, 금지 경로 1–2
+@data allowed: 출발 → 대안 경로들 | forbidden: 출발 ✕ 금지된 도착 (이유)
+HOW TO FILL
+  1. 왼쪽 = 허용 경로(강조색), 오른쪽 = 금지 경로(경고색). 가운데 ≠ 표시는 그대로 둔다.
+  2. 허용 쪽 노드는 ▼REPEAT 로 늘린다. 금지 쪽에는 금지 이유를 반드시 한 줄로 적는다.
+  3. 금지 쪽에 강조색을 쓰지 않는다. 두 쪽 출발 노드는 같은 이름이어야 비교가 성립한다.
+-->
+<div data-component="forbidden-path" style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:24px;">
+  <div style="display:grid; grid-template-columns:1fr 44px 1fr; gap:14px; align-items:center;">
+    <!-- allowed -->
+    <div style="background:#FFFFFF; border:1px solid #C9CEF4; border-radius:12px; padding:18px;">
+      <div style="margin-bottom:12px;"><span style="font:700 10.5px/1 Pretendard,sans-serif; color:#1F8A5B; background:#E6F5EE; border-radius:5px; padding:4px 8px;">✓ 허용</span></div>
+      <div style="font:600 12.5px/1.35 Pretendard,sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:10px; text-align:center;">⟦Survey Response⟧</div>
+      <div style="text-align:center; color:#B6BBCB; font:400 14px/1 Pretendard,sans-serif; padding:6px 0;">↓</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+        <!-- ▼ REPEAT per allowed destination -->
+        <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#4338CA; background:#EEF0FF; border:1.5px solid #4338CA; border-radius:8px; padding:9px 8px; text-align:center;">⟦Evidence 첨부⟧</div>
+        <!-- ▲ /REPEAT -->
+        <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#4338CA; background:#EEF0FF; border:1.5px solid #4338CA; border-radius:8px; padding:9px 8px; text-align:center;">⟦Finding 근거⟧</div>
+        <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#4338CA; background:#EEF0FF; border:1.5px solid #4338CA; border-radius:8px; padding:9px 8px; text-align:center;">⟦Task Request⟧</div>
+        <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#4338CA; background:#EEF0FF; border:1.5px solid #4338CA; border-radius:8px; padding:9px 8px; text-align:center;">⟦기존 VOC 근거⟧</div>
+      </div>
+    </div>
+    <!-- separator -->
+    <div style="width:36px; height:36px; border-radius:50%; background:#FFFFFF; border:1.5px solid #F0D7CF; color:#B4543F; display:flex; align-items:center; justify-content:center; font:700 17px/1 Pretendard,sans-serif; justify-self:center;">≠</div>
+    <!-- forbidden -->
+    <div style="background:#FBF1EE; border:1px solid #F0D7CF; border-radius:12px; padding:18px;">
+      <div style="margin-bottom:12px;"><span style="font:700 10.5px/1 Pretendard,sans-serif; color:#B4543F; background:#FFFFFF; border:1px solid #F0D7CF; border-radius:5px; padding:4px 8px;">✕ 금지</span></div>
+      <div style="font:600 12.5px/1.35 Pretendard,sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:10px; text-align:center;">⟦Survey Response⟧</div>
+      <div style="text-align:center; color:#B4543F; font:600 12px/1 Pretendard,sans-serif; padding:7px 0;">✕ ↓</div>
+      <div style="font:600 12.5px/1.35 Pretendard,sans-serif; color:#B4543F; background:#FFFFFF; border:1px dashed #B4543F; border-radius:8px; padding:10px; text-align:center;">⟦새 VOC 자동 생성⟧</div>
+      <div style="font:400 12px/1.6 Pretendard,sans-serif; color:#94724F; margin-top:10px; text-align:center;">⟦VOC는 인증된 사용자가 직접 제출한 목소리만 담는다⟧</div>
+    </div>
+  </div>
+</div>

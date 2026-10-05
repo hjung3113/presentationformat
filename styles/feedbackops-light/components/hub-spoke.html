@@ -1,0 +1,57 @@
+<!-- GENERATED for style "feedbackops-light" from core/components/hub-spoke.html by .claude/lib/components.mjs — do not edit here.
+     Paste the <div data-component="hub-spoke"> block into a section, then replace EVERY ⟦…⟧ (the exit gate fails on any left over). -->
+<!--
+@component hub-spoke
+@kind figure
+@order 110
+@shape hub
+@title 허브 앤 스포크 — 하나가 여럿을 잇는 중심
+@use 하나의 중심(링크 테이블·통합 계층·게이트웨이·공통 서비스)이 여러 대상과 연결된다는 "중앙화"가 주장이다.
+@avoid 관계마다 이름·카디널리티가 중요 → er-relations. 층 구조 → layer-map. 순서 있는 흐름 → pipeline.
+@limits 스포크 2–8 (좌우 각 1–4)
+@data hub: 이름(설명) | left: 대상(연결 내용), … | right: 대상(연결 내용), …
+HOW TO FILL
+  1. 가운데 허브는 강조 채움 노드 하나. 좌우 칸에 스포크를 나눠 넣는다(한쪽 최대 4).
+  2. 스포크 한 개 = ▼REPEAT 행 하나: [대상 노드][↔ 연결 라벨]. 오른쪽 칸은 [↔ 라벨][대상 노드] 순서.
+  3. 단방향이면 ↔ 대신 → 또는 ←. 연결 라벨은 2–6자 개조식.
+-->
+<div data-component="hub-spoke" style="background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:24px;">
+  <div style="display:grid; grid-template-columns:1fr 200px 1fr; align-items:center; max-width:820px; margin:0 auto;">
+    <!-- left spokes -->
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <!-- ▼ REPEAT per left spoke -->
+      <div style="display:grid; grid-template-columns:1fr 74px; align-items:center;">
+        <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px; text-align:center;">⟦VOC⟧</div>
+        <div style="display:flex; flex-direction:column; align-items:center; padding:0 4px;"><span style="font:500 10px/1.2 Inter,Pretendard,sans-serif; color:#667083; white-space:nowrap;">⟦근거⟧</span><span style="color:#1428A0; font:400 15px/1 Inter,Pretendard,sans-serif;">↔</span></div>
+      </div>
+      <!-- ▲ /REPEAT -->
+      <div style="display:grid; grid-template-columns:1fr 74px; align-items:center;">
+        <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px; text-align:center;">⟦Survey⟧</div>
+        <div style="display:flex; flex-direction:column; align-items:center; padding:0 4px;"><span style="font:500 10px/1.2 Inter,Pretendard,sans-serif; color:#667083; white-space:nowrap;">⟦결과 근거⟧</span><span style="color:#1428A0; font:400 15px/1 Inter,Pretendard,sans-serif;">↔</span></div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 74px; align-items:center;">
+        <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px; text-align:center;">⟦Finding⟧</div>
+        <div style="display:flex; flex-direction:column; align-items:center; padding:0 4px;"><span style="font:500 10px/1.2 Inter,Pretendard,sans-serif; color:#667083; white-space:nowrap;">⟦종합⟧</span><span style="color:#1428A0; font:400 15px/1 Inter,Pretendard,sans-serif;">↔</span></div>
+      </div>
+    </div>
+    <!-- hub -->
+    <div style="font:700 13.5px/1.35 Inter,Pretendard,sans-serif; color:#FFFFFF; background:#1428A0; border-radius:8px; padding:22px 14px; text-align:center;"><span style="display:block; font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.08em; color:#B9C9F7; margin-bottom:8px;">HUB</span>⟦entity_links⟧<span style="display:block; font:400 11px/1.45 Inter,Pretendard,sans-serif; color:#E7EFFC; margin-top:6px;">⟦교차 이력의 단일 정본⟧</span></div>
+    <!-- right spokes -->
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <!-- ▼ REPEAT per right spoke -->
+      <div style="display:grid; grid-template-columns:74px 1fr; align-items:center;">
+        <div style="display:flex; flex-direction:column; align-items:center; padding:0 4px;"><span style="font:500 10px/1.2 Inter,Pretendard,sans-serif; color:#667083; white-space:nowrap;">⟦실행 요청⟧</span><span style="color:#1428A0; font:400 15px/1 Inter,Pretendard,sans-serif;">↔</span></div>
+        <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px; text-align:center;">⟦Task Request⟧</div>
+      </div>
+      <!-- ▲ /REPEAT -->
+      <div style="display:grid; grid-template-columns:74px 1fr; align-items:center;">
+        <div style="display:flex; flex-direction:column; align-items:center; padding:0 4px;"><span style="font:500 10px/1.2 Inter,Pretendard,sans-serif; color:#667083; white-space:nowrap;">⟦실행⟧</span><span style="color:#1428A0; font:400 15px/1 Inter,Pretendard,sans-serif;">↔</span></div>
+        <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px; text-align:center;">⟦Task⟧</div>
+      </div>
+      <div style="display:grid; grid-template-columns:74px 1fr; align-items:center;">
+        <div style="display:flex; flex-direction:column; align-items:center; padding:0 4px;"><span style="font:500 10px/1.2 Inter,Pretendard,sans-serif; color:#667083; white-space:nowrap;">⟦큐 계산⟧</span><span style="color:#1428A0; font:400 15px/1 Inter,Pretendard,sans-serif;">→</span></div>
+        <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px; text-align:center;">⟦Dashboard⟧</div>
+      </div>
+    </div>
+  </div>
+</div>

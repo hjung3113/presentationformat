@@ -165,14 +165,14 @@ Use the `font: {weight} {size}/{line-height} {family}` shorthand verbatim.
 | `r-node-lg` | `9–10px` | Emphasis nodes, arrow-adjacent boxes |
 | `r-pill-sm` | `4–6px` | Small badges / number chips |
 | `r-card-sm` | `11–12px` | Filled sub-cards, figure panel |
-| `r-card` | `14px` | Standard card (most common) |
-| `r-card-lg` | `16px` | Diagram container, large card |
-| `r-panel` | `18px` | AS-IS/TO-BE comparison panel |
+| `r-card` | `10px` | Standard card (most common) |
+| `r-card-lg` | `12px` | Diagram container, large card |
+| `r-panel` | `12px` | AS-IS/TO-BE comparison panel |
 | `r-sheet` | `22px 22px 0 0` | Top paper sheet (top corners only) |
 | `r-pill` | `100px` | Tag pills, start/end nodes |
 | `r-circle` | `50%` | Arrow circle badge (36px), legend dots |
 
-> Small nodes 8–10px, cards/containers 14–16px, big comparison panels 18px. Keep radius uniform within one diagram.
+> Small nodes 8–10px, cards/containers 10–12px, big comparison panels 12px (tightened vs `indigo-serif`; the answer key is authoritative). Keep radius uniform within one diagram.
 
 ### 3.2 Padding / gap / width
 | Token | Value | Use |

@@ -53,3 +53,24 @@ test('CLI exits 2 on usage error (missing arg) and unreadable file', () => {
   assert.equal(runCli().status, 2);
   assert.equal(runCli('/no/such/plan.md').status, 2);
 });
+
+test('valid plan carries a known shape per section and an optional doc-type', () => {
+  const p = parsePlan(read('plan-valid.md'));
+  assert.deepEqual(p.sections.map(s => s.shape), ['headline-metric', 'data-flow']);
+  assert.equal(p.header.docType, 'explainer');
+});
+
+test('unknown shape and missing figure-data for a figure shape both fail', () => {
+  const res = validatePlan(read('plan-bad-shape.md'));
+  assert.equal(res.ok, false);
+  const msg = res.errors.join('\n');
+  assert.match(msg, /shape "flowchart" is not in the vocabulary/);
+  assert.match(msg, /shape "lifecycle" needs figure-data/);
+});
+
+test('a section without a shape fails', () => {
+  const md = read('plan-valid.md').replace('- shape: data-flow\n', '');
+  const res = validatePlan(md);
+  assert.equal(res.ok, false);
+  assert.match(res.errors.join('\n'), /section 2 .* missing shape/);
+});

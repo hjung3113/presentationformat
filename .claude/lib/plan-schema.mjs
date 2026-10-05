@@ -1,4 +1,20 @@
+import { listTemplates } from './components.mjs';
+
 const HEADER_KEYS = ['has-as-is', 'metrics-mode', 'act-structure', 'narrative-lens', 'source-ref'];
+export const DOC_TYPES = ['explainer', 'status-report', 'proposal', 'feature-guide', 'analysis'];
+
+// Closed shape vocabulary = every @shape declared by a core component template, plus `none`.
+// `figureShapes` are the shapes whose component is a figure/chart/report (they need figure-data).
+export function shapeVocabulary() {
+  const all = new Set(['none']);
+  const figureShapes = new Set();
+  for (const t of listTemplates())
+    for (const s of t.meta.shapes) {
+      all.add(s);
+      if (t.meta.kind !== 'content') figureShapes.add(s);
+    }
+  return { all, figureShapes };
+}
 
 export function parsePlan(md) {
   const fm = md.match(/^---\n([\s\S]*?)\n---\n/);
@@ -19,6 +35,7 @@ export function parsePlan(md) {
     sections.push({
       title,
       intent: field('intent'),
+      shape: field('shape').replace(/`/g, '').split(/\s+/)[0] || '',
       payload: field('payload'),
       figureData: field('figure-data'),
       sourceSpan: field('source-span'),
@@ -30,11 +47,14 @@ export function parsePlan(md) {
       metricsMode: header['metrics-mode'] || '',
       actStructure: header['act-structure'] || '',
       narrativeLens: header['narrative-lens'] || '',
+      docType: header['doc-type'] || '',
       sourceRef: header['source-ref'] || '',
     },
     sections,
   };
 }
+
+const isEmpty = (v) => !v || /^(none|n\/a|-|—|없음)$/i.test(v.trim());
 
 export function validatePlan(md) {
   const errors = [];
@@ -42,13 +62,21 @@ export function validatePlan(md) {
   if (!fm) errors.push('missing YAML header block');
   else for (const k of HEADER_KEYS)
     if (!new RegExp(`^${k}:`, 'm').test(fm[1])) errors.push(`header missing key: ${k}`);
-  const { sections } = parsePlan(md);
+  const { header, sections } = parsePlan(md);
+  if (header.docType && !DOC_TYPES.includes(header.docType))
+    errors.push(`header doc-type "${header.docType}" is not one of: ${DOC_TYPES.join(', ')}`);
+  const { all, figureShapes } = shapeVocabulary();
   if (sections.length === 0) errors.push('no sections found');
   sections.forEach((s, i) => {
-    for (const k of ['intent', 'payload', 'source-span']) {
+    const where = `section ${i + 1} (${s.title || '?'})`;
+    for (const k of ['intent', 'shape', 'payload', 'source-span']) {
       const key = k === 'source-span' ? 'sourceSpan' : k;
-      if (!s[key]) errors.push(`section ${i + 1} (${s.title || '?'}) missing ${k}`);
+      if (!s[key]) errors.push(`${where} missing ${k}`);
     }
+    if (s.shape && !all.has(s.shape))
+      errors.push(`${where} shape "${s.shape}" is not in the vocabulary (core/components.md §1): ${[...all].join(', ')}`);
+    if (figureShapes.has(s.shape) && isEmpty(s.figureData))
+      errors.push(`${where} shape "${s.shape}" needs figure-data in its component's format (core/components/README.md)`);
   });
   return { ok: errors.length === 0, errors };
 }
@@ -72,7 +100,9 @@ async function main() {
   }
   const { ok, errors } = validatePlan(md);
   if (ok) {
+    const { sections } = parsePlan(md);
     console.log(`content-plan OK: ${path}`);
+    for (const s of sections) console.log(`  ${s.shape.padEnd(18)} ${s.title}`);
     process.exit(0);
   }
   console.error(`content-plan INVALID: ${path}`);

@@ -61,6 +61,12 @@ colors:
   table-header-soft: "#EFF5F4"  # secondary table header
   dashed-store: "#B9BEDB"    # data/DB store dashed border
   dashed-rule: "#D7DCE4"     # gantt/lifeline dashed line
+fontStacks:
+  # CSS font-family stacks pasted verbatim into inline styles (design.md §0). Consumed by the
+  # component generator (.claude/lib/components.mjs) to fill ⟨f:body⟩ / ⟨f:display⟩ / ⟨f:mono⟩.
+  body: "'IBM Plex Sans','IBM Plex Sans KR',sans-serif"
+  display: "'IBM Plex Sans','IBM Plex Sans KR',sans-serif"
+  mono: "'IBM Plex Mono',monospace"
 typography:
   t-hero:        { fontFamily: "IBM Plex Sans", fontWeight: 700, fontSize: "52px", lineHeight: "1.28", letterSpacing: "-0.02em" }
   t-h2:          { fontFamily: "IBM Plex Sans", fontWeight: 600, fontSize: "34px", lineHeight: "1.34", letterSpacing: "-0.01em" }
@@ -89,9 +95,9 @@ rounded:
   node-lg: "9px"
   pill-sm: "5px"
   card-sm: "12px"
-  card: "14px"
-  card-lg: "16px"
-  panel: "18px"
+  card: "10px"
+  card-lg: "12px"
+  panel: "12px"
   pill: "100px"
   circle: "50%"
 spacing:

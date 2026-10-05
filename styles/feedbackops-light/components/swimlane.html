@@ -1,0 +1,88 @@
+<!-- GENERATED for style "feedbackops-light" from core/components/swimlane.html by .claude/lib/components.mjs — do not edit here.
+     Paste the <div data-component="swimlane"> block into a section, then replace EVERY ⟦…⟧ (the exit gate fails on any left over). -->
+<!--
+@component swimlane
+@kind figure
+@order 40
+@shape role-handoff
+@title UML 스윔레인 — 역할 사이를 오가는 업무 흐름
+@use 2–5개 역할(사람·팀·시스템)이 번갈아 행동하고 "다음은 누가 하는가"가 주장이다. 요청→검토→실행 같은 역할 간 인계.
+@avoid 역할이 하나뿐 → process-row/activity. 시스템 간 호출 순서와 응답이 핵심 → sequence. 역할별 권한 비교 → matrix.
+@limits 레인 2–5, 단계 3–8
+@data lanes: 요청자, 검토자, 개발자 | steps: 요청자:요청 등록 → 검토자:검토(판단) → 개발자:처리 → 요청자:결과 확인
+HOW TO FILL
+  1. L = 레인 수. 아래 세 곳의 L을 모두 같은 값으로 바꾼다:
+       헤더 행·모든 단계 행·모든 연결 행   grid-template-columns:repeat(L,1fr)
+       레인 구분선                         background-size:calc(100% / L) 100%
+  2. 단계 행 하나 = 노드 하나. 노드가 있는 레인 번호를 grid-column:N 으로 지정한다.
+     같은 높이에 두 레인이 동시에 행동하면 한 행에 노드 두 개를 레인 순서대로 넣는다.
+  3. 단계 사이 연결 행:
+       같은 레인으로 이어짐 → "같은 레인" 연결 (grid-column:N)
+       다른 레인으로 넘어감 → "레인 이동" 연결. grid-column: 작은번호 / 큰번호+1,
+         margin:0 X% (두 레인 사이 칸 수 S = 큰번호−작은번호+1: S=2 → 25%, 3 → 16.667%, 4 → 12.5%, 5 → 10%)
+         오른쪽으로 가면 →변형, 왼쪽으로 가면 ←변형.
+  4. 판단 노드는 ◇ 접두와 강조 테두리, 마지막 결과 노드는 강조 노드.
+-->
+<div data-component="swimlane" style="border:1px solid #DCE5F2; border-radius:8px; overflow:hidden; background:#FFFFFF;">
+  <!-- lane headers: repeat(L,1fr) -->
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); border-bottom:1px solid #DCE5F2;">
+    <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1428A0; background:#EEF4FB; padding:10px 8px; text-align:center; border-right:1px solid #DCE5F2;">⟦요청자⟧</div>
+    <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#475467; background:#F3F7FE; padding:10px 8px; text-align:center; border-right:1px solid #DCE5F2;">⟦검토자⟧</div>
+    <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#475467; background:#F3F7FE; padding:10px 8px; text-align:center;">⟦개발자⟧</div>
+  </div>
+  <!-- lane body: background-size = calc(100% / L) -->
+  <div style="padding:16px 0 18px; background-image:linear-gradient(90deg, transparent calc(100% - 1px), #DCE5F2 calc(100% - 1px)); background-size:calc(100% / 3) 100%;">
+
+    <!-- step row: node in lane 1 -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr);">
+      <div style="grid-column:1; justify-self:center; width:80%; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:9px 8px; text-align:center;">⟦요청 등록⟧</div>
+    </div>
+    <!-- connector: lane move → (from lane 1 to lane 2: grid-column 1 / 3, S=2 → margin 0 25%) -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr);">
+      <div style="grid-column:1 / 3; margin:0 25%; position:relative; height:28px;">
+        <div style="position:absolute; left:-1px; top:0; height:12px; border-left:2px solid #B8C4D6;"></div>
+        <div style="position:absolute; left:-1px; right:-1px; top:12px; border-top:2px solid #B8C4D6;"></div>
+        <div style="position:absolute; right:-1px; top:12px; bottom:6px; border-left:2px solid #B8C4D6;"></div>
+        <div style="position:absolute; right:-5px; bottom:0; width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent; border-top:6px solid #B8C4D6;"></div>
+      </div>
+    </div>
+    <!-- step row: decision node in lane 2 -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr);">
+      <div style="grid-column:2; justify-self:center; width:80%; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1428A0; background:#FFFFFF; border:1.5px solid #1428A0; border-radius:6px; padding:9px 8px; text-align:center;">◇ ⟦실행할 가치?⟧</div>
+    </div>
+    <!-- connector: lane move → (lane 2 to lane 3: grid-column 2 / 4, margin 0 25%) with a branch label -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr);">
+      <div style="grid-column:2 / 4; margin:0 25%; position:relative; height:28px;">
+        <div style="position:absolute; left:-1px; top:0; height:12px; border-left:2px solid #B8C4D6;"></div>
+        <div style="position:absolute; left:-1px; right:-1px; top:12px; border-top:2px solid #B8C4D6;"></div>
+        <div style="position:absolute; right:-1px; top:12px; bottom:6px; border-left:2px solid #B8C4D6;"></div>
+        <div style="position:absolute; right:-5px; bottom:0; width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent; border-top:6px solid #B8C4D6;"></div>
+        <span style="position:absolute; left:50%; top:1px; transform:translateX(-50%); font:600 10px/1 Inter,Pretendard,sans-serif; color:#10734A; background:#E7F5EE; border-radius:4px; padding:2px 6px; white-space:nowrap;">⟦승인⟧</span>
+      </div>
+    </div>
+    <!-- step row: node in lane 3 -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr);">
+      <div style="grid-column:3; justify-self:center; width:80%; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:9px 8px; text-align:center;">⟦Task로 처리⟧</div>
+    </div>
+    <!-- connector: same lane ↓ (grid-column = lane) -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr);">
+      <div style="grid-column:3; text-align:center; color:#B8C4D6; font:400 14px/1 Inter,Pretendard,sans-serif; padding:6px 0;">↓</div>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr);">
+      <div style="grid-column:3; justify-self:center; width:80%; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:9px 8px; text-align:center;">⟦배포⟧</div>
+    </div>
+    <!-- connector: lane move ← (lane 3 back to lane 1: grid-column 1 / 4, S=3 → margin 0 16.667%) -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr);">
+      <div style="grid-column:1 / 4; margin:0 16.667%; position:relative; height:28px;">
+        <div style="position:absolute; right:-1px; top:0; height:12px; border-left:2px solid #B8C4D6;"></div>
+        <div style="position:absolute; left:-1px; right:-1px; top:12px; border-top:2px solid #B8C4D6;"></div>
+        <div style="position:absolute; left:-1px; top:12px; bottom:6px; border-left:2px solid #B8C4D6;"></div>
+        <div style="position:absolute; left:-5px; bottom:0; width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent; border-top:6px solid #B8C4D6;"></div>
+      </div>
+    </div>
+    <!-- final node: emphasised result -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr);">
+      <div style="grid-column:1; justify-self:center; width:80%; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:6px; padding:9px 8px; text-align:center;">⟦결과 확인⟧</div>
+    </div>
+  </div>
+</div>

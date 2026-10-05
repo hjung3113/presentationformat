@@ -1,0 +1,34 @@
+<!-- GENERATED for style "indigo-serif" from core/components/stacked-bar.html by .claude/lib/components.mjs — do not edit here.
+     Paste the <div data-component="stacked-bar"> block into a section, then replace EVERY ⟦…⟧ (the exit gate fails on any left over). -->
+<!--
+@component stacked-bar
+@kind chart
+@order 220
+@shape share
+@title 구성비 막대 — 전체 중 비율
+@use 하나의 전체가 몇 부분으로 나뉘는 비율이 주장이다. 유형별 점유율, 처리 결과 구성, 시간 배분.
+@avoid 부분 6개 이상 → hbar-chart. 항목 간 크기 비교 → bar-chart. 비율 하나만 중요 → kpi-row.
+@limits 구간 2–5
+@data total: 값(선택) | parts: 라벨=비율%, … (합계 100)
+HOW TO FILL
+  1. 구간 width = 비율 % (합계 100). 큰 구간부터 왼쪽에.
+  2. 색 순서(큰 → 작은): 강조색 → 보조 강조색 → 연한 강조색 → 회색(기타).
+  3. 막대 안 글자는 12% 이상 구간에만. 범례에는 모든 구간을 같은 순서·색으로 적는다.
+-->
+<div data-component="stacked-bar" style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:22px 24px 20px;">
+  <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px;"><span style="font:600 13px/1.4 Pretendard,sans-serif; color:#15172B;">⟦트리아지 결과 구성⟧</span><span style="font:500 11px/1 'JetBrains Mono',monospace; color:#9AA0B2;">⟦n = 412⟧</span></div>
+  <div style="display:flex; height:34px; border-radius:8px; overflow:hidden;">
+    <!-- ▼ REPEAT per segment: width = share % -->
+    <div style="width:46%; background:#4338CA; color:#FFFFFF; font:700 11px/34px 'JetBrains Mono',monospace; text-align:center;">⟦46%⟧</div>
+    <!-- ▲ /REPEAT -->
+    <div style="width:27%; background:#6B63D6; color:#FFFFFF; font:700 11px/34px 'JetBrains Mono',monospace; text-align:center;">⟦27%⟧</div>
+    <div style="width:17%; background:#C7CCF2; color:#312E81; font:700 11px/34px 'JetBrains Mono',monospace; text-align:center;">⟦17%⟧</div>
+    <div style="width:10%; background:#B6BBCB;"></div>
+  </div>
+  <div style="display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:12px;">
+    <span style="display:inline-flex; align-items:center; gap:6px; font:500 12px/1 Pretendard,sans-serif; color:#5A6175;"><span style="width:11px; height:11px; border-radius:3px; background:#4338CA;"></span>⟦Task Request⟧ <b style="color:#15172B;">⟦46%⟧</b></span>
+    <span style="display:inline-flex; align-items:center; gap:6px; font:500 12px/1 Pretendard,sans-serif; color:#5A6175;"><span style="width:11px; height:11px; border-radius:3px; background:#6B63D6;"></span>⟦Finding⟧ <b style="color:#15172B;">⟦27%⟧</b></span>
+    <span style="display:inline-flex; align-items:center; gap:6px; font:500 12px/1 Pretendard,sans-serif; color:#5A6175;"><span style="width:11px; height:11px; border-radius:3px; background:#C7CCF2;"></span>⟦공개 업데이트⟧ <b style="color:#15172B;">⟦17%⟧</b></span>
+    <span style="display:inline-flex; align-items:center; gap:6px; font:500 12px/1 Pretendard,sans-serif; color:#5A6175;"><span style="width:11px; height:11px; border-radius:3px; background:#B6BBCB;"></span>⟦후속 없음⟧ <b style="color:#15172B;">⟦10%⟧</b></span>
+  </div>
+</div>

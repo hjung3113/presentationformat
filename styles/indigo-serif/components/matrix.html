@@ -1,0 +1,55 @@
+<!-- GENERATED for style "indigo-serif" from core/components/matrix.html by .claude/lib/components.mjs — do not edit here.
+     Paste the <div data-component="matrix"> block into a section, then replace EVERY ⟦…⟧ (the exit gate fails on any left over). -->
+<!--
+@component matrix
+@kind report
+@order 360
+@shape capability-matrix option-compare
+@title 체크 매트릭스 — 대상 × 항목 허용·충족 여부
+@use 행(역할·옵션·객체)과 열(권한·기준·기능)이 교차하는 곳의 예/아니오/부분이 주장이다. 역할별 권한, 대안 비교, 소유 범위.
+@avoid 칸마다 문장이 들어간다 → table. 조건 조합에 따른 결과 → decision-table.
+@limits 행 3–7, 열 2–5
+@data columns: 열1, 열2, 열3 | rows: 행이름: ✓ ✕ 부분(설명) …
+HOW TO FILL
+  1. C = 열 수. 모든 행의 grid-template-columns:1.4fr repeat(C,1fr) 의 C를 고친다.
+  2. 칸 값은 세 가지 기호만: ✓(충족·허용) · ✕(불가) · 짧은 글자(부분·조건부, 예: "같은 범위만").
+  3. 이 문서가 미는 대안·역할의 열(또는 행)은 머리글을 강조색으로(하나만).
+  4. 행 하나 = ▼REPEAT 하나. 아래 범례 줄을 남긴다.
+-->
+<div data-component="matrix" style="border:1px solid #E7E9F3; border-radius:12px; overflow:hidden; background:#FFFFFF;">
+  <div style="display:grid; grid-template-columns:1.4fr repeat(3,1fr); background:#15172B;">
+    <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#B6BBCB; padding:12px 16px;">⟦역할⟧</div>
+    <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#FFFFFF; padding:12px 10px; text-align:center;">⟦VOC 트리아지⟧</div>
+    <!-- VARIANT highlighted column header -->
+    <div style="font:700 12px/1.35 Pretendard,sans-serif; color:#FFFFFF; padding:12px 10px; text-align:center; background:#4338CA;">⟦Task 전환 승인⟧</div>
+    <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#FFFFFF; padding:12px 10px; text-align:center;">⟦설정 변경⟧</div>
+  </div>
+  <!-- ▼ REPEAT per row -->
+  <div style="display:grid; grid-template-columns:1.4fr repeat(3,1fr); border-top:1px solid #EDEEF4; align-items:center;">
+    <div style="font:600 12.5px/1.35 Pretendard,sans-serif; color:#1E2233; padding:11px 16px; background:#FAFBFE;">⟦Workspace Admin⟧</div>
+    <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#1F8A5B;">✓</div>
+    <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#1F8A5B;">✓</div>
+    <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#1F8A5B;">✓</div>
+  </div>
+  <!-- ▲ /REPEAT -->
+  <div style="display:grid; grid-template-columns:1.4fr repeat(3,1fr); border-top:1px solid #EDEEF4; align-items:center;">
+    <div style="font:600 12.5px/1.35 Pretendard,sans-serif; color:#1E2233; padding:11px 16px; background:#FAFBFE;">⟦VOC Manager⟧</div>
+    <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#1F8A5B;">✓</div>
+    <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#1F8A5B;">✓</div>
+    <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#C2C8D4;">✕</div>
+  </div>
+  <div style="display:grid; grid-template-columns:1.4fr repeat(3,1fr); border-top:1px solid #EDEEF4; align-items:center;">
+    <div style="font:600 12.5px/1.35 Pretendard,sans-serif; color:#1E2233; padding:11px 16px; background:#FAFBFE;">⟦Developer⟧</div>
+    <!-- VARIANT partial / conditional -->
+    <div style="text-align:center; font:600 12px/1.3 Pretendard,sans-serif; color:#94724F;">⟦같은 범위만⟧</div>
+    <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#C2C8D4;">✕</div>
+    <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#C2C8D4;">✕</div>
+  </div>
+  <div style="display:grid; grid-template-columns:1.4fr repeat(3,1fr); border-top:1px solid #EDEEF4; align-items:center;">
+    <div style="font:600 12.5px/1.35 Pretendard,sans-serif; color:#1E2233; padding:11px 16px; background:#FAFBFE;">⟦Reporter⟧</div>
+    <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#C2C8D4;">✕</div>
+    <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#C2C8D4;">✕</div>
+    <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#C2C8D4;">✕</div>
+  </div>
+  <div style="padding:9px 16px; border-top:1px solid #EDEEF4; font:400 11.5px/1.5 Pretendard,sans-serif; color:#9AA0B2; background:#FAFBFE;">✓ 허용 · ✕ 불가 · 글자 = 조건부</div>
+</div>

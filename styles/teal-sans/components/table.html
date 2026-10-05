@@ -1,0 +1,41 @@
+<!-- GENERATED for style "teal-sans" from core/components/table.html by .claude/lib/components.mjs — do not edit here.
+     Paste the <div data-component="table"> block into a section, then replace EVERY ⟦…⟧ (the exit gate fails on any left over). -->
+<!--
+@component table
+@kind content
+@order 420
+@shape text-table
+@title 표 — 행과 열 모두 의미가 있는 문장 비교
+@use 행(항목)과 열(관점) 모두 의미가 있고 칸마다 짧은 문장이 들어간다. 문제↔해결↔효과 대응, 미정 질문(항목 / 현재 방향 / 결정 필요), 용어 대응.
+@avoid 칸이 ✓/✕ → matrix. 조건 조합 → decision-table. 열이 하나뿐 → card-grid.
+@limits 열 2–4, 행 3–7
+@data columns: 열1, 열2, 열3 | rows: 값 · 값 · 값 …
+HOW TO FILL
+  1. 열 수와 비율을 모든 행의 grid-template-columns 에 같게 쓴다(첫 열은 핵심어라 좁게, 예: 1fr 1.6fr 1.6fr).
+  2. 첫 열은 핵심어(굵게). 나머지 칸은 한 문장 이하.
+  3. 행 하나 = ▼REPEAT 하나. 7행을 넘기면 두 표로 나누거나 부록으로 옮긴다.
+-->
+<div data-component="table" style="border:1px solid #E7E9F3; border-radius:10px; overflow:hidden; background:#FFFFFF;">
+  <div style="display:grid; grid-template-columns:1fr 1.6fr 1.6fr; background:#15172B;">
+    <div style="font:600 12.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#FFFFFF; padding:13px 18px;">⟦상황⟧</div>
+    <div style="font:600 12.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#FFFFFF; padding:13px 18px;">⟦권장 방식⟧</div>
+    <div style="font:600 12.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#FFFFFF; padding:13px 18px;">⟦피해야 할 해석⟧</div>
+  </div>
+  <!-- ▼ REPEAT per row -->
+  <div style="display:grid; grid-template-columns:1fr 1.6fr 1.6fr; border-top:1px solid #EDEEF4;">
+    <div style="font:600 13px/1.55 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#1E2233; padding:12px 18px; background:#FAFBFE;">⟦단일 VOC 조치 명확⟧</div>
+    <div style="font:400 13px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175; padding:12px 18px;">⟦Task Request를 만들고 검토 후 Task로 전환한다.⟧</div>
+    <div style="font:400 13px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175; padding:12px 18px;">⟦모든 VOC에 Finding을 강제한다.⟧</div>
+  </div>
+  <!-- ▲ /REPEAT -->
+  <div style="display:grid; grid-template-columns:1fr 1.6fr 1.6fr; border-top:1px solid #EDEEF4;">
+    <div style="font:600 13px/1.55 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#1E2233; padding:12px 18px; background:#FAFBFE;">⟦여러 근거 종합⟧</div>
+    <div style="font:400 13px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175; padding:12px 18px;">⟦VOC·설문 결과를 Finding으로 요약한다.⟧</div>
+    <div style="font:400 13px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175; padding:12px 18px;">⟦설문 응답을 새 VOC로 만든다.⟧</div>
+  </div>
+  <div style="display:grid; grid-template-columns:1fr 1.6fr 1.6fr; border-top:1px solid #EDEEF4;">
+    <div style="font:600 13px/1.55 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#1E2233; padding:12px 18px; background:#FAFBFE;">⟦Task 배포됨⟧</div>
+    <div style="font:400 13px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175; padding:12px 18px;">⟦작성자 대면 상태 검토 후보로 올린다.⟧</div>
+    <div style="font:400 13px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175; padding:12px 18px;">⟦Task 완료를 VOC 해결로 자동 처리한다.⟧</div>
+  </div>
+</div>

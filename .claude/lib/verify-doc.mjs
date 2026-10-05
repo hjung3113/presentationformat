@@ -5,6 +5,8 @@ import { execSync, spawn } from 'node:child_process';
 import { basename, dirname, extname, join, resolve, sep } from 'node:path';
 import { tmpdir } from 'node:os';
 import { runGate } from './gate.mjs';
+import { listTemplates, shapeMap } from './components.mjs';
+import { parsePlan } from './plan-schema.mjs';
 
 export function hasHeadlessChrome() {
   if (findHeadlessChrome()) return true;
@@ -57,6 +59,7 @@ const analyze = () => {
   const textOf = (el) => (el ? el.innerText || el.textContent || '' : '');
   const isReference = (section) => /reference|appendix|glossary|용어|참고/i.test(textOf(section.querySelector('h2')) + ' ' + section.id);
   const hasMeaningfulFigure = (section) => {
+    if (section.querySelector('[data-component]:not([data-component="card-grid"]):not([data-component="callout"]):not([data-component="table"])')) return true;
     const text = textOf(section).toLowerCase();
     const styled = [...section.querySelectorAll('[style]')].filter(visible);
     const hasTable = !!section.querySelector('table') || styled.some(el => /grid-template-columns\\s*:\\s*[^;]*(2fr|3fr|4fr|150px|130px|70px|repeat\\()/i.test(el.getAttribute('style') || '') && text.includes('→'));
@@ -325,12 +328,42 @@ export async function collectCompositionWarnings(doc) {
   });
 }
 
+function argValue(args, flag) {
+  const i = args.indexOf(flag);
+  return i >= 0 ? args[i + 1] : undefined;
+}
+
+export function gateOptions({ accent, sidecarPresent, planPath }) {
+  const templates = listTemplates();
+  const opts = {
+    accentHex: accent,
+    sidecarPresent,
+    knownComponents: templates.map(t => t.meta.component),
+    figureComponents: templates.filter(t => t.meta.kind !== 'content').map(t => t.meta.component),
+  };
+  if (planPath) {
+    opts.plan = parsePlan(readFileSync(planPath, 'utf8'));
+    opts.shapeMap = shapeMap();
+  }
+  return opts;
+}
+
 async function main() {
-  const [doc, , accent, , canonical] = process.argv.slice(2);
+  const args = process.argv.slice(2);
+  const doc = args[0];
+  const accent = argValue(args, '--accent');
+  const canonical = argValue(args, '--canonical-support');
+  const planPath = argValue(args, '--plan');
+  if (!doc || !accent || !canonical) {
+    console.error('usage: node verify-doc.mjs <doc.dc.html> --accent <hex> --canonical-support <support.js> [--plan <content-plan.md>]');
+    process.exit(2);
+  }
   const html = readFileSync(doc, 'utf8');
   const sidecarPresent = sidecarByteIdentical(dirname(doc), canonical);
-  const r = runGate(html, { accentHex: accent, sidecarPresent });
+  const r = runGate(html, gateOptions({ accent, sidecarPresent, planPath }));
   for (const c of r.checks) console.log(`${c.ok ? 'PASS' : 'FAIL'}  ${c.name}  ${c.detail}`);
+  for (const w of r.warnings) console.log(`${w.level || 'WARN'}  ${w.name}  ${w.detail}`);
+  if (!planPath) console.log('NOTE  plan-shapes  not checked (pass --plan <content-plan.md> to verify every section carries its shape\'s component)');
   if (!r.ok) { console.error('GATE FAILED'); process.exit(1); }
   const warnings = await collectCompositionWarnings(doc);
   if (!warnings) { console.log('VISUAL: UNVERIFIED (no headless browser)'); return; }

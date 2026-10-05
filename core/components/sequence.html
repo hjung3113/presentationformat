@@ -1,0 +1,82 @@
+<!--
+@component sequence
+@kind figure
+@order 60
+@shape interaction
+@title UML 시퀀스 — 참여자 간 요청·응답 순서
+@use 둘 이상의 참여자(사용자·서비스·DB·외부 시스템)가 정해진 순서로 요청과 응답을 주고받는다. API 호출, 시스템 연동, 인증, 동기화.
+@avoid 참여자 1명의 단계 → process-row. "다음은 누가"가 핵심인 사람 업무 → swimlane. 조건별 결말 → activity.
+@limits 참여자 2–5, 메시지 3–10, ALT/OPT 묶음 0–2
+@data participants: 사용자, API, DB | messages: 사용자→API 로그인 · API→DB 조회 · DB⇢API 결과 · API↻ 토큰 발급 · API⇢사용자 응답   (→ 요청, ⇢ 응답, ↻ 내부 처리)
+HOW TO FILL
+  1. N = 참여자 수. 아래 모든 곳의 N을 같은 값으로 바꾼다:
+       참여자 행·모든 메시지 행        grid-template-columns:repeat(N,1fr)
+       생명선(lifeline) 배경           background-size:calc(100% / N) 100%
+  2. 참여자 변형: 주 행위자=채운 강조, 핵심 시스템=강조 테두리, 저장소·외부=점선.
+  3. 메시지 한 개 = 메시지 행 한 개. 위에서 아래로 시간 순서. 번호를 1부터 붙인다.
+       grid-column: 작은 참여자 번호 / 큰 참여자 번호+1
+       margin: 0 X%   (S = 큰번호−작은번호+1: S=2 → 25%, 3 → 16.667%, 4 → 12.5%, 5 → 10%)
+       오른쪽으로 보내면 →변형, 왼쪽으로 보내면 ←변형.
+     요청(call)=실선 강조색, 응답(return)=점선 회색.
+  4. 한 참여자 안의 처리(검증·계산·저장 판단)는 "내부 처리" 칩: grid-column: 그 참여자 번호.
+  5. 조건부 구간은 ALT 박스로 감싼다(라벨: "ALT 조건"). 반복은 "LOOP 조건".
+-->
+<div data-component="sequence" style="background:⟨fig-tint⟩; border:1px solid ⟨border-fig⟩; border-radius:⟨r:card-sm⟩; padding:24px 24px 20px;">
+  <!-- lifelines: background-size = calc(100% / N) -->
+  <div style="max-width:760px; margin:0 auto; background-image:linear-gradient(90deg, transparent calc(50% - 1px), ⟨dashed-rule⟩ calc(50% - 1px), ⟨dashed-rule⟩ calc(50% + 1px), transparent calc(50% + 1px)); background-size:calc(100% / 3) 100%; padding-bottom:10px;">
+    <!-- participants: repeat(N,1fr) -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); margin-bottom:8px;">
+      <div style="justify-self:center; max-width:92%; font:600 12px/1.3 ⟨f:body⟩; color:⟨white⟩; background:⟨accent⟩; border-radius:⟨r:node⟩; padding:9px 14px; text-align:center;">⟦사용자⟧</div>
+      <div style="justify-self:center; max-width:92%; font:600 12px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:⟨r:node⟩; padding:9px 14px; text-align:center;">⟦API 서버⟧</div>
+      <div style="justify-self:center; max-width:92%; font:600 12px/1.3 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px dashed ⟨dashed-store⟩; border-radius:⟨r:node⟩; padding:9px 14px; text-align:center;">⟦DB⟧</div>
+    </div>
+
+    <!-- message 1 — call →, participant 1 to 2 (grid-column 1 / 3, S=2 → margin 0 25%) -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); padding:6px 0;">
+      <div style="grid-column:1 / 3; margin:0 25%;">
+        <div style="text-align:center; margin-bottom:3px;"><span style="font:500 11px/1.4 ⟨f:body⟩; color:⟨ink-700⟩; background:⟨fig-tint⟩; padding:0 5px;"><b style="font:700 10px/1 ⟨f:mono⟩; color:⟨accent⟩;">1</b> ⟦로그인 요청⟧</span></div>
+        <div style="display:flex; align-items:center;"><div style="flex:1; height:2px; background:⟨accent⟩;"></div><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:8px solid ⟨accent⟩;"></div></div>
+      </div>
+    </div>
+    <!-- message 2 — call →, participant 2 to 3 -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); padding:6px 0;">
+      <div style="grid-column:2 / 4; margin:0 25%;">
+        <div style="text-align:center; margin-bottom:3px;"><span style="font:500 11px/1.4 ⟨f:body⟩; color:⟨ink-700⟩; background:⟨fig-tint⟩; padding:0 5px;"><b style="font:700 10px/1 ⟨f:mono⟩; color:⟨accent⟩;">2</b> ⟦사용자 조회⟧</span></div>
+        <div style="display:flex; align-items:center;"><div style="flex:1; height:2px; background:⟨accent⟩;"></div><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:8px solid ⟨accent⟩;"></div></div>
+      </div>
+    </div>
+    <!-- message 3 — return ← (dashed), participant 3 to 2 -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); padding:6px 0;">
+      <div style="grid-column:2 / 4; margin:0 25%;">
+        <div style="text-align:center; margin-bottom:3px;"><span style="font:500 11px/1.4 ⟨f:body⟩; color:⟨muted-500⟩; background:⟨fig-tint⟩; padding:0 5px;"><b style="font:700 10px/1 ⟨f:mono⟩; color:⟨muted-500⟩;">3</b> ⟦사용자 정보⟧</span></div>
+        <div style="display:flex; align-items:center;"><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-right:8px solid ⟨slate⟩;"></div><div style="flex:1; border-top:2px dashed ⟨slate⟩;"></div></div>
+      </div>
+    </div>
+    <!-- self / internal processing on participant 2 -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); padding:6px 0;">
+      <div style="grid-column:2; justify-self:center; max-width:94%; font:500 11px/1.35 ⟨f:body⟩; color:⟨accent-ink⟩; background:⟨accent-050⟩; border:1px solid ⟨accent-line⟩; border-radius:⟨r:pill-sm⟩; padding:5px 10px; text-align:center;"><b style="font:700 10px/1 ⟨f:mono⟩; color:⟨accent⟩;">4</b> ↻ ⟦비밀번호 검증⟧</div>
+    </div>
+    <!-- ALT block: wrap conditional message rows -->
+    <div style="border:1px dashed ⟨accent-line⟩; border-radius:⟨r:node⟩; margin:6px 0;">
+      <div style="display:inline-block; font:700 10px/1 ⟨f:mono⟩; letter-spacing:.04em; color:⟨accent⟩; background:⟨accent-050⟩; padding:5px 8px; border-radius:⟨r:node⟩ 0 ⟨r:node⟩ 0;">ALT ⟦검증 실패 시⟧</div>
+      <!-- message 5 — return ← (dashed), participant 2 to 1 -->
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); padding:2px 0 8px;">
+        <div style="grid-column:1 / 3; margin:0 25%;">
+          <div style="text-align:center; margin-bottom:3px;"><span style="font:500 11px/1.4 ⟨f:body⟩; color:⟨muted-500⟩; background:⟨fig-tint⟩; padding:0 5px;"><b style="font:700 10px/1 ⟨f:mono⟩; color:⟨muted-500⟩;">5</b> ⟦401 오류⟧</span></div>
+          <div style="display:flex; align-items:center;"><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-right:8px solid ⟨slate⟩;"></div><div style="flex:1; border-top:2px dashed ⟨slate⟩;"></div></div>
+        </div>
+      </div>
+    </div>
+    <!-- message 6 — return ← (dashed), participant 2 to 1 -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); padding:6px 0;">
+      <div style="grid-column:1 / 3; margin:0 25%;">
+        <div style="text-align:center; margin-bottom:3px;"><span style="font:500 11px/1.4 ⟨f:body⟩; color:⟨muted-500⟩; background:⟨fig-tint⟩; padding:0 5px;"><b style="font:700 10px/1 ⟨f:mono⟩; color:⟨muted-500⟩;">6</b> ⟦세션 토큰⟧</span></div>
+        <div style="display:flex; align-items:center;"><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-right:8px solid ⟨slate⟩;"></div><div style="flex:1; border-top:2px dashed ⟨slate⟩;"></div></div>
+      </div>
+    </div>
+    <!-- VARIANT call ← (solid, leftward): arrowhead first, border-right:8px solid accent; then the solid line
+    <div style="display:flex; align-items:center;"><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-right:8px solid ⟨accent⟩;"></div><div style="flex:1; height:2px; background:⟨accent⟩;"></div></div>
+    -->
+  </div>
+  <div style="font:400 11.5px/1.55 ⟨f:body⟩; color:⟨muted-400⟩; margin-top:10px;">* 실선 = 요청 · 점선 = 응답 · ↻ = 참여자 내부 처리</div>
+</div>

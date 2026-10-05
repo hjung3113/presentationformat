@@ -1,0 +1,46 @@
+<!--
+@component pipeline
+@kind figure
+@order 80
+@shape data-flow
+@title 데이터 흐름 — 단계별 입력·처리·출력
+@use 무엇이 들어와서(입력) 어떤 처리를 거쳐 어디로 나가는지(출력)가 주장이다. 여러 출처가 합류하거나 한 처리 결과가 여러 곳으로 퍼진다. ETL, 수집·정제·적재, 근거→판단→실행.
+@avoid 사람의 업무 순서 → process-row/swimlane. 층 구조와 소속 → layer-map. 분기 조건이 핵심 → activity.
+@limits 단계 3–5, 단계당 노드 1–4
+@data stages: 수집[VOC 폼, 설문 응답] → 종합[Finding] → 실행[Task Request, Task] | arrow-labels: 근거 연결, 승인 후 전환
+HOW TO FILL
+  1. 단계 하나 = ▼REPEAT 블록(머리표 + 노드 1–4개). 단계 사이에 화살표 칸을 하나씩 둔다(마지막 단계 뒤에는 없음).
+  2. 화살표 칸 아래 작은 글씨로 무엇이 넘어가는지(데이터·이벤트 이름)를 적는다. 모르면 비우지 말고 화살표만 둔다.
+  3. 노드 변형: 일반=흰 노드, 저장소·큐=점선 노드, 최종 목적지=강조 노드(한 개).
+  4. 합류(여러 → 하나)·분산(하나 → 여러)은 단계의 노드 수로 표현한다. 선을 따로 그리지 않는다.
+-->
+<div data-component="pipeline" style="background:⟨fig-tint⟩; border:1px solid ⟨border-fig⟩; border-radius:⟨r:card-sm⟩; padding:24px;">
+  <div style="display:flex; align-items:stretch;">
+    <!-- ▼ REPEAT per stage -->
+    <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:8px;">
+      <div style="font:700 10.5px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨muted-500⟩; text-align:center; padding-bottom:8px; border-bottom:1px solid ⟨border⟩;">⟦01 · 입력⟧</div>
+      <div style="font:600 12px/1.35 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:10px; text-align:center;">⟦VOC 폼⟧<span style="display:block; font:400 10.5px/1.4 ⟨f:body⟩; color:⟨muted-400⟩; margin-top:2px;">⟦사용자 제출⟧</span></div>
+      <div style="font:600 12px/1.35 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:10px; text-align:center;">⟦설문 응답⟧<span style="display:block; font:400 10.5px/1.4 ⟨f:body⟩; color:⟨muted-400⟩; margin-top:2px;">⟦집계 결과⟧</span></div>
+    </div>
+    <!-- arrow cell between stages -->
+    <div style="flex:0 0 64px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding-top:20px;">
+      <span style="color:⟨accent⟩; font:400 18px/1 ⟨f:body⟩;">→</span>
+      <span style="font:500 10px/1.3 ⟨f:body⟩; color:⟨muted-500⟩; text-align:center; margin-top:4px;">⟦근거 연결⟧</span>
+    </div>
+    <!-- ▲ /REPEAT -->
+    <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:8px;">
+      <div style="font:700 10.5px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨muted-500⟩; text-align:center; padding-bottom:8px; border-bottom:1px solid ⟨border⟩;">⟦02 · 종합⟧</div>
+      <div style="font:600 12px/1.35 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:10px; text-align:center;">⟦Finding⟧<span style="display:block; font:400 10.5px/1.4 ⟨f:body⟩; color:⟨muted-400⟩; margin-top:2px;">⟦근거와 판단⟧</span></div>
+      <div style="font:600 12px/1.35 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px dashed ⟨dashed-store⟩; border-radius:⟨r:node⟩; padding:10px; text-align:center;">⟦검토 큐⟧<span style="display:block; font:400 10.5px/1.4 ⟨f:body⟩; color:⟨muted-400⟩; margin-top:2px;">⟦대기 항목⟧</span></div>
+    </div>
+    <div style="flex:0 0 64px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding-top:20px;">
+      <span style="color:⟨accent⟩; font:400 18px/1 ⟨f:body⟩;">→</span>
+      <span style="font:500 10px/1.3 ⟨f:body⟩; color:⟨muted-500⟩; text-align:center; margin-top:4px;">⟦승인 후 전환⟧</span>
+    </div>
+    <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:8px;">
+      <div style="font:700 10.5px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨muted-500⟩; text-align:center; padding-bottom:8px; border-bottom:1px solid ⟨border⟩;">⟦03 · 실행⟧</div>
+      <!-- VARIANT destination (one per figure) -->
+      <div style="font:600 12px/1.35 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:⟨r:node⟩; padding:10px; text-align:center;">⟦Task⟧<span style="display:block; font:400 10.5px/1.4 ⟨f:body⟩; color:⟨body⟩; margin-top:2px;">⟦실행 백로그⟧</span></div>
+    </div>
+  </div>
+</div>

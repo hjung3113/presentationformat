@@ -61,6 +61,12 @@ colors:
   table-header-soft: "#F3F4FA"  # secondary table header
   dashed-store: "#B9BEDB"    # data/DB store dashed border
   dashed-rule: "#D7DAEC"     # gantt/lifeline dashed line
+fontStacks:
+  # CSS font-family stacks pasted verbatim into inline styles (design.md §0). Consumed by the
+  # component generator (.claude/lib/components.mjs) to fill ⟨f:body⟩ / ⟨f:display⟩ / ⟨f:mono⟩.
+  body: "Pretendard,sans-serif"
+  display: "'Noto Serif KR',serif"
+  mono: "'JetBrains Mono',monospace"
 typography:
   t-hero:        { fontFamily: "Noto Serif KR", fontWeight: 700, fontSize: "52px", lineHeight: "1.28", letterSpacing: "-0.02em" }
   t-h2:          { fontFamily: "Noto Serif KR", fontWeight: 600, fontSize: "34px", lineHeight: "1.34", letterSpacing: "-0.01em" }

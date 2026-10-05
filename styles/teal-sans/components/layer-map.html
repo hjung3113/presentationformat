@@ -1,0 +1,75 @@
+<!-- GENERATED for style "teal-sans" from core/components/layer-map.html by .claude/lib/components.mjs — do not edit here.
+     Paste the <div data-component="layer-map"> block into a section, then replace EVERY ⟦…⟧ (the exit gate fails on any left over). -->
+<!--
+@component layer-map
+@kind figure
+@order 70
+@shape layered-structure
+@title 계층 아키텍처 맵 — 레이어·모듈·연결
+@use 시스템이 어떤 층(사용자 접점·서비스·통합·데이터·외부)으로 나뉘고, 각 층에 어떤 모듈이 있으며, 층 사이가 무엇으로 연결되는지가 주장이다. 시스템 구성도, 아키텍처 개요.
+@avoid 데이터가 단계를 따라 흘러간다 → pipeline. 상하 소속(조직도·메뉴 트리) → tree. 한 허브가 여럿을 잇는다 → hub-spoke.
+@limits 레이어 2–5, 레이어당 모듈 1–5
+@data layers (위→아래): 레이어명: 모듈(부가설명), 모듈 | links: 레이어1↕레이어2 연결 방식 | optional: 레이어명 | external: 레이어명
+HOW TO FILL
+  1. 레이어 하나 = ▼REPEAT 블록 하나(왼쪽 라벨 칸 + 오른쪽 모듈 칸). 위에서 아래로 사용자에 가까운 층부터.
+  2. 레이어 사이에는 연결 행을 둔다: ↕ 기호 + 연결 방식(API 호출, 이벤트, 링크 테이블…). 연결이 없으면 행을 지운다.
+     연결 방식을 비워 두지 않는다 — 화살표 없는 박스 더미는 이 도식의 실패다.
+  3. 레이어 변형:
+       핵심 레이어(이 문서의 주제) → 강조 변형
+       선택적 레이어(없어도 각 시스템이 동작) → 점선 변형 + "선택" 배지
+       외부·레거시(우리 소유 아님) → 외부 변형 (중립 점선 — 문제·레거시 색이 아니다)
+  4. 모듈은 이름 + 한 줄 부가설명. 핵심 모듈 하나만 강조 노드로.
+-->
+<div data-component="layer-map" style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:24px;">
+  <!-- ▼ REPEAT per layer -->
+  <div style="display:grid; grid-template-columns:160px 1fr; border:1px solid #E2E5F0; border-radius:9px; background:#FFFFFF; overflow:hidden;">
+    <div style="padding:12px 14px; background:#F8F9FD; border-right:1px solid #E2E5F0; display:flex; flex-direction:column; justify-content:center;">
+      <div style="font:700 10px/1 'IBM Plex Mono',monospace; letter-spacing:.06em; color:#8A91A6; margin-bottom:6px;">⟦LAYER 1⟧</div>
+      <div style="font:600 13px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦사용자 접점⟧</div>
+    </div>
+    <div style="padding:12px; display:flex; flex-wrap:wrap; gap:8px; align-content:center;">
+      <div style="flex:1 1 130px; font:600 12px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:9px 10px; text-align:center;">⟦VOC 접수⟧<span style="display:block; font:400 10.5px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#9AA0B2; margin-top:2px;">⟦Inbox·Triage⟧</span></div>
+      <div style="flex:1 1 130px; font:600 12px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:9px 10px; text-align:center;">⟦설문⟧<span style="display:block; font:400 10.5px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#9AA0B2; margin-top:2px;">⟦응답·결과⟧</span></div>
+      <div style="flex:1 1 130px; font:600 12px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:9px 10px; text-align:center;">⟦Task⟧<span style="display:block; font:400 10.5px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#9AA0B2; margin-top:2px;">⟦요청·보드⟧</span></div>
+    </div>
+  </div>
+  <!-- ▲ /REPEAT -->
+  <!-- connector between layers: ALWAYS name how they connect -->
+  <div style="text-align:center; font:500 11px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#8A91A6; padding:7px 0;"><span style="color:#0F766E; font:400 14px/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif;">↕</span> ⟦선택적 링크 · 이벤트⟧</div>
+  <!-- VARIANT key layer (the subject of the document) -->
+  <div style="display:grid; grid-template-columns:160px 1fr; border:1.5px solid #0F766E; border-radius:9px; background:#FFFFFF; overflow:hidden;">
+    <div style="padding:12px 14px; background:#ECFDF8; border-right:1px solid #99F6E4; display:flex; flex-direction:column; justify-content:center;">
+      <div style="font:700 10px/1 'IBM Plex Mono',monospace; letter-spacing:.06em; color:#0F766E; margin-bottom:6px;">⟦LAYER 2⟧</div>
+      <div style="font:600 13px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#0F766E;">⟦통합 계층⟧ <span style="font:700 9px/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#FFFFFF; background:#0F766E; border-radius:5px; padding:3px 5px; vertical-align:2px;">⟦선택⟧</span></div>
+    </div>
+    <div style="padding:12px; display:flex; flex-wrap:wrap; gap:8px; align-content:center;">
+      <div style="flex:1 1 130px; font:600 12px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#0F766E; background:#ECFDF8; border:1.5px solid #0F766E; border-radius:8px; padding:9px 10px; text-align:center;">⟦Entity Link⟧<span style="display:block; font:400 10.5px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175; margin-top:2px;">⟦교차 이력 정본⟧</span></div>
+      <div style="flex:1 1 130px; font:600 12px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:9px 10px; text-align:center;">⟦Finding⟧<span style="display:block; font:400 10.5px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#9AA0B2; margin-top:2px;">⟦근거 종합⟧</span></div>
+      <div style="flex:1 1 130px; font:600 12px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:9px 10px; text-align:center;">⟦Dashboard⟧<span style="display:block; font:400 10.5px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#9AA0B2; margin-top:2px;">⟦액션 큐⟧</span></div>
+    </div>
+  </div>
+  <div style="text-align:center; font:500 11px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#8A91A6; padding:7px 0;"><span style="color:#0F766E; font:400 14px/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif;">↕</span> ⟦권한 조회 · 범위 필터⟧</div>
+  <div style="display:grid; grid-template-columns:160px 1fr; border:1px solid #E2E5F0; border-radius:9px; background:#FFFFFF; overflow:hidden;">
+    <div style="padding:12px 14px; background:#F8F9FD; border-right:1px solid #E2E5F0; display:flex; flex-direction:column; justify-content:center;">
+      <div style="font:700 10px/1 'IBM Plex Mono',monospace; letter-spacing:.06em; color:#8A91A6; margin-bottom:6px;">⟦LAYER 3⟧</div>
+      <div style="font:600 13px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦공통 플랫폼⟧</div>
+    </div>
+    <div style="padding:12px; display:flex; flex-wrap:wrap; gap:8px; align-content:center;">
+      <div style="flex:1 1 130px; font:600 12px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:9px 10px; text-align:center;">⟦Workspace·Actor⟧</div>
+      <div style="flex:1 1 130px; font:600 12px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:9px 10px; text-align:center;">⟦권한⟧</div>
+      <div style="flex:1 1 130px; font:600 12px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#1E2233; background:#FFFFFF; border:1px dashed #B9BEDB; border-radius:8px; padding:9px 10px; text-align:center;">⟦PostgreSQL⟧<span style="display:block; font:400 10.5px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#9AA0B2; margin-top:2px;">⟦저장소⟧</span></div>
+    </div>
+  </div>
+  <div style="text-align:center; font:500 11px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#8A91A6; padding:7px 0;"><span style="color:#B6BBCB; font:400 14px/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif;">↕</span> ⟦AD 인증⟧</div>
+  <!-- VARIANT external / legacy layer (not ours) -->
+  <div style="display:grid; grid-template-columns:160px 1fr; border:1px dashed #C2C8D4; border-radius:9px; background:#F8F9FD; overflow:hidden;">
+    <div style="padding:12px 14px; display:flex; flex-direction:column; justify-content:center;">
+      <div style="font:700 10px/1 'IBM Plex Mono',monospace; letter-spacing:.06em; color:#9AA0B2; margin-bottom:6px;">EXTERNAL</div>
+      <div style="font:600 13px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#8A91A6;">⟦외부 시스템⟧</div>
+    </div>
+    <div style="padding:12px; display:flex; flex-wrap:wrap; gap:8px; align-content:center;">
+      <div style="flex:1 1 130px; font:500 12px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#8A91A6; background:#FFFFFF; border:1px dashed #C2C8D4; border-radius:8px; padding:9px 10px; text-align:center;">⟦Active Directory⟧</div>
+      <div style="flex:1 1 130px; font:500 12px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#8A91A6; background:#FFFFFF; border:1px dashed #C2C8D4; border-radius:8px; padding:9px 10px; text-align:center;">⟦BI 도구⟧</div>
+    </div>
+  </div>
+</div>

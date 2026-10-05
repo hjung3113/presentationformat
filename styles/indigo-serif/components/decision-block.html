@@ -1,0 +1,48 @@
+<!-- GENERATED for style "indigo-serif" from core/components/decision-block.html by .claude/lib/components.mjs — do not edit here.
+     Paste the <div data-component="decision-block"> block into a section, then replace EVERY ⟦…⟧ (the exit gate fails on any left over). -->
+<!--
+@component decision-block
+@kind report
+@order 340
+@shape decision
+@title 결정 블록 — 결정 요청·선택지·권고
+@use 독자에게 결정을 요청한다. 무엇을 결정해야 하는지, 선택지별 장단점, 권고안, 언제까지 누가 정하는지를 놓치지 않게 보여 준다.
+@avoid 결정이 아니라 미정 질문 여러 개 → table(항목 / 현재 방향 / 결정 필요). 주의 한 줄 → callout.
+@limits 선택지 2–3, 장단점 각 1–3줄
+@data question: 결정할 질문 | options: A 이름(+장점, −단점), B … | recommend: A (근거) | due: 날짜 | owner: 결정 주체 | if-not: 미결정 시 영향
+HOW TO FILL
+  1. 질문은 한 문장, 예/아니오 또는 A/B로 답할 수 있게 쓴다.
+  2. 선택지 수 K에 맞춰 grid-template-columns:repeat(K,1fr). 권고 선택지만 "권고" 변형(강조 테두리 + 배지).
+  3. + 줄은 성공색, − 줄은 경고 보조색. 각 1–3줄 개조식.
+  4. 아래 메타 줄(결정 시점·결정 주체·미결정 시 영향)은 비우지 않는다. 모르면 "추후 확정"을 회색으로.
+  5. 결정 블록은 문서당 1–2개. 섹션 맨 위나 결론 섹션에 둔다(작은 카드 안에 숨기지 않는다).
+-->
+<div data-component="decision-block" style="border:1.5px solid #4338CA; border-radius:14px; background:#FFFFFF; overflow:hidden;">
+  <div style="background:#4338CA; padding:14px 22px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+    <span style="font:700 10.5px/1 'JetBrains Mono',monospace; letter-spacing:.08em; color:#4338CA; background:#FFFFFF; border-radius:5px; padding:5px 8px;">DECISION</span>
+    <span style="font:600 16px/1.4 Pretendard,sans-serif; color:#FFFFFF;">⟦Task Request를 MVP에서 필수 단계로 둘 것인가⟧</span>
+  </div>
+  <div style="padding:18px 22px 20px;">
+    <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:12px;">
+      <!-- VARIANT recommended option -->
+      <div style="border:1.5px solid #4338CA; border-radius:12px; padding:14px 16px; background:#EEF0FF;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;"><span style="font:700 11px/1 'JetBrains Mono',monospace; color:#FFFFFF; background:#4338CA; border-radius:5px; padding:4px 7px;">A</span><span style="font:600 14px/1.35 Pretendard,sans-serif; color:#15172B;">⟦필수 단계로 둔다⟧</span><span style="margin-left:auto; font:700 10.5px/1 Pretendard,sans-serif; color:#4338CA; border:1px solid #4338CA; border-radius:100px; padding:4px 8px;">권고</span></div>
+        <div style="font:400 12.5px/1.65 Pretendard,sans-serif; color:#1F8A5B;">+ ⟦백로그가 미검토 후보로 오염되지 않는다⟧</div>
+        <div style="font:400 12.5px/1.65 Pretendard,sans-serif; color:#94724F;">− ⟦검토 대기 시간이 생긴다⟧</div>
+      </div>
+      <!-- ▼ REPEAT per other option -->
+      <div style="border:1px solid #E7E9F3; border-radius:12px; padding:14px 16px;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;"><span style="font:700 11px/1 'JetBrains Mono',monospace; color:#5A6175; background:#F6F7FB; border-radius:5px; padding:4px 7px;">B</span><span style="font:600 14px/1.35 Pretendard,sans-serif; color:#15172B;">⟦선택 단계로 둔다⟧</span></div>
+        <div style="font:400 12.5px/1.65 Pretendard,sans-serif; color:#1F8A5B;">+ ⟦소규모 팀은 바로 Task를 만든다⟧</div>
+        <div style="font:400 12.5px/1.65 Pretendard,sans-serif; color:#94724F;">− ⟦실행 근거가 남지 않는 Task가 섞인다⟧</div>
+      </div>
+      <!-- ▲ /REPEAT -->
+    </div>
+    <div style="margin-top:14px; background:#EEF0FF; border-left:3px solid #4338CA; border-radius:0 8px 8px 0; padding:11px 14px; font:400 13px/1.65 Pretendard,sans-serif; color:#3A4255;"><b style="color:#4338CA;">권고 —</b> ⟦A안. 실행 백로그를 보호하는 것이 MVP의 핵심 가치이고, 대기 시간은 일괄 검토로 줄인다.⟧</div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:14px; padding-top:12px; border-top:1px solid #EDEEF4;">
+      <div><div style="font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#9AA0B2; margin-bottom:5px;">DUE</div><div style="font:600 12.5px/1.4 Pretendard,sans-serif; color:#1E2233;">⟦2026-10-12⟧</div></div>
+      <div><div style="font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#9AA0B2; margin-bottom:5px;">OWNER</div><div style="font:600 12.5px/1.4 Pretendard,sans-serif; color:#1E2233;">⟦제품 책임자⟧</div></div>
+      <div><div style="font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#9AA0B2; margin-bottom:5px;">IF UNDECIDED</div><div style="font:600 12.5px/1.4 Pretendard,sans-serif; color:#1E2233;">⟦전환 UI 개발 2주 지연⟧</div></div>
+    </div>
+  </div>
+</div>

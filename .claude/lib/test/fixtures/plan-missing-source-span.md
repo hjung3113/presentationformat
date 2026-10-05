@@ -7,5 +7,6 @@ source-ref: docs/source.md@abc123
 ---
 ## 1. 개요
 - intent: 배경 설명
+- shape: none
 - payload: 시스템 목적 서술
 - figure-data:

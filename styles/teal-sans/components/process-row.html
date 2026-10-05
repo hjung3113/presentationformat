@@ -1,0 +1,47 @@
+<!-- GENERATED for style "teal-sans" from core/components/process-row.html by .claude/lib/components.mjs — do not edit here.
+     Paste the <div data-component="process-row"> block into a section, then replace EVERY ⟦…⟧ (the exit gate fails on any left over). -->
+<!--
+@component process-row
+@kind figure
+@order 20
+@shape linear-steps
+@title 단계 흐름 (가로 프로세스)
+@use 분기·되돌아감 없이 정해진 순서로 3–5단계가 진행된다. 절차, 도입 단계, 처리 순서.
+@avoid 승인/반려·조건·예외로 갈라진다 → activity. 역할이 바뀌며 넘어간다 → swimlane. 6단계 이상 → timeline 또는 섹션 분할.
+@limits 단계 3–5
+@data steps: 1 접수(설명) → 2 분류(설명) → 3 처리(설명) → 4 완료(설명)
+HOW TO FILL
+  1. 단계 수만큼 ▼REPEAT(단계 + 화살표)를 복사한다. 마지막 단계 뒤에는 화살표를 두지 않는다.
+  2. 마지막 단계는 완료 변형(✓, 성공색)을 쓴다. 완료가 아니면 일반 단계로 둔다.
+  3. 단계 제목은 개조식 2–6자, 설명은 한 줄.
+-->
+<div data-component="process-row" style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:26px 22px 22px;">
+  <div style="display:flex; align-items:flex-start;">
+    <!-- ▼ REPEAT per step (3–5) -->
+    <div style="flex:1; min-width:0; text-align:center; padding:0 4px;">
+      <div style="width:38px; height:38px; border-radius:50%; background:#0F766E; color:#FFFFFF; font:700 15px/38px 'IBM Plex Mono',monospace; margin:0 auto 12px;">1</div>
+      <div style="font:600 13.5px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦접수⟧</div>
+      <div style="font:400 12px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175; margin-top:4px;">⟦요청이 한 곳으로 모인다⟧</div>
+    </div>
+    <div style="flex:0 0 24px; padding-top:9px; text-align:center; color:#7BE0D3; font:400 18px/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif;">→</div>
+    <!-- ▲ /REPEAT -->
+    <div style="flex:1; min-width:0; text-align:center; padding:0 4px;">
+      <div style="width:38px; height:38px; border-radius:50%; background:#0F766E; color:#FFFFFF; font:700 15px/38px 'IBM Plex Mono',monospace; margin:0 auto 12px;">2</div>
+      <div style="font:600 13.5px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦분류⟧</div>
+      <div style="font:400 12px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175; margin-top:4px;">⟦담당과 우선순위를 정한다⟧</div>
+    </div>
+    <div style="flex:0 0 24px; padding-top:9px; text-align:center; color:#7BE0D3; font:400 18px/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif;">→</div>
+    <div style="flex:1; min-width:0; text-align:center; padding:0 4px;">
+      <div style="width:38px; height:38px; border-radius:50%; background:#0F766E; color:#FFFFFF; font:700 15px/38px 'IBM Plex Mono',monospace; margin:0 auto 12px;">3</div>
+      <div style="font:600 13.5px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦처리⟧</div>
+      <div style="font:400 12px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175; margin-top:4px;">⟦실행 항목으로 옮긴다⟧</div>
+    </div>
+    <div style="flex:0 0 24px; padding-top:9px; text-align:center; color:#7BE0D3; font:400 18px/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif;">→</div>
+    <!-- VARIANT final step = done (✓, success colour) -->
+    <div style="flex:1; min-width:0; text-align:center; padding:0 4px;">
+      <div style="width:38px; height:38px; border-radius:50%; background:#15803D; color:#FFFFFF; font:700 15px/38px 'IBM Plex Mono',monospace; margin:0 auto 12px;">✓</div>
+      <div style="font:600 13.5px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦완료⟧</div>
+      <div style="font:400 12px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175; margin-top:4px;">⟦결과를 알린다⟧</div>
+    </div>
+  </div>
+</div>

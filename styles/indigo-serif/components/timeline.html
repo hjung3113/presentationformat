@@ -1,0 +1,49 @@
+<!-- GENERATED for style "indigo-serif" from core/components/timeline.html by .claude/lib/components.mjs — do not edit here.
+     Paste the <div data-component="timeline"> block into a section, then replace EVERY ⟦…⟧ (the exit gate fails on any left over). -->
+<!--
+@component timeline
+@kind report
+@order 310
+@shape milestones
+@title 타임라인 — 날짜별 완료·현재·예정
+@use 날짜가 붙은 사건·마일스톤을 순서대로 보여 준다. 지금까지 한 일과 다음 일정, 릴리스 이력, 의사결정 이력.
+@avoid 기간이 겹치는 작업 계획 → gantt. 날짜 없는 단계 → process-row.
+@limits 항목 3–8
+@data items: 날짜 · 제목 · 한 줄 설명 · 상태(done|current|planned|risk)
+HOW TO FILL
+  1. 항목 하나 = ▼REPEAT 행 하나. 위에서 아래로 시간 순서.
+  2. 점 변형: 완료(done)=성공색 ✓ · 현재(current)=강조색 링 · 예정(planned)=빈 원(글자 회색) · 위험(risk)=경고색.
+  3. 현재 항목은 하나만. 마지막 행은 세로선이 아래로 이어지지 않게 "마지막 행" 변형을 쓴다.
+-->
+<div data-component="timeline" style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:22px 24px 10px;">
+  <!-- ▼ REPEAT per item — done -->
+  <div style="display:grid; grid-template-columns:96px 28px 1fr; column-gap:10px;">
+    <div style="font:600 11.5px/1.4 'JetBrains Mono',monospace; color:#8A91A6; text-align:right; padding-top:2px;">⟦2026-07-15⟧</div>
+    <div style="display:flex; justify-content:center; background:linear-gradient(#E7E9F3,#E7E9F3) center/2px 100% no-repeat;"><div style="width:18px; height:18px; border-radius:50%; background:#1F8A5B; color:#FFFFFF; font:700 10px/18px Pretendard,sans-serif; text-align:center;">✓</div></div>
+    <div style="padding:0 0 18px;"><div style="font:600 13.5px/1.4 Pretendard,sans-serif; color:#15172B;">⟦VOC 접수·트리아지 출시⟧</div><div style="font:400 12.5px/1.6 Pretendard,sans-serif; color:#5A6175; margin-top:2px;">⟦Inbox·Triage 콘솔 사내 오픈⟧</div></div>
+  </div>
+  <!-- ▲ /REPEAT -->
+  <div style="display:grid; grid-template-columns:96px 28px 1fr; column-gap:10px;">
+    <div style="font:600 11.5px/1.4 'JetBrains Mono',monospace; color:#8A91A6; text-align:right; padding-top:2px;">⟦2026-08-28⟧</div>
+    <div style="display:flex; justify-content:center; background:linear-gradient(#E7E9F3,#E7E9F3) center/2px 100% no-repeat;"><div style="width:18px; height:18px; border-radius:50%; background:#1F8A5B; color:#FFFFFF; font:700 10px/18px Pretendard,sans-serif; text-align:center;">✓</div></div>
+    <div style="padding:0 0 18px;"><div style="font:600 13.5px/1.4 Pretendard,sans-serif; color:#15172B;">⟦Task Request 검토⟧</div><div style="font:400 12.5px/1.6 Pretendard,sans-serif; color:#5A6175; margin-top:2px;">⟦실행 후보 보호 장치 적용⟧</div></div>
+  </div>
+  <!-- VARIANT current -->
+  <div style="display:grid; grid-template-columns:96px 28px 1fr; column-gap:10px;">
+    <div style="font:700 11.5px/1.4 'JetBrains Mono',monospace; color:#4338CA; text-align:right; padding-top:2px;">⟦2026-10 현재⟧</div>
+    <div style="display:flex; justify-content:center; background:linear-gradient(#E7E9F3,#E7E9F3) center/2px 100% no-repeat;"><div style="width:18px; height:18px; border-radius:50%; background:#4338CA; box-shadow:0 0 0 4px #EEF0FF;"></div></div>
+    <div style="padding:0 0 18px;"><div style="font:600 13.5px/1.4 Pretendard,sans-serif; color:#4338CA;">⟦통합 대시보드·커버리지⟧</div><div style="font:400 12.5px/1.6 Pretendard,sans-serif; color:#5A6175; margin-top:2px;">⟦액션 큐와 연결 커버리지 지표 정리 중⟧</div></div>
+  </div>
+  <!-- VARIANT risk -->
+  <div style="display:grid; grid-template-columns:96px 28px 1fr; column-gap:10px;">
+    <div style="font:600 11.5px/1.4 'JetBrains Mono',monospace; color:#8A91A6; text-align:right; padding-top:2px;">⟦2026-11⟧</div>
+    <div style="display:flex; justify-content:center; background:linear-gradient(#E7E9F3,#E7E9F3) center/2px 100% no-repeat;"><div style="width:18px; height:18px; border-radius:50%; background:#FBF1EE; border:2px solid #B4543F; box-sizing:border-box;"></div></div>
+    <div style="padding:0 0 18px;"><div style="font:600 13.5px/1.4 Pretendard,sans-serif; color:#15172B;">⟦권한 요청 자동화⟧ <span style="font:700 10px/1 Pretendard,sans-serif; color:#B4543F; background:#FBF1EE; border-radius:5px; padding:3px 6px; vertical-align:2px;">⟦지연 위험⟧</span></div><div style="font:400 12.5px/1.6 Pretendard,sans-serif; color:#5A6175; margin-top:2px;">⟦보안 검토 결과에 따라 일정 변동⟧</div></div>
+  </div>
+  <!-- VARIANT planned + last row (line stops at the dot) -->
+  <div style="display:grid; grid-template-columns:96px 28px 1fr; column-gap:10px;">
+    <div style="font:600 11.5px/1.4 'JetBrains Mono',monospace; color:#9AA0B2; text-align:right; padding-top:2px;">⟦2026-12⟧</div>
+    <div style="display:flex; justify-content:center; background:linear-gradient(#E7E9F3,#E7E9F3) center top/2px 9px no-repeat;"><div style="width:18px; height:18px; border-radius:50%; background:#FFFFFF; border:2px solid #B6BBCB; box-sizing:border-box;"></div></div>
+    <div style="padding:0 0 18px;"><div style="font:600 13.5px/1.4 Pretendard,sans-serif; color:#8A91A6;">⟦결과 설문 연동⟧</div><div style="font:400 12.5px/1.6 Pretendard,sans-serif; color:#9AA0B2; margin-top:2px;">⟦Milestone 종료 시 효과 검증⟧</div></div>
+  </div>
+</div>
