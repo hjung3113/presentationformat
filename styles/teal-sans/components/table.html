@@ -14,6 +14,11 @@ HOW TO FILL
   1. 열 수와 비율을 모든 행의 grid-template-columns 에 같게 쓴다(첫 열은 핵심어라 좁게, 예: 1fr 1.6fr 1.6fr).
   2. 첫 열은 핵심어(굵게). 나머지 칸은 한 문장 이하.
   3. 행 하나 = ▼REPEAT 하나. 7행을 넘기면 두 표로 나누거나 부록으로 옮긴다.
+  4. 헤더는 두 가지다 — 표 하나에 하나만 쓴다:
+       진한 헤더(기본) = 본문 흐름의 주 표.
+       소프트 헤더 = 참조·부록 표(sref 부록의 표는 항상 소프트 헤더), 그림 뒤에 붙는 보조 표.
+     소프트 헤더는 아래 VARIANT 주석의 헤더 줄로 진한 헤더 줄을 통째로 바꾼다(열 수·비율·본문 행은 그대로).
+     진한 헤더의 배경색만 바꾸면 흰 글자가 안 보이므로 줄 전체를 바꾼다.
 -->
 <div data-component="table" style="border:1px solid #E7E9F3; border-radius:10px; overflow:hidden; background:#FFFFFF;">
   <div style="display:grid; grid-template-columns:1fr 1.6fr 1.6fr; background:#15172B;">
@@ -21,6 +26,13 @@ HOW TO FILL
     <div style="font:600 12.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#FFFFFF; padding:13px 18px;">⟦열 2 제목⟧</div>
     <div style="font:600 12.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#FFFFFF; padding:13px 18px;">⟦열 3 제목⟧</div>
   </div>
+  <!-- VARIANT soft header (appendix / reference / secondary tables): use INSTEAD of the strong header row above — same columns, delete the other
+  <div style="display:grid; grid-template-columns:1fr 1.6fr 1.6fr; background:#EFF5F4;">
+    <div style="font:600 12.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#3A4255; padding:12px 18px;">⟦열 1 제목⟧</div>
+    <div style="font:600 12.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#3A4255; padding:12px 18px;">⟦열 2 제목⟧</div>
+    <div style="font:600 12.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#3A4255; padding:12px 18px;">⟦열 3 제목⟧</div>
+  </div>
+  -->
   <!-- ▼ REPEAT per row -->
   <div style="display:grid; grid-template-columns:1fr 1.6fr 1.6fr; border-top:1px solid #EDEEF4;">
     <div style="font:600 13px/1.55 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#1E2233; padding:12px 18px; background:#FAFBFE;">⟦핵심어 A⟧</div>

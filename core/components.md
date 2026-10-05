@@ -177,12 +177,24 @@ a first section that is not `headline-metric` or `decision`, or a last section t
   line k+1. Bar heights: value ÷ max × 100.
 - **Placement.** Lead paragraph first, then the figure (full width). Never put the figure before the
   lead. One primary figure per section; a support block (callout or small table) may follow it.
+- **A `text-table` section is a pasted `table`, filled from its figure-data.** The plan carries
+  `columns: … | rows: …` (never `none`) and the table's columns and rows are exactly those. A reference or
+  appendix table (`sref`, or a secondary table that follows a figure) uses the table's soft header.
 - **Counts must match.** If the lead says "세 가지 상태", the figure shows three.
+- **A not-built thing never gets the built look (cross-component rule).** Anything the source calls
+  planned, designed-only, not yet built or not decided — a module, a pipeline node, a tree child or leaf, a
+  timeline item, an ALT/OPT frame of messages — is drawn in the **shared planned look**: muted dashed
+  outline (on the soft fill where it is a box), muted text, plus a small state chip carrying the source's own word (예정·계획·
+  미설계·미구현·대기). Its figure-data carries the marker `[planned]` right after it. Components with the
+  variant: `layer-map`, `pipeline`, `tree`, `timeline`, `sequence`; any other figure draws a planned thing
+  the same way. A planned thing is never given the key-node, accent or success look — passing a design off as
+  an existing system is the most common overstatement a diagram makes.
 - **figure-data arrows.** Flow-shaped figure-data (`sequence`, `swimlane`, `state-machine`, `activity`,
   `pipeline`, `process-row`, …) may use the glyphs `→ ⇢ ↻` or ASCII: `->` for a request or transition,
   two hyphens followed by `>` for a response, `(self)` for internal processing. The plan validator
-  accepts both. Per-component markers (state `●`/`◉` and `[ok]`/`[retry]`/`[negative]`, layer
-  `[key]`/`[optional]`/`[external]`/`[legacy]`, swimlane `◇`/`→[라벨]`/`↓`, gantt `(legacy) + (core)`)
+  accepts both. Per-component markers (state `●`/`◉` and `[ok]`/`[retry]`/`[negative]`/`[neutral]`, layer
+  `[key]`/`[optional]`/`[external]`/`[legacy]`, swimlane `◇`/`→[라벨]`/`↓`, gantt `(legacy) + (core)`, screen-map
+  `[above]`/`[below]` for the 5th–6th region, and `[planned]` on layer, pipeline, tree, timeline and sequence items)
   are documented in each template's `@data` line and HOW TO FILL header (`components/README.md`).
 
 ---

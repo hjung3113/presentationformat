@@ -20,13 +20,18 @@ HOW TO FILL
   3. 막대 변형: 확정 범위(core)=강조색, 부분·최소(partial)=연한 강조색, 이후 예정(planned)=테두리만, 지연 위험(risk)=경고색,
      기존 체제·병행 운영(legacy)=회색(slate, AS-IS 색). 새 체제(core)와 기존 체제(legacy)를 같은 색으로 칠하지 않는다.
      같은 종류의 막대는 같은 변형을 쓴다. 막대 안 글자는 2–6자 또는 비운다(범례가 색을 설명하면 비운다).
+     행 높이는 고정이 아니다: 행은 min-height + 위아래 padding 이라 작업명이 두 줄이면 행이 스스로 늘어나고 아무것도 잘리지 않는다.
+     작업명은 두 줄 이내(라벨 칸 150px → 한 줄 한글 약 11자). 세 줄이 되면 이름을 줄이고 설명은 각주로 옮긴다.
   4. 한 행에 막대 둘(작업 = P1–P2 (legacy) + P3–P5 (core)):
        기간이 겹치지 않으면 두 막대를 같은 행에 그대로 놓는다.
        병행 운영처럼 기간이 겹치면 "겹침 행" 변형: 두 막대에 grid-row:1 을 주고 legacy 는 위(align-self:start), 새 체제는 아래(align-self:end)에
-       반 높이로 쌓는다. 겹침 행은 글자를 비우고 min-height:40px.
+       반 높이로 쌓는다. 겹침 행은 막대 글자를 비우고 min-height:36px(작업명이 두 줄이면 행이 늘어난다).
   5. 마일스톤은 ◆ 행: grid-column: k+1 (그 기간 칸 하나). 기존 체제를 끄고 신규 체제로 넘어가는 시점은 어두운 알약 변형 "◆ 컷오버"(cutover).
   6. (선택) 현재 기간 헤더를 강조색 글자로.
   7. figure-data 의 시작–끝 은 기간 이름이 아니라 기간 번호 또는 이름 둘 다 허용한다(예: P1–P2, 1월–2월).
+  8. 범례(맨 아래 줄)의 항목 이름은 ⟦슬롯⟧이다. 예시 문구(확정 범위·최소 범위·이후 예정·지연 위험·기존 체제)를 그대로 두지 말고
+     이 문서가 그 막대 종류에 붙인 이름으로 바꾼다(예: 코어 구축 · MVP 범위 · 병행 운영 · 이관 완료). 막대 종류(색)와 범례 항목은 1:1이다:
+     쓰지 않은 종류의 항목은 지우고, 쓴 종류는 모두 적는다. 막대 안 글자를 비웠다면 범례가 색의 뜻을 전부 설명해야 한다.
 -->
 <div data-component="gantt" style="background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:22px 24px 18px;">
   <!-- header: 150px repeat(P,1fr) -->
@@ -42,45 +47,45 @@ HOW TO FILL
   <!-- body: vertical period lines only over the bar area (padding-left = label width) -->
   <div style="padding-left:150px; background-image:linear-gradient(90deg, #DCE5F2 1px, transparent 1px); background-size:calc(100% / 6) 100%; background-origin:content-box; background-clip:content-box; border-top:1px solid #DCE5F2; border-bottom:1px solid #DCE5F2; padding-top:6px; padding-bottom:6px;">
     <!-- ▼ REPEAT per task row: margin-left:-150px keeps the label column aligned -->
-    <div style="display:grid; grid-template-columns:150px repeat(6,1fr); margin-left:-150px; align-items:center; min-height:34px;">
+    <div style="display:grid; grid-template-columns:150px repeat(6,1fr); margin-left:-150px; align-items:center; box-sizing:border-box; min-height:34px; padding:4px 0;">
       <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1D2939; padding-right:10px;">⟦작업 A⟧</div>
       <div style="grid-column:2 / 5; height:24px; margin:0 3px; background:#1428A0; border-radius:4px; color:#FFFFFF; font:600 10.5px/24px Inter,Pretendard,sans-serif; text-align:center; white-space:nowrap; overflow:hidden;">⟦핵심⟧</div>
     </div>
     <!-- ▲ /REPEAT -->
     <!-- row with two bars, no overlap: legacy first, then the new system -->
-    <div style="display:grid; grid-template-columns:150px repeat(6,1fr); margin-left:-150px; align-items:center; min-height:34px;">
+    <div style="display:grid; grid-template-columns:150px repeat(6,1fr); margin-left:-150px; align-items:center; box-sizing:border-box; min-height:34px; padding:4px 0;">
       <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1D2939; padding-right:10px;">⟦작업 B⟧</div>
       <!-- VARIANT legacy (existing system / parallel run, AS-IS colour) -->
       <div style="grid-column:2 / 4; height:24px; margin:0 3px; background:#CBD6E6; border-radius:4px; color:#374151; font:600 10.5px/24px Inter,Pretendard,sans-serif; text-align:center; white-space:nowrap; overflow:hidden;">⟦병행 운영⟧</div>
       <div style="grid-column:4 / 7; height:24px; margin:0 3px; background:#1428A0; border-radius:4px; color:#FFFFFF; font:600 10.5px/24px Inter,Pretendard,sans-serif; text-align:center; white-space:nowrap; overflow:hidden;">⟦신규 체제⟧</div>
     </div>
-    <!-- VARIANT overlap row (parallel run): both bars grid-row:1, half height, stacked; no text; min-height:40px -->
-    <div style="display:grid; grid-template-columns:150px repeat(6,1fr); margin-left:-150px; align-items:center; min-height:40px;">
+    <!-- VARIANT overlap row (parallel run): both bars grid-row:1, half height, stacked; no text; min-height:36px -->
+    <div style="display:grid; grid-template-columns:150px repeat(6,1fr); margin-left:-150px; align-items:center; box-sizing:border-box; min-height:36px; padding:4px 0;">
       <div style="grid-row:1; font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1D2939; padding-right:10px;">⟦작업 C⟧</div>
-      <div style="grid-column:2 / 5; grid-row:1; align-self:start; height:12px; margin:6px 3px 0; background:#CBD6E6; border-radius:4px;"></div>
-      <div style="grid-column:4 / 7; grid-row:1; align-self:end; height:12px; margin:0 3px 6px; background:#1428A0; border-radius:4px;"></div>
+      <div style="grid-column:2 / 5; grid-row:1; align-self:start; height:12px; margin:0 3px; background:#CBD6E6; border-radius:4px;"></div>
+      <div style="grid-column:4 / 7; grid-row:1; align-self:end; height:12px; margin:0 3px; background:#1428A0; border-radius:4px;"></div>
     </div>
-    <div style="display:grid; grid-template-columns:150px repeat(6,1fr); margin-left:-150px; align-items:center; min-height:34px;">
+    <div style="display:grid; grid-template-columns:150px repeat(6,1fr); margin-left:-150px; align-items:center; box-sizing:border-box; min-height:34px; padding:4px 0;">
       <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1D2939; padding-right:10px;">⟦작업 D⟧</div>
       <!-- VARIANT partial / minimal scope -->
       <div style="grid-column:2 / 4; height:24px; margin:0 3px; background:#A9BDF5; border-radius:4px; color:#0F1E78; font:600 10.5px/24px Inter,Pretendard,sans-serif; text-align:center; white-space:nowrap; overflow:hidden;">⟦최소 범위⟧</div>
       <!-- VARIANT planned (later scope) -->
       <div style="grid-column:4 / 7; height:24px; margin:0 3px; background:#E7EFFC; border:1px solid #B9C9F7; box-sizing:border-box; border-radius:4px; color:#1428A0; font:600 10.5px/22px Inter,Pretendard,sans-serif; text-align:center; white-space:nowrap; overflow:hidden;">⟦이후 예정⟧</div>
     </div>
-    <div style="display:grid; grid-template-columns:150px repeat(6,1fr); margin-left:-150px; align-items:center; min-height:34px;">
+    <div style="display:grid; grid-template-columns:150px repeat(6,1fr); margin-left:-150px; align-items:center; box-sizing:border-box; min-height:34px; padding:4px 0;">
       <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1D2939; padding-right:10px;">⟦작업 E⟧</div>
       <!-- VARIANT at risk / delayed -->
       <div style="grid-column:5 / 7; height:24px; margin:0 3px; background:#FCEDEE; border:1px solid #F3C7CB; box-sizing:border-box; border-radius:4px; color:#B2202B; font:600 10.5px/22px Inter,Pretendard,sans-serif; text-align:center; white-space:nowrap; overflow:hidden;">⟦지연 위험⟧</div>
     </div>
     <!-- milestone row: ◆ in one period cell (grid-column: k+1) -->
-    <div style="display:grid; grid-template-columns:150px repeat(6,1fr); margin-left:-150px; align-items:center; min-height:30px;">
+    <div style="display:grid; grid-template-columns:150px repeat(6,1fr); margin-left:-150px; align-items:center; box-sizing:border-box; min-height:30px; padding:4px 0;">
       <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#667083; padding-right:10px;">⟦마일스톤⟧</div>
       <div style="grid-column:4; justify-self:center; font:600 10.5px/1.2 Inter,Pretendard,sans-serif; color:#1D2939; white-space:nowrap;"><span style="color:#1428A0;">◆</span> ⟦마일스톤 A⟧</div>
       <!-- VARIANT cutover milestone (switch from the existing system to the new one) -->
       <div style="grid-column:6; justify-self:center; font:700 10.5px/1 Inter,Pretendard,sans-serif; color:#FFFFFF; background:#101828; border-radius:4px; padding:4px 7px; white-space:nowrap;">◆ ⟦컷오버⟧</div>
     </div>
   </div>
-  <!-- legend -->
+  <!-- legend: ▼ REPEAT per bar kind actually used — rename every ⟦label⟧ for this document, delete unused kinds -->
   <div style="display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:12px;">
     <span style="display:inline-flex; align-items:center; gap:6px; font:500 11.5px/1 Inter,Pretendard,sans-serif; color:#475467;"><span style="width:12px; height:12px; border-radius:3px; background:#1428A0;"></span>⟦확정 범위⟧</span>
     <span style="display:inline-flex; align-items:center; gap:6px; font:500 11.5px/1 Inter,Pretendard,sans-serif; color:#475467;"><span style="width:12px; height:12px; border-radius:3px; background:#A9BDF5;"></span>⟦최소 범위⟧</span>
