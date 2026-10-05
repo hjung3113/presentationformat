@@ -415,7 +415,7 @@
     <section id="s6" data-screen-label="06 시범" style="padding:56px 0; border-top:1px solid #E3EAF4;">
       <div style="font:700 13px/1 Inter,Pretendard,sans-serif; letter-spacing:.08em; color:#1428A0; margin-bottom:14px;">06 · 시범</div>
       <h2 style="font:600 28px/1.32 Inter,Pretendard,sans-serif; color:#101828; margin:0 0 12px; letter-spacing:-.01em;">단계별 시범 — 준비 2주, 운영 8주, 판정 2주</h2>
-      <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 28px; max-width:760px;">시범은 <b style="color:#101828;">1개 팀</b>(그 팀장의 사전 동의를 받는다)에서 세 단계로 하며, 각 단계 끝에서 다시 판단한다. <b style="color:#101828;">준비 2주는 승인 즉시 시작하고</b>, 운영은 사내 로그인·서버·보안 회신이 모두 갖춰진 날 시작한다. 늦으면 운영 시작만 미룬다. 준비 2주에는 지난 6개월 Jira 기준선 추출, 보안 사전 확인, 시범 팀 동의, 사내 로그인·인프라 협조 요청, 병행 기간 접수 경로 확정(문의자 직접 등록인지, Jira 건을 옮기는지, 이중 입력이 생기는지)을 하고, 2주 점검에서 기준선 숫자와 함께 운영 8주 승인을 다시 올린다.</p>
+      <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 28px; max-width:760px;">시범은 <b style="color:#101828;">1개 팀</b>(그 팀장의 사전 동의를 받는다)에서 세 단계로 하며, 각 단계 끝에서 다시 판단한다. <b style="color:#101828;">준비 2주는 승인 즉시 시작하고</b>, 운영은 사내 로그인이 실제로 동작하고(등록·연동 완료) 서버와 보안 회신이 갖춰진 날 시작한다. 늦으면 운영 시작만 미룬다. 준비 2주에는 지난 6개월 Jira 기준선 추출, 보안 사전 확인, 시범 팀 동의, 사내 로그인·인프라 협조 요청, 병행 기간 접수 경로 확정(문의자 직접 등록인지, Jira 건을 옮기는지, 이중 입력이 생기는지)을 하고, 2주 점검에서 기준선 숫자와 함께 운영 8주 승인을 다시 올린다.</p>
 
       <div data-component="gantt" style="background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:22px 24px 18px;">
   <div style="display:grid; grid-template-columns:150px repeat(6,1fr); margin-bottom:4px;">
@@ -476,8 +476,8 @@
   </div>
   <div style="display:grid; grid-template-columns:1.1fr 2fr 1.7fr .8fr; border-top:1px solid #E6EDF7;">
     <div style="font:600 13px/1.55 Inter,Pretendard,sans-serif; color:#1D2939; padding:12px 18px; background:#F7FAFE;">첫 응답 리드타임</div>
-    <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">등록 → 첫 공개 업데이트 중앙값</div>
-    <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">Jira 생성 → 첫 댓글</div>
+    <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">등록 → 문의자에게 보이는 첫 응답 중앙값(상태 변경과 무관)</div>
+    <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">Jira 생성 → 문의자에게 보이는 첫 댓글(본인 댓글 제외)</div>
     <div style="font:600 13px/1.6 Inter,Pretendard,sans-serif; color:#1428A0; padding:12px 18px;">판정</div>
   </div>
   <div style="display:grid; grid-template-columns:1.1fr 2fr 1.7fr .8fr; border-top:1px solid #E6EDF7;">
@@ -505,7 +505,7 @@
     <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">보고만</div>
   </div>
 </div>
-      <p style="font:400 12px/1.65 Inter,Pretendard,sans-serif; color:#667083; margin:10px 0 0;">* 연결률·통지율은 FeedbackOps 연결 지표에 이미 있고, 첫 응답 리드타임은 감사 기록에서 뽑으며, 재문의는 표본을 사람이 분류한다.</p>
+      <p style="font:400 12px/1.65 Inter,Pretendard,sans-serif; color:#667083; margin:10px 0 0;">* 연결률·통지율은 FeedbackOps 연결 지표에 이미 있고, 첫 응답 리드타임은 두 시스템에서 같은 사건(문의자에게 보이는 첫 응답)이 되도록 준비 단계에서 정의를 맞춘 뒤 감사 기록에서 뽑으며, 재문의는 표본을 사람이 분류한다.</p>
 
       <p style="font:400 14px/1.75 Inter,Pretendard,sans-serif; color:#475467; margin:26px 0 0; max-width:860px;"><b style="color:#101828;">판정 규칙(제안)</b> — 두 판정 지표가 모두 기준선보다 나아지고 데이터 사고(VOC 유실·권한 밖 노출)가 0건이면 두 결정을 올린다. 그 팀 VOC 접수 일원화, 그리고 FeedbackOps 화면을 플랫폼으로 옮기는 단계 착수(거친 추정 4~8주, 별도 승인)이다. 미달이면 원인과 함께 보고하고 시범 팀은 FeedbackOps 사용을 멈춘다. 판정선 숫자는 기준선을 본 뒤 정하며, 오늘은 지표만 승인한다.</p>
     </section>
