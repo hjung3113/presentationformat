@@ -216,7 +216,9 @@ function planWarnings(plan) {
   const decisions = plan.sections.filter(s => s.shape === 'decision');
   if (decisions.length > 2) out.push(`${decisions.length} sections have shape "decision" (${decisions.map(s => s.id).join(',')}) — the request itself is one decision; the rest are probably peer-list or text-table`);
   if (plan.header.audience === 'executive') {
-    if (nums.length > 7) out.push(`executive plan has ${nums.length} numbered sections (>7) — cut to what the reader needs to decide`);
+    // the section count follows the content (a plan covering several products needs a section set per product);
+    // past ~9 sections the document is act-grouped, and past 12 even an executive reader needs acts to find the way
+    if (nums.length > 12) out.push(`executive plan has ${nums.length} numbered sections (>12) — group them into acts (act-structure: act-grouped, dividers between acts) or merge sections the reader does not need to decide`);
     const heavy = nums.filter(s => EXEC_BANNED_SHAPES.includes(s.shape));
     if (heavy.length) out.push(`executive plan uses developer-grade shapes: ${heavy.map(s => `${s.id}=${s.shape}`).join(', ')}`);
     if (nums.length && !['headline-metric', 'decision'].includes(nums[0].shape)) out.push(`executive plan should open with headline-metric or decision (first numbered section is "${nums[0].shape}")`);

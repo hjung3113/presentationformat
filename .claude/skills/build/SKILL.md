@@ -26,7 +26,8 @@ document that has not passed the gate is not "built," regardless of how the HTML
 
 **The plan is the only content input.** Do not re-read the original source docs and do not add a
 claim, a number, or a hero token the plan does not carry (the exit gate traces every number back to
-the plan and its `facts.md`).
+the plan and its `facts.md`). The `facts.md` the plan names also carries the document's **term sheet**
+(`## T — 용어`, when present): the words below are chosen there, not by you.
 
 ## Step 1 — Read the plan and the style's specs
 
@@ -60,9 +61,11 @@ Use the answer key to see how a component actually looks when in doubt.
 
 Before rendering anything, check that the plan's section count and shape fit the style's skeleton
 (the style's authoring-guide describes its target section-count range and when it expects
-act-grouped structure). If the plan has far too few or too many sections for the skeleton, or its
-`act-structure` header disagrees with what its section count implies, surface that mismatch to the
-user before building rather than silently forcing a bad fit.
+act-grouped structure). The count follows the plan's content — never cut or merge sections to fit a range, and a
+document that covers several products/systems legitimately has a section set per product. What must
+agree is the `act-structure` header and the count (flat up to ~9, act-grouped above); if they disagree, or the
+plan has far too few sections for the skeleton, surface that mismatch to the user before building rather than
+silently forcing a bad fit.
 
 ## Step 3 — Clone the style's template
 
@@ -180,6 +183,16 @@ wherever a number appears: "(추정)" after an estimate, "(소유자 진술)" af
 designed/planned facts stay in the tense the plan gave them. A `pitch` ends with its explicit request
 and does not use the "승인 요청서가 아니라" opener (the style's authoring-guide §1).
 
+**Terms.** Name every concept with the term the plan's term sheet chose — the same word everywhere, never a
+`쓰지 않을 말` variant (the gate fails it outside the appendix). The first time a term appears in the body, write
+its `처음 나올 때` form (`작업(Task)`, `FeedbackOps(VOC·작업 운영 도구)`), then the bare term. A concept the sheet does
+not name gets no new name from you: use the plan's own wording or send the gap back to `/plan`.
+
+**Natural Korean.** Compose each sentence by the style's authoring-guide §3.2 checklist (no `·` noun piles, one em
+dash at most, active verbs, no `~에 대한/~를 통해/~하는 것이다` chains, one idea per sentence, subject next to its
+predicate, everyday words for executive/user readers). Do not translate the plan's notes word for word — they are
+notes; the page is a Korean paragraph.
+
 **Register conversion.** The plan's `thesis` and `payload` may be written in any register — notes, `~합니다`,
 bare nouns. The document is **always** rendered in the style's register (these styles: `~한다/~된다/~이다`
 문어체 for prose, 개조식 for chips and labels — authoring-guide §3.1). Convert the sentence, keep the meaning
@@ -222,7 +235,7 @@ node .claude/lib/verify-doc.mjs <doc.dc.html> --canonical-support <styles/<style
 ```
 
 `--style` supplies the accent color and turns on the palette check; `--plan` turns on the section,
-shape and number checks — always pass both. (`--no-visual` skips the headless-browser tier; the
+shape, number and term-sheet checks — always pass both. (`--no-visual` skips the headless-browser tier; the
 environment variable `CHROME_PATH` picks the browser.)
 
 **Success means the literal last gate line `GATE PASSED (k/k checks)`** — nothing else. An exit code of
@@ -263,6 +276,10 @@ The gate runs two tiers:
     must come from the plan or be removed from the document.** Never add a number to the plan or facts
     just to pass: if the number is real it needs a source, so go back to `/plan`, add the fact with its
     citation, and re-confirm.
+  - `terms-consistent` — runs only when the plan's `facts.md` has a `## T — 용어` table. A banned variant
+    (`쓰지 않을 말`) appears in the document outside the appendix: replace it with the chosen term. **Never edit the term
+    sheet to make the gate pass** — a different word is a decision for `/plan`; without a table the gate prints a `NOTE`
+    and skips it.
   It also prints non-blocking `figures:*` rows (coverage per section, low variety, bare sections,
   crowded sections) — read them. **This gate does not verify semantic-color-split correctness** — it
   cannot tell whether the AS-IS color family stayed in AS-IS/problem zones and the accent stayed in
@@ -277,8 +294,31 @@ The gate runs two tiers:
   If a headless browser is not available, the gate reports the visual check as unverified rather
   than silently skipping it — treat that as an honest "not checked," not a pass.
 
+- **Non-blocking Korean-writing rows**, printed as `WARN` whatever the plan: `prose:long-sentence` (>110 characters),
+  `prose:dot-chain` (4+ `·` in one sentence), `prose:dash` (more than one `—` in a sentence, or more than 3 in a lead),
+  `prose:translationese` (`~하는 것이다`, `~것으로 보인다`, `되어지`, `~에 있어서`, and `~에 대한` / `~를 통해` three or more
+  times in a section) and `prose:register` (`~합니다/~습니다/~해요` in body text), plus `terms:first-use` (a term's
+  first-use form never appears). They never change the exit code — Step 9 is where they get fixed.
+
 **Treat anything other than the `GATE PASSED` line as "not built."** Read every check the gate prints;
 if any mechanical check fails, fix the document and rerun the gate — do not hand the document to the
 user as finished while a check is failing. Do not report success on the strength of the visual line
 alone, and do not claim the visual/composition tier passed when it reports unverified. Do read and
 summarize any `WARN` rows for the user; warnings are not failures, but they are review evidence.
+
+## Step 9 — Prose pass (after `GATE PASSED`)
+
+The gate cannot judge Korean, but it counts the patterns that read awkwardly — the same patterns a reviewer
+flagged in the first pitch built with this system (over-long sentences, noun piles, translated-sounding phrases,
+one thing under several names). When the last gate line is `GATE PASSED`:
+
+1. **Fix every `WARN  prose:*` and `WARN  terms:*` row in the document** — split the sentence, write the clause, use
+   the active verb, use the term-sheet word, add the first-use form — and rerun the gate. A warning you keep must be
+   **justified in the final report**: quote the sentence and say why it stays (an exact on-screen string, a literal
+   identifier list, a source term that cannot be reworded). "Non-blocking" is not a reason.
+2. **Read-aloud pass, section by section.** For each section read the lead, then every card, callout and table
+   sentence, as a colleague would say it. Where you stumble, or have to re-read to find the subject, rewrite it by the
+   authoring-guide §3.2 checklist. Check that each term is defined before it is used and appears in one form only.
+3. Rerun the gate (the last line must still be `GATE PASSED`). The final report lists: the gate line, the remaining
+   `prose:*` / `terms:*` rows with one line of justification each (the goal is none), and the wording-only fixes made.
+   This pass changes wording only — never add a claim or a number (that is `/plan`'s job and `numbers-traced`'s check).

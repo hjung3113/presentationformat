@@ -141,9 +141,10 @@ each section whose shape is not `none` contains a `data-component` the shape all
 Warnings (non-blocking): fewer than 3 distinct figure components in a document with ≥5 numbered
 sections; more than one third of numbered sections with shape `none`; a section with **more than 2**
 main figures (the gate warns above 2 — one idea per figure). Plan-time warnings from
-`plan-schema`: more than 2 `decision` sections, and for `audience: executive` more than 7 numbered
-sections, a developer-grade shape (`code-structure`, `interaction`, `entity-relations`, `rule-table`),
-a first section that is not `headline-metric` or `decision`, or a last section that is not `decision`.
+`plan-schema`: more than 2 `decision` sections, and for `audience: executive` more than 12 numbered
+sections (group into acts — the section count follows the content, §5), a developer-grade shape
+(`code-structure`, `interaction`, `entity-relations`, `rule-table`), a first section that is not
+`headline-metric` or `decision`, or a last section that is not `decision`.
 
 ---
 
@@ -234,6 +235,13 @@ Pick the recipe from the user's request words, then adapt; record its id as the 
 row is one numbered section; the shape column is the **default** — reclassify with §2 when the source
 says otherwise. A recipe row the source cannot support is dropped, never padded.
 
+**Section count follows the content.** The rows are a checklist, not a quota. A document on one subject usually lands
+at ~6–9 numbered sections plus the appendix; when it covers **several products or systems**, each one gets its own
+section(s) — what it is, who uses it, what works today, what is planned (recipe F's *system introduction* block applies
+to any recipe) — and the relationship or migration between them gets a section of its own. Above ~9 numbered sections
+group them into acts (`act-structure: act-grouped`; the dividers are `<div>`s, never `<section>`s). The audience does not
+cap the count: `plan-schema` warns for an `executive` plan only above 12 numbered sections, and suggests acts.
+
 **A. 설계·아키텍처 설명서** (`explainer`) — "설계", "구조", "아키텍처", "어떻게 동작", "소개"
 
 | Section | Shape |
@@ -308,12 +316,29 @@ says otherwise. A recipe row the source cannot support is dropped, never padded.
 | 9 요청 | `decision`, always the last numbered section |
 | 근거 부록 | `text-table` with a source column (the `sref` appendix) |
 
+**System introduction block (optional).** When a pitch has to introduce more than one product or system, the reader
+must understand each one before judging the proposal — a single thin paragraph for all of them is the failure this block
+prevents. Give **each product its own section(s)**, placed between 3 원인 and 4 제안 구조 (or as the body of 4 when
+the proposal *is* the products), each answering three questions in this order — one section per row when the facts are
+rich, the three folded into one section when they are few:
+
+| Part | Question | Shape → component |
+|---|---|---|
+| 무엇인가 | what is it, who uses it | `peer-list` → `card-grid` (what it contains), or `actor-goals` → `use-case` (actors and their goals) |
+| 어떻게 쓰나 | how is it used, step by step | `linear-steps` → `process-row`; `role-handoff` → `swimlane` when roles take turns; `branching-flow` → `activity` when it branches |
+| 지금 상태 | what works today, what is planned | `layered-structure` → `layer-map` (planned parts carry `[planned]` — the not-built rule, §4) or `status` → `status-board` (built = 완료·정상, planned = 대기) |
+
+The **relationship or migration between the products gets its own section** after the product sections — `schedule`
+→ `gantt` (legacy bar + cutover milestone) or `milestones` → `timeline` — never folded into one product's section. Each
+product keeps one name (the plan's term sheet, `## T — 용어` in `facts.md`); more products means more sections, and past ~9
+the document is act-grouped (one act per product is a natural split).
+
 Pitch rules: an explicit ask is required (the one `decision`, last); every number comes from the facts
 ledger (`[Fnn]`) — an estimate or an owner statement renders with "(추정)" / "(소유자 진술)", and a
 `designed` or `planned` fact is never written as if it already exists. Write **one plan per audience**
-(`executive`, `user`, `developer`) from the same `facts.md`; an executive plan keeps ≤7 numbered sections
-(merge 1+2, fold 3 into 2, drop 4 or 8 when the source has nothing) and still opens with the metrics
-and ends with the request. An executive or user pitch uses `labels: ko` (Korean eyebrows and component labels, see §4) and the
+(`executive`, `user`, `developer`) from the same `facts.md`. The section count follows the content (see the note
+above recipe A): an executive plan may merge 1+2, fold 3 into 2 or drop 4 or 8 when the source has nothing, but never
+by squeezing several products into one section; it still opens with the metrics and ends with the request. An executive or user pitch uses `labels: ko` (Korean eyebrows and component labels, see §4) and the
 style template's compact hero, so the first section's lead and its first figure row are visible without scrolling.
 
 Recipes set the default shape per section; the narrative lens and the source decide the final

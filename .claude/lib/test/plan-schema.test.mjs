@@ -315,10 +315,13 @@ test('executive plans warn on developer shapes, a non-opening metric/decision an
   assert.deepEqual(validatePlan(read('plan-valid.md')).warnings, []);
 });
 
-test('executive plans with more than 7 numbered sections warn; non-executive plans do not', () => {
-  const many = (over) => plan(Array.from({ length: 8 }, (_, i) => sec(i + 1, i === 0 || i === 7 ? 'decision' : 'peer-list', i === 0 || i === 7 ? 'question: 승인?' : 'none')), over);
-  assert.match(validatePlan(many({ audience: 'executive' }), { templates: [...templates, ...synthDecision()] }).warnings.join('\n'), /8 numbered sections \(>7\)/);
-  assert.doesNotMatch(validatePlan(many({}), { templates: [...templates, ...synthDecision()] }).warnings.join('\n'), />7/);
+test('executive plans with more than 12 numbered sections warn (and suggest acts); up to 12, and non-executive plans, do not', () => {
+  const many = (n, over) => plan(Array.from({ length: n }, (_, i) => sec(i + 1, i === 0 || i === n - 1 ? 'decision' : 'peer-list', i === 0 || i === n - 1 ? 'question: 승인?' : 'none')), over);
+  const warns = (md) => validatePlan(md, { templates: [...templates, ...synthDecision()] }).warnings.join('\n');
+  assert.match(warns(many(13, { audience: 'executive' })), /13 numbered sections \(>12\) — group them into acts \(act-structure: act-grouped/);
+  assert.doesNotMatch(warns(many(12, { audience: 'executive' })), /numbered sections/); // 8–12 sections used to warn
+  assert.doesNotMatch(warns(many(8, { audience: 'executive' })), /numbered sections/);
+  assert.doesNotMatch(warns(many(13, {})), /numbered sections/);
 });
 
 function synthDecision() {

@@ -38,7 +38,7 @@ A document in this voice almost always follows this arc. Rename freely; keep the
 
 > The eyebrow examples above are the `labels: en` form. Under `labels: ko` the same rows read `01 · 배경`, `02 · 문제`, `03 · 방향`, `06 · 효과`, `07 · 리스크`, `08 · 범위`, and the reference row `부록`.
 
-- **Section count:** target ~6–9 numbered sections + a reference appendix. Below 4, merge skeleton rows; above ~9, group into acts with a section divider (`design.md §6.2`; markup is a `<div>`, never a `<section>`) and keep nav labels short (2–4 chars). Rows commonly merge — e.g. Mapping+Outcome → one section, Scope+Open-questions → one; drop Risk/Method if not applicable. The reference ships 8 numbered + 1 reference from the 10-row skeleton.
+- **Section count follows the content.** One subject usually lands at ~6–9 numbered sections + a reference appendix; below 4, merge skeleton rows (don't pad). When a document covers **several products/systems**, give each its own section(s) — what it is, who uses it, what works today, what is planned — and the relationship or migration between them a section of its own (`../../core/components.md` §5, recipe F *system introduction*). The audience sets no cap (an executive plan is warned only above 12 numbered sections). Above ~9, group into acts with a section divider (`design.md §6.2`; markup is a `<div>`, never a `<section>`) and keep nav labels short (2–4 chars). Rows commonly merge — e.g. Mapping+Outcome → one section, Scope+Open-questions → one; drop Risk/Method if not applicable. The reference ships 8 numbered + 1 reference from the 10-row skeleton.
 - **Other document types.** Status report, decision proposal, feature guide, analysis and **pitch** follow the recipes in `../../core/components.md` §5 (record the id as the plan's `doc-type`); the cover, voice and page-type rules in this guide still apply. A pitch additionally requires the explicit, last-placed ask (Genre exception, §1).
 - **Label language (`labels: en | ko`).** A document uses **one** language for its category labels — the section eyebrows, the appendix label and the fixed badge text inside components (`../../core/components.md §4`). Default by the plan's `audience`: `developer` → `en`; `executive` / `user` → `ko`. The plan's optional `labels:` header key overrides the default. Body prose, titles and nav labels are Korean either way. Never mix the two languages in one document.
   - **`en` (default — engineering docs).** Section eyebrows are `NN · ENGLISH (UPPERCASE)` where ENGLISH is the **category** (one or two words: BACKGROUND, PROBLEMS, DIRECTION, NON-FUNCTIONAL, TESTING, OUTCOME, RISK, SCOPE, REFERENCE) — *not* a translation of the Korean title. The appendix eyebrow is `REFERENCE` and its nav link is faint with a superscript `ref`. Component badges stay English (AS-IS / TO-BE, DECISION · DUE · OWNER · IF UNDECIDED, LAYER A · EXTERNAL).
@@ -52,7 +52,7 @@ A document in this voice almost always follows this arc. Rename freely; keep the
 
 - Plain declaratives. Split long sentences in two.
 - Lead with the point, then the qualifier (in a short clause or parentheses).
-- Use `·` for peer enumeration ("collect · delete · transform"); `→` for transformation/flow.
+- Use `·` for peer enumeration of two or three items ("collect · delete · transform"; four or more is a noun pile — §3.2); `→` for transformation/flow.
 - Expand an acronym once, then abbreviate.
 - **1–2 bold emphases per paragraph, max.** Bold only true keywords.
 - When a number matters, bold it ("organized into **six groups**").
@@ -67,17 +67,35 @@ The output is Korean technical prose; these morphology rules carry more of the f
 - **Two registers by surface.** Full `~다` sentences for leads / body / risk descriptions; **개조식** (telegraphic — 조사 dropped, ends on a noun) for chips, node sub-labels, roadmap bars, pills, footnote tails.
   Card body "…격리**한다**." → its pill "변경 영향 격리". Footnote "추후 보강 **예정**".
 - **AS-IS pain = flat capability gap**, never emotive. Use `…하기 어렵다`, `…하지 못해 …`, `…이 낮다`, `…에 의존한다`. Avoid 심각/치명적/엄청난.
-- **`·` (가운뎃점) joins peer nouns with NO surrounding spaces:** `수집·삭제·가공`, `구조적·운영적 부채`, `정규화·보정·병합`. Use it densely. (Spaces around `·` appear *only* in the `NN · ENGLISH` / `NN · 한글` eyebrow.)
+- **`·` (가운뎃점) joins peer nouns with NO surrounding spaces:** `수집·삭제·가공`, `구조적·운영적 부채`, `정규화·보정·병합`. Two or three nouns per sentence; a longer list is written as a clause (§3.2). (Spaces around `·` appear *only* in the `NN · ENGLISH` / `NN · 한글` eyebrow.)
 - **Title form = `핵심 명사구 — 한 줄 보조 설명`** (spaced em-dash). Phrase before `—` is the topic; after is a verdict-free gloss: "개선 방향 — 책임 분리", "처리 흐름 — 수집·가공 분리".
 - **Acronyms: `한국어 정식어(ACRONYM)` once, then the bare acronym.** "단일 진실 원천(SSOT)" → later just "SSOT". Not English-expansion-first.
 - **Keep established English engineering tokens inline, unmarked** (Job, thread, Config, diff, CI, raw, stale, upsert, Shadow Run). Don't translate, italicize, or quote them. Coin Korean only where a natural domain word exists ("따라잡기"). Literal identifiers — file names, paths, class / function / API names, config keys, enum values — are the exception: they get the inline identifier chip (`design.md §7.6`).
 - **Numbers take a Korean counter and are bolded with the number:** "**6개** 그룹", "**50종 이상**", "**1회/시간**". For a not-yet-fixed figure: capital-`O` placeholder + muted parenthetical — "**O개**의 DB 서버 (수 추후 확정)". Never flag an unknown with warn color.
 - **Double-quotes `'…'` mark a plain-language gloss or guiding question** dropped into terse 한자어 prose: "'어디까지 처리했는지'를 파악", 정책은 '무엇을' / 메커니즘은 '어떻게'. Quotes are never emphasis (emphasis is bold).
 - **Problem-card headings = 조사-free noun stack ending in a neutral evaluative noun** (미흡/비효율/부담/난이도/수작업): "기준정보 설계·활용 미흡". A noun, not a sentence, no adjectival drama.
-- **Lead rhythm:** a lead may run one long architected sentence (stacked clauses, commas, em-dash) resolving on a single `~한다`; keep card/figure prose to 1–2 short sentences. The flowing-lead ↔ clipped-card contrast is part of the voice — don't uniformly short-chop.
+- **Lead rhythm:** a lead is 2–4 connected sentences, each carrying one idea and staying under ~110 characters (§3.2); card/figure prose is 1–2 short sentences. The flowing-lead ↔ clipped-card contrast is part of the voice and comes from the lead's connected flow, never from one stacked sentence with a chain of clauses and dashes.
 - **Footnotes** (`*` prefix, muted grey) do one of two jobs and stay to one sentence: (a) explain a figure's encoding ("막대의 길이·위치는 …를 나타낸다"), or (b) defer scope with a noun-ending tail ("추후 보강/확정 예정"). End an in-progress document with a closing disclaimer line above a `border-top` — the caveat voice is deliberate, not a hedge to delete.
 - **Glossary line = `용어 — 정의`**; the definition ends nominally (메움/정렬/관리) and packs paired senses with bare `vs` / `+`: "표준/비표준 로그 — 표준 스펙 준수 로그 vs 설비사 자체 양식 로그(변환 필요)".
 - **The plan's register is not the document's register.** A plan's `thesis`, `payload` and `figure-data` may be written in any register (notes, `~합니다`, bare nouns); `/build` always renders the document in this style's register — `~한다/~된다/~이다` 문어체 for prose, 개조식 for chips — converting the sentence while keeping its meaning and its markers (`(추정)`, `(소유자 진술)`). Never copy a plan's `~합니다` sentence onto the page.
+
+### 3.2 자연스러운 한국어 (natural Korean — check while writing, again before shipping)
+
+§3.1 fixes the sentence *endings*; this list fixes the *sentences*. The exit gate counts the patterns below as non-blocking `prose:*` / `terms:*` warnings — fix every one (or justify it in the build report), then read each section aloud once.
+
+| Check (gate row) | ✗ before → ✓ after |
+|---|---|
+| **Noun piles joined by `·` → a clause.** At most three nouns per sentence; a longer list becomes a verb phrase or a figure. (`prose:dot-chain`) | ✗ 로그인·권한·변경 감사·메뉴 활용률·내보내기·필터가 반복된다 → ✓ 메뉴마다 로그인과 권한, 변경 감사를 따로 만들어야 한다 |
+| **One em dash per sentence at most** (a lead: three in all). A second dash is a second sentence. (`prose:dash`) | ✗ 요청은 하나다 — 작은 단계다 — 되돌리기 쉽다 → ✓ 요청은 하나다. 작은 단계라 되돌리기 쉽다 |
+| **Active verbs over `~되다 / ~되어지다`.** Say who acts. (`prose:translationese`) | ✗ 문제가 해결되어진다 → ✓ 담당자가 문제를 해결한다 |
+| **No `~에 대한 / ~를 통해 / ~하는 것이다` chains.** Use the verb the noun hides. (`prose:translationese`) | ✗ 권한에 대한 설명을 로그를 통해 확인하는 것이다 → ✓ 로그에서 권한 설정을 확인한다 |
+| **`~에 있어서`, `~함에 있어`, `~것으로 보인다` → plain connectives.** A guess is marked "(추정)", not hedged. (`prose:translationese`) | ✗ 운영함에 있어 위험이 있는 것으로 보인다 → ✓ 운영할 때 위험이 있다 |
+| **One idea per sentence, ~110 characters at most.** Cut at the second `~며 / ~고 / ~으나`. (`prose:long-sentence`) | ✗ A는 …이며, B는 …이고, C는 …이므로 D이다 → ✓ A는 …이다. B는 …이다. C는 …이므로 D이다 |
+| **Subject and predicate close together.** No long clause between them. | ✗ 시범은 그 팀장의 사전 동의를 받은 1개 팀에서 세 단계로 한다 → ✓ 시범은 1개 팀에서 세 단계로 한다. 그 팀장의 사전 동의를 먼저 받는다 |
+| **Define a term before using it, and use it in one form.** The first mention is the term sheet's `처음 나올 때` form; after that the bare term. A term the reader has not met is glossed where it first appears, not only in the appendix. (`terms-consistent`, `terms:first-use`) | ✗ 클러스터 … 묶음 … 군집 → ✓ 묶음(클러스터) … 묶음 … 묶음 |
+| **Everyday words over internal jargon** for executive and user readers; keep an engineering token only for a developer audience or where the reader meets it on screen. | ✗ 액션 큐 · SSO · mock 데이터 → ✓ 할 일 목록 · 사내 통합 로그인 · 시험용 데이터 |
+
+Polite endings (`~합니다`, `~해요`) stay out of body text (§3.1; `prose:register`).
 - **A KEY callout is one sentence.** Callouts are asides (`design.md §4.8`); if the point needs a second sentence, the extra goes into the section's lead, not into the callout.
 
 ---
@@ -196,7 +214,7 @@ Map by intent; copy the **exact HEX from `design.md`** (the single source of tru
 This is the **content/voice** pre-ship list. For visual reproduction, also run `design.md §9`.
 
 1. [ ] **One label language (§2):** section eyebrows `NN · ENGLISH` (`labels: en`) or `NN · 한글` (`labels: ko`) — category, not translation — and the appendix label and component badges in the same language; cover eyebrow = the plan's `eyebrow:` (else `DOC-TYPE · 대상` / `문서 종류 · 대상`, §2); titles all noun phrases (`핵심구 — 보조설명`).
-2. [ ] Reading titles only tells the whole story, like a TOC. ~6–9 sections + reference.
+2. [ ] Reading titles only tells the whole story, like a TOC. The count follows the content (§2): ~6–9 for one subject, a section set per product when there are several, acts above ~9.
 3. [ ] Every section lead is 16px/1.85, max-width 760; lead flows long, cards stay short.
 4. [ ] **Korean register (§3.1):** all body in `~한다` 문어체 (no `~합니다`); chips/labels 개조식; AS-IS pain as flat capability gap.
 5. [ ] AS-IS = slate + amber, TO-BE = indigo — never violated. Amber only for AS-IS pain or a semantic WARN/Don't/regression signal; never decorative, never for an unknown value.
@@ -207,15 +225,16 @@ This is the **content/voice** pre-ship list. For visual reproduction, also run `
 10. [ ] `word-break:keep-all` is on; glossary at the end, de-emphasized; closing disclaimer if in-progress.
 11. [ ] **Page type matches its job** (cover sparse, deep-dive dense, reference muted — §4).
 12. [ ] Small informative text (sub-lines, footnotes, legend, chips) is `muted-text`, never a faint muted role (§5.2); a pitch / executive document uses the compact hero (§4.1).
+13. [ ] **Natural Korean (§3.2):** every `prose:*` / `terms:*` row of the gate is fixed or justified in the build report; each term is defined before use and appears in one form; each section was read aloud once.
 
 ---
 
 ## 7. Quick start for a new document
 1. Declare the **narrative lens**: `architecture-first` | `use-case-first` | `decision-first`. If `use-case-first`, the first numbered sections follow actor/scenario/journey and architecture supports the journey later. If `decision-first`, the opening states the decision context and the deck proves it through tradeoffs/open questions. If `architecture-first`, use cases are examples, not the main spine.
-2. Write the **title sequence first** (one noun-phrase title per section). Read them back as a TOC; revise until they tell the story alone. Aim for ~6–9 sections + reference (§2).
+2. Write the **title sequence first** (one noun-phrase title per section). Read them back as a TOC; revise until they tell the story alone. Let the content set the count (§2): ~6–9 for one subject, a section set per product when there are several, acts above ~9.
 3. Lay out the skeleton (§2) and decide each page's **type** (§4 / `design.md` §6). If the topic is greenfield (no AS-IS) or metric-less, read §4.4 / §4.6 first.
 4. **Clone `template.dc.html`** (it carries the shell + runtime JS from `../../core/runtime-spec.md`; choose the label language — §2 — and, for a pitch / executive document, the compact hero — §4.1 — before filling). For each section: lead paragraph → core content → **classify its shape (`../../core/components.md` §2)** → paste and fill that shape's component from `components/`.
-5. Apply color/emphasis by intent (§5.2–5.3); copy exact visual values from `design.md`. Write in the §3.1 Korean register.
+5. Apply color/emphasis by intent (§5.2–5.3); copy exact visual values from `design.md`. Write in the §3.1 Korean register and the §3.2 natural-Korean checklist.
 6. Run the §6 content checklist **and** `design.md §9` visual checklist before shipping.
 
 ### 7.1 Stop questions for structural ambiguity

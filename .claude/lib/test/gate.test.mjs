@@ -202,6 +202,71 @@ test('numbers-traced lists at most 8 untraced numbers', () => {
   assert.equal(row.detail.split(' ; ').length, 8);
 });
 
+// ----- terms-consistent / terms:first-use -----
+const termsFacts = read('facts-terms.md');
+const termsBase = { ...opts, plan: { sections: [{ id: 's1', shape: 'none' }, { id: 's2', shape: 'none' }] }, shapeMap, planText: '40', factsText: termsFacts };
+
+test('terms-consistent: passes a document that keeps the term sheet; the appendix may quote the banned variants', () => {
+  const r = runGate(read('doc-terms-ok.dc.html'), termsBase);
+  assert.equal(check(r, 'terms-consistent').ok, true, JSON.stringify(r.checks.filter(c => !c.ok)));
+  assert.match(read('doc-terms-ok.dc.html'), /<section id="sref">[\s\S]*태스크/); // the exemption is really exercised
+  assert.deepEqual(r.warnings.filter(w => w.name === 'terms:first-use'), []);
+});
+
+test('terms-consistent: a banned variant in the hero or a numbered section fails the gate, listing term, section and context', () => {
+  const r = runGate(read('doc-terms-banned.dc.html'), termsBase);
+  const row = check(r, 'terms-consistent');
+  assert.equal(row.ok, false);
+  assert.equal(r.ok, false);
+  assert.match(row.detail, /^2 banned variant\(s\) in the body: s2 "태스크" \(use 작업\) …태스크가 끝나면 결과 확인 설문…/);
+  assert.match(row.detail, /s2 "인입" \(use 접수\) …/);
+  assert.doesNotMatch(row.detail, /sref/);
+  const hero = runGate(read('doc-terms-ok.dc.html').replace('<i style=', '<div>업무 현황</div><i style='), termsBase);
+  assert.match(check(hero, 'terms-consistent').detail, /hero "업무" \(use 작업\)/);
+});
+
+test('terms-consistent: Latin variants are case-sensitive, Hangul variants exact; at most 8 hits are listed', () => {
+  const run = (body) => check(runGate(secs(body), termsBase), 'terms-consistent');
+  assert.equal(run('<p>task request는 소문자라 괜찮다. 업 무도 괜찮다.</p>').ok, true);
+  assert.equal(run('<p>Task Request를 쓰면 안 된다.</p>').ok, false);
+  const many = run(`<p>${'인입 '.repeat(12)}</p>`);
+  assert.match(many.detail, /^12 banned variant\(s\)/);
+  assert.equal(many.detail.split(' ; ').length, 8);
+});
+
+test('terms-consistent: runs only with a plan and a facts file that has a T table; otherwise a NOTE says why', () => {
+  const html = read('doc-terms-banned.dc.html');
+  assert.equal(check(runGate(html, opts), 'terms-consistent'), undefined); // no plan
+  assert.deepEqual(runGate(html, opts).notes, []);
+  const noTable = runGate(html, { ...termsBase, factsText: '## F — 사실\n| id |\n|---|\n| F01 |' });
+  assert.equal(check(noTable, 'terms-consistent'), undefined);
+  assert.match(noTable.notes[0].detail, /^not checked — the facts file has no "## T — 용어" table/);
+  const noFacts = runGate(html, { ...termsBase, factsText: undefined });
+  assert.match(noFacts.notes[0].detail, /the plan names no facts file/);
+  const unreadable = runGate(html, { ...termsBase, factsText: undefined, factsError: 'cannot be read' });
+  assert.equal(check(unreadable, 'terms-consistent'), undefined); // numbers-traced already fails with the reason
+  assert.equal(check(unreadable, 'numbers-traced').ok, false);
+});
+
+test('terms:first-use is a non-blocking warning when a term\'s first-use form never appears', () => {
+  const r = runGate(secs('<p>접수와 작업은 많다. 결과 확인도 한다.</p>'), termsBase);
+  assert.equal(check(r, 'terms-consistent').ok, true);
+  const w = r.warnings.find(x => x.name === 'terms:first-use');
+  assert.match(w.detail, /^2 term\(s\) never appear in their first-use form: 접수\(VOC\) ; 작업\(Task\)/);
+  assert.equal(runGate(secs('<p>접수(VOC)와 작업(Task)과 결과 확인</p>'), termsBase).warnings.some(x => x.name === 'terms:first-use'), false);
+});
+
+// ----- prose warnings in the gate -----
+
+test('prose:* rows are warnings: they appear in the result and never change `ok`', () => {
+  const bad = secs(`<p>${'가'.repeat(120)}. 이 문서는 시범을 제안합니다. 수집·정제·적재·집계·조회를 묶는다. 요청은 하나다 — 작다 — 쉽다. 줄이는 것이다.</p>`);
+  const r = runGate(bad, opts);
+  assert.equal(r.ok, true, JSON.stringify(r.checks.filter(c => !c.ok)));
+  const names = r.warnings.map(w => w.name);
+  for (const n of ['prose:long-sentence', 'prose:dot-chain', 'prose:dash', 'prose:translationese', 'prose:register']) assert.ok(names.includes(n), n);
+  assert.deepEqual(runGate(secs('<p>요청은 하나다.</p>'), opts).warnings.filter(w => w.name.startsWith('prose:')), []);
+});
+
 // Calibration: the worked example (light brief) with its plan — every number traced, no placeholders, palette clean.
 test('worked example (feedbackops-light brief) passes every plan-aware check; mutating it makes numbers-traced fire', () => {
   const html = read('example-brief/brief.dc.html');

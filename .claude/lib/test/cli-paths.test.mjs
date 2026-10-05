@@ -25,7 +25,7 @@ function repoCopy() {
   const root = join(base, '발표 자료', 'pf');
   const lib = join(root, '.claude', 'lib');
   mkdirSync(lib, { recursive: true });
-  for (const f of ['components.mjs', 'gate.mjs', 'plan-schema.mjs', 'verify-doc.mjs']) copyFileSync(join(REPO, '.claude/lib', f), join(lib, f));
+  for (const f of ['components.mjs', 'gate.mjs', 'prose.mjs', 'plan-schema.mjs', 'verify-doc.mjs']) copyFileSync(join(REPO, '.claude/lib', f), join(lib, f));
   mkdirSync(join(root, 'core', 'components'), { recursive: true });
   for (const f of readdirSync(join(REPO, 'core/components'))) copyFileSync(join(REPO, 'core/components', f), join(root, 'core/components', f));
   mkdirSync(join(root, 'styles', STYLE), { recursive: true });

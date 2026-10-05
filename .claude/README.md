@@ -21,6 +21,9 @@ The gate itself is zero-dependency Node under `.claude/lib/`:
 
 - `.claude/lib/gate.mjs` — the checks, pure functions over the document's HTML (no I/O). See
   **Gate checks** below.
+- `.claude/lib/prose.mjs` — the text-level half of the gate, also pure: the reader's visible text split into
+  paragraph-like blocks, the `## T — 용어` term-sheet parser, `terms-consistent` / `terms:first-use`, and the
+  Korean `prose:*` heuristics. `gate.mjs` imports it, so the two files travel together.
 - `.claude/lib/verify-doc.mjs` — CLI entry that runs the gate against a `.dc.html`
   (`<doc> --canonical-support <support.js> [--style <id>] [--accent <hex>] [--plan <content-plan.md>] [--no-visual]`),
   checks the `support.js` sidecar is byte-identical to the canonical copy, runs the visual tier (see
@@ -44,8 +47,10 @@ The gate itself is zero-dependency Node under `.claude/lib/`:
   each template's first `@data` key matches the figure-data contract, no template hard-codes an English label
   outside a `⟦slot⟧` (label language), informative text uses `⟨muted-text⟩` and every style's `muted-text` is ≥4.5:1 on
   white with a mono stack that ends in its Korean body font, the optional `labels: en|ko` plan key, the three CLIs run from a
-  path with spaces/Korean and through a symlink (they once exited 0 without running), and the worked
-  example (`test/fixtures/example-brief/`) passes every plan-aware check.
+  path with spaces/Korean and through a symlink (they once exited 0 without running), the worked
+  example (`test/fixtures/example-brief/`) passes every plan-aware check, and the text half of the gate
+  (`prose.test.mjs`: visible-text blocks, the term-sheet parser, `terms-consistent` / sref exemption, each `prose:*`
+  heuristic positive and negative).
 
 ### The GATE line
 
@@ -63,7 +68,7 @@ tier. Usage errors (missing flag, unknown `--style`) exit `2` with the usage tex
 Flags: `--style <id>` resolves `styles/<id>/` from the lib's own location, supplies the accent
 (`design.tokens.md` `colors.accent`) when `--accent` is absent, and enables the `palette` check.
 `--accent <hex>` wins over the style's. `--plan <file>` enables `plan-alignment`, `plan-shapes`
-and `numbers-traced`. `--no-visual` skips the browser tier. At least one of `--accent` / `--style`
+and `numbers-traced` — and `terms-consistent` when the plan's facts file has a `## T — 용어` table. `--no-visual` skips the browser tier. At least one of `--accent` / `--style`
 is required.
 
 ### Gate checks
@@ -84,9 +89,11 @@ Every check is hard-fail unless marked non-blocking.
 | `plan-alignment` (`--plan`) | plan sections map to ids — a numbered title `N.` → `sN`, an unnumbered title → `sref` — and every one exists in the document; the document has no numbered `sN` the plan lacks. Act dividers must be `<div>`, never `<section>` |
 | `plan-shapes` (`--plan`) | each section (looked up by id) carries the component its shape requires |
 | `numbers-traced` (`--plan`) | every numeral a reader sees is traceable — next section |
+| `terms-consistent` (`--plan` + a facts file with a `## T — 용어` table) | no `쓰지 않을 말` variant of the term sheet appears in the visible text outside the `sref` appendix — see **Term sheet** below. Without a T table the gate prints `NOTE  terms-consistent  not checked …` |
 
 Non-blocking `figures:*` rows report per-section coverage, low variety, bare sections, and more
-than 2 main figures in one section.
+than 2 main figures in one section. Non-blocking `prose:*` and `terms:first-use` rows report Korean-writing
+problems — see **Prose warnings** below.
 
 **`numbers-traced`** exists so nothing in the document can be a number nobody supplied (template
 examples, plausible-looking invention). *Document side:* only visible text — comments, `<script>`,
@@ -100,6 +107,33 @@ eyebrows, a text node that is only 1–2 digits inside a section (step/number ba
 full, so a made-up hero token fails. Failure lists up to 8 untraced numbers with ~20 characters of
 context each; fix it by putting the real number in the plan (with its citation) or removing it
 from the document — never by editing the check.
+
+**Term sheet (`terms-consistent`, `terms:first-use`).** `/plan` Step 1 fixes one word per concept in the
+optional `## T — 용어` table of `facts.md` (`| 용어 | 뜻 | 처음 나올 때 | 쓰지 않을 말 |`; template
+`.claude/skills/plan/facts.template.md`). The gate reads that table through the plan's `facts:` header. *Check:* the
+reader's visible text (the same stripping as `numbers-traced`, but inline tags join the surrounding text) outside the
+`<section id="sref">` appendix — hero, nav and numbered sections — must contain no `쓰지 않을 말` variant (comma-separated;
+plain substring match, Latin case-sensitive, Hangul exact). A chosen term or first-use form that contains a variant
+(`작업(Task)` holds `Task`) is masked first, so the prescribed form never trips its own ban. Failure lists up to 8 hits
+(`s3 "태스크" (use 작업) …context…`). *Warning:* `terms:first-use` — a term's `처음 나올 때` form (whitespace-insensitive)
+appears nowhere in the document. Placeholder rows (`<…>`) are ignored, so an unfilled template table means "no term
+sheet". Without `--plan`, without a facts file, or without a T table the check does not run (a `NOTE` says why).
+
+**Prose warnings (`prose:*`, never fail the gate).** Computed on the paragraph-like blocks of the hero and the numbered
+sections (the appendix and headings are excluded; only blocks of 25+ characters that end like a sentence — `.`/`!`/`?`,
+or `다`/`요`/`까` — are prose, so figure labels and chips are ignored). Sentences end at `. ! ?` before a space or the end
+(3.5, v0.2.0 and file.md stay whole). Thresholds are constants in `prose.mjs`.
+
+| row | fires when |
+|---|---|
+| `prose:long-sentence` | a sentence is over 110 characters (spaces included); reports the count and the two longest |
+| `prose:dot-chain` | a sentence has 4 or more `·` (a noun pile) |
+| `prose:dash` | more than one `—` in a sentence, or more than 3 in a section lead (the first `<p>` of a numbered section) |
+| `prose:translationese` | any `~는/한/된/인 것이다`, `~것으로 보인다`, `되어지/되어진/보여지…`, `~에 있어서/~함에 있어`; or `~에 대한` / `~(을/를) 통해` 3+ times in one section |
+| `prose:register` | a polite ending (`~합니다`, `~습니다`, `~해요` and kin) in body text — all styles write `~한다` |
+
+`~에 있어서` also matches a literal "is located in" (`서버에 있어서`); read the context before rewriting. A kept warning
+must be justified in `/build`'s final report (its Step 9).
 
 ### Plan checks
 
@@ -128,8 +162,9 @@ INVALID.
   an annotation such as `layers (위→아래):` is fine), and for a component whose `@data` shows flow
   (`→ ⇢ -> ↻`) at least one of `→ ⇢ -> --> ↻ (self)`; ASCII `->` request, `-->` response, `(self)`
   internal are accepted equivalents.
-- **Warnings:** more than 2 sections with shape `decision`; `audience: executive` with more than 7
-  numbered sections, any of `code-structure|interaction|entity-relations|rule-table`, a first
+- **Warnings:** more than 2 sections with shape `decision`; `audience: executive` with more than 12
+  numbered sections (the text suggests grouping into acts — the section count follows the content, and a document that
+  covers several products/systems gives each its own section set; `core/components.md` §5), any of `code-structure|interaction|entity-relations|rule-table`, a first
   numbered section that is not `headline-metric|decision`, or a last one that is not `decision`.
 
 ## Prerequisites
