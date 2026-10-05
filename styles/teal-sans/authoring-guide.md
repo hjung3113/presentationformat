@@ -38,7 +38,7 @@ A document in this voice almost always follows this arc. Rename freely; keep the
 
 - **Section count:** target ~6–9 numbered sections + a reference appendix. Below 4, merge skeleton rows; above ~9, group into acts with a section divider (`design.md §6.2`; markup is a `<div>`, never a `<section>`) and keep nav labels short (2–4 chars). Rows commonly merge — e.g. Mapping+Outcome → one section, Scope+Open-questions → one; drop Risk/Method if not applicable. The reference ships 8 numbered + 1 reference from the 10-row skeleton.
 - **Other document types.** Status report, decision proposal, feature guide, analysis and **pitch** follow the recipes in `../../core/components.md` §5 (record the id as the plan's `doc-type`); the cover, voice and page-type rules in this guide still apply. A pitch additionally requires the explicit, last-placed ask (Genre exception, §1).
-- **Eyebrows:** section eyebrows are `NN · ENGLISH (UPPERCASE)` where ENGLISH is the **category** (one or two words: BACKGROUND, PROBLEMS, DIRECTION, NON-FUNCTIONAL, TESTING, OUTCOME, RISK, SCOPE, REFERENCE) — *not* a translation of the Korean title. The **cover** eyebrow is `ENGLISH TAG · 한국어 한 줄 부제` ("PROJECT BRIEF · 실행 방향 공유 자료"). Nav and on-screen labels stay Korean.
+- **Eyebrows:** section eyebrows are `NN · ENGLISH (UPPERCASE)` where ENGLISH is the **category** (one or two words: BACKGROUND, PROBLEMS, DIRECTION, NON-FUNCTIONAL, TESTING, OUTCOME, RISK, SCOPE, REFERENCE) — *not* a translation of the Korean title. The **cover** eyebrow is the plan's optional `eyebrow:` header key, verbatim (e.g. `PROJECT BRIEF · 실행 방향 공유 자료`). When the plan has none, `/build` writes `<DOC-TYPE in English caps> · <audience in Korean>` — `PROPOSAL · 관리자용`, `FEATURE GUIDE · 사용자용`, `EXPLAINER · 개발자용` (`audience` executive → 관리자용, user → 사용자용, developer → 개발자용; a hyphen in the doc-type becomes a space) — and nothing else: no invented subtitle. Nav and on-screen labels stay Korean.
 - **Titles are noun phrases** ("Current Problems", "Direction — Separation of Concerns"), never punchy sentences. The titles read end-to-end like a table of contents: a reader skimming only the headings should follow the whole story.
 
 ---
@@ -65,13 +65,15 @@ The output is Korean technical prose; these morphology rules carry more of the f
 - **`·` (가운뎃점) joins peer nouns with NO surrounding spaces:** `수집·삭제·가공`, `구조적·운영적 부채`, `정규화·보정·병합`. Use it densely. (Spaces around `·` appear *only* in the `NN · ENGLISH` eyebrow.)
 - **Title form = `핵심 명사구 — 한 줄 보조 설명`** (spaced em-dash). Phrase before `—` is the topic; after is a verdict-free gloss: "개선 방향 — 책임 분리", "처리 흐름 — 수집·가공 분리".
 - **Acronyms: `한국어 정식어(ACRONYM)` once, then the bare acronym.** "단일 진실 원천(SSOT)" → later just "SSOT". Not English-expansion-first.
-- **Keep established English engineering tokens inline, unmarked** (Job, thread, Config, diff, CI, raw, stale, upsert, Shadow Run). Don't translate, italicize, or quote them. Coin Korean only where a natural domain word exists ("따라잡기").
+- **Keep established English engineering tokens inline, unmarked** (Job, thread, Config, diff, CI, raw, stale, upsert, Shadow Run). Don't translate, italicize, or quote them. Coin Korean only where a natural domain word exists ("따라잡기"). Literal identifiers — file names, paths, class / function / API names, config keys, enum values — are the exception: they get the inline identifier chip (`design.md §7.6`).
 - **Numbers take a Korean counter and are bolded with the number:** "**6개** 그룹", "**50종 이상**", "**1회/시간**". For a not-yet-fixed figure: capital-`O` placeholder + muted parenthetical — "**O개**의 DB 서버 (수 추후 확정)". Never flag an unknown with warn color.
 - **Double-quotes `'…'` mark a plain-language gloss or guiding question** dropped into terse 한자어 prose: "'어디까지 처리했는지'를 파악", 정책은 '무엇을' / 메커니즘은 '어떻게'. Quotes are never emphasis (emphasis is bold).
 - **Problem-card headings = 조사-free noun stack ending in a neutral evaluative noun** (미흡/비효율/부담/난이도/수작업): "기준정보 설계·활용 미흡". A noun, not a sentence, no adjectival drama.
 - **Lead rhythm:** a lead may run one long architected sentence (stacked clauses, commas, em-dash) resolving on a single `~한다`; keep card/figure prose to 1–2 short sentences. The flowing-lead ↔ clipped-card contrast is part of the voice — don't uniformly short-chop.
 - **Footnotes** (`*` prefix, muted grey) do one of two jobs and stay to one sentence: (a) explain a figure's encoding ("막대의 길이·위치는 …를 나타낸다"), or (b) defer scope with a noun-ending tail ("추후 보강/확정 예정"). End an in-progress document with a closing disclaimer line above a `border-top` — the caveat voice is deliberate, not a hedge to delete.
 - **Glossary line = `용어 — 정의`**; the definition ends nominally (메움/정렬/관리) and packs paired senses with bare `vs` / `+`: "표준/비표준 로그 — 표준 스펙 준수 로그 vs 설비사 자체 양식 로그(변환 필요)".
+- **The plan's register is not the document's register.** A plan's `thesis`, `payload` and `figure-data` may be written in any register (notes, `~합니다`, bare nouns); `/build` always renders the document in this style's register — `~한다/~된다/~이다` 문어체 for prose, 개조식 for chips — converting the sentence while keeping its meaning and its markers (`(추정)`, `(소유자 진술)`). Never copy a plan's `~합니다` sentence onto the page.
+- **A KEY callout is one sentence.** Callouts are asides (`design.md §4.8`); if the point needs a second sentence, the extra goes into the section's lead, not into the callout.
 
 ---
 
@@ -80,7 +82,7 @@ The output is Korean technical prose; these morphology rules carry more of the f
 > Match the page's *job* to its density, structure, and devices. (Visual values: `design.md` §6.)
 
 ### 4.1 Cover
-Write: an eyebrow tag, a noun-phrase title (1–2 lines), one paragraph stating the thesis, an optional one-line "purpose of this doc" note, and 3–4 **framing tokens** (number + 2-line label). Nothing else. No bullet lists. A framing token need not be a number — when the topic has no metrics, use a 1–2-char word (`MVP`, `단계`, `Phase`) in the display-numeral slot. Pick 4 tokens that frame the doc (scale · scope · stage · approach). The hero text — title, thesis, tokens, date — comes only from the plan's `title` / `thesis` / `cover-tokens` / `as-of` header; never invent a hero token (a token with no source is dropped, not decorated).
+Write: an eyebrow tag, a noun-phrase title (1–2 lines), one paragraph stating the thesis, an optional one-line "purpose of this doc" note, and 3–4 **framing tokens** (number + 2-line label). Nothing else. No bullet lists. A framing token need not be a number — when the topic has no metrics, use a 1–2-char word (`MVP`, `단계`, `Phase`) in the display-numeral slot. Pick 4 tokens that frame the doc (scale · scope · stage · approach). The hero text — title, thesis, tokens, date — comes only from the plan's `title` / `thesis` / `cover-tokens` / `as-of` / optional `eyebrow` header (the eyebrow's fallback is in §2); never invent a hero token (a token with no source is dropped, not decorated).
 
 ### 4.2 Background / Overview
 Write: a lead paragraph that frames *why this matters* and the current state in 2–4 sentences, then either a short set of "current limitations" cards **or** a single orienting diagram (a current-state flow). Low density; let it breathe. Background may carry a short (≤4) **thematic** limitations summary; Problems (next page) expands the same themes into **enumerated** numbered detail. Keep Background thematic, Problems enumerated — the overlap is by design, not duplication.
@@ -185,7 +187,7 @@ Map by intent; copy the **exact HEX from `design.md`** (the single source of tru
 
 This is the **content/voice** pre-ship list. For visual reproduction, also run `design.md §9`.
 
-1. [ ] Section eyebrows `NN · ENGLISH` (category, not translation); cover eyebrow `ENGLISH · 한국어 부제`; titles all noun phrases (`핵심구 — 보조설명`).
+1. [ ] Section eyebrows `NN · ENGLISH` (category, not translation); cover eyebrow = the plan's `eyebrow:` (else `DOC-TYPE · 대상`, §2); titles all noun phrases (`핵심구 — 보조설명`).
 2. [ ] Reading titles only tells the whole story, like a TOC. ~6–9 sections + reference.
 3. [ ] Every section lead is 16px/1.85, max-width 760; lead flows long, cards stay short.
 4. [ ] **Korean register (§3.1):** all body in `~한다` 문어체 (no `~합니다`); chips/labels 개조식; AS-IS pain as flat capability gap.

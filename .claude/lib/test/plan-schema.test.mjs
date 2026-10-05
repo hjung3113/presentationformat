@@ -55,6 +55,7 @@ function synthTemplates() {
     'flow.html': tpl('flow', 'figure', 'data-flow', 'stages: 수집[A] → 처리[B] | arrow-labels: 근거'),
     'layers.html': tpl('layers', 'figure', 'layered-structure', 'layers (위→아래): 레이어명: 모듈 | links: 연결 | external: 이름'),
     'cards.html': tpl('cards', 'content', 'peer-list', 'items: 번호 · 제목'),
+    'tbl.html': tpl('tbl', 'content', 'text-table', 'columns: 열1, 열2, 열3 | rows: 값 · 값 · 값 …'),
   };
   for (const [f, src] of Object.entries(files)) writeFileSync(join(dir, f), src);
   const templates = listTemplates(dir);
@@ -78,6 +79,25 @@ test('valid plan passes and parses all fields', () => {
   assert.equal(p.sections.length, 2);
   assert.deepEqual(p.sections.map(s => s.id), ['s1', 's2']);
   assert.ok(p.sections[0].sourceSpan.length > 0);
+});
+
+test('text-table fixtures: columns/rows plan is valid (eyebrow and a ~합니다 thesis are accepted), `none` fails through the CLI', () => {
+  const ok = runCli(fixture('plan-text-table.md'));
+  assert.equal(ok.status, 0, ok.stderr);
+  assert.equal(parsePlan(read('plan-text-table.md')).header.eyebrow, 'PROPOSAL · 관리자용');
+  const bad = runCli(fixture('plan-text-table-none.md'));
+  assert.equal(bad.status, 1);
+  assert.match(bad.stderr, /shape "text-table" needs figure-data/);
+});
+
+test('header: `eyebrow` is optional, kept verbatim, and rejected only as a template placeholder', () => {
+  const run = (v) => validatePlan(plan([sec(1, 'none')], { eyebrow: v }), { templates });
+  assert.equal(run(null).ok, true); // key absent
+  assert.equal(parsePlan(plan([sec(1, 'none')], { eyebrow: null })).header.eyebrow, '');
+  assert.equal(run('PROPOSAL · 관리자용').ok, true);
+  assert.equal(parsePlan(plan([sec(1, 'none')], { eyebrow: 'PROPOSAL · 관리자용' })).header.eyebrow, 'PROPOSAL · 관리자용');
+  assert.equal(run('').ok, true); // empty = absent (the fallback applies), not an error
+  assert.match(run('<DOC-TYPE> · <audience>').errors.join('\n'), /header eyebrow is still a template placeholder/);
 });
 
 test('section ids: numbered titles → sN, an unnumbered title → sref; duplicates are an error', () => {
@@ -230,6 +250,22 @@ test('figure-data must contain the component\'s first @data key; annotated keys 
   assert.match(run('layered-structure', 'links: A ↕ B'), /key "layers:"/);
   // peer-list is a content component: no figure-data rules
   assert.equal(run('peer-list', 'none'), '');
+});
+
+test('text-table is the one content shape that needs figure-data: columns first, like a figure', () => {
+  const run = (fd) => errs(plan([sec(1, 'text-table', fd)]), { templates });
+  for (const none of ['none', '', 'n/a'])
+    assert.match(run(none), /section 1 .* shape "text-table" needs figure-data/, none);
+  assert.match(run('rows: A · B · C'), /must contain the key "columns:" \(tbl format/);
+  assert.equal(run('columns: 문제, 해결, 효과 | rows: 수작업 · 자동화 · 시간 절감'), '');
+  assert.equal(run('columns: 항목, 값'), ''); // only the first key is mandatory, as for every component
+  // the real library: a text-table section without columns/rows is rejected, with them it passes
+  const real = (fd) => validatePlan(plan([sec(1, 'text-table', fd)])).errors.join('\n');
+  assert.match(real('none'), /shape "text-table" needs figure-data in its component's format/);
+  assert.match(real('rows: a · b'), /key "columns:" \(table format/);
+  assert.equal(real('columns: 문제, 해결 | rows: 가 · 나'), '');
+  // peer-list stays figure-data-free
+  assert.equal(errs(plan([sec(1, 'peer-list')]), { templates }), '');
 });
 
 test('arrow rule: a flow component\'s figure-data must show at least one arrow (→ ⇢ -> --> ↻ (self))', () => {

@@ -17,7 +17,7 @@ document that has not passed the gate is not "built," regardless of how the HTML
 
 - `content-plan.md` — the seam contract from `/plan`. Style-agnostic: header (`doc-type`, `audience`,
   `reader-action`, `has-as-is`, `metrics-mode`, `act-structure`, `narrative-lens`, `source-ref`, and
-  the hero keys `title`, `thesis`, `cover-tokens`, optional `facts`, `as-of`) plus, per section
+  the hero keys `title`, `thesis`, `cover-tokens`, optional `eyebrow`, `facts`, `as-of`) plus, per section
   (`## N. 제목` → `sN`, an unnumbered `##` → `sref`), `intent`, `shape`, `payload` (structured notes,
   not prose), `figure-data`, `source-span`.
 - `--style <id>` — which style to render into: a folder under `styles/` (today `indigo-serif`,
@@ -74,8 +74,13 @@ line), so a leftover fails the gate.
 
 **Fill the hero only from the plan header — never invent it:**
 
-- the hero title ← `title`; the thesis paragraph ← `thesis` (compose it in the style's voice, but keep
-  its meaning and keep its citation out of the visible text);
+- the hero eyebrow pill ← the plan's optional `eyebrow:` header key, verbatim. If the plan has none, write
+  `<DOC-TYPE in English caps> · <audience in Korean>` — e.g. `PROPOSAL · 관리자용`, `FEATURE GUIDE · 사용자용`
+  (`audience` executive → 관리자용, user → 사용자용, developer → 개발자용; a hyphen in the doc-type becomes a
+  space) — and nothing else: no invented subtitle, no tagline;
+- the hero title ← `title`; the thesis paragraph ← `thesis` (compose it in the style's voice and register
+  — the plan's thesis may be in any register, the page never is — but keep its meaning and keep its
+  citation out of the visible text);
 - each hero token (value + label) ← one entry of `cover-tokens`, in order; delete the unused token
   boxes — never pad to four and never add a token the plan lacks;
 - the hero meta line ← `as-of` (e.g. 기준 YYYY-MM-DD) and nothing else; delete the line if the plan
@@ -87,6 +92,9 @@ section's title cut to a Korean 2–4-character keyword (the appendix gets the m
 ids are `s1…sN` in plan order and `sref` for the appendix; keep every `data-screen-label`, nav
 `data-navlink` and `href` in agreement. **Act dividers** (documents above ~9 sections) are a `<div>`,
 never a `<section>` — a `<section>` breaks the section count the gate checks against the plan.
+**Act-divider spacing** (the style's `design.md §4.12`): the divider takes `margin:36px 0 0` when it is the
+first block in the sheet and `margin:8px 0 0` after a section; the **first section after a divider drops its
+`border-top`** and uses `padding:48px 0 56px` (later sections of the act keep `56px 0` + `border-top`).
 
 ## Step 4 — Map each plan section into the style
 
@@ -102,6 +110,12 @@ never a `<section>` — a `<section>` breaks the section count the gate checks a
    pick `VARIANT`s by meaning, delete unused `OPTIONAL` blocks, and set only the values the header
    names (column count — the same N in **every** `repeat(N,1fr)` and `calc(100% / N)` — a
    `grid-column`, a percentage slot together with its label, or a margin from its lookup table).
+   **A thing the plan marks `[planned]` (or whose fact is `designed`/`planned`) is drawn with the component's
+   planned variant** — muted dashed outline + state chip — never the built look (`core/components.md` §4).
+   **A `text-table` section pastes the `table` component and fills it from the section's figure-data**
+   (`columns: … | rows: …` — those columns and those rows, nothing added or dropped). A table in the
+   reference appendix (`sref`), or a secondary table that follows another figure, uses the table's **soft
+   header** variant (swap the header row for the soft-header VARIANT in its HOW TO FILL).
 5. Never hand-draw a figure the library has, never use absolute pixel coordinates to place nodes,
    and never change a pasted component's colors, radii, or fonts. If the content truly fits no
    component, use the closest one and say so in your build notes.
@@ -141,6 +155,17 @@ carried — `/build` does not re-read source docs or add new claims. Keep the pl
 wherever a number appears: "(추정)" after an estimate, "(소유자 진술)" after an owner statement, and
 designed/planned facts stay in the tense the plan gave them. A `pitch` ends with its explicit request
 and does not use the "승인 요청서가 아니라" opener (the style's authoring-guide §1).
+
+**Register conversion.** The plan's `thesis` and `payload` may be written in any register — notes, `~합니다`,
+bare nouns. The document is **always** rendered in the style's register (these styles: `~한다/~된다/~이다`
+문어체 for prose, 개조식 for chips and labels — authoring-guide §3.1). Convert the sentence, keep the meaning
+and the markers; never carry a plan's `~합니다` sentence onto the page. A **KEY callout is one sentence**: if
+the point needs more, the rest goes into the section's lead, not into the callout.
+
+**Identifier chips.** An identifier inside prose — file name, path, class / function / API name, config key,
+enum value, command — is set as the inline identifier chip of the style's `design.md §7.6` (mono font, light
+fill, 4px radius, `white-space:nowrap`; copy the exact `style` string from there). Ordinary English
+engineering words (Job, thread, diff) stay plain text; emphasis stays bold, never a chip.
 
 ## Step 6 — Assemble the document
 

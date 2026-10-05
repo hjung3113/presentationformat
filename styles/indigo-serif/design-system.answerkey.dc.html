@@ -667,7 +667,7 @@
       </div>
 
       <!-- 10.7 stat band -->
-      <div style="border:1px solid #E7E9F3; border-radius:14px; padding:24px 26px;">
+      <div style="border:1px solid #E7E9F3; border-radius:14px; padding:24px 26px; margin-bottom:18px;">
         <div style="font:600 16px/1.4 Pretendard; color:#15172B; margin-bottom:18px;">10.7 통계 밴드</div>
         <div style="background:#15172B; border-radius:14px; padding:26px 30px; display:grid; grid-template-columns:repeat(4,1fr); gap:20px;">
           <div><div style="font:700 32px/1 'Noto Serif KR',serif; color:#fff;">5</div><div style="font:400 12px/1.5 Pretendard; color:#A8AEF5; margin-top:8px;">독립 컴포넌트</div></div>
@@ -676,6 +676,13 @@
           <div><div style="font:700 32px/1 'Noto Serif KR',serif; color:#fff;">단계</div><div style="font:400 12px/1.5 Pretendard; color:#A8AEF5; margin-top:8px;">점진적 전환</div></div>
         </div>
         <div style="display:flex; gap:10px; margin-top:18px; background:#EEF0FF; border-radius:10px; padding:12px 15px;"><span style="font:700 11px/1.5 Pretendard; letter-spacing:.03em; color:#4338CA; white-space:nowrap;">언제 쓰나</span><span style="font:400 12.5px/1.6 Pretendard; color:#5A6175;">섹션 사이에 핵심 수치 3~4개를 띠 형태로 요약할 때. 다크(#15172B) 배경으로 흐름에 강한 쉼표를 찍는다. 표지 스탯 타일의 축약형.</span></div>
+      </div>
+
+      <!-- 10.8 inline identifier chip -->
+      <div style="border:1px solid #E7E9F3; border-radius:14px; padding:24px 26px;">
+        <div style="font:600 16px/1.4 Pretendard; color:#15172B; margin-bottom:18px;">10.8 인라인 식별자 칩</div>
+        <p style="font:400 14px/1.8 Pretendard; color:#5A6175; margin:0; max-width:720px;">전환 중에는 <span style="font:500 .86em/1.4 'JetBrains Mono',monospace; color:#1E2233; background:#F6F7FB; border-radius:4px; padding:2px 6px; white-space:nowrap;">legacy_parser</span>와 <span style="font:500 .86em/1.4 'JetBrains Mono',monospace; color:#1E2233; background:#F6F7FB; border-radius:4px; padding:2px 6px; white-space:nowrap;">ParserV2</span>가 병행하고, 재시도 횟수는 <span style="font:500 .86em/1.4 'JetBrains Mono',monospace; color:#1E2233; background:#F6F7FB; border-radius:4px; padding:2px 6px; white-space:nowrap;">config/rules.yaml</span>의 <span style="font:500 .86em/1.4 'JetBrains Mono',monospace; color:#1E2233; background:#F6F7FB; border-radius:4px; padding:2px 6px; white-space:nowrap;">retry.max</span>로 고정한다. 식별자는 한 문단에 네 개 안팎으로 둔다.</p>
+        <div style="display:flex; gap:10px; margin-top:18px; background:#EEF0FF; border-radius:10px; padding:12px 15px;"><span style="font:700 11px/1.5 Pretendard; letter-spacing:.03em; color:#4338CA; white-space:nowrap;">언제 쓰나</span><span style="font:400 12.5px/1.6 Pretendard; color:#5A6175;">본문 안의 파일명·경로·클래스·함수·설정 키·열거값을 가리킬 때. 모노 폰트 + 연한 채움 + 4px 모서리, 줄바꿈하지 않는다. 강조는 굵게로 하고, 칩은 식별자에만 쓴다.</span></div>
       </div>
     </section>
 

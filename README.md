@@ -66,7 +66,7 @@ Diagrams are chosen by **content shape**, not by taste, and built by **pasting**
 There is an optional `/plan` → `/build` skill pipeline (plus a Node-based exit gate) that helps
 produce a spec-conforming document — see [`.claude/README.md`](.claude/README.md). It is tooling
 only, separate from the product spec above; it runs co-equally on Claude Code and opencode.
-`/plan` records each document's `doc-type`, `audience`, hero text (`title`, `thesis`, `cover-tokens`)
+`/plan` records each document's `doc-type`, `audience`, hero text (`title`, optional `eyebrow`, `thesis`, `cover-tokens`)
 and, for a `pitch`, a `facts.md` ledger so every claim and number traces to a source; `/build` counts a
 document as built only when its exit gate — `node .claude/lib/verify-doc.mjs <doc> --canonical-support
 styles/<id>/support.js --style <id> --plan <content-plan.md>` — prints the `GATE PASSED` line.

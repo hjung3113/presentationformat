@@ -298,6 +298,8 @@ A compact dark cousin of the hero stat tiles, dropped between sections. `backgro
 ### 4.12 Section divider
 Same solid Samsung-blue as the hero, boxed. `background:#1428A0; border-radius:8px; padding:40px 44px;` overlay `none`. Big index `700 56px/1 'JetBrains Mono'; color:rgba(255,255,255,.28);` (e.g. `03`) + part label `700 13px/1 Inter,Pretendard,sans-serif; letter-spacing:.1em; #D8E7FB;` (`PART 03`) + title `600 30px/1.3 Inter,Pretendard,sans-serif; #fff`. Breaks a long document into acts (page-type §6.2).
 
+**Act-divider spacing.** The divider is a `<div>` that sits between two sections, so it carries its own top margin: `margin:36px 0 0` when it is the first block in the sheet (the sheet's `8px` top padding + 36px leaves 44px under the sheet's rim), `margin:8px 0 0` when it follows a section (that section's `56px` bottom padding supplies the rest of the gap). The **first section after a divider drops its `border-top`** — the divider is the separator, a hairline under it would double the line — and uses `padding:48px 0 56px`; the later sections of the same act keep the usual `56px 0` + `border-top`. (§3.2 gives the first-section rule when there is no divider.)
+
 ### 4.13 Do / Don't rows
 Paired guidance rows. Do: `background:#E7F5EE; border-radius:8px; padding:12px 14px;` mark `✓` `700 13px #10734A`. Don't: `background:#FCEDEE;` mark `✕` `#B2202B`. Text `400 12.5px/1.6 #374151`. Don't-rows use red per the updated red scope (§4.8-note).
 
@@ -474,7 +476,7 @@ Density, type emphasis, color, and component mix shift with a page's role. Match
 - Emphasis = white + translucent bottom-border highlight. No body-grey, no figure panels, no cards-with-borders.
 
 ### 6.2 Section divider (optional)
-- The **boxed solid-blue divider (§4.12)**: big mono index + Inter title on the flat hero blue. Almost no body. Used to break long documents into acts. (A lighter variant — large index + `t-h2` on `#F3F7FE` — is fine for a quieter break.)
+- The **boxed solid-blue divider (§4.12)**: big mono index + Inter title on the flat hero blue. Almost no body. Used to break long documents into acts (spacing before and after it: §4.12). (A lighter variant — large index + `t-h2` on `#F3F7FE` — is fine for a quieter break.)
 
 ### 6.3 Overview / Summary
 - **Goal:** orient, give the big picture. **Density:** low–medium, airy.
@@ -528,6 +530,16 @@ Use the **4-variant callout set (§4.8)** — KEY (blue) · OK (green) · WARN (
 ### 7.5 Placeholders & unknown values
 - A figure not yet quantified: use a placeholder glyph in **normal ink bold** (`O`, `OO`) immediately followed by a muted parenthetical `<span style="color:#98A2B3;">(… 추후 확정)</span>`. **Never** flag missing data with red/warn color — unknown ≠ problem.
 - A framing "stat" with no number: substitute a 1–2-char word (`MVP`, `단계`) still set in `t-stat`.
+
+### 7.6 Inline code / identifier chip
+An identifier that appears **inside prose** — a file name or path, a class / function / API name, a config key, an enum value, a command — is set as a small inline chip so it reads as a literal, not as a word. Ordinary English engineering words (Job, thread, diff — `authoring-guide.md §3.1`) stay plain text.
+```html
+<span style="font:500 .86em/1.4 'JetBrains Mono',monospace; color:#1D2939; background:#EDF3FB; border-radius:4px; padding:2px 6px; white-space:nowrap;">pageType</span>
+```
+- Existing tokens only: the mono font stack, `ink-800` text, `fill-100` fill. The radius is a literal **4px** (smaller than `r-pill-sm`, sized to inline text) and there is no border. `.86em` makes it follow the surrounding size — lead, body, card text and table cells alike.
+- `white-space:nowrap`: a chip never breaks across lines. An identifier longer than ~28 characters (a full path, a long signature) goes in a mono log box (§5.7) or is shortened.
+- A chip is neutral: never accent- or warn-coloured (colour carries meaning), never bold, never underlined, and never a link. Emphasis stays bold (§2).
+- Prose, list items and table cells only — not headings, the hero, nav labels, or inside a badge/chip that is already mono. About 4 chips per paragraph at most; a denser run of identifiers is a table or a list.
 
 ---
 

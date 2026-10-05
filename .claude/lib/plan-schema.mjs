@@ -14,19 +14,25 @@ const ENUMS = {
   'act-structure': ['flat', 'act-grouped'],
   'narrative-lens': ['architecture-first', 'use-case-first', 'decision-first'],
 };
+// Optional header keys (not in REQUIRED): `facts` (required for doc-type pitch), `as-of`, `eyebrow` (the hero
+// eyebrow, verbatim; any non-placeholder text — /build writes `DOC-TYPE · 대상` when it is absent).
 const REQUIRED = ['doc-type', 'audience', 'reader-action', 'has-as-is', 'metrics-mode', 'act-structure',
   'narrative-lens', 'source-ref', 'title', 'thesis', 'cover-tokens'];
 const EXEC_BANNED_SHAPES = ['code-structure', 'interaction', 'entity-relations', 'rule-table'];
+// A `content` component normally needs no figure-data (peer-list → card-grid, `callout`). The exception: a
+// text-table section is a pasted `table` filled from its figure-data columns/rows, so it carries them like a figure.
+const FIGURE_DATA_CONTENT_SHAPES = new Set(['text-table']);
 
 // Closed shape vocabulary = every @shape declared by a core component template, plus `none`.
-// `figureShapes` are the shapes whose component is a figure/chart/report (they need figure-data).
+// `figureShapes` are the shapes whose component is a figure/chart/report (they need figure-data), plus the
+// content shapes in FIGURE_DATA_CONTENT_SHAPES (`text-table`).
 export function shapeVocabulary(templates = listTemplates()) {
   const all = new Set(['none']);
   const figureShapes = new Set();
   for (const t of templates)
     for (const s of t.meta.shapes) {
       all.add(s);
-      if (t.meta.kind !== 'content') figureShapes.add(s);
+      if (t.meta.kind !== 'content' || FIGURE_DATA_CONTENT_SHAPES.has(s)) figureShapes.add(s);
     }
   return { all, figureShapes };
 }
@@ -93,6 +99,7 @@ export function parsePlan(md) {
       audience: raw.audience || '',
       readerAction: raw['reader-action'] || '',
       title: raw.title || '',
+      eyebrow: raw.eyebrow || '', // optional: the hero eyebrow verbatim; /build falls back to `DOC-TYPE · 대상` when empty
       thesis: raw.thesis || '',
       coverTokens: parseCoverTokens(raw['cover-tokens']),
       facts: raw.facts || '',

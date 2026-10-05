@@ -9,7 +9,7 @@
 @use 하나가 여러 하위로 나뉘는 소속·분류 구조가 주장이다. 메뉴·정보 구조(IA), 조직, 시스템 아래 모듈, 분류 체계.
 @avoid 층 사이 호출·연결이 핵심 → layer-map. 순서나 흐름 → process-row/pipeline. 코드 상속 → class-diagram.
 @limits 하위 2–5, 하위당 잎 0–5
-@data root: 이름 | children: 이름[잎, 잎], 이름[잎] …
+@data root: 이름 | children: 이름[잎, 잎 [planned]], 이름[잎], 이름 [planned][잎] …
 HOW TO FILL
   1. K = 하위 노드 수. 두 곳을 고친다:
        하위 그리드  grid-template-columns:repeat(K,1fr)

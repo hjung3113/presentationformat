@@ -109,14 +109,16 @@ INVALID.
   (`executive|user|developer`), `reader-action`, `has-as-is`, `metrics-mode`, `act-structure`,
   `narrative-lens`, `source-ref`, `title`, `thesis`, `cover-tokens`. `facts: <path>` is required for
   `pitch` (the file must exist relative to the plan) and read by `numbers-traced` whenever present;
-  `as-of: YYYY-MM-DD` is optional. Enums are validated; any value that is still a template
+  `as-of: YYYY-MM-DD` is optional, and so is `eyebrow` (the hero eyebrow, printed verbatim; without it `/build`
+  writes `<DOC-TYPE> · <audience>`). Enums are validated; any value that is still a template
   placeholder (`<…>`) is rejected; `cover-tokens` is 2–4 items `값=라벨 [cite]` separated by `;`.
   Keys and enums are defined in the figure-data contract — `core/components.md` and the
   `content-plan.template.md` the skills carry.
 - **Sections** (`## N. 제목` → `sN`; `## 제목` without a number → `sref`; ids must be unique). Each
   field is one `- key: value` line (indented continuation lines are appended; an empty field stays
   empty and never captures the next line): `intent`, `shape`, `payload`, `source-span` always;
-  `figure-data` for figure/chart/report shapes. `source-span` must look like a citation
+  `figure-data` for figure/chart/report shapes **and `text-table`** (a `columns: … | rows: …` table; `none` is an
+  error). `source-span` must look like a citation
   (path, `L12-40`, `[F03]`, `repo@sha`) — "source" alone is rejected.
 - **figure-data** must contain the component's first `@data` key (`(^|[|\s])KEY\s*(\([^)]*\))?\s*:` —
   an annotation such as `layers (위→아래):` is fine), and for a component whose `@data` shows flow

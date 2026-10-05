@@ -86,3 +86,22 @@ test('first @data keys match the plan-schema contract (C4)', () => {
   const got = Object.fromEntries(listTemplates().map(t => [t.meta.component, t.meta.dataKeys[0]?.key]));
   assert.deepEqual(got, want);
 });
+
+// The shared "planned" look: a not-built thing is drawn muted + dashed + a state chip and marked [planned] in
+// figure-data — one rule (core/components.md §4), five components.
+const PLANNED = ['layer-map', 'pipeline', 'tree', 'timeline', 'sequence'];
+test('planned look: every figure that supports [planned] documents it in @data and ships a muted dashed VARIANT planned', () => {
+  assert.match(readFileSync(join(CORE, 'components.md'), 'utf8'), /never gets the built look/);
+  const by = Object.fromEntries(listTemplates().map(t => [t.meta.component, t]));
+  for (const id of PLANNED) {
+    assert.ok(by[id].meta.data.includes('[planned]'), `${id} @data does not document the [planned] marker`);
+    assert.match(by[id].src, /<!-- VARIANT planned[^>]*-->/, `${id} has no VARIANT planned block`);
+    assert.match(by[id].src, /border:\d(?:\.\d)?px dashed ⟨muted-300⟩/, `${id} planned look is not muted dashed`);
+  }
+});
+
+test('variant markers promised in HOW TO FILL are in the @data line /plan reads (matrix cells, state neutral, screen-map extras)', () => {
+  const by = Object.fromEntries(listTemplates().map(t => [t.meta.component, t.meta.data]));
+  for (const [id, marks] of Object.entries({ 'state-machine': ['[neutral]'], 'screen-map': ['[above]', '[below]'], matrix: ['—', '✓ 한정어'] }))
+    for (const m of marks) assert.ok(by[id].includes(m), `${id} @data lacks ${m}`);
+});

@@ -199,8 +199,14 @@ working strictly from the source:
 - `figure-data` — the raw values behind the figure, written in **the figure-data format of the
   shape's component** (the last column of `core/components/README.md`), so `/build` can fill the
   component's slots without re-reading source. Required for every shape whose component is a
-  figure, chart, or report block; write `none` for `none`/`peer-list`/`text-table`. The format's
-  first key is mandatory (`states:`, `lanes:`, `tiles:`, …) and keys ending in `?` are optional.
+  figure, chart, or report block **and for `text-table`**; write `none` only for `none`/`peer-list`.
+  A `text-table` section is a pasted `table` filled from its figure-data, so it MUST carry
+  `columns: 열1, 열2, 열3 | rows: 값 · 값 · 값 …` (every row, every cell — the document's table is exactly
+  this; the plan validator rejects `none`). The format's first key is mandatory (`states:`, `lanes:`,
+  `tiles:`, `columns:`, …) and keys ending in `?` are optional.
+  An item whose ledger status is `designed` or `planned` (not built yet) gets the marker `[planned]` right
+  after it — a layer module, pipeline node, tree child or leaf, timeline item, sequence ALT/OPT group — so
+  `/build` draws it in the shared planned look instead of the built look (`core/components.md` §4).
   Numbers carry their `[Fnn]` here too. ASCII arrows are accepted: `->` for a request or transition,
   two hyphens followed by `>` for a response, `(self)` for internal processing.
   **Carry the connections, not just the boxes.** For flow and structure shapes the figure-data
@@ -246,8 +252,12 @@ determined in the earlier steps:
 - `narrative-lens` — `architecture-first`, `use-case-first`, or `decision-first`, matching Step 2.5.
 - `source-ref` — every source consumed, with a fingerprint (`repo@sha` or `path@mtime`), so `/build`
   can detect if the source has since changed without re-reading it.
-- `title` — the hero title. `thesis` — the one-sentence hero thesis (may end with a citation such
-  as `[F03]`). `cover-tokens` — 2–4 hero tokens, `값=라벨 [cite]` separated by `;`, **each with a
+- `title` — the hero title. `eyebrow` — optional: the hero eyebrow pill, printed verbatim (e.g.
+  `PROPOSAL · 관리자용`); leave the key out and `/build` writes `<DOC-TYPE in English caps> · <audience in
+  Korean>` — nothing else. `thesis` — the one-sentence hero thesis (may end with a citation such
+  as `[F03]`); it may be written in **any register** (notes, `~합니다`, bare nouns) — `/build` always
+  renders the page in the style's register (`~한다`), so don't spend effort on polish here.
+  `cover-tokens` — 2–4 hero tokens, `값=라벨 [cite]` separated by `;`, **each with a
   citation** (`[F07]`, or a source span such as `[PRODUCT.md L12]` when no ledger exists). `/build`
   fills the hero **only** from these, so a framing token with no source is not planned. A token need
   not be a number (`MVP=출시 단계 [F02]`).
