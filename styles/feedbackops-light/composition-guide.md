@@ -201,7 +201,7 @@ eyebrow → h2 → lead(≤760px) → [무게중심 블록] → (보조 블록)
 ## 5. 스크롤 전반의 페이싱 (Viewport pacing)
 
 - **밀/소 교대:** 연속 고밀도 섹션(deep-dive/table)은 **최대 2개**. 세 번째 고밀도 섹션 앞에 **브리더**(pull quote `§4.10` · dark stat band `§4.11` · divider `§4.12`)를 강제 삽입한다.
-- **9섹션 초과 문서**는 3–4섹션마다 act divider로 막을 끊어 "얼마나 남았나"의 불안을 없앤다(`authoring-guide §2`).
+- **9섹션 초과 문서**는 3–4섹션마다 act divider로 막을 끊어 "얼마나 남았나"의 불안을 없앤다(`authoring-guide §2`). 압축 히어로(피치·경영진용) 문서의 첫 divider는 한 줄 컴팩트 변형(`design.md §4.12`)이다 — 박스형(≈210px)은 첫 리드와 첫 도식을 폴드 아래로 민다.
 - **1.0밴드 미만 본문 섹션**(리드만 있고 도해 없음)은 cover/divider/reference에서만 허용 — 본문이 반 화면이면 앞뒤와 병합한다.
 - 밀도 배치가 역할과 맞물리는지 확인한다(P8): cover(저) → overview(저–중) → problem(중) → direction(중–고) → deep-dive(고) → … → reference(저강도 마감).
 

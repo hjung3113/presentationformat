@@ -5,7 +5,7 @@ import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { validatePlan, parsePlan, parseCoverTokens, labelLanguage } from '../plan-schema.mjs';
+import { validatePlan, parsePlan, parseCoverTokens, labelLanguage, COUNT_LIMITS, useCaseGoals, layerModules, tableRowCount } from '../plan-schema.mjs';
 import { listTemplates } from '../components.mjs';
 
 const read = (f) => readFileSync(new URL(`./fixtures/${f}`, import.meta.url), 'utf8');
@@ -337,6 +337,54 @@ test('more than two `decision` sections warn (non-blocking)', () => {
   const res = validatePlan(md, { templates: [...templates, ...synthDecision()] });
   assert.equal(res.ok, true, res.errors.join('; '));
   assert.match(res.warnings.join('\n'), /3 sections have shape "decision" \(s1,s2,s3\)/);
+});
+
+// ---- countable limits: goals per actor, modules per layer, table rows (non-blocking, real component library) ----
+
+const countWarns = (shape, fd, n = 1) => {
+  const res = validatePlan(plan([sec(n, shape, fd)]));
+  assert.equal(res.ok, true, res.errors.join('; ')); // always a warning, never an error
+  return res.warnings.join('\n');
+};
+const goals = (n) => Array.from({ length: n }, (_, i) => `목표${i + 1}`).join(', ');
+
+test('use-case: more than 5 goals for one actor warns, naming the actor; 5 does not; parenthesised commas stay in one goal', () => {
+  const fd = (n) => `system: 도구 | actors: 문의자: ${goals(3)} ‖ 담당 개발자: ${goals(n)} ‖ 팀장(검토, 승인): 요청 검토`;
+  assert.match(countWarns('actor-goals', fd(6)), /^s1 \(actor-goals\): "담당 개발자" has 6 goals \(>5\) — use-case shows 1–5 per actor/);
+  assert.doesNotMatch(countWarns('actor-goals', fd(5)), /goals/);
+  assert.deepEqual(useCaseGoals('system: X | actors: A: 가(나, 다), 라 ‖ B: 마'), [{ name: 'A', n: 2 }, { name: 'B', n: 1 }]);
+  assert.equal(countWarns('actor-goals', fd(7)).split('\n').length, 1); // one warning per offending actor
+});
+
+test('layer-map: more than 5 modules in one layer warns; tags, a bare `key` marker and parenthesised commas do not count as modules', () => {
+  const layer = (n) => `업무 화면 [state: 시험용 데이터]: ${Array.from({ length: n }, (_, i) => `모듈${i + 1}(설명, 둘)`).join(', ')}`;
+  const w = countWarns('layered-structure', `layers: ${layer(6)} ‖ 공통 기반 [key]: 가, 나 | links: 업무 화면 ↕ 공통 기반 = 호출`);
+  assert.match(w, /^s1 \(layered-structure\): layer "업무 화면" has 6 modules \(>5\) — layer-map shows 1–5 per layer/);
+  assert.doesNotMatch(countWarns('layered-structure', `layers: ${layer(5)}, key ‖ 공통 기반: 가, 나 [planned] | links: a ↕ b = c`), /modules/); // 5 + a `key` marker = 5 modules
+  // the older format separates layers with " | " until links/external
+  assert.deepEqual(layerModules('layers (위→아래): 독립: A, B | Integration [optional, key]: C, D(e, f) | Core: G | links: x ↕ y = z | external: AD'),
+    [{ name: '독립', n: 2 }, { name: 'Integration', n: 2 }, { name: 'Core', n: 1 }]);
+});
+
+test('text-table: more than 10 rows warns outside the appendix; the sref appendix may run longer; rows are `;`-separated', () => {
+  const rows = (n) => Array.from({ length: n }, (_, i) => `항목${i + 1} · 설명(가; 나)`).join(' ; ');
+  const fd = (n) => `columns: 항목, 설명 | rows: ${rows(n)}`;
+  assert.match(countWarns('text-table', fd(11)), /^s1 \(text-table\): table has 11 rows \(>10\)/);
+  assert.doesNotMatch(countWarns('text-table', fd(10)), /rows/);
+  assert.equal(tableRowCount(fd(12)), 12);
+  const appendix = plan([sec(1, 'none'), `## 부록 — 용어\n- intent: i\n- shape: text-table\n- payload: p\n- figure-data: ${fd(14)}\n- source-span: docs/a.md L1\n`]);
+  const res = validatePlan(appendix);
+  assert.equal(res.ok, true, res.errors.join('; '));
+  assert.deepEqual(res.warnings, []);
+});
+
+test('the countable limits match the components\' @limits lines (the warning and the template cannot drift apart)', () => {
+  const by = Object.fromEntries(listTemplates().map(t => [t.meta.component, t.meta.limits]));
+  assert.equal(COUNT_LIMITS.goalsPerActor, 5);
+  assert.match(by['use-case'], /행위자당 유스케이스 1–5/);
+  assert.match(by['layer-map'], /레이어당 모듈 1–5/);
+  assert.match(by.table, /10행/);
+  assert.equal(COUNT_LIMITS.tableRows, 10);
 });
 
 test('CLI prints warnings after OK, non-blocking', () => {

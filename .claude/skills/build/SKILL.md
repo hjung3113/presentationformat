@@ -92,6 +92,11 @@ line), so a leftover fails the gate.
    the lead's `margin-bottom:22px` — when the plan's `doc-type` is `pitch` or its `audience` is `executive`, so the sheet starts
    higher and the first section's lead plus its first figure row are visible at 1366×900. Every other document keeps the default
    hero. Replace the default hero block with the variant (or delete the variant); never leave both.
+   **Act dividers follow the hero.** With the compact hero and `act-structure: act-grouped`, the **first** act divider is the
+   template's `VARIANT compact act divider` (the style's `design.md §4.12`) — a one-line band, about 54px and never over 64px —
+   so section 1's lead and first figure row stay above the 1366×900 fold; a boxed divider (≈210px) there pushes them below it.
+   When act 1 is a single summary section, omit the first divider (the hero stands in for the act; later dividers keep their
+   own numbers). Later dividers may be boxed or compact. With the default hero the dividers are boxed.
 
 **Fill the hero only from the plan header — never invent it:**
 
@@ -117,9 +122,11 @@ link with no mark — `부록` or a short Korean title such as `근거`). Sectio
 ids are `s1…sN` in plan order and `sref` for the appendix; keep every `data-screen-label`, nav
 `data-navlink` and `href` in agreement. **Act dividers** (documents above ~9 sections) are a `<div>`,
 never a `<section>` — a `<section>` breaks the section count the gate checks against the plan.
-**Act-divider spacing** (the style's `design.md §4.12`): the divider takes `margin:36px 0 0` when it is the
+**Act-divider spacing** (the style's `design.md §4.12`): the boxed divider takes `margin:36px 0 0` when it is the
 first block in the sheet and `margin:8px 0 0` after a section; the **first section after a divider drops its
-`border-top`** and uses `padding:48px 0 56px` (later sections of the act keep `56px 0` + `border-top`).
+`border-top`** and uses `padding:48px 0 56px` (later sections of the act keep `56px 0` + `border-top`). The compact
+band takes `margin:24px 0 0` as the first block and `margin:8px 0 0` after a section, and the section after it uses
+`padding:32px 0 56px` (`32px 0 48px` for `s1` under the compact hero).
 
 ## Step 4 — Map each plan section into the style
 
@@ -184,8 +191,13 @@ designed/planned facts stay in the tense the plan gave them. A `pitch` ends with
 and does not use the "승인 요청서가 아니라" opener (the style's authoring-guide §1).
 
 **Terms.** Name every concept with the term the plan's term sheet chose — the same word everywhere, never a
-`쓰지 않을 말` variant (the gate fails it outside the appendix). The first time a term appears in the body, write
-its `처음 나올 때` form (`작업(Task)`, `FeedbackOps(VOC·작업 운영 도구)`), then the bare term. A concept the sheet does
+`쓰지 않을 말` variant (the gate fails it outside the appendix). The first time a term appears, write
+its `처음 나올 때` form (`작업(Task)`, `FeedbackOps(VOC·작업 운영 도구)`), then the bare term. **Order of first use:** the
+hero thesis counts as the first occurrence, so a term the thesis uses carries its first-use form in the thesis; a term the
+thesis does not use gets the form at its first appearance in the numbered sections — a section title counts as an
+appearance, so a title that names a term before its lead has introduced it is out of order (put the form in the thesis, or
+word the title without the term). **Nav labels and the fixed document title** (the hero title and the nav brand) **are
+exempt**: they stay bare and neither count as a first use nor break the order. A concept the sheet does
 not name gets no new name from you: use the plan's own wording or send the gap back to `/plan`.
 
 **Natural Korean.** Compose each sentence by the style's authoring-guide §3.2 checklist (no `·` noun piles, one em
@@ -298,7 +310,8 @@ The gate runs two tiers:
   `prose:dot-chain` (4+ `·` in one sentence), `prose:dash` (more than one `—` in a sentence, or more than 3 in a lead),
   `prose:translationese` (`~하는 것이다`, `~것으로 보인다`, `되어지`, `~에 있어서`, and `~에 대한` / `~를 통해` three or more
   times in a section) and `prose:register` (`~합니다/~습니다/~해요` in body text), plus `terms:first-use` (a term's
-  first-use form never appears). They never change the exit code — Step 9 is where they get fixed.
+  first-use form never appears, or the bare term appears before it — order as defined in Step 5). They never change the exit
+  code — Step 9 is where they get fixed.
 
 **Treat anything other than the `GATE PASSED` line as "not built."** Read every check the gate prints;
 if any mechanical check fails, fix the document and rerun the gate — do not hand the document to the

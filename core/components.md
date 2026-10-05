@@ -172,6 +172,13 @@ sections (group into acts — the section count follows the content, §5), a dev
   plan has no number for a slot, use the `O … (추후 확정)` placeholder. A **number chip** (the `card-grid`
   item badge) is a bare integer — 1, 2, 3 in card order — never a `2.1` / `5.3` section.item decimal; the gate's
   `numbers-traced` reads a decimal as a number the plan never supplied.
+- **Terms and first use.** A concept the plan's term sheet (`## T — 용어` in `facts.md`) names is written in one form
+  only: its `처음 나올 때` form the first time the reader meets it, the bare term afterwards. **The hero thesis counts as
+  the first occurrence** — a term the thesis uses carries its first-use form there; a term the thesis does not use gets
+  the form where it first appears in the numbered sections (a section title counts as an appearance). **Nav labels and
+  the fixed document title (the hero title and the nav brand) are exempt**: they stay bare, and neither count as a first
+  use nor break the order. The gate's `terms:first-use` warns (non-blocking) when a first-use form never appears or when
+  the bare term appears before it; a banned variant (`terms-consistent`) is the hard check.
 - **What the gate reads in pasted figures** (`verify-doc`): `no-role-placeholders`, `palette` (with
   `--style`: every color literal must be in the style's `design.md` — no invented colors),
   `grid-consistency`, and `numbers-traced` (with `--plan`).
@@ -197,6 +204,7 @@ sections (group into acts — the section count follows the content, §5), a dev
   | `layer-map` | LAYER A · EXTERNAL · AS-IS | 층 A · 외부 · 지금 |
   | `decision-table` | IF · THEN | 조건 · 결과 |
   | `hub-spoke` | HUB | 허브 |
+  | `use-case` system box | SYSTEM · system name | 시스템 · system name |
   | `screen-map` | TOP BAR · SIDEBAR · LIST · DETAIL … | 상단 바 · 사이드바 · 목록 · 상세 … |
   | `sequence` frames | ALT · OPT · LOOP | 분기 · 선택 · 반복 |
 
@@ -209,22 +217,28 @@ sections (group into acts — the section count follows the content, §5), a dev
   lead. One primary figure per section; a support block (callout or small table) may follow it.
 - **A `text-table` section is a pasted `table`, filled from its figure-data.** The plan carries
   `columns: … | rows: …` (never `none`) and the table's columns and rows are exactly those. A reference or
-  appendix table (`sref`, or a secondary table that follows a figure) uses the table's soft header.
+  appendix table (`sref`, or a secondary table that follows a figure) uses the table's soft header. A body table
+  holds up to 7 rows; an **appendix glossary or source table may be longer** — up to 10 rows per table, and past that
+  two tables of ≤10 rows each or the table's definition-list variant (a two-column "term — definition" list that keeps
+  the `data-component="table"` root). Cell variants (a muted detail line under the first-column label, several value
+  lines stacked in one cell) are listed in the table template's `HOW TO FILL`.
 - **Counts must match.** If the lead says "세 가지 상태", the figure shows three.
 - **A not-built thing never gets the built look (cross-component rule).** Anything the source calls
   planned, designed-only, not yet built or not decided — a module, a pipeline node, a tree child or leaf, a
   timeline item, an ALT/OPT frame of messages — is drawn in the **shared planned look**: muted dashed
   outline (on the soft fill where it is a box), muted text, plus a state chip carrying the source's own word (예정·계획·
   미설계·미구현·대기). The chip is **11px bold in the text-safe muted ink** — a 9px faint badge cannot be read. Its figure-data carries the marker `[planned]` right after it. Components with the
-  variant: `layer-map`, `pipeline`, `tree`, `timeline`, `sequence`; any other figure draws a planned thing
-  the same way. A planned thing is never given the key-node, accent or success look — passing a design off as
+  variant: `layer-map`, `pipeline`, `tree`, `timeline`, `sequence`, and `before-after` (a planned cell inside the
+  **TO-BE** zone only — the muted dashed look is neutral, so it does not break the zone's color rule; the AS-IS zone
+  has no planned things); any other figure draws a planned thing the same way. A planned thing is never given the key-node, accent or success look — passing a design off as
   an existing system is the most common overstatement a diagram makes.
 - **figure-data arrows.** Flow-shaped figure-data (`sequence`, `swimlane`, `state-machine`, `activity`,
   `pipeline`, `process-row`, …) may use the glyphs `→ ⇢ ↻` or ASCII: `->` for a request or transition,
   two hyphens followed by `>` for a response, `(self)` for internal processing. The plan validator
   accepts both. Per-component markers (state `●`/`◉` and `[ok]`/`[retry]`/`[negative]`/`[neutral]`, layer
   `[key]`/`[optional]`/`[external]`/`[legacy]`, layer-or-module `[state: 텍스트]` (built, but on sample data or with a caveat — chip text is the source's own words, e.g. 가짜 데이터), swimlane `◇`/`→[라벨]`/`↓`, gantt `(legacy) + (core)`, screen-map
-  `[above]`/`[below]` for the 5th–6th region, and `[planned]` on layer, pipeline, tree, timeline and sequence items)
+  `[above]`/`[below]` for the 5th–6th region, `[planned]` on layer, pipeline, tree, timeline, sequence and before-after (TO-BE) items,
+  before-after `[full]` for a full-width key cell, table `{보조 설명}` / ` ¶ ` for a first-column detail line / stacked cell lines)
   are documented in each template's `@data` line and HOW TO FILL header (`components/README.md`).
 
 ---
@@ -340,6 +354,9 @@ ledger (`[Fnn]`) — an estimate or an owner statement renders with "(추정)" /
 above recipe A): an executive plan may merge 1+2, fold 3 into 2 or drop 4 or 8 when the source has nothing, but never
 by squeezing several products into one section; it still opens with the metrics and ends with the request. An executive or user pitch uses `labels: ko` (Korean eyebrows and component labels, see §4) and the
 style template's compact hero, so the first section's lead and its first figure row are visible without scrolling.
+In an act-grouped pitch the **first act divider is the style's compact variant** — a one-line band — or is omitted when
+act 1 is a single summary section; a boxed divider there would push the first lead and figure below the fold. Later
+dividers may be either.
 
 Recipes set the default shape per section; the narrative lens and the source decide the final
 outline.

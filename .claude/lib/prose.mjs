@@ -1,7 +1,7 @@
 // Text-level gate logic over a document's HTML — pure functions, no I/O (verify-doc.mjs reads the files).
 //   visibleBlocks()  → the reader's text, one entry per paragraph-like block, tagged with its section id
 //   parseTerms()     → the `## T — 용어` table of facts.md
-//   bannedTermHits() → `terms-consistent` (hard)      missingFirstUse() → `terms:first-use` (warning)
+//   bannedTermHits() → `terms-consistent` (hard)      missingFirstUse() · firstUseOrder() → `terms:first-use` (warnings)
 //   proseWarnings()  → `prose:*` Korean-writing heuristics (warnings only — they never fail the gate)
 
 // ---------- visible text ----------
@@ -156,6 +156,44 @@ export function bannedTermHits(blocks, terms) {
 export function missingFirstUse(blocks, terms) {
   const flat = blocks.map(b => b.text).join('\n').replace(/\s+/g, '');
   return terms.filter(t => t.first && !flat.includes(t.first.replace(/\s+/g, '')));
+}
+
+// Terms whose bare form is read BEFORE their 처음 나올 때 form (core/components.md §4 "Terms and first use"). Order is the
+// order of `blocks`: the `hero` region (everything outside the sections — nav, cover, act dividers, closing line) reads
+// first, then the numbered sections; the `sref` appendix is a glossary, not a use, so its bare terms never count.
+//   · the hero thesis counts as the first occurrence: when the first-use form is in the hero, the hero's bare terms are
+//     excluded from the check (and everything after it is fine); when it is not, a bare term in the hero is out of order;
+//   · nav labels and the fixed document title (hero blocks tagged a / nav / h1) are exempt — they neither count as a first
+//     use nor as a bare use;
+//   · a longer term or first-use form that contains the bare term ("작업 요청" holds "작업") is masked, so it is not a bare use.
+// A term whose first-use form appears nowhere is left to missingFirstUse(); a term with no distinct first-use form is skipped.
+// → [{ term, first, id, ctx }] (the first out-of-order use of each term)
+const NAV_OR_TITLE = new Set(['a', 'nav', 'h1']);
+const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const looseRe = (form) => new RegExp([...form.replace(/\s+/g, '')].map(escapeRe).join('\\s*'), 'u');
+const MASK = '\u0002';
+
+export function firstUseOrder(blocks, terms) {
+  const known = [...new Set(terms.flatMap(t => [t.term, t.first]).filter(Boolean))];
+  const reader = blocks.filter(b => !(b.id === 'hero' && NAV_OR_TITLE.has(b.tag)));
+  const out = [];
+  for (const t of terms) {
+    if (!t.first || t.first.replace(/\s+/g, '') === t.term.replace(/\s+/g, '')) continue;
+    if (missingFirstUse(blocks, [t]).length) continue;
+    const form = looseRe(t.first);
+    if (reader.some(b => b.id === 'hero' && form.test(b.text))) continue; // the thesis introduces the term
+    const longer = known.filter(w => w !== t.first && w.length > t.term.length && w.includes(t.term));
+    for (const b of reader) {
+      if (b.id === 'sref') continue;
+      const at = b.text.search(form);
+      let masked = b.text.replace(new RegExp(form.source, 'gu'), (m) => MASK.repeat(m.length));
+      for (const w of longer) masked = masked.split(w).join(MASK.repeat(w.length));
+      const bare = masked.indexOf(t.term);
+      if (bare >= 0 && (at < 0 || bare < at)) { out.push({ term: t.term, first: t.first, id: b.id, ctx: `…${b.text.slice(Math.max(0, bare - 14), bare + t.term.length + 14)}…` }); break; }
+      if (at >= 0) break; // the first-use form comes first
+    }
+  }
+  return out;
 }
 
 // ---------- Korean prose warnings ----------

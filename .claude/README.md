@@ -115,8 +115,13 @@ reader's visible text (the same stripping as `numbers-traced`, but inline tags j
 `<section id="sref">` appendix — hero, nav and numbered sections — must contain no `쓰지 않을 말` variant (comma-separated;
 plain substring match, Latin case-sensitive, Hangul exact). A chosen term or first-use form that contains a variant
 (`작업(Task)` holds `Task`) is masked first, so the prescribed form never trips its own ban. Failure lists up to 8 hits
-(`s3 "태스크" (use 작업) …context…`). *Warning:* `terms:first-use` — a term's `처음 나올 때` form (whitespace-insensitive)
-appears nowhere in the document. Placeholder rows (`<…>`) are ignored, so an unfilled template table means "no term
+(`s3 "태스크" (use 작업) …context…`). *Warnings:* `terms:first-use` — (a) a term's `처음 나올 때` form (whitespace-insensitive)
+appears nowhere in the document, or (b) the bare term is read **before** its first-use form (order check, `firstUseOrder()`
+in `prose.mjs`). Order rules (`core/components.md §4` "Terms and first use"): the hero thesis counts as the first occurrence — when the
+form is in the hero, the hero and everything after it may use the bare term; when it is not, a bare term in the hero is out of
+order; nav labels and the fixed document title (hero blocks that are a link or an `<h1>`) are exempt; a section title counts as a
+use; a longer term that contains the bare one (`작업 요청` holds `작업`) and the `sref` glossary are not bare uses; a term whose form
+appears nowhere is left to (a). Placeholder rows (`<…>`) are ignored, so an unfilled template table means "no term
 sheet". Without `--plan`, without a facts file, or without a T table the check does not run (a `NOTE` says why).
 
 **Prose warnings (`prose:*`, never fail the gate).** Computed on the paragraph-like blocks of the hero and the numbered
@@ -165,7 +170,11 @@ INVALID.
 - **Warnings:** more than 2 sections with shape `decision`; `audience: executive` with more than 12
   numbered sections (the text suggests grouping into acts — the section count follows the content, and a document that
   covers several products/systems gives each its own section set; `core/components.md` §5), any of `code-structure|interaction|entity-relations|rule-table`, a first
-  numbered section that is not `headline-metric|decision`, or a last one that is not `decision`.
+  numbered section that is not `headline-metric|decision`, or a last one that is not `decision`. Three **countable
+  limits** also warn (never error; `COUNT_LIMITS` in `plan-schema.mjs`, the same numbers as each component's `@limits`): more than 5
+  goals for one actor in an `actor-goals` figure-data (`actors: A: 목표, 목표 ‖ B: …`), more than 5 modules in one layer of a
+  `layered-structure` figure-data (bracket tags such as `[planned]` and a bare `key` marker do not count), and more than 10
+  rows in a `text-table` (`rows:` split on `;`) outside the `sref` appendix, which may run longer.
 
 ## Prerequisites
 

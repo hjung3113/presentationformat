@@ -319,6 +319,10 @@ Same solid Samsung-blue as the hero, boxed. `background:#1428A0; border-radius:8
 
 **Act-divider spacing.** The divider is a `<div>` that sits between two sections, so it carries its own top margin: `margin:36px 0 0` when it is the first block in the sheet (the sheet's `8px` top padding + 36px leaves 44px under the sheet's rim), `margin:8px 0 0` when it follows a section (that section's `56px` bottom padding supplies the rest of the gap). The **first section after a divider drops its `border-top`** — the divider is the separator, a hairline under it would double the line — and uses `padding:48px 0 56px`; the later sections of the same act keep the usual `56px 0` + `border-top`. (§3.2 gives the first-section rule when there is no divider.)
 
+**Compact variant (slim band).** For the *first* divider of a document that uses the compact hero (§4.1). The boxed divider is ≈210px tall; straight after the compact hero it pushes the first section's lead and first figure row below the 1366×900 fold. The band keeps the divider's fill and radius (the flat hero blue) and drops the big index and the overlay: `display:flex; align-items:center; flex-wrap:wrap; gap:4px 14px; background:#1428A0; border-radius:8px; padding:14px 24px;` — about 54px tall (**≤ 64px**), one line. Part label `700 13px/1 Inter,Pretendard,sans-serif; letter-spacing:.1em; #D8E7FB;` + title `600 19px/1.3 Inter,Pretendard,sans-serif; #fff;`. The act number lives in the label and the label ends with a middle dot: `제1부 ·` under `labels: ko`, `PART 01 ·` under `labels: en` (one label language per document — `authoring-guide.md §2`).
+
+**Which divider.** With the compact hero (pitch / executive documents) the **first** act divider uses the compact variant — or is omitted when act 1 is a single summary section (the hero then stands in for the act; later dividers keep their own numbers, `제2부` …). Later dividers may use either variant. Compact-band spacing: `margin:24px 0 0` as the first block in the sheet (the sheet's `8px` padding + 24px leaves 32px under the rim), `margin:8px 0 0` after a section; the first section after it drops its `border-top` and uses `padding:32px 0 56px` (`32px 0 48px` for the first section under the compact hero). The rest of the divider rules above (a `<div>`, never a `<section>`; no id, no nav link) are the same.
+
 ### 4.13 Do / Don't rows
 Paired guidance rows. Do: `background:#E7F5EE; border-radius:8px; padding:12px 14px;` mark `✓` `700 13px #10734A`. Don't: `background:#FCEDEE;` mark `✕` `#B2202B`. Text `400 12.5px/1.6 #374151`. Don't-rows use red per the updated red scope (§4.8-note).
 
@@ -496,6 +500,7 @@ Density, type emphasis, color, and component mix shift with a page's role. Match
 
 ### 6.2 Section divider (optional)
 - The **boxed solid-blue divider (§4.12)**: big mono index + Inter title on the flat hero blue. Almost no body. Used to break long documents into acts (spacing before and after it: §4.12). (A lighter variant — large index + `t-h2` on `#F3F7FE` — is fine for a quieter break.)
+- With the compact hero (pitch / executive) the **first** divider is the **compact variant** (§4.12) — a one-line band, ≤ 64px — or is left out when act 1 is a single summary section; later dividers may be boxed or compact.
 
 ### 6.3 Overview / Summary
 - **Goal:** orient, give the big picture. **Density:** low–medium, airy.

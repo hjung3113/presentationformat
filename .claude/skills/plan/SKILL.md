@@ -115,7 +115,10 @@ With the ledger in hand, note for later use:
      keeps the engineering token. The audience comes from Step 2.6 — if that step changes it, redo the words.
   3. **Product and system names are defined once.** The `처음 나올 때` form carries the definition
      (`FeedbackOps(VOC·작업 운영 도구)`, `작업(Task)`); after that the bare name. A term the reader already knows needs no
-     gloss: its `처음 나올 때` is the term itself.
+     gloss: its `처음 나올 때` is the term itself. **The hero thesis counts as the first occurrence**, so write the plan's
+     `thesis` with the first-use form of every sheet term it names (the nav labels and the document title are exempt and stay
+     bare); a term the thesis does not name gets its form where `/build` first uses it (`terms:first-use` warns on a bare term
+     read before its form).
   4. **No near-synonyms by accident.** Two rows that a reader could confuse (작업 / 작업 요청 / 과제) either get a
      difference in their `뜻` or collapse into one.
 
@@ -232,8 +235,8 @@ working strictly from the source:
   component's slots without re-reading source. Required for every shape whose component is a
   figure, chart, or report block **and for `text-table`**; write `none` only for `none`/`peer-list`.
   A `text-table` section is a pasted `table` filled from its figure-data, so it MUST carry
-  `columns: 열1, 열2, 열3 | rows: 값 · 값 · 값 …` (every row, every cell — the document's table is exactly
-  this; the plan validator rejects `none`). The format's first key is mandatory (`states:`, `lanes:`,
+  `columns: 열1, 열2, 열3 | rows: 값 · 값 · 값 ; 값 · 값 · 값 …` (cells split by `·`, rows by `;` — every row, every cell; the
+  document's table is exactly this; the plan validator rejects `none`, and warns above 10 rows outside the appendix). The format's first key is mandatory (`states:`, `lanes:`,
   `tiles:`, `columns:`, …) and keys ending in `?` are optional.
   An item whose ledger status is `designed` or `planned` (not built yet) gets the marker `[planned]` right
   after it — a layer module, pipeline node, tree child or leaf, timeline item, sequence ALT/OPT group — so

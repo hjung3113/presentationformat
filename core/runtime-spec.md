@@ -107,7 +107,7 @@ Rules:
 | Nav brand link | `href="#top"` | scrolls to hero |
 | Each section | `id="sN"` (`s1…s8`), appendix `id="sref"` | `<section id="s3" …>` |
 | Each section | `data-screen-label="NN <Korean title>"` | `data-screen-label="03 개선 방향"` (human-readable label used by host tooling; mirror the eyebrow number) |
-| Act divider (long documents) | a `<div>`, never a `<section>` | it is not a numbered section: no `id`, no nav link, and the `sN` count must still equal the plan's sections |
+| Act divider (long documents; boxed or the compact one-line band) | a `<div>`, never a `<section>` | it is not a numbered section: no `id`, no nav link, and the `sN` count must still equal the plan's sections |
 | Each nav link | `data-navlink="sN"` **and** `href="#sN"` | `<a data-navlink="s3" href="#s3">` |
 | Progress bar inner div | `id="rprog"` | `<div id="rprog" style="width:0%">` |
 | Progress bar wrapper (the fixed strip) | `data-progress` | hidden by the print block (§5) |

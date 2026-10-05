@@ -18,7 +18,7 @@ Written by /plan Step 0. A plan cites a row as [F07]; /build never reads a sourc
   용어 = the one word the document uses for the concept (one term per concept; everyday words for an executive/user audience)
   뜻 = one plain sentence in the reader's words                         처음 나올 때 = the form used at the first mention, e.g. 작업(Task)
   쓰지 않을 말 = comma-separated variants the document body must not use (substring match, Latin case-sensitive, Hangul exact)
-  Gate: `terms-consistent` FAILS when a banned variant appears outside the appendix; `terms:first-use` warns when the 처음 나올 때 form never appears.
+  Gate: `terms-consistent` FAILS when a banned variant appears outside the appendix; `terms:first-use` warns when the 처음 나올 때 form never appears or the bare term comes before it (the hero thesis counts as the first occurrence; nav labels and the document title are exempt).
   Delete the whole section when the document needs no term sheet (a one-product note); never leave the placeholder row filled in.
 Rules: a claim with no F row is dropped · estimate and owner values keep their marker everywhere they appear ·
        an open question stays a Q row until someone answers it (never fill it from general knowledge).

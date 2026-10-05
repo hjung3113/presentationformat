@@ -25,9 +25,12 @@ HOW TO FILL
          grid-column 과 margin 두 값만 위 룩업으로 바꾼다. 아래 본문 예시는 S=2(←), 주석 변형은 S=3(←)이다.
        연결 라벨(선택)은 두 가지다. 긍정 분기(예·승인·충분)만 초록 태그, 그 밖의 라벨(아니오·반려·보완·조건 설명)은 회색 글자 라벨(태그가 아니다).
          어느 쪽이든 라벨은 연결선 가운데에 두고, 라벨이 없으면 그 span 을 지운다.
+         라벨 종류는 방향과 무관하다: →변형·←변형 모두 초록 태그와 회색 글자 라벨을 쓸 수 있다. 아래 본문에는 네 경우가 실제 마크업으로 들어 있다
+         (→ 초록 태그, ← 회색 글자 라벨, ← 초록 태그 — 승인·완료가 앞 레인으로 되돌아가는 인계, ← 라벨 없음은 아래 S=3 주석 변형). 라벨 span 의 위치 값은 두 방향이 같다.
   4. 판단 노드는 ◇ 접두와 강조 테두리, 마지막 결과 노드는 강조 노드.
   5. figure-data 표기: 역할:단계 · 판단은 "역할:◇ 질문?(decision)" · 분기 라벨이 붙은 인계는 "→[라벨]"(긍정 분기는 "→[예]" 처럼 긍정 라벨) · 같은 레인에서 이어지는 단계는 "↓".
-     → 는 ASCII 꺾쇠 형태(->)로 적어도 같은 뜻이다.
+     → 는 ASCII 꺾쇠 형태(->)로 적어도 같은 뜻이다. "→" 는 "다음 단계" 라는 뜻이고 방향이 아니다: 다음 단계의 레인이 왼쪽이면 ←변형으로 그린다
+     ("승인팀:단계 →[승인] 요청자:결과" 에서 요청자 레인이 왼쪽이면 ←변형 + 초록 태그).
 -->
 <div data-component="swimlane" style="border:1px solid #DCE5F2; border-radius:8px; overflow:hidden; background:#FFFFFF;">
   <!-- lane headers: repeat(L,1fr) -->
@@ -91,16 +94,17 @@ HOW TO FILL
     <div style="display:grid; grid-template-columns:repeat(3,1fr);">
       <div style="grid-column:2; justify-self:center; width:80%; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:9px 8px; text-align:center;">⟦단계 E⟧</div>
     </div>
-    <!-- connector: lane move ← (lane 2 back to lane 1: grid-column 1 / 3, S=2 → margin 0 25%), no label -->
+    <!-- connector: lane move ← (lane 2 back to lane 1: grid-column 1 / 3, S=2 → margin 0 25%) with a POSITIVE branch label: green tag, same as the → tag (positive branches only) -->
     <div style="display:grid; grid-template-columns:repeat(3,1fr);">
       <div style="grid-column:1 / 3; margin:0 25%; position:relative; height:28px;">
         <div style="position:absolute; right:-1px; top:0; height:12px; border-left:2px solid #B8C4D6;"></div>
         <div style="position:absolute; left:-1px; right:-1px; top:12px; border-top:2px solid #B8C4D6;"></div>
         <div style="position:absolute; left:-1px; top:12px; bottom:6px; border-left:2px solid #B8C4D6;"></div>
         <div style="position:absolute; left:-5px; bottom:0; width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent; border-top:6px solid #B8C4D6;"></div>
+        <span style="position:absolute; left:50%; top:1px; transform:translateX(-50%); font:600 10px/1 Inter,Pretendard,sans-serif; color:#10734A; background:#E7F5EE; border-radius:4px; padding:2px 6px; white-space:nowrap;">⟦분기 라벨⟧</span>
       </div>
     </div>
-    <!-- VARIANT lane move ← across S=3 (lane 3 back to lane 1: grid-column 1 / 4, margin 0 16.667%) — same markup as S=2, only grid-column and margin change (S=4 → 12.5%, S=5 → 10%)
+    <!-- VARIANT lane move ← across S=3 (lane 3 back to lane 1: grid-column 1 / 4, margin 0 16.667%), no label — same markup as S=2, only grid-column and margin change (S=4 → 12.5%, S=5 → 10%)
     <div style="display:grid; grid-template-columns:repeat(3,1fr);">
       <div style="grid-column:1 / 4; margin:0 16.667%; position:relative; height:28px;">
         <div style="position:absolute; right:-1px; top:0; height:12px; border-left:2px solid #B8C4D6;"></div>

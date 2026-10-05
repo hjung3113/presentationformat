@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { visibleBlocks, parseTerms, bannedTermHits, missingFirstUse, splitSentences, proseWarnings, LONG_SENTENCE } from '../prose.mjs';
+import { visibleBlocks, parseTerms, bannedTermHits, missingFirstUse, firstUseOrder, splitSentences, proseWarnings, LONG_SENTENCE } from '../prose.mjs';
 
 // A document around `body`: `hero` text outside the sections, then numbered sections given as [id, html] pairs.
 const doc = (...secs) => `<!DOCTYPE html><html><body><div>표지 문구</div>${secs.map(([id, h]) => `<section id="${id}">${h}</section>`).join('')}</body></html>`;
@@ -98,6 +98,51 @@ test('missingFirstUse: the first-use form must appear (whitespace-insensitive, a
   assert.deepEqual(miss(doc(['s1', '<p>접수와 작업 (Task)은 많다.</p>'])), []);
   assert.deepEqual(miss(doc(['s1', '<p>접수</p>'], ['sref', '<p>작업(Task)</p>'])), []);
   assert.deepEqual(miss(doc(['s1', '<p>접수 <b>작업</b>(Task)</p>'])), []);
+});
+
+// ----- first-use order (the bare term must not come before its 처음 나올 때 form) -----
+
+const ORD = parseTerms('## T — 용어\n| 용어 | 뜻 | 처음 나올 때 | 쓰지 않을 말 |\n|---|---|---|---|\n| 접수 | 처음 기록 | 접수(VOC) | — |\n| 작업 | 일 한 건 | 작업(Task) | — |\n| 결과 확인 | 설문 | 결과 확인 | — |');
+const early = (h, terms = ORD) => firstUseOrder(visibleBlocks(h), terms).map(e => [e.term, e.id]);
+
+test('firstUseOrder: a bare term before its first-use form is reported once per term, with the section and context', () => {
+  const r = firstUseOrder(visibleBlocks(doc(['s1', '<p>접수와 작업이 쌓인다. 작업 수도 센다.</p>'], ['s2', '<p>접수(VOC)와 작업(Task)을 나눠 본다.</p>'])), ORD);
+  assert.deepEqual(r.map(e => [e.term, e.first, e.id]), [['접수', '접수(VOC)', 's1'], ['작업', '작업(Task)', 's1']]);
+  assert.match(r[1].ctx, /^…접수와 작업이 쌓인다/);
+});
+
+test('firstUseOrder: the first-use form first means any later bare use is fine; bare-before-form in one block still counts', () => {
+  assert.deepEqual(early(doc(['s1', '<p>접수(VOC)와 작업(Task)이 있다. 접수와 작업은 이어진다.</p>'], ['s2', '<p>작업이 끝나면 접수에 알린다.</p>'])), []);
+  assert.deepEqual(early(doc(['s1', '<p>작업은 먼저 오고 작업(Task)은 뒤에 온다.</p>'])), [['작업', 's1']]);
+  assert.deepEqual(early(doc(['s1', '<p>작업 (Task)을 연다. 작업은 이어진다.</p>'])), []); // whitespace inside the form is ignored, as in missingFirstUse
+  assert.deepEqual(early(doc(['s1', '<p>결과 확인이 먼저 나온다.</p>'])), []); // a term whose first-use form is itself has no order to break
+});
+
+test('firstUseOrder: the hero thesis counts as the first occurrence', () => {
+  // the form is in the hero → the hero and everything after it may use the bare term
+  const heroForm = '<!DOCTYPE html><body><p>접수(VOC)가 작업(Task)으로 이어진다. 접수와 작업은 한 줄이다.</p><section id="s1"><h2>작업 흐름</h2><p>접수는 작업으로 간다.</p></section></body>';
+  assert.deepEqual(early(heroForm), []);
+  // the form is NOT in the hero → a bare term in the hero is out of order even though the form comes later
+  const heroBare = '<!DOCTYPE html><body><p>작업이 느리다. 접수도 느리다.</p><section id="s1"><p>접수(VOC)와 작업(Task)을 본다.</p></section></body>';
+  assert.deepEqual(early(heroBare), [['접수', 'hero'], ['작업', 'hero']]);
+});
+
+test('firstUseOrder: nav labels and the fixed document title are exempt; a section title is not', () => {
+  const nav = '<div data-nav style="display:flex"><a href="#top">작업 운영 안내</a><a href="#s1">작업</a><a href="#s2">접수</a></div><h1>작업 운영</h1>';
+  const intro = '<p>접수(VOC)와 작업(Task)을 나눠 본다.</p>';
+  const html = (hero, h2, p) => `<!DOCTYPE html><body>${nav}${hero}<section id="s1"><h2>${h2}</h2><p>${p}</p></section></body>`;
+  assert.deepEqual(early(html(intro, '처리 흐름', '작업은 이어진다.')), []); // nav + h1 are bare, the thesis introduces both
+  assert.deepEqual(early(html('', '처리 흐름', '접수(VOC)와 작업(Task)을 만든다.')), []); // exempt blocks neither introduce nor use a term
+  assert.deepEqual(early(html('', '작업 흐름', '작업(Task)을 만든다.')), [['작업', 's1']]); // the title is read before the lead
+});
+
+test('firstUseOrder: a longer term holding the bare one, an appendix glossary and an absent form are not reported; a form only in the appendix is', () => {
+  const t = parseTerms('## T — 용어\n| 용어 | 뜻 | 처음 나올 때 | 쓰지 않을 말 |\n|---|---|---|---|\n| 작업 | 일 | 작업(Task) | — |\n| 작업 요청 | 승인 전 | 작업 요청(Task Request) | — |');
+  assert.deepEqual(early(doc(['s1', '<p>작업 요청(Task Request)을 올린다.</p>'], ['s2', '<p>작업(Task)이 뒤에 온다.</p>']), t), []); // 작업 요청 is not a bare 작업
+  assert.deepEqual(early(doc(['s1', '<p>작업 요청(Task Request)이 먼저다. 작업이 뒤따른다.</p>'], ['s2', '<p>작업(Task)은 나중에 정의한다.</p>']), t), [['작업', 's1']]);
+  assert.deepEqual(early(doc(['s1', '<p>작업(Task)을 만든다.</p>'], ['sref', '<p>작업 — 처리하는 일</p>']), t), []); // a glossary entry is not a use
+  assert.deepEqual(early(doc(['s1', '<p>작업이 쌓인다.</p>']), t), []); // no form anywhere: missingFirstUse reports it, not the order check
+  assert.deepEqual(early(doc(['s1', '<p>작업이 쌓인다.</p>'], ['sref', '<p>작업(Task) — 일</p>']), t), [['작업', 's1']]); // the form exists, but the body used the term first
 });
 
 // ----- sentence splitting -----

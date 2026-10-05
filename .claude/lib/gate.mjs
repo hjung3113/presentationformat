@@ -1,5 +1,5 @@
 // Pure gate checks over a document's HTML. No I/O here — verify-doc.mjs reads files and wires options.
-import { visibleBlocks, parseTerms, bannedTermHits, missingFirstUse, proseWarnings } from './prose.mjs';
+import { visibleBlocks, parseTerms, bannedTermHits, missingFirstUse, firstUseOrder, proseWarnings } from './prose.mjs';
 const stripComments = (html) => html.replace(/<!--[\s\S]*?-->/g, '');
 const stripScripts = (html) => html.replace(/<script\b[\s\S]*?<\/script>/gi, '');
 
@@ -243,6 +243,9 @@ export function runGate(html, opts) {
           const missing = missingFirstUse(blocks(), terms);
           if (missing.length)
             warnings.push({ name: 'terms:first-use', detail: `${missing.length} term(s) never appear in their first-use form: ${missing.slice(0, 8).map(t => t.first).join(' ; ')}` });
+          const early = firstUseOrder(blocks(), terms);
+          if (early.length)
+            warnings.push({ name: 'terms:first-use', detail: `${early.length} term(s) appear bare before their first-use form (the hero thesis counts as the first occurrence; nav labels and the document title are exempt): ${early.slice(0, 8).map(e => `${e.term} → ${e.first}, bare in ${e.id} ${e.ctx}`).join(' ; ')}` });
         } else {
           notes.push({ name: 'terms-consistent', detail: opts.factsText === undefined
             ? 'not checked — the plan names no facts file with a "## T — 용어" table (see .claude/skills/plan/facts.template.md)'

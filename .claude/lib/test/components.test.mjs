@@ -89,7 +89,7 @@ test('first @data keys match the plan-schema contract (C4)', () => {
 
 // The shared "planned" look: a not-built thing is drawn muted + dashed + a state chip and marked [planned] in
 // figure-data — one rule (core/components.md §4), five components.
-const PLANNED = ['layer-map', 'pipeline', 'tree', 'timeline', 'sequence'];
+const PLANNED = ['layer-map', 'pipeline', 'tree', 'timeline', 'sequence', 'before-after']; // before-after: a planned cell in the TO-BE zone only
 test('planned look: every figure that supports [planned] documents it in @data and ships a muted dashed VARIANT planned', () => {
   assert.match(readFileSync(join(CORE, 'components.md'), 'utf8'), /never gets the built look/);
   const by = Object.fromEntries(listTemplates().map(t => [t.meta.component, t]));
@@ -102,7 +102,7 @@ test('planned look: every figure that supports [planned] documents it in @data a
 
 test('variant markers promised in HOW TO FILL are in the @data line /plan reads (matrix cells, state neutral, screen-map extras)', () => {
   const by = Object.fromEntries(listTemplates().map(t => [t.meta.component, t.meta.data]));
-  for (const [id, marks] of Object.entries({ 'state-machine': ['[neutral]'], 'screen-map': ['[above]', '[below]'], matrix: ['—', '✓ 한정어'] }))
+  for (const [id, marks] of Object.entries({ 'state-machine': ['[neutral]'], 'screen-map': ['[above]', '[below]'], matrix: ['—', '✓ 한정어'], 'before-after': ['[planned]', '[full]'] }))
     for (const m of marks) assert.ok(by[id].includes(m), `${id} @data lacks ${m}`);
 });
 
@@ -144,4 +144,52 @@ test('every style defines muted-text at >=4.5:1 on white, and its mono stack fal
     assert.ok(families(fontStacks.mono).includes(korean), `${style}: mono stack ${fontStacks.mono} lacks the Korean body font ${korean}`);
     assert.match(fontStacks.mono, /,monospace$/, `${style}: mono stack must end in the generic family`);
   }
+});
+
+// ---- documented variants (system gaps found building the v3 pitch) ----
+const tpl = (id) => listTemplates().find(t => t.meta.component === id);
+const live = (t) => bodyOf(t.src).replace(/<!--[\s\S]*?-->/g, '');
+
+test('before-after: the planned cell lives in the TO-BE column only and a full-width key cell spans the grid (grid-column:1 / -1)', () => {
+  const t = tpl('before-after');
+  const [asIs, toBe] = bodyOf(t.src).split('<!-- TO-BE column -->');
+  assert.match(toBe, /<!-- VARIANT planned cell \(\[planned\]\)[^>]*-->\s*<div[^>]*border:1px dashed ⟨muted-300⟩[^>]*>⟦예정 요소⟧ <span[^>]*font:700 11px/);
+  assert.doesNotMatch(asIs, /VARIANT planned|border:1px dashed ⟨muted-300⟩/); // the AS-IS zone has no planned things
+  assert.match(toBe, /<!-- VARIANT full-width key cell \(\[full\]\)[^>]*-->\s*<div style="grid-column:1 \/ -1;/);
+  assert.match(t.src, /HOW TO FILL[\s\S]*\[planned\][\s\S]*core\/components\.md §4[\s\S]*\[full\]/); // the cross-component rule is named
+  assert.match(readFileSync(join(CORE, 'components.md'), 'utf8'), /`before-after` \(a planned cell inside the\s+\*\*TO-BE\*\* zone only/);
+});
+
+test('swimlane: a ← lane move carries the positive (green) tag as live markup, next to the neutral ← label and the → tag', () => {
+  const body = live(tpl('swimlane'));
+  // a connector row starts at a `grid-column:A / B; margin:…` div and ends where the next grid row begins
+  const rows = body.split(/(?=<div style="grid-column:\d \/ \d; margin:)/).slice(1).map(c => c.split('<div style="display:grid')[0]);
+  const left = rows.filter(r => r.includes('right:-1px; top:0; height:12px')); // ← : the upper stem is on the right
+  const right = rows.filter(r => r.includes('left:-1px; top:0; height:12px'));
+  assert.ok(left.some(r => r.includes('color:⟨ok⟩; background:⟨ok-bg⟩')), '← with a green tag');
+  assert.ok(left.some(r => /color:⟨muted-text⟩; background:⟨white⟩; padding:2px 5px/.test(r)), '← with a neutral label');
+  assert.ok(right.some(r => r.includes('color:⟨ok⟩; background:⟨ok-bg⟩')), '→ with a green tag');
+  assert.match(tpl('swimlane').src, /←변형 모두 초록 태그와 회색 글자 라벨/);
+});
+
+test('use-case: the system-box label is a ⟦slot⟧ covered by the label-language table; up to 5 goals per actor, with the wrapping rule', () => {
+  const t = tpl('use-case');
+  assert.match(live(t), />⟦SYSTEM⟧ · ⟦시스템 이름⟧</);
+  assert.match(t.meta.limits, /행위자당 유스케이스 1–5/);
+  assert.match(t.src, /flex-wrap:wrap[\s\S]*3 \+ 2/);
+  assert.match(live(t), /⟦유스케이스 C5⟧/); // the live example shows the maximum of 5 goals
+  const row = readFileSync(join(CORE, 'components.md'), 'utf8').match(/^\s*\| `use-case` system box \| (.*?) \| (.*?) \|$/m);
+  assert.ok(row, 'label-language table has a use-case row');
+  assert.match(row[1], /SYSTEM/);
+  assert.match(row[2], /시스템/);
+});
+
+test('table: two cell variants (first-column detail line, stacked lines with a muted separator), appendix tables up to 10 rows and a definition-list variant', () => {
+  const t = tpl('table');
+  assert.match(t.src, /<!-- VARIANT first-column detail line[^>]*-->\s*<div[^>]*>\s*<div[^>]*>⟦핵심어 B⟧<span style="display:block; font:400 12px\/1\.5 ⟨f:body⟩; color:⟨muted-text⟩/);
+  assert.match(t.src, /<!-- VARIANT stacked cell[^>]*-->[\s\S]*⟦값 줄 1⟧<div style="border-top:1px solid ⟨border-row⟩;[^"]*">⟦값 줄 2⟧<\/div>/);
+  assert.match(t.src, /<!-- VARIANT definition list[\s\S]*?<div data-component="table" style="display:grid; grid-template-columns:1fr 1fr; gap:0 40px;">/);
+  assert.match(t.src, /본문 표는 7행까지[\s\S]*부록\(sref\)[\s\S]*10행/);
+  assert.match(t.meta.limits, /10행/);
+  assert.match(readFileSync(join(CORE, 'components.md'), 'utf8'), /appendix glossary or source table may be longer/);
 });
