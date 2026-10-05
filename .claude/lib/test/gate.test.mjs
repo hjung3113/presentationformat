@@ -259,9 +259,9 @@ test('terms:first-use is a non-blocking warning when a term\'s first-use form ne
 test('terms:first-use also warns, non-blocking, when a bare term is read before its first-use form; the hero thesis counts as the first occurrence', () => {
   const order = (r) => r.warnings.filter(x => x.name === 'terms:first-use' && /bare before/.test(x.detail));
   const two = (inner, hero = '') => page(`${hero}<section id="s1">${inner}</section><section id="s2"><p>둘째 섹션이다.</p></section>`); // termsBase's plan has s1 and s2
-  const late = runGate(two('<h2>작업 흐름</h2><p>접수(VOC)와 작업(Task)을 나눈다.</p>'), termsBase);
+  const late = runGate(two('<h2>작업 흐름</h2><p>작업이 먼저 보인다. 접수(VOC)와 작업(Task)을 나눈다.</p>'), termsBase); // the h2 is exempt; the lead is not
   assert.equal(late.ok, true, JSON.stringify(late.checks.filter(c => !c.ok))); // a warning, never a failure
-  assert.match(order(late)[0].detail, /^1 term\(s\) appear bare before their first-use form .*: 작업 → 작업\(Task\), bare in s1 …작업 흐름…/);
+  assert.match(order(late)[0].detail, /^1 term\(s\) appear bare before their first-use form .*: 작업 → 작업\(Task\), bare in s1 …작업이 먼저/);
   // the thesis in the hero introduces both terms → the section title and lead may use them bare
   const hero = '<p>접수(VOC)가 작업(Task)으로 이어진다.</p>';
   assert.deepEqual(order(runGate(two('<h2>작업 흐름</h2><p>접수는 작업으로 간다.</p>', hero), termsBase)), []);

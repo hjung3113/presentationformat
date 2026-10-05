@@ -127,13 +127,14 @@ test('firstUseOrder: the hero thesis counts as the first occurrence', () => {
   assert.deepEqual(early(heroBare), [['접수', 'hero'], ['작업', 'hero']]);
 });
 
-test('firstUseOrder: nav labels and the fixed document title are exempt; a section title is not', () => {
+test('firstUseOrder: nav labels, the fixed document title and section titles are exempt; a lead is not', () => {
   const nav = '<div data-nav style="display:flex"><a href="#top">작업 운영 안내</a><a href="#s1">작업</a><a href="#s2">접수</a></div><h1>작업 운영</h1>';
   const intro = '<p>접수(VOC)와 작업(Task)을 나눠 본다.</p>';
   const html = (hero, h2, p) => `<!DOCTYPE html><body>${nav}${hero}<section id="s1"><h2>${h2}</h2><p>${p}</p></section></body>`;
   assert.deepEqual(early(html(intro, '처리 흐름', '작업은 이어진다.')), []); // nav + h1 are bare, the thesis introduces both
   assert.deepEqual(early(html('', '처리 흐름', '접수(VOC)와 작업(Task)을 만든다.')), []); // exempt blocks neither introduce nor use a term
-  assert.deepEqual(early(html('', '작업 흐름', '작업(Task)을 만든다.')), [['작업', 's1']]); // the title is read before the lead
+  assert.deepEqual(early(html('', '작업 흐름', '작업(Task)을 만든다.')), []); // a heading may name the term its lead defines
+  assert.deepEqual(early(html('', '처리 흐름', '작업이 먼저 나오고 작업(Task)은 뒤에 온다.')), [['작업', 's1']]); // a bare term in the lead before its form
 });
 
 test('firstUseOrder: a longer term holding the bare one, an appendix glossary and an absent form are not reported; a form only in the appendix is', () => {

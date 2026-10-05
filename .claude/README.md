@@ -119,8 +119,7 @@ plain substring match, Latin case-sensitive, Hangul exact). A chosen term or fir
 appears nowhere in the document, or (b) the bare term is read **before** its first-use form (order check, `firstUseOrder()`
 in `prose.mjs`). Order rules (`core/components.md §4` "Terms and first use"): the hero thesis counts as the first occurrence — when the
 form is in the hero, the hero and everything after it may use the bare term; when it is not, a bare term in the hero is out of
-order; nav labels and the fixed document title (hero blocks that are a link or an `<h1>`) are exempt; a section title counts as a
-use; a longer term that contains the bare one (`작업 요청` holds `작업`) and the `sref` glossary are not bare uses; a term whose form
+order; nav labels and the fixed document title (hero blocks that are a link or an `<h1>`) are exempt; section titles (`h2`) are exempt too — the lead right below defines the term; a longer term that contains the bare one (`작업 요청` holds `작업`) and the `sref` glossary are not bare uses; a term whose form
 appears nowhere is left to (a). Placeholder rows (`<…>`) are ignored, so an unfilled template table means "no term
 sheet". Without `--plan`, without a facts file, or without a T table the check does not run (a `NOTE` says why).
 

@@ -194,10 +194,9 @@ and does not use the "승인 요청서가 아니라" opener (the style's authori
 `쓰지 않을 말` variant (the gate fails it outside the appendix). The first time a term appears, write
 its `처음 나올 때` form (`작업(Task)`, `FeedbackOps(VOC·작업 운영 도구)`), then the bare term. **Order of first use:** the
 hero thesis counts as the first occurrence, so a term the thesis uses carries its first-use form in the thesis; a term the
-thesis does not use gets the form at its first appearance in the numbered sections — a section title counts as an
-appearance, so a title that names a term before its lead has introduced it is out of order (put the form in the thesis, or
-word the title without the term). **Nav labels and the fixed document title** (the hero title and the nav brand) **are
-exempt**: they stay bare and neither count as a first use nor break the order. A concept the sheet does
+thesis does not use gets the form at its first appearance in the numbered sections. **Nav labels, the fixed document
+title** (the hero title and the nav brand) **and section titles are exempt**: they stay bare and neither count as a first
+use nor break the order — a section title may name the term its own lead defines right below it. A concept the sheet does
 not name gets no new name from you: use the plan's own wording or send the gap back to `/plan`.
 
 **Natural Korean.** Compose each sentence by the style's authoring-guide §3.2 checklist (no `·` noun piles, one em

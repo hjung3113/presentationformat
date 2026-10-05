@@ -175,9 +175,9 @@ sections (group into acts — the section count follows the content, §5), a dev
 - **Terms and first use.** A concept the plan's term sheet (`## T — 용어` in `facts.md`) names is written in one form
   only: its `처음 나올 때` form the first time the reader meets it, the bare term afterwards. **The hero thesis counts as
   the first occurrence** — a term the thesis uses carries its first-use form there; a term the thesis does not use gets
-  the form where it first appears in the numbered sections (a section title counts as an appearance). **Nav labels and
-  the fixed document title (the hero title and the nav brand) are exempt**: they stay bare, and neither count as a first
-  use nor break the order. The gate's `terms:first-use` warns (non-blocking) when a first-use form never appears or when
+  the form where it first appears in the numbered sections. **Nav labels, the fixed document title (the hero title and
+  the nav brand) and section titles are exempt**: they stay bare, and neither count as a first use nor break the order —
+  a section title may name the term its own lead defines right below it. The gate's `terms:first-use` warns (non-blocking) when a first-use form never appears or when
   the bare term appears before it; a banned variant (`terms-consistent`) is the hard check.
 - **What the gate reads in pasted figures** (`verify-doc`): `no-role-placeholders`, `palette` (with
   `--style`: every color literal must be in the style's `design.md` — no invented colors),

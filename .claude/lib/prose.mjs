@@ -163,8 +163,8 @@ export function missingFirstUse(blocks, terms) {
 // first, then the numbered sections; the `sref` appendix is a glossary, not a use, so its bare terms never count.
 //   · the hero thesis counts as the first occurrence: when the first-use form is in the hero, the hero's bare terms are
 //     excluded from the check (and everything after it is fine); when it is not, a bare term in the hero is out of order;
-//   · nav labels and the fixed document title (hero blocks tagged a / nav / h1) are exempt — they neither count as a first
-//     use nor as a bare use;
+//   · nav labels, the fixed document title (hero blocks tagged a / nav / h1) and section titles (h2) are exempt — they
+//     neither count as a first use nor as a bare use;
 //   · a longer term or first-use form that contains the bare term ("작업 요청" holds "작업") is masked, so it is not a bare use.
 // A term whose first-use form appears nowhere is left to missingFirstUse(); a term with no distinct first-use form is skipped.
 // → [{ term, first, id, ctx }] (the first out-of-order use of each term)
@@ -175,7 +175,8 @@ const MASK = '\u0002';
 
 export function firstUseOrder(blocks, terms) {
   const known = [...new Set(terms.flatMap(t => [t.term, t.first]).filter(Boolean))];
-  const reader = blocks.filter(b => !(b.id === 'hero' && NAV_OR_TITLE.has(b.tag)));
+  // Section titles (h2) are exempt too: a heading may name a term that its own lead defines right below it.
+  const reader = blocks.filter(b => !(b.id === 'hero' && NAV_OR_TITLE.has(b.tag)) && b.tag !== 'h2');
   const out = [];
   for (const t of terms) {
     if (!t.first || t.first.replace(/\s+/g, '') === t.term.replace(/\s+/g, '')) continue;
