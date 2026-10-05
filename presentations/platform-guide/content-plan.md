@@ -48,11 +48,11 @@ cover-tokens: 5종=화면 유형(Page Archetype) [F047] ; 8개=권한 키 [F166]
 - figure-data: stages: 선언[endpoints.ts defineEndpoint] → 조회[useMenuQuery, QueryView] → 포트[PlatformAdapter.menuQuery] → 서버[mock 어댑터(개발), 실어댑터 HTTP #154(계획), FastAPI #155(계획)] | arrow-labels: 권한·Context·한도 선언, endpoint·context·params, 선언 사본으로 10단계 판정
 - source-span: facts.md F089–F112
 
-## 6. 메뉴 하나 만들기 — 7단계를 다섯 묶음으로
+## 6. 메뉴 하나 만들기 — 7단계를 다섯 구간으로
 - intent: 사내 메뉴 개발 가이드 7단계를 순서대로 보여 주고, 생성기가 해 주는 것과 사람이 하는 것을 구분한다
 - shape: linear-steps
-- payload: 가이드 7단계: 1 시작 전 → 2 그룹·패키지 → 3 조회 선언 → 4 화면 → 5 서버 쪽 → 6 적합성 묶음 등록 → 7 검증 [F113]. 1 시작 전: 06 §5·§29를 읽고 화면 유형·공통 컴포넌트·연결할 메뉴를 먼저 적는다 [F114]. 2 그룹·패키지: 기존 그룹이면 manifest만 추가, 새 그룹이면 사람이 GroupId·GROUPS를 먼저 넣고 pnpm gen:menu — 생성기는 파일 11개 + 앱 배선 6줄을 만들고 --remove로 되돌린다(수정 안 한 경우만), 지금 7개 그룹은 모두 패키지가 있어 생성기는 새 그룹에만 쓴다 [F115][F123][F124][F127][F128]. 3 조회 선언: endpoints.ts [F116]. 4 화면: 페이지 작성 규칙 10개 [F117]. 5 서버 쪽: 개발 중에는 메뉴 src/mock/, 실서버에는 같은 엔드포인트 id로 FastAPI 핸들러 [F118]. 6 적합성 묶음: params 표본 등록 [F119]. 7 검증: pnpm lint && typecheck && test && build, 화면이 바뀌면 dev 도구의 역할·응답 시나리오로 확인 [F121][F243]. 하지 말 것은 별도 콜아웃으로(packages/* 수정, 포트 추가, 메뉴 간 import, URL 직접 조립, 화면의 권한 판단, wall-clock 시간대 변환) [F132]–[F137].
-- figure-data: steps: 1 준비(가이드 1–2단계: 화면 유형·연결 메뉴 정하기, manifest 추가 또는 gen:menu) → 2 조회 선언(3단계: endpoints.ts에 권한·Context·한도) → 3 화면(4단계: PlatformPage + useMenuQuery + QueryView) → 4 서버(5–6단계: mock 핸들러 → 같은 id의 FastAPI, 적합성 묶음 표본) → 5 검증(7단계: lint·typecheck·test·build, 응답 시나리오 확인) | callout WARN: 메뉴 작업 중 packages/* 수정·포트 추가·메뉴 간 import·URL 직접 조립·화면의 권한 판단·시간대 변환은 하지 않는다
+- payload: 가이드 7단계: 1 시작 전 → 2 그룹·패키지 → 3 조회 선언 → 4 화면 → 5 서버 쪽 → 6 적합성 검사 등록 → 7 검증 [F113]. 1 시작 전: 06 §5·§29를 읽고 화면 유형·공통 컴포넌트·연결할 메뉴를 먼저 적는다 [F114]. 2 그룹·패키지: 기존 그룹이면 manifest만 추가, 새 그룹이면 사람이 GroupId·GROUPS를 먼저 넣고 pnpm gen:menu — 생성기는 파일 11개 + 앱 배선 6줄을 만들고 --remove로 되돌린다(수정 안 한 경우만), 지금 7개 그룹은 모두 패키지가 있어 생성기는 새 그룹에만 쓴다 [F115][F123][F124][F127][F128]. 3 조회 선언: endpoints.ts [F116]. 4 화면: 페이지 작성 규칙 10개 [F117]. 5 서버 쪽: 개발 중에는 메뉴 src/mock/, 실서버에는 같은 엔드포인트 id로 FastAPI 핸들러 [F118]. 6 적합성 검사: params 표본 등록 [F119]. 7 검증: pnpm lint && typecheck && test && build, 화면이 바뀌면 dev 도구의 역할·응답 시나리오로 확인 [F121][F243]. 하지 말 것은 별도 콜아웃으로(packages/* 수정, 포트 추가, 메뉴 간 import, URL 직접 조립, 화면의 권한 판단, wall-clock 시간대 변환) [F132]–[F137].
+- figure-data: steps: 1 준비(가이드 1–2단계: 화면 유형·연결 메뉴 정하기, manifest 추가 또는 gen:menu) → 2 조회 선언(3단계: endpoints.ts에 권한·Context·한도) → 3 화면(4단계: PlatformPage + useMenuQuery + QueryView) → 4 서버(5–6단계: mock 핸들러 → 같은 id의 FastAPI, 적합성 검사 표본) → 5 검증(7단계: lint·typecheck·test·build, 응답 시나리오 확인) | callout WARN: 메뉴 작업 중 packages/* 수정·포트 추가·메뉴 간 import·URL 직접 조립·화면의 권한 판단·시간대 변환은 하지 않는다
 - source-span: facts.md F113–F143
 
 ## 7. 메뉴 사이 이동 — 문맥을 들고 가는 링크
