@@ -208,7 +208,7 @@ function galleryFile(styleId, templates, tokens, renderedById) {
   <div id="top" style="max-width:1100px; margin:0 auto; padding:56px 64px 8px;">
     <div style="font:700 13px/1 ${f.body}; letter-spacing:.08em; color:${c.accent}; margin-bottom:14px;">COMPONENT LIBRARY · ${styleId}</div>
     <h1 style="font:700 40px/1.25 ${f.display}; color:${c['ink-900']}; margin:0 0 14px;">컴포넌트 라이브러리</h1>
-    <p style="font:400 16px/1.85 ${f.body}; color:${c['body-lead']}; margin:0; max-width:760px;">도식은 내용의 모양(shape)으로 고른다. 각 항목의 HTML은 <span style="font:500 14px/1 ${f.mono}; color:${c.accent};">styles/${styleId}/components/&lt;id&gt;.html</span>에 있고, 붙여 넣은 뒤 모든 ⟦…⟧를 채운다. 선택 규칙은 core/components.md에 있다.</p>
+    <p style="font:400 16px/1.85 ${f.body}; color:${c['body-lead']}; margin:0; max-width:760px;">도식은 내용의 모양(shape)으로 고른다. 각 항목의 HTML은 <span style="font:500 14px/1 ${f.mono}; color:${c.accent};">styles/${styleId}/components/&lt;id&gt;.html</span>에 있고, 붙여 넣은 뒤 모든 &#x27E6;…&#x27E7; 자리를 채운다. 선택 규칙은 core/components.md에 있다.</p>
   </div>
   <div style="max-width:1100px; margin:24px auto 0; background:${c.white}; border-radius:${r.panel} ${r.panel} 0 0; padding:8px 64px 100px;">
 ${sections}

@@ -237,7 +237,7 @@ Mostly flat. The only shadows: the paper sheet (`0 -24px 60px rgba(16,24,40,.08)
 
 ## Shapes
 
-Radius is fixed by element type (a consistency fingerprint): small nodes/chips 8–10px, cards/containers 14–16px, big comparison panels 18px, pills 100px, the paper-sheet top corners 22px. Keep radius uniform within one diagram. Full radius scale: `design.md §3.1`.
+Radius is fixed by element type (a consistency fingerprint): nodes/chips 6px, figure panels and cards 8px, big comparison panels 12px, pills 100px, the paper-sheet top corners 12px. Keep radius uniform within one diagram. Full radius scale: `design.md §3.1`.
 
 ## Components
 
