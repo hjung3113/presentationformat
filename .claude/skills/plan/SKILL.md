@@ -32,13 +32,14 @@ Only once a real source is confirmed does the interview begin.
 This skill produces content, not layout. Never decide, discuss, or bake in:
 
 - which page type a section renders as (Cover, Background, Problems, Direction, etc.),
-- which diagram or figure device is used,
 - which color token or semantic state (current/target) a section gets,
-- any exact visual value.
+- any exact visual value or style.
 
-Those are `/build`'s job, derived later from the chosen style's specs. If the user asks about
-layout or look during the interview, note that it's decided at `/build` time and steer back to
-content.
+It **does** classify each section's content **shape** (`core/components.md` §1–§2) — e.g. "this is a
+lifecycle", "this is a role handoff". A shape is a fact about the content, not a visual choice, and
+it is the same in every style. `/build` turns the shape into a figure by a fixed lookup, so a correct
+shape here is what guarantees the document gets the right diagram. If the user asks about colors or
+look, note that it's decided at `/build` time and steer back to content.
 
 ## Flow — propose, then confirm (two gates)
 
@@ -82,6 +83,14 @@ order. If the user later asks for "more use cases", "decision-maker framing", "m
 similar expansion that would change this lens, stop and ask whether to reorganize the outline or
 only add examples inside the existing outline.
 
+### Step 2.6 — Pick the document recipe
+
+Match the request words to a recipe in `core/components.md` §5 and record it as the optional
+`doc-type` header: `explainer` (설계·구조·아키텍처·소개), `status-report` (보고·현황·주간·진행 상황),
+`proposal` (결정·승인·제안), `feature-guide` (사용법·화면·기능 소개), `analysis` (분석·회고·지표).
+The recipe gives a default section list *and* a default shape per section — use it as the TOC
+checklist in Step 3, dropping rows the source cannot support. If two recipes fit equally, ask once.
+
 ### Step 3 — Propose the TOC (Gate 1)
 
 Propose a full section sequence as noun-phrase titles only (no content yet) — a table of
@@ -109,12 +118,21 @@ Once the TOC is agreed, draft each section's plan entry. For every section, work
 from the source:
 
 - `intent` — one line: what this section is meant to convey.
+- `shape` — exactly one value from `core/components.md` §1, chosen with the §2 procedure (ask its
+  questions in order; first "yes" wins). Write the shape even when it is `none` or `peer-list`.
+  If the section honestly needs two shapes, it is two sections — split it in the TOC.
 - `payload` — the facts/information to place there, as structured notes, **not finished Korean
   prose**. Voice and register are decided at `/build` time (authoring-guide §3.1); this skill
   only carries content.
-- `figure-data` — if the section warrants a figure, the raw values behind it (bar values, a
-  gantt's when×how-much, a matrix's rows) so `/build` can pick a device without re-reading
-  source. Leave empty if the section has no figure.
+- `figure-data` — the raw values behind the figure, written in **the figure-data format of the
+  shape's component** (the last column of `core/components/README.md`), so `/build` can fill the
+  component's slots without re-reading source. Required for every shape whose component is a
+  figure, chart, or report block; write `none` for `none`/`peer-list`/`text-table`.
+  **Carry the connections, not just the boxes.** For flow and structure shapes the figure-data
+  must name every edge: transitions with their trigger (`대기 →(제출) 검토 중`), messages with
+  sender→receiver, handoffs with lane:step, layer links with how they connect, relations with
+  cardinality. A list of node names with no edges is underdetermined — ask (Step 5) instead of
+  guessing. This is the single biggest cause of "a pile of boxes instead of a diagram".
 - `source-span` — the exact citation in the source that covers this content (e.g. a file path
   plus line range).
 
@@ -147,6 +165,7 @@ determined in Steps 1–2:
 - `metrics-mode` — `present` / `partial` / `absent`, matching Step 2's detection.
 - `act-structure` — `flat` or `act-grouped`, matching the Step 3 count check.
 - `narrative-lens` — `architecture-first`, `use-case-first`, or `decision-first`, matching Step 2.5.
+- `doc-type` — optional; the recipe from Step 2.6.
 - `source-ref` — every source doc consumed, with a path and a hash or mtime, so `/build` can
   detect if the source has since changed (staleness guard) without re-reading it.
 
@@ -157,21 +176,27 @@ reaches the user (this is the same shape gate `/build` runs at ingest, run here 
 node .claude/lib/plan-schema.mjs <content-plan.md>
 ```
 
-Exit `0` = shaped correctly, go to Step 7. Exit `1` = the CLI lists the header keys or per-section
-fields still missing — fill them in and re-run before Gate 2. (Repo-relative path — run from the
+Exit `0` = shaped correctly (it also prints each section's shape — read it back as a list: a
+document whose shapes are mostly `none`/`peer-list` will render as walls of text and cards; recheck
+those sections with the §2 procedure), go to Step 7. Exit `1` = the CLI lists the header keys or
+per-section fields still missing, unknown shapes, or figure shapes without figure-data — fix them and
+re-run before Gate 2. (Repo-relative path — run from the
 repo root; if `node` cannot find `.claude/lib/`, this skill is running outside its repo.)
 
 ### Step 7 — Confirm before handoff (Gate 2)
 
-Present the completed `content-plan.md` — every section's `intent`, `payload`, and `figure-data`
-— to the user for review. This is **Gate 2**: do not consider the plan final, and do not point
+Present the completed `content-plan.md` — every section's `intent`, `shape`, `payload`, and
+`figure-data` — to the user for review. Show the shapes as a one-line-per-section list first, with
+the component each implies (e.g. `05 상태 규칙 — lifecycle → state-machine`), so the user can see
+which diagrams the document will carry before any HTML exists. This is **Gate 2**: do not consider the plan final, and do not point
 the user at `/build`, until the user has confirmed it. If they request changes, edit and
 re-present; `/build` should never have to guess at unconfirmed content.
 
 ## What this skill does not do
 
 - It does not write final Korean (or any language's) prose — `payload` is notes, not copy.
-- It does not choose a page type, diagram device, or color for any section.
+- It does not choose a page type, a color, or a style for any section. (It classifies the content
+  shape; the component follows from the shape by lookup, not by taste.)
 - It does not consult or reference a specific style's design docs — the plan is style-agnostic
   by construction, referencing style concepts (if at all) only by pointer, never by re-stating
   them.

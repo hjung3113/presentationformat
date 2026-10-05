@@ -13,8 +13,12 @@ The system is split on two axes so **multiple styles** can coexist:
   serving). **Contains no colors/HEX.**
 - **`styles/<style>/`** — one style's self-contained SSOT (tokens, components, geometry,
   density, voice, template, answer key).
+- **`core/components.md` + `core/components/`** — the style-agnostic **figure contract**: content
+  *shape* → component, and the component templates (role placeholders, no HEX). Each style gets the
+  same components with its own values, generated into `styles/<style>/components/`.
 
-Today there are two styles, `indigo-serif` (default) and `teal-sans` (internal-engineering docs).
+Today there are three styles: `indigo-serif` (default), `teal-sans` (internal-engineering docs), and
+`feedbackops-light` (the FeedbackOps product design language — Samsung blue on porcelain).
 A further style is added by **copying the folder**, never by forking `core/` — see
 `ADDING-A-STYLE.md`.
 
@@ -26,12 +30,17 @@ A further style is added by **copying the folder**, never by forking `core/` —
 | `ADDING-A-STYLE.md` | **Adding a style** — consolidated clone procedure + invariant gate (process doc; points at SSOT, owns no values) |
 | `core/runtime-spec.md` | `.dc.html` shell, `<helmet>`, `DCLogic` lifecycle, DOM contract, serving, the six **chrome-token** slots. Style-agnostic, **no HEX** |
 | `core/support.js` reference | The generated runtime; a byte-identical copy sits beside every `.dc.html` (see Requirements) |
+| `core/components.md` | **Figure contract** — shape vocabulary (Korean signal words), classification procedure, shape→component table, gate hard-fail pairs, paste/fill rules, document recipes. Style-agnostic, **no HEX** |
+| `core/components/*.html` | 29 component templates (grid-placed, `⟨role⟩` placeholders, `⟦slot⟧` markers, `HOW TO FILL` header); `README.md` = generated index incl. figure-data formats |
+| `styles/<style>/components/` · `components.gallery.dc.html` | **Generated** paste-ready components + rendered gallery for that style (`node .claude/lib/components.mjs build`). Never hand-edit |
+| `styles/feedbackops-light/` | Third style: FeedbackOps Pack 17 light tokens (Inter + Pretendard, `#1428A0`, flat, 6–8px radii) — same 8-file structure |
 | `styles/indigo-serif/design.md` | **All** HEX/px/radius tokens, components, diagram geometry, anti-patterns. This style's visual SSOT |
 | `styles/indigo-serif/design.tokens.md` | Machine-readable **mirror** of that `design.md` (derived, not source) |
-| `styles/indigo-serif/authoring-guide.md` | Voice, Korean register, skeleton, page types, situation→device, color intent→token map |
+| `styles/indigo-serif/authoring-guide.md` | Voice, Korean register, skeleton, page types, color intent→token map (situation→figure → `core/components.md`) |
 | `styles/indigo-serif/composition-guide.md` | Density budgets, in-section layout, focal hierarchy, whitespace/pacing |
 | `styles/indigo-serif/template.dc.html` | Runnable fill-in-the-blanks skeleton — start builds here (support.js sidecar next to it) |
 | `styles/indigo-serif/design-system.answerkey.dc.html` | Rendered answer key — live gallery; **wins** vs `design.md` on conflict |
+| `examples/feedbackops-light-brief/` | Worked example of the **full pipeline**: `content-plan.md` with shapes → `.dc.html` with nine pasted components → gate passing with `--plan`; desktop render |
 | `examples/feedbackops.dc.html` | Worked example (support.js sidecar in `examples/`) |
 | `examples/feedbackops-design-report/` | Second worked example + desktop/mobile renders |
 | `archive/parserimprove/` | **Archived.** Old design reference (semiconductor log-parser docs). Not part of this project — kept only for provenance |
@@ -68,12 +77,18 @@ carries no live TODOs.
 9. **Korean line breaking** — `word-break: keep-all` is global and mandatory.
 10. **support.js beside every `.dc.html`** — there is no build step; each `.dc.html` needs a
     byte-identical `support.js` copy in its own directory (runtime does `fetch('./…')`).
+11. **Figures are pasted, not drawn** — a section's diagram follows from its content shape
+    (`core/components.md`) and is pasted from the active style's `components/`, keeping its
+    `data-component` root and filling every `⟦…⟧`. Do not hand-assemble a diagram the library has, and
+    do not position nodes with pixel coordinates. A missing figure kind is added as a new
+    `core/components/<id>.html` template (roles only, zero HEX) + regenerate — never as a one-off.
 
 ## Building a document
 
 Read order for indigo-serif: `styles/indigo-serif/authoring-guide.md` →
 `styles/indigo-serif/composition-guide.md` → `styles/indigo-serif/design.md` →
-`core/runtime-spec.md`, then clone `styles/indigo-serif/template.dc.html`. Full quick-start in
+`core/components.md` → `core/runtime-spec.md`, then clone `styles/indigo-serif/template.dc.html` and
+paste figures from `styles/indigo-serif/components/`. Full quick-start in
 `README.md`.
 
 **Requirements to render:** serve over http(s) (not `file://`), keep a `support.js` copy beside
@@ -82,7 +97,11 @@ the `.dc.html`, allow outbound network (fonts + React UMD). Details in `core/run
 ## Working notes
 
 - When adding/changing a token: edit that style's `design.md` → update its `design.tokens.md`
-  mirror → verify against that style's answer key.
+  mirror → `node .claude/lib/components.mjs build` (regenerates that style's components + gallery) →
+  verify against that style's answer key and gallery.
+- When adding/changing a component: edit `core/components/<id>.html` (metadata header + roles only),
+  keep `core/components.md` §1 in sync (a test checks it), run `components.mjs build`, and look at
+  every style's gallery.
 - When extending structure (new runtime behavior, DOM contract): put it in `core/`, keep it
   style-agnostic (token names, no HEX, no style-folder paths) so every style inherits it.
 - `archive/parserimprove/` is frozen historical reference only — not authoritative, no live

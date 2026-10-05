@@ -312,6 +312,8 @@ Place every diagram inside a **figure panel** (under the explanatory text):
 `background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:22–24px;`
 Standalone comparison panels use `border:1px solid #DCE5F2; border-radius:16–12px; background:#FBFDFF; padding:24–30px;`
 
+> **Building a figure? Paste it, don't draw it.** Every figure shape in `../../core/components.md` has a paste-ready component in `components/` (generated from `../../core/components/` with this style's `design.tokens.md`; rendered in `components.gallery.dc.html`). The specs in this section are the visual reference those components implement — for *construction* (grid placement, lookup tables, slot markers) the component file wins; for *values* this file wins.
+
 ### 5.1 Universal node rules
 - **Node:** white bg + `1px solid #CBD6E6` + radius 6px + pad 11px 8px, centered, `600 12px #1D2939`; sub-line `400 10–11px #98A2B3`.
 - **Key node:** `background:#E7EFFC; border:1.5px solid #1428A0; color:#1428A0;`.

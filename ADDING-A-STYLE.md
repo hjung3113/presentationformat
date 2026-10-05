@@ -29,12 +29,13 @@ is style-scoped SSOT — none of it is shared.
 |------|---------|-------|
 | `style.md` | Every field: id, identity, fonts, accent, page bg, when-to-use | The manifest. Rewrite first — it forces the identity decisions the rest inherit. |
 | `design.md` | **All** HEX/px/radius tokens, components, diagram geometry, anti-patterns | **The** source of truth. All ~64 HEX values live here and only here. |
-| `design.tokens.md` | Re-mirror from the new `design.md` | Derived, not source. Regenerate after `design.md` is final — never hand-diverge it. |
+| `design.tokens.md` | Re-mirror from the new `design.md` | Derived, not source. Regenerate after `design.md` is final — never hand-diverge it. It is also the **component generator's input**: it must define every `colors` key the templates in `core/components/` name, the `rounded` keys, and a `fontStacks` block (`body`, `display`, `mono` — CSS stacks exactly as pasted inline). The generator stops and lists any missing key. |
 | `authoring-guide.md` | Voice, Korean register, page-type registry, situation→device, intent→token map | Kept whole (not split). |
 | `composition-guide.md` | Density budgets, in-section layout, focal hierarchy, pacing | |
 | `template.dc.html` | Paste the new style's values into the runnable skeleton | Clone target for every document in this style. |
 | `design-system.answerkey.dc.html` | Re-render as a live gallery of the new tokens/components/diagrams | **Wins vs `design.md`** on conflict. |
-| `support.js` | Keep byte-identical (copy, do not edit) | Sidecar for **both** `.dc.html` files in the folder — no build step, runtime does `fetch('./support.js')`. |
+| `support.js` | Keep byte-identical (copy, do not edit) | Sidecar for **every** `.dc.html` file in the folder — no build step, runtime does `fetch('./support.js')`. |
+| `components/` · `components.gallery.dc.html` | **Do not copy — generate.** Run `node .claude/lib/components.mjs build --style <new-id>` | Paste-ready figure components with the new style's values + their rendered gallery. Never hand-edit; a wrong look means a wrong token in `design.md`/`design.tokens.md`. |
 
 ---
 
@@ -52,6 +53,9 @@ is style-scoped SSOT — none of it is shared.
 4. **Re-mirror `design.tokens.md`** from the finished `design.md`.
 5. **Rewrite `authoring-guide.md` + `composition-guide.md`** — voice, register, density.
 6. **Paste values into `template.dc.html`**; keep the `support.js` sidecar beside it.
+6a. **Generate the component library** — `node .claude/lib/components.mjs build --style <new-id>`,
+   then open `components.gallery.dc.html` over http and check every component reads correctly in the
+   new palette (semantic colors in particular: target vs problem vs success must stay distinct).
 7. **Re-render `design-system.answerkey.dc.html`** — served over http, verify each token/component/diagram visually.
 8. **Register in `README.md`** — add a row to the style registry table (§"Style registry") and,
    if worth it, a two-most-opened-files pointer.
@@ -71,6 +75,7 @@ From `CLAUDE.md §"Core rules"`. A new style is not done until every line is tru
 6. **Inline styles only** — no CSS classes/shared stylesheet; values pasted inline. Only global CSS = what cannot be inlined (font loading, `word-break`, selection, scrollbar).
 7. **`word-break: keep-all` global** (mandatory for Korean line-breaking).
 8. **`support.js` beside every `.dc.html`** — byte-identical copy in the folder.
+9. **Components generated and current** — `node .claude/lib/components.mjs check` passes and the gallery was reviewed; the test suite (`node --test .claude/lib/test/*.test.mjs`) is green.
 
 ---
 
@@ -112,3 +117,32 @@ Cloning `teal-sans` showed **no clean seam**: the table-driven transform treats 
 the answer key as single units, and splitting either would have complicated the mapping without
 benefit. The large files are large by content volume, not by tangled responsibility. Do not split
 until a clone actually surfaces a clean boundary.
+
+---
+
+## After the third style (`feedbackops-light`, added) — decisions recorded
+
+The third style, **`feedbackops-light`**, mirrors the FeedbackOps product design language (Pack 17
+light: Inter + Pretendard, Samsung blue `#1428A0`, porcelain canvas, flat surfaces, 6–8px radii). It
+was cloned from `teal-sans` with the same table-driven technique: hue families mapped to FeedbackOps
+tokens, the **neutral ramp also remapped** this time (FeedbackOps' cool-gray `#101828 / #374151 /
+#667083 / #98A2B3` scale is part of its identity, unlike indigo→teal where the ramp was kept), fonts
+swapped, radii mapped inside `border-radius:` declarations, the gradient hero flattened to a solid
+fill (FeedbackOps forbids broad decorative gradients), and only identity prose hand-edited.
+
+### Skill-ification (`/add-style`) — re-reviewed at n=3, still **no**
+The component library removed the largest mechanical chunk a skill would have automated (every
+diagram is now generated from `core/components/`). What remains is the irreducibly human part —
+choosing the palette mapping and rewriting identity prose — plus a short hex-map script that is
+bespoke per style pair. A skill would wrap this doc and little else.
+
+### Doc-split (HANDOFF D2) — **the seam appeared and was taken**
+The clean boundary that earlier clones did not show turned out to be *diagram construction*: it now
+lives once in `core/components/` (style-agnostic templates) instead of being re-described in every
+style's `design.md §5`. `design.md` keeps the values and the visual reference; no further split of
+`design.md` or the answer key is planned.
+
+### Drift found while cloning
+`teal-sans`'s answer key had tightened card/panel radii (10/12/12px) while its `design.md` and
+`design.tokens.md` still listed 14/16/18px. Per answer-key-wins the docs were corrected. The component
+generator reads `design.tokens.md`, so this kind of mirror drift now shows up directly in the gallery.

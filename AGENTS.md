@@ -5,7 +5,10 @@ under `.claude/skills/`:
 
 - **`/plan`** — interviews you against your source docs and emits `content-plan.md`.
 - **`/build`** — renders a confirmed `content-plan.md` into a `.dc.html` document in a chosen
-  style (`indigo-serif` today) and runs a mechanical exit gate.
+  style (`indigo-serif`, `teal-sans`, or `feedbackops-light`) and runs a mechanical exit gate.
+
+Figure choice is shared by every style: `core/components.md` maps each section's content shape to a
+paste-ready component in `styles/<style>/components/`.
 
 **This file is non-normative.** The product spec of record is `CLAUDE.md` plus `core/` and
 `styles/<style>/`. This file restates none of it and defers to them; if anything here ever

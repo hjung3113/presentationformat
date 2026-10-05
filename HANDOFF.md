@@ -3,15 +3,16 @@
 > 이 레포(발표 시스템)의 인수인계 문서. 파서 프로젝트 세션의 옛 핸드오프는 이 프로젝트와 무관해
 > `archive/HANDOFF-parserimprove.md`로 이관됨. 이 문서는 **제품(발표 시스템 + 저작 하네스)** 상태만 다룬다.
 >
-> 최종 갱신: 2026-07-11 · **2번째 스타일 `teal-sans` 추가** + 하네스 위생 정리(plan-schema 배선). `ADDING-A-STYLE` 절차를 처음으로 태워 실증.
+> 최종 갱신: 2026-10-05 · **도식 계약(component contract) + 29종 그리드 컴포넌트 라이브러리 + 3번째 스타일 `feedbackops-light`**. 저추론 모델도 "내용의 모양 → 컴포넌트 붙여넣기"로 맞는 도식을 넣도록 지침·스킬·게이트를 재구성.
 
 ---
 
 ## 0. 한눈에
 
-- **무엇**: 어떤 문서든 같은 저자의 작품처럼 읽히는 재사용 스크롤형 HTML 발표 시스템. `core/`(스타일 불가지) + `styles/<style>/`(스타일별 SSOT)로 분리. **스타일 둘**: `indigo-serif`(기본) · `teal-sans`(내부 엔지니어링 문서).
+- **무엇**: 어떤 문서든 같은 저자의 작품처럼 읽히는 재사용 스크롤형 HTML 발표 시스템. `core/`(스타일 불가지) + `styles/<style>/`(스타일별 SSOT)로 분리. **스타일 셋**: `indigo-serif`(기본) · `teal-sans`(내부 엔지니어링 문서) · `feedbackops-light`(FeedbackOps 제품 디자인 언어).
+- **도식 계약**: `core/components.md`(내용 shape → 컴포넌트, 판정 절차, 문서 레시피) + `core/components/*.html`(29종 템플릿) → 스타일별 붙여넣기용 `styles/<style>/components/` 자동 생성.
 - **저작 하네스**: `.claude/`에 `/plan → /build` 2-스킬 파이프라인 + zero-dep Node 종료 게이트. 3개 에이전트 호스트(Claude Code · opencode · Codex)에서 host-neutral 동작.
-- **상태**: 제품·하네스 모두 **완성**. 하네스 테스트 **13/13**(plan-schema CLI 3건 추가). 3-호스트 install 검증 완료. 2번째 스타일로 클론 절차(`ADDING-A-STYLE`) 실증 완료.
+- **상태**: 하네스 테스트 **24/24**. 게이트가 `--plan`으로 섹션별 shape→컴포넌트 일치를 강제. 워크드 예시 `examples/feedbackops-light-brief/`가 전체 파이프라인을 통과(9개 섹션, 9종 도식).
 
 ---
 
@@ -19,15 +20,19 @@
 
 ```
 core/runtime-spec.md          스타일 불가지 (셸·DOM계약·서빙, HEX 0, 크롬 토큰만)
+core/components.md            도식 계약 — shape 어휘·판정 절차·shape→컴포넌트·게이트 규칙·문서 레시피 (HEX 0)
+core/components/*.html        29종 컴포넌트 템플릿 (⟨role⟩ 자리표시·⟦slot⟧·HOW TO FILL) + 생성 인덱스 README
 styles/indigo-serif/          기본 스타일 SSOT (serif+indigo)
   design.md(시각 SSOT) · design.tokens.md(미러) · authoring-guide.md
   composition-guide.md · style.md · template.dc.html · design-system.answerkey.dc.html
   support.js(사이드카)
 styles/teal-sans/             2번째 스타일 SSOT (IBM Plex 슈퍼패밀리 + teal accent + slate/red vs teal)
   ↳ 같은 8-파일 구조. indigo-serif 복제 → 결정론적 매핑 변환 + 프로세 편집으로 생성
-examples/                     워크드 예시 (feedbackops, feedbackops-design-report)
+styles/feedbackops-light/     3번째 스타일 SSOT (FeedbackOps Pack 17 light: Inter+Pretendard, #1428A0, 평면, 6–8px)
+styles/*/components/          (생성물) 붙여넣기용 컴포넌트 + README 인덱스, styles/*/components.gallery.dc.html
+examples/                     워크드 예시 (feedbackops-light-brief ← 새 파이프라인 기준, feedbackops, feedbackops-design-report)
 .claude/                      저작 하네스 (비규범 tooling)
-  skills/{plan,build}/SKILL.md · lib/{gate,plan-schema,verify-doc}.mjs + test/
+  skills/{plan,build}/SKILL.md · lib/{gate,plan-schema,verify-doc,components}.mjs + test/
   README.md(하네스 개요 + 3-호스트 install 증거)
 archive/                      동결 참고자료 (parserimprove — 제품 아님, provenance만)
 docs/superpowers/             spec + plan 문서
@@ -39,7 +44,33 @@ README.md · CLAUDE.md · AGENTS.md
 
 ---
 
-## 2. 이 세션 작업 (2026-07-11)
+## 2. 이 세션 작업 (2026-10-05) — 도식이 "안 쓰이는" 문제 해결
+
+### 진단 (왜 컴포넌트를 못 썼나)
+1. **조립 난이도** — 도식이 `design.md`의 산문 CSS 명세로만 존재. 시퀀스 다이어그램은 `position:absolute; top:76px; left:16%` 같은 픽셀 좌표를 직접 계산해야 해서 저추론 모델은 카드·표로 후퇴.
+2. **선택 표의 중복·장황** — 스타일마다 거의 같은 40행 situation→device 표. 의도(한국어 요청어)와 도식을 잇는 신호어가 없음.
+3. **plan의 figure-data에 구조가 없음** — 노드 이름만 있고 엣지(전이·호출·연결)가 없어 "화살표 없는 박스 더미"가 나옴(기존 예시의 시스템 지도가 그 사례).
+4. **게이트가 도식 유무를 안 봄** — 구조 검사만 해서, 흐름 섹션을 카드로 그려도 통과.
+
+### 해결
+- **`core/components.md`(도식 계약)** — 닫힌 shape 어휘 32종(각 shape의 한국어 신호어), 첫 "예"가 이기는 17단계 판정 절차, shape→컴포넌트 표, 게이트 hard-fail, 붙여넣기 규칙, 문서 레시피 5종(설계 설명서·상태 보고·의사결정 제안·기능 소개·분석). 상태 보고 레시피는 FeedbackOps `docs/reporting` 8섹션 순서를 따른다.
+- **`core/components/*.html` 29종** — 픽셀 계산 없는 그리드 배치. 가변 값은 `repeat(N,1fr)`, `grid-column:a / b`, 폭 %, 그리고 **한 개의 조회표**(걸치는 칸 S → `margin:0 X%`: 2→25%, 3→16.667%, 4→12.5%, 5→10%)뿐. 시퀀스(생명선=반복 배경, ALT 묶음), 스윔레인(엘보 연결선), 상태 머신(주 경로 + "그 밖의 전이" 목록으로 모든 전이를 노출), 액티비티(마름모·결말 그리드·되돌림 칩·포크/조인), 계층 맵, 데이터 흐름, 트리, ER 관계(카디널리티·선택 링크·금지 관계), 클래스, 허브, 유스케이스, 화면 맵(ListShell/PageShell/WorkbenchShell 프리셋), 금지 경로, 차트 4종, 상태 보드·타임라인·간트·리스크 매트릭스·결정 블록·결정 표·체크 매트릭스, 카드 그리드·콜아웃·표.
+- **생성기 `.claude/lib/components.mjs`** — 템플릿 × 스타일 토큰(`design.tokens.md`의 `colors`/`rounded`/신규 `fontStacks`) → 스타일별 붙여넣기 파일·인덱스·갤러리. `check` 모드 + 테스트로 드리프트 차단.
+- **새 스타일 `feedbackops-light`** — teal-sans 복제 + 매핑 변환(중립 램프까지 FeedbackOps 회색으로 교체, 그라디언트 히어로 → 단색, 반경 6–8px) + 정체성 산문 손편집. 답안지·템플릿·갤러리 렌더 검증.
+- **`/plan`** — 섹션마다 `shape` 필수(어휘 밖이면 실패), 컴포넌트별 figure-data 형식, "엣지를 적어라" 규칙, `doc-type` 레시피 선택.
+- **`/build`** — Step 4를 "shape → 표 조회 → 파일 붙여넣기 → ⟦⟧ 채우기"의 기계적 절차로 재작성. 게이트에 `--plan` 필수.
+- **게이트** — `slots-filled`, `known-components`, `plan-alignment`, `plan-shapes`(shape가 요구하는 컴포넌트 없으면 FAIL) + `figures:*` 경고(커버리지·다양성·빈 섹션).
+- **스타일 가이드** — 세 스타일의 §5.1 표를 계약 포인터 + 라이브러리 밖 장치 표(인용·구분자·도넛·히트맵 등)로 교체. composition-guide 프리플라이트를 shape/컴포넌트 열로 갱신.
+- **드리프트 수정** — teal-sans `design.md`/`design.tokens.md` 반경(14/16/18)이 답안지(10/12/12)와 달라 답안지 기준으로 정정.
+
+### 검증
+- 테스트 24/24 (`node --test .claude/lib/test/*.test.mjs`). `components.mjs check` 통과.
+- 세 스타일 갤러리·`feedbackops-light` 템플릿·답안지·워크드 예시를 Chromium으로 렌더해 육안 확인. 예시 게이트 PASS 10/10(`--plan` 포함), 9개 섹션 모두 shape에 맞는 컴포넌트.
+- 렌더 환경 메모: 이 컨테이너는 unpkg/jsdelivr가 막혀 있어 React UMD·Pretendard를 npm에서 받아 Playwright 라우팅으로 대체해 확인했다. 게이트의 시각 tier(`VISUAL:`)는 PATH에 chromium이 없고 CDN이 막혀 UNVERIFIED.
+
+---
+
+## 2-prev. 이전 세션 작업 (2026-07-11)
 
 ### 2A. 하네스 위생 정리 (A)
 - **문제**: `plan-schema.mjs`(validatePlan/parsePlan)가 `content-plan.template.md`와 필드 1:1 일치하는데도 **어느 SKILL.md에서도 호출 안 됨**(만들고 안 이은 orphan). build/SKILL.md의 `.claude/lib` 경로는 repo-relative라 Codex 전역 노출 시 깨질 수 있음.
@@ -106,9 +137,16 @@ README.md · CLAUDE.md · AGENTS.md
 - [ ] 토큰 CSS 변수화 + allowlist 린터 (인라인 토큰 드리프트 방지) — 필요 생길 때. **teal-sans 추가로 스타일이 둘 → 토큰 드리프트 감시 가치 소폭 상승**(여전히 트리거 대기).
 - [ ] `support.js`의 `cssToObj` data-URI 맹글링 수정 (SVG 엣지 예외 개방 선행조건) — 트리거 있을 때.
 
+### 도식 계약 (이번 세션 후속)
+- [ ] **저추론 모델 실측** — 작은 모델로 `/plan → /build`를 2–3회 돌려 `plan-shapes` 실패율·shape 오분류 패턴을 기록하고, `core/components.md` §1 신호어/§2 순서를 보정.
+- [ ] **figure-data → 컴포넌트 자동 채움(선택)** — 형식이 고정된 shape(gantt·timeline·status-board·kpi-row)부터 CLI로 슬롯을 채우는 도구를 검토. 지금은 수작업 붙여넣기.
+- [ ] `figures:*` 경고를 2–3개 승인 산출물로 보정한 뒤 일부를 hard fail로 승격 검토.
+- [ ] FeedbackOps 레포 `docs/reporting/report-template.html`(구 다크 토큰)을 이 시스템의 `feedbackops-light` + 상태 보고 레시피로 대체할지 FeedbackOps 쪽에서 결정 필요(이번 세션은 FeedbackOps 레포 무수정).
+
 ### 스타일 시스템
 - [x] ~~2번째 스타일 추가~~ — **완료: `teal-sans`**. 절차(`ADDING-A-STYLE.md`) 실증, 게이트 8/8.
-- [ ] **3번째 스타일 요청 시**: (a) `ADDING-A-STYLE`의 매핑테이블 변환 기법 재사용 (b) 이때 **`/add-style` 스킬화 재검토**(빈도가 정당화하면 그 기법이 스펙) (c) D2 문서분리 seam 재검토.
+- [x] ~~3번째 스타일~~ — **완료: `feedbackops-light`**. `/add-style` 스킬화는 n=3에서도 보류(결정 기록: `ADDING-A-STYLE.md`). D2 문서분리는 "도식 구성"이라는 seam이 나타나 `core/components/`로 분리.
+- [x] ~~3번째 스타일 요청 시 (a)(b)(c) 재검토~~ — 위 항목으로 처리 완료.
 - [ ] **teal-sans 실사용**: 아직 워크드 예시(`examples/`)가 indigo-serif뿐 → teal-sans로 실제 문서 하나 `/plan → /build` 해보면 voice/composition 가이드의 엔지니어링 레지스터가 실전 검증됨(현재는 스펙만 존재).
 
 ---

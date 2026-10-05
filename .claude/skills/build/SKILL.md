@@ -1,6 +1,6 @@
 ---
 name: build
-description: Render a confirmed content-plan.md into a verified scroll-style .dc.html document in a chosen style, then run the exit gate. Use after /plan has produced and the user has confirmed a content-plan.md, when the user is ready to actually produce the document. Takes a style id (only indigo-serif exists today) as an argument. A document that has not passed the gate is not considered built.
+description: Render a confirmed content-plan.md into a verified scroll-style .dc.html document in a chosen style, then run the exit gate. Use after /plan has produced and the user has confirmed a content-plan.md, when the user is ready to actually produce the document. Takes a style id (indigo-serif, teal-sans, or feedbackops-light) as an argument. A document that has not passed the gate is not considered built.
 ---
 
 # /build — render + verify
@@ -16,10 +16,12 @@ document that has not passed the gate is not "built," regardless of how the HTML
 ## Inputs
 
 - `content-plan.md` — the seam contract from `/plan`. Style-agnostic: header (`has-as-is`,
-  `metrics-mode`, `act-structure`, `narrative-lens`, `source-ref`) plus, per section, `title`,
-  `intent`, `payload` (structured notes, not prose), `figure-data`, `source-span`.
-- `--style <id>` — which style to render into. Only `indigo-serif` exists today; if asked for any
-  other id, say so and stop rather than guessing at a style that doesn't exist.
+  `metrics-mode`, `act-structure`, `narrative-lens`, optional `doc-type`, `source-ref`) plus, per
+  section, `title`, `intent`, `shape`, `payload` (structured notes, not prose), `figure-data`,
+  `source-span`.
+- `--style <id>` — which style to render into: a folder under `styles/` (today `indigo-serif`,
+  `teal-sans`, `feedbackops-light`; the registry is `README.md` §"Style registry"). If asked for an id
+  with no folder, say so and stop rather than guessing at a style that doesn't exist.
 
 ## Step 1 — Read the plan and the style's specs
 
@@ -32,16 +34,17 @@ node .claude/lib/plan-schema.mjs <content-plan.md>
 ```
 
 Exit `0` = the plan is shaped correctly; proceed. Exit `1` = the plan is malformed (the CLI prints
-each missing field) — do not build; send the user back to `/plan` to fix it, or fix the plan if
+each missing field, unknown shape, or figure shape without figure-data) — do not build; send the user back to `/plan` to fix it, or fix the plan if
 the fix is unambiguous. Exit `2` = usage/read error (wrong path). A plan that fails this check is
 not buildable, the same way a document that fails the exit gate (Step 8) is not built. (This
 `node .claude/lib/…` path is repo-relative — see the note at Step 8 if `node` cannot find it.)
 
-Read the full `content-plan.md`. Then read the chosen style's own specs, in this order:
-`authoring-guide.md` (voice, page-type registry §4, situation→device §5.1, color intent→token map
-§5.2), `composition-guide.md` (density budgets, in-section layout), `design.md` (exact HEX/px
-tokens, semantic color law §1.4). These three files are that style's complete self-contained SSOT
-— never reach into another style's folder, and never invent a value not in them.
+Read the full `content-plan.md`. Then read `core/components.md` (shape → component contract, paste
+rules) and the chosen style's own specs, in this order: `authoring-guide.md` (voice, page-type
+registry §4, color intent→token map §5.2), `composition-guide.md` (density budgets, in-section
+layout), `design.md` (exact HEX/px tokens, semantic color law §1.4), and `components/README.md` (the
+style's paste-ready component index). These are that style's complete self-contained SSOT — never
+reach into another style's folder, and never invent a value not in them.
 
 **The rendered `design-system.answerkey.dc.html` is the visual oracle for this style, not the
 prose in `design.md`.** Where the two disagree, the answer key wins (repo rule: answer-key-wins).
@@ -63,7 +66,21 @@ carries the shell + runtime contract; only its section content is a stub to be r
 
 ## Step 4 — Map each plan section into the style
 
-For each section in the plan, in order, derive its rendering purely from the style's own specs —
+**Figures are a lookup, not a design decision.** For each section, in order:
+
+1. Read its `shape`. (Older plan without shapes: classify it now with `core/components.md` §2 and
+   write the result into your build notes — never skip the step.)
+2. Look up the component for that shape in `core/components.md` §1.
+3. Open **`styles/<style>/components/<component>.html`**. Read its `HOW TO FILL` header.
+4. Paste the `<div data-component="…">` block under the section's lead paragraph and fill it from
+   the section's `figure-data`: replace every `⟦…⟧`, copy `▼ REPEAT` units to match the item count,
+   pick `VARIANT`s by meaning, delete unused `OPTIONAL` blocks, and set only the values the header
+   names (column count, `grid-column`, a percentage, or a margin from its lookup table).
+5. Never hand-draw a figure the library has, never use absolute pixel coordinates to place nodes,
+   and never change a pasted component's colors, radii, or fonts. If the content truly fits no
+   component, use the closest one and say so in your build notes.
+
+Then derive the rest of the section purely from the style's own specs —
 the plan never states these choices itself:
 
 - **`intent` → page type.** Match the section's stated intent to the style's page-type registry
@@ -71,22 +88,17 @@ the plan never states these choices itself:
   current state maps to a Background/Problems-shaped page; an intent describing a proposed model
   maps to a Direction/Approach-shaped page. Follow that page type's own density and structure
   rules (composition-guide) once chosen.
-- **`figure-data` → diagram device.** Use the style's situation→device table and reviewer-question
-  column to pick the concrete figure (before/after panel, flow, bar chart, gantt, matrix, UML
-  activity, swimlane, state machine, lane/surface map, etc.) that matches the shape of the data
-  the plan carried — not a device picked for visual variety. A section with no `figure-data` gets
-  no figure; don't invent one to fill space, and don't leave a diagrammable shape as bare prose
-  either. A branching workflow is not a process row; ownership is not equal cards; UI operation
-  needs a screen/surface/role map; decision asks need a visible decision block or open-question
-  table.
+- **`shape` → component** (above). The shape decides the figure; visual variety never does. A
+  section with shape `none` gets no figure; don't invent one to fill space, and don't leave a
+  figure shape as bare prose or cards either — the gate fails that (`plan-shapes`).
 - **State → semantic color.** Use the plan's `has-as-is` header and each section's content to
   decide which parts are current/old/problem state versus target/new/improved state, then apply
   the style's semantic color law accordingly. Never mix the two halves of that law inside one
   structural zone.
 
 Before writing HTML, create the composition-guide section preflight for every numbered section:
-`Section | Page type | Claim type | Primary device | Why not cards/table? | Expected count |
-Figure budget`. Treat the preflight hard-fail cases as build blockers even though the automated
+`Section | Page type | Shape | Component | Lead promises (count) | Figure budget`. The `Component`
+column is copied from the lookup, not chosen. Treat the preflight hard-fail cases as build blockers even though the automated
 visual tier only reports warnings for now. If the plan's `narrative-lens` is missing because it
 was produced by an older `/plan`, infer it from the confirmed TOC and keep the inference explicit
 in your build notes.
@@ -126,8 +138,10 @@ Run the gate against the freshly built document and sidecar, passing the style's
 the path to its canonical `support.js`:
 
 ```
-node .claude/lib/verify-doc.mjs <doc.dc.html> --accent <style-accent-hex> --canonical-support <path/to/canonical/support.js>
+node .claude/lib/verify-doc.mjs <doc.dc.html> --accent <style-accent-hex> --canonical-support <path/to/canonical/support.js> --plan <content-plan.md>
 ```
+
+Always pass `--plan`: it is what checks that every section carries the component its shape requires.
 
 **Repo-relative path — run from the repo root.** Both `node .claude/lib/…` invocations in this
 skill (this gate and the Step 1 plan check) resolve `.claude/lib/` relative to the current working
@@ -143,7 +157,10 @@ The gate runs two tiers:
 - A **mechanical hard gate** that always runs without a browser: accent color *present* somewhere
   in the document (a substring check, not a zone check), `word-break: keep-all` present,
   inline-styles-only, unique section ids with intact nav-link targets, `support.js` sidecar
-  byte-identical to the canonical file. This must pass — exit 0 — for the document to count as
+  byte-identical to the canonical file, no `⟦…⟧` slot left unfilled, every `data-component` a known
+  component, and — with `--plan` — the plan's sections align 1:1 with the document's `<section>`s and
+  each section contains the component its shape requires (`plan-shapes`). It also prints
+  non-blocking `figures:*` rows (coverage per section, low variety, bare sections) — read them. This must pass — exit 0 — for the document to count as
   built. **This gate does not verify semantic-color-split correctness** — it cannot tell whether
   slate/amber stayed in AS-IS/problem zones and indigo stayed in TO-BE/target zones per the color
   law. That correctness depends on following Step 4's state→color mapping and is checked, if at

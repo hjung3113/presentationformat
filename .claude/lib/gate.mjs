@@ -76,7 +76,7 @@ export function runGate(html, opts) {
     if (numbered.length >= 5 && distinct.size < 3)
       warnings.push({ name: 'figures:low-variety', detail: `${distinct.size} distinct figure component(s) across ${numbered.length} numbered sections — check core/components.md §2 for missed shapes` });
     if (numbered.length && bare.length > numbered.length / 3)
-      warnings.push({ name: 'figures:bare-sections', detail: `${bare.length}/${numbered.length} numbered sections have no figure: ${bare.join(',')}` });
+      warnings.push({ name: 'figures:bare-sections', detail: `${bare.length}/${numbered.length} numbered sections have no pasted figure component (hand-drawn figures without data-component are not counted): ${bare.join(',')}` });
     numbered.forEach((s, i) => {
       if (figs[i].length > 2) warnings.push({ name: 'figures:crowded-section', detail: `${s.id} has ${figs[i].length} figures (${figs[i].join(',')}) — one idea per figure, ≤2 per section` });
     });

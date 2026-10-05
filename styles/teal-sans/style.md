@@ -21,7 +21,8 @@
 - `composition-guide.md` — density budgets, layout, pacing.
 - `template.dc.html` — runnable skeleton with this style's pasted values.
 - `design-system.answerkey.dc.html` — rendered answer key (wins vs `design.md` on conflict).
-- `support.js` — byte-identical generated runtime sidecar for the two `.dc.html` files here.
+- `components/` + `components.gallery.dc.html` — **generated** paste-ready figure components (from `../../core/components/`) and their rendered gallery. Regenerate with `node .claude/lib/components.mjs build`; never hand-edit.
+- `support.js` — byte-identical generated runtime sidecar for the `.dc.html` files here.
 
 ## Chrome tokens consumed by `core/runtime-spec.md`
 The shared runtime names six slots; this style supplies them from `design.md`:

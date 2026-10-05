@@ -14,22 +14,36 @@ A two-step pipeline:
    and emits `content-plan.md`: a style-agnostic, data-carrying outline of what goes in each
    section. Refuses to run on a vague idea with no real source material.
 2. **`/build`** (`.claude/skills/build/SKILL.md`) — renders a confirmed `content-plan.md` into an
-   actual `.dc.html` document in a chosen style (only `indigo-serif` exists today), then runs the
-   exit gate. A document that hasn't passed the gate is not considered built.
+   actual `.dc.html` document in a chosen style (`indigo-serif`, `teal-sans`, `feedbackops-light`),
+   pasting each section's figure from the style's component library by shape, then runs the exit gate. A document that hasn't passed the gate is not considered built.
 
 The gate itself is zero-dependency Node under `.claude/lib/`:
 
 - `.claude/lib/gate.mjs` — structural checks (`word-break: keep-all` present, accent hex present,
   sidecar present, unique `id`s, nav-link targets resolve, inline-styles-only — no class-based
-  color rulesets).
-- `.claude/lib/verify-doc.mjs` — CLI entry that runs the gate against a `.dc.html`, checks the
+  color rulesets) plus the **figure checks**: no `⟦…⟧` slot left unfilled (`slots-filled`), every
+  `data-component` is a known component (`known-components`), and — given a plan — plan sections align
+  1:1 with `<section>`s (`plan-alignment`) and each carries the component its shape requires
+  (`plan-shapes`). Non-blocking `figures:*` rows report per-section coverage, low variety, and bare
+  sections.
+- `.claude/lib/verify-doc.mjs` — CLI entry that runs the gate against a `.dc.html`
+  (`--accent <hex> --canonical-support <support.js> [--plan <content-plan.md>]`), checks the
   `support.js` sidecar is byte-identical to the canonical copy, and reports a `VISUAL:` line
   (see below).
 - `.claude/lib/plan-schema.mjs` — schema/shape checks for `content-plan.md`. CLI entry
-  (`node .claude/lib/plan-schema.mjs <content-plan.md>`): exit `0` valid, `1` malformed (lists the
-  missing header keys / per-section fields), `2` usage or read error. `/plan` runs it to self-check
+  (`node .claude/lib/plan-schema.mjs <content-plan.md>`): exit `0` valid (prints each section's
+  shape), `1` malformed (lists missing header keys / per-section fields, shapes outside the
+  `core/components.md` vocabulary, and figure shapes without `figure-data`), `2` usage or read error. `/plan` runs it to self-check
   its emitted plan before Gate 2; `/build` runs it as a fail-fast at Step 1 ingest.
-- `.claude/lib/test/*.test.mjs` — the test suite for the above (`node --test .claude/lib/test/*.test.mjs`).
+- `.claude/lib/components.mjs` — the **component generator**. Reads `core/components/*.html`
+  (structure, role placeholders) and each style's `design.tokens.md` (`colors`, `rounded`,
+  `fontStacks`), and writes `styles/<style>/components/*.html` (paste-ready), their `README.md` index,
+  `styles/<style>/components.gallery.dc.html`, and `core/components/README.md`.
+  `build [--style <id>]` regenerates, `check` exits 1 if anything committed is stale, `list` / `shapes`
+  print the catalog. Outputs are committed so documents need no build step.
+- `.claude/lib/test/*.test.mjs` — the test suite for the above (`node --test .claude/lib/test/*.test.mjs`),
+  including: generated outputs up to date, every template renders in every style with no unresolved
+  token, `core/` carries zero HEX, and `core/components.md` §1 matches the templates' `@shape` metadata.
 
 ## Prerequisites
 
