@@ -76,7 +76,7 @@
     <section id="s1" data-screen-label="01 요약" style="padding:60px 0 56px;">
       <div style="font:700 13px/1 Inter,Pretendard,sans-serif; letter-spacing:.08em; color:#1428A0; margin-bottom:14px;">01 · 요약</div>
       <h2 style="font:600 28px/1.32 Inter,Pretendard,sans-serif; color:#101828; margin:0 0 12px; letter-spacing:-.01em;">요약 — 무엇을, 왜 지금, 무엇이 드는가</h2>
-      <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 28px; max-width:760px;">요청은 하나다 — 이미 만든 VOC·Task 도구(FeedbackOps)를 한 팀에서 써 보고 Jira 처리와 숫자로 비교해 확대 여부를 다시 올린다. 오늘은 <b style="color:#101828;">준비 2주</b>만 승인을 구하며, 시범 동안 <b style="color:#101828;">Jira 접수는 그대로</b>라서 기준에 못 미치면 그 팀이 사용을 멈추는 것으로 끝난다. 새 예산 요청은 없고, 드는 것은 사내 담당의 협조·시범 팀의 병행 운영·발표자 시간이라는 사람 시간이다. 지금인 이유는 두 시스템이 사내 연결 직전까지 왔으나 사내 회신과 보안 확인 없이는 다음 단계로 갈 수 없어 가짜(시험용) 데이터 위에 머물러 있기 때문이다.</p>
+      <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 28px; max-width:760px;">요청은 하나다 — 이미 만든 VOC·Task 도구(FeedbackOps)를 한 팀에서 써 보고 Jira 처리와 숫자로 비교해 그 팀 VOC 접수 일원화 여부를 다시 올린다. 오늘은 <b style="color:#101828;">준비 2주</b>만 승인을 구하며, 시범 동안 <b style="color:#101828;">Jira 접수는 그대로</b>라서 기준에 못 미치면 그 팀이 사용을 멈추는 것으로 끝난다. 새 예산 요청은 없고, 드는 것은 사내 담당의 협조·시범 팀의 병행 운영·발표자 시간이라는 사람 시간이다. 지금인 이유는 두 시스템이 사내 연결 직전까지 왔으나 사내 회신과 보안 확인 없이는 다음 단계로 갈 수 없어 가짜(시험용) 데이터 위에 머물러 있기 때문이다.</p>
 
       <div data-component="kpi-row" style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px;">
         <div style="background:#FFFFFF; border:1px solid #DCE5F2; border-radius:8px; padding:16px 18px;">
@@ -97,15 +97,15 @@
         <div style="background:#FCEDEE; border:1px solid #F3C7CB; border-radius:8px; padding:16px 18px;">
           <div style="font:500 12px/1.4 Inter,Pretendard,sans-serif; color:#475467;">사내 실서버 검증</div>
           <div style="display:flex; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 Inter,Pretendard,sans-serif; color:#B2202B;">0<span style="font:700 16px/1 Inter,Pretendard,sans-serif;">건</span></span></div>
-          <div style="font:400 11.5px/1.5 Inter,Pretendard,sans-serif; color:#8E5500; margin-top:8px;">시범의 첫 목표</div>
+          <div style="font:400 11.5px/1.5 Inter,Pretendard,sans-serif; color:#8E5500; margin-top:8px;">플랫폼 메뉴 기준 · 2주 점검에서 승인 시 연결</div>
         </div>
       </div>
 
-      <p style="font:400 12.5px/1.7 Inter,Pretendard,sans-serif; color:#667083; margin:16px 0 0; max-width:860px;"><b style="font-weight:600; color:#475467;">만든 방식</b> — 두 시스템은 발표자 1인이 AI 코딩 에이전트와 함께 만들었고(플랫폼은 저장소를 만든 날부터 <span style="font:500 .86em/1.4 'JetBrains Mono',monospace; color:#1D2939; background:#EDF3FB; border-radius:4px; padding:2px 6px; white-space:nowrap;">v0.2.0</span> 릴리스까지 18일), 그래서 검증을 자동 검사로 강제했다. 플랫폼 자동 검사는 54개이고 테스트 코드가 제품 코드보다 많다(플랫폼 1.07배·FeedbackOps 1.4배). 다만 FeedbackOps에는 테스트를 자동으로 돌리는 환경(CI)이 아직 없고, 남는 위험은 1인 의존이다.</p>
+      <p style="font:400 12.5px/1.7 Inter,Pretendard,sans-serif; color:#667083; margin:16px 0 0; max-width:860px;"><b style="font-weight:600; color:#475467;">만든 방식</b> — 두 시스템은 발표자 1인이 AI 코딩 에이전트와 함께 만들었고(플랫폼은 저장소를 만든 날부터 <span style="font:500 .86em/1.4 'JetBrains Mono',monospace; color:#1D2939; background:#EDF3FB; border-radius:4px; padding:2px 6px; white-space:nowrap;">v0.2.0</span> 릴리스까지 18일), 그래서 검증을 자동 검사로 강제했다. 플랫폼 계약 자동 검사는 54개이고 테스트 코드가 제품 코드보다 많다(플랫폼 1.07배·FeedbackOps 1.4배). 다만 FeedbackOps에는 테스트를 자동으로 돌리는 환경(CI)이 아직 없고, 남는 위험은 1인 의존이다.</p>
 
       <div style="margin-top:18px;">
         <div data-component="callout" style="display:flex; flex-direction:column; gap:10px;">
-          <div style="display:flex; gap:12px; align-items:baseline; background:#E7EFFC; border-left:3px solid #1428A0; border-radius:0 8px 8px 0; padding:13px 16px;"><span style="font:700 11px/1 Inter,Pretendard,sans-serif; letter-spacing:.04em; color:#1428A0; white-space:nowrap;">핵심</span><span style="font:400 13px/1.65 Inter,Pretendard,sans-serif; color:#374151;">이미 만든 VOC·Task 도구를 한 팀에서 시범한다 — 오늘은 준비 2주만, 예산 요청 없이 Jira는 그대로 두고, 2주 뒤 기준선 숫자로 운영을, 12주 뒤 확대 여부를 다시 올린다.</span></div>
+          <div style="display:flex; gap:12px; align-items:baseline; background:#E7EFFC; border-left:3px solid #1428A0; border-radius:0 8px 8px 0; padding:13px 16px;"><span style="font:700 11px/1 Inter,Pretendard,sans-serif; letter-spacing:.04em; color:#1428A0; white-space:nowrap;">핵심</span><span style="font:400 13px/1.65 Inter,Pretendard,sans-serif; color:#374151;">이미 만든 VOC·Task 도구를 한 팀에서 시범한다 — 오늘은 준비 2주만, 예산 요청 없이 Jira는 그대로 두고, 2주 뒤 기준선 숫자로 운영을, 12주 뒤 그 팀 VOC 접수 일원화 여부를 다시 올린다.</span></div>
         </div>
       </div>
     </section>
@@ -113,7 +113,7 @@
     <section id="s2" data-screen-label="02 문제" style="padding:56px 0; border-top:1px solid #E3EAF4;">
       <div style="font:700 13px/1 Inter,Pretendard,sans-serif; letter-spacing:.08em; color:#1428A0; margin-bottom:14px;">02 · 문제</div>
       <h2 style="font:600 28px/1.32 Inter,Pretendard,sans-serif; color:#101828; margin:0 0 12px; letter-spacing:-.01em;">지금의 문제 — VOC는 남지만 연결은 남지 않는다</h2>
-      <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 28px; max-width:760px;">Jira에 VOC는 남지만 어떤 VOC가 어떤 작업으로 이어졌고 문의자에게 알렸는지는 남지 않으며, VOC 사이의 후속 공유·여러 VOC를 묶어 작업으로 만들기·처리를 성과로 보이기도 어렵다(소유자 진술 — 준비 단계의 Jira 추출로 숫자 확인). 발표자는 원인이 담당자의 노력이 아니라 흩어진 도구에 있다고 보며, 목표는 하나의 기반 위에 업무 <b style="color:#101828;">6갈래</b>를 얹고 메뉴 사이를 잇는 것이다. Jira 전체를 대체하지 않고 VOC 흐름만 옮겨 시험한다.</p>
+      <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 28px; max-width:760px;">Jira에 VOC는 남지만 어떤 VOC가 어떤 작업으로 이어졌고 문의자에게 무엇을 알렸는지는 따라가기 어려우며, VOC 사이의 후속 공유·여러 VOC를 묶어 작업으로 만들기·처리를 성과로 보이기도 어렵다(소유자 진술 — 준비 단계의 Jira 추출로 숫자 확인). 발표자는 원인이 담당자의 노력이 아니라 흩어진 도구에 있다고 보며, 목표는 하나의 기반 위에 업무 <b style="color:#101828;">6갈래</b>를 얹고 메뉴 사이를 잇는 것이다. Jira 전체를 대체하지 않고 VOC 흐름만 옮겨 시험한다.</p>
 
       <div data-component="before-after" style="border:1px solid #DCE5F2; border-radius:12px; padding:28px; background:#FBFDFF;">
         <div style="display:grid; grid-template-columns:1fr 50px 1fr; align-items:stretch;">
@@ -232,7 +232,7 @@
     <section id="s4" data-screen-label="04 흐름" style="padding:56px 0; border-top:1px solid #E3EAF4;">
       <div style="font:700 13px/1 Inter,Pretendard,sans-serif; letter-spacing:.08em; color:#1428A0; margin-bottom:14px;">04 · 흐름</div>
       <h2 style="font:600 28px/1.32 Inter,Pretendard,sans-serif; color:#101828; margin:0 0 12px; letter-spacing:-.01em;">목표 흐름 — 문의자·담당·팀장이 각각 얻는 것</h2>
-      <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 28px; max-width:760px;">같은 VOC를 문의자·담당 개발자·팀장이 각자 필요한 모양으로 본다. 담당 개발자가 같은 문제의 VOC를 묶음으로 모아 작업 요청을 올리고 <b style="color:#101828;">팀장이 승인한 뒤에만</b> 작업이 되므로, '작업 관리가 없다'는 문제에 대한 직접적인 답이 된다. 처리·릴리스되면 공개 업데이트 검토 후보가 생기고, 담당자가 묶음 전체에 공개 업데이트를 한 번 보내면 문의자는 '내 VOC'에서 8단계 상태와 연결된 작업을 직접 본다.</p>
+      <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 28px; max-width:760px;">같은 VOC를 문의자·담당 개발자·팀장이 각자 필요한 모양으로 본다. 담당 개발자가 같은 문제의 VOC를 묶음으로 모아 작업 요청을 올리고 <b style="color:#101828;">검토 권한자(시범에서는 팀장)가 승인한 뒤에만</b> 작업이 되므로, '작업 관리가 없다'는 문제에 대한 직접적인 답이 된다. 처리·릴리스되면 공개 업데이트 검토 후보가 생기고, 담당자가 묶음 전체에 공개 업데이트를 한 번 보내면 문의자는 '내 VOC'에서 8단계 상태와 연결된 작업을 직접 본다.</p>
 
       <div data-component="swimlane" style="border:1px solid #DCE5F2; border-radius:8px; overflow:hidden; background:#FFFFFF;">
         <div style="display:grid; grid-template-columns:repeat(3,1fr); border-bottom:1px solid #DCE5F2;">
@@ -329,7 +329,7 @@
     <section id="s5" data-screen-label="05 기반" style="padding:56px 0; border-top:1px solid #E3EAF4;">
       <div style="font:700 13px/1 Inter,Pretendard,sans-serif; letter-spacing:.08em; color:#1428A0; margin-bottom:14px;">05 · 기반</div>
       <h2 style="font:600 28px/1.32 Inter,Pretendard,sans-serif; color:#101828; margin:0 0 12px; letter-spacing:-.01em;">하나의 기반 — 두 시스템의 관계와 왜 하나인가</h2>
-      <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 28px; max-width:760px;">두 시스템은 따로 만들었고, 합치는 것은 시범 효과를 본 뒤의 별도 결정이다. 그래도 하나의 기반이 필요한 이유는 메뉴마다 따로 만들면 로그인·권한·변경 감사·메뉴 활용률·표 내보내기·필터가 반복되기 때문이며, 실제로 견본 메뉴 <b style="color:#101828;">3곳</b>이 내보내기를 각자 만들다 한 곳은 엑셀에서 한글이 깨졌고 필터는 <b style="color:#101828;">5곳</b>이 각자 만들었다. 플랫폼은 이를 한 번만 만들며, 성공 기준은 새 메뉴를 얹을 때 플랫폼 코드를 고치지 않는 것이다.</p>
+      <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 28px; max-width:760px;">두 시스템은 따로 만들었고, 합치는 것은 시범 효과를 본 뒤의 별도 결정이다. 그래도 하나의 기반이 필요한 이유는 메뉴마다 따로 만들면 로그인·권한·변경 감사·메뉴 활용률·표 내보내기·필터가 반복되기 때문이며, 실제로 견본 메뉴 <b style="color:#101828;">3곳</b>이 내보내기를 각자 만들다 한 곳은 엑셀에서 한글이 깨질 수 있었고 필터는 <b style="color:#101828;">5곳</b>이 각자 만들었다. 플랫폼은 이를 한 번만 만들며, 성공 기준은 새 메뉴를 얹을 때 플랫폼 코드를 고치지 않는 것이다.</p>
 
       <div data-component="card-grid">
         <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px;">
@@ -339,11 +339,11 @@
         </div>
         <div style="border:1px solid #DCE5F2; border-radius:8px; padding:20px 22px; background:#FFFFFF;">
           <div style="display:flex; align-items:center; gap:10px; margin-bottom:9px;"><span style="font:700 12px/1 'JetBrains Mono',monospace; color:#1428A0; background:#E7EFFC; border-radius:4px; padding:6px 9px;">2</span><span style="font:600 15.5px/1.35 Inter,Pretendard,sans-serif; color:#101828;">시범</span></div>
-          <div style="font:400 14px/1.7 Inter,Pretendard,sans-serif; color:#475467;">이미 완성된 FeedbackOps로 VOC 효과부터 잰다. 합치는 비용을 쓰기 전에 효과를 먼저 확인하기 위해서다.</div>
+          <div style="font:400 14px/1.7 Inter,Pretendard,sans-serif; color:#475467;">기능이 구현된 FeedbackOps(개발 묶음 31/32)로 VOC 효과부터 잰다. 합치는 비용을 쓰기 전에 효과를 먼저 확인하기 위해서다.</div>
         </div>
         <div style="border:1px solid #DCE5F2; border-radius:8px; padding:20px 22px; background:#FFFFFF;">
           <div style="display:flex; align-items:center; gap:10px; margin-bottom:9px;"><span style="font:700 12px/1 'JetBrains Mono',monospace; color:#1428A0; background:#E7EFFC; border-radius:4px; padding:6px 9px;">3</span><span style="font:600 15.5px/1.35 Inter,Pretendard,sans-serif; color:#101828;">판정 뒤 <span style="font-weight:400; font-size:13px; color:#667083;">(별도 결정)</span></span></div>
-          <div style="font:400 14px/1.7 Inter,Pretendard,sans-serif; color:#475467;">FeedbackOps 화면을 플랫폼 메뉴로 옮겨 사용자는 한 곳에서 쓰고, 서버는 FeedbackOps 것을 그대로 쓴다. 플랫폼이 이미 FeedbackOps의 디자인·부품을 쓰고 있어 새로 만드는 일이 아니며, 거친 추정은 4~8주로 일정 승인이 아니다.</div>
+          <div style="font:400 14px/1.7 Inter,Pretendard,sans-serif; color:#475467;">FeedbackOps 화면을 플랫폼 메뉴로 옮겨 사용자는 한 곳에서 쓰고, 서버는 FeedbackOps 것을 그대로 쓴다. 플랫폼이 이미 FeedbackOps의 디자인·부품을 쓰고 있어 옮기는 비용이 크게 줄었지만, 거친 추정은 4~8주로 일정 승인이 아니다.</div>
         </div>
         </div>
       </div>
@@ -415,7 +415,7 @@
     <section id="s6" data-screen-label="06 시범" style="padding:56px 0; border-top:1px solid #E3EAF4;">
       <div style="font:700 13px/1 Inter,Pretendard,sans-serif; letter-spacing:.08em; color:#1428A0; margin-bottom:14px;">06 · 시범</div>
       <h2 style="font:600 28px/1.32 Inter,Pretendard,sans-serif; color:#101828; margin:0 0 12px; letter-spacing:-.01em;">단계별 시범 — 준비 2주, 운영 8주, 판정 2주</h2>
-      <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 28px; max-width:760px;">시범은 <b style="color:#101828;">1개 팀</b>(그 팀장의 사전 동의를 받는다)에서 세 단계로 하며, 각 단계 끝에서 다시 판단한다. <b style="color:#101828;">12주는 착수일부터 센다</b> — 사내 로그인 연결이 늦으면 착수일을 미룬다. 준비 2주에는 지난 6개월 Jira 기준선 추출, 보안 사전 확인, 시범 팀 동의, 사내 로그인·인프라 협조 요청, 병행 기간 접수 경로 확정(문의자 직접 등록인지, Jira 건을 옮기는지, 이중 입력이 생기는지)을 하고, 2주 점검에서 기준선 숫자와 함께 운영 8주 승인을 다시 올린다.</p>
+      <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 28px; max-width:760px;">시범은 <b style="color:#101828;">1개 팀</b>(그 팀장의 사전 동의를 받는다)에서 세 단계로 하며, 각 단계 끝에서 다시 판단한다. <b style="color:#101828;">준비 2주는 승인 즉시 시작하고</b>, 운영은 사내 로그인·서버·보안 회신이 모두 갖춰진 날 시작한다. 늦으면 운영 시작만 미룬다. 준비 2주에는 지난 6개월 Jira 기준선 추출, 보안 사전 확인, 시범 팀 동의, 사내 로그인·인프라 협조 요청, 병행 기간 접수 경로 확정(문의자 직접 등록인지, Jira 건을 옮기는지, 이중 입력이 생기는지)을 하고, 2주 점검에서 기준선 숫자와 함께 운영 8주 승인을 다시 올린다.</p>
 
       <div data-component="gantt" style="background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:22px 24px 18px;">
   <div style="display:grid; grid-template-columns:150px repeat(6,1fr); margin-bottom:4px;">
@@ -489,7 +489,7 @@
   <div style="display:grid; grid-template-columns:1.1fr 2fr 1.7fr .8fr; border-top:1px solid #E6EDF7;">
     <div style="font:600 13px/1.55 Inter,Pretendard,sans-serif; color:#1D2939; padding:12px 18px; background:#F7FAFE;">VOC→작업 연결률</div>
     <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">실행이 필요한 VOC 중 작업으로 이어진 비율</div>
-    <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">없음 (Jira에 연결 개념 없음)</div>
+    <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">없음 (지금은 VOC–작업 연결을 따로 관리하지 않음 — 소유자 진술)</div>
     <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">운영 점검</div>
   </div>
   <div style="display:grid; grid-template-columns:1.1fr 2fr 1.7fr .8fr; border-top:1px solid #E6EDF7;">
@@ -530,7 +530,7 @@
             <div style="border:1px solid #DCE5F2; border-radius:8px; padding:14px 16px;">
               <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;"><span style="font:700 11px/1 'JetBrains Mono',monospace; color:#475467; background:#EDF3FB; border-radius:4px; padding:4px 7px;">B</span><span style="font:600 14px/1.35 Inter,Pretendard,sans-serif; color:#101828;">보류</span></div>
               <div style="font:400 12.5px/1.65 Inter,Pretendard,sans-serif; color:#10734A;">+ 당장 추가 일 없음</div>
-              <div style="font:400 12.5px/1.65 Inter,Pretendard,sans-serif; color:#8E5500;">− VOC–작업–통지 연결이 계속 기록에 남지 않고, 만든 기반이 가짜 데이터에 머묾</div>
+              <div style="font:400 12.5px/1.65 Inter,Pretendard,sans-serif; color:#8E5500;">− VOC–작업–통지 연결을 계속 따라가기 어렵고, 만든 기반이 가짜 데이터에 머묾</div>
             </div>
           </div>
           <div style="margin-top:14px; background:#E7EFFC; border-left:3px solid #1428A0; border-radius:0 6px 6px 0; padding:11px 14px; font:400 13px/1.65 Inter,Pretendard,sans-serif; color:#374151;"><b style="color:#1428A0;">권고 —</b> A. 작은 단계라 되돌릴 것이 거의 없다.</div>
@@ -560,16 +560,16 @@
     <div style="font:600 13px/1.55 Inter,Pretendard,sans-serif; color:#1D2939; padding:12px 18px; background:#F7FAFE;"><b style="color:#1428A0;">D2</b> 사내 로그인(SSO)·인프라 담당에 협조 요청 발송 (팀장 명의)</div>
     <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">팀장</div>
     <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">이번 주 발송, 회신 요청 2주</div>
-    <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">안 하면: 회신·로그인 등록이 늦어지면 착수일을 미룬다 — 12주는 착수일부터 센다</div>
+    <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">안 하면: 회신·로그인 등록이 늦어지면 운영 시작을 미룬다 — 준비는 그대로 진행한다</div>
   </div>
   <div style="display:grid; grid-template-columns:1.7fr .8fr 1fr 1.7fr; border-top:1px solid #E6EDF7;">
     <div style="font:600 13px/1.55 Inter,Pretendard,sans-serif; color:#1D2939; padding:12px 18px; background:#F7FAFE;"><b style="color:#1428A0;">D3</b> 발표자 시간 배분</div>
     <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">팀장</div>
     <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">이번 회의</div>
-    <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">확보: 본업 대비 비율</div>
+    <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">확보: 본업 대비 비율 — 발표자가 제안 비율을 회의에 가져온다</div>
   </div>
   <div style="display:grid; grid-template-columns:1.7fr .8fr 1fr 1.7fr; border-top:1px solid #E6EDF7;">
-    <div style="font:600 13px/1.55 Inter,Pretendard,sans-serif; color:#1D2939; padding:12px 18px; background:#F7FAFE;"><b style="color:#1428A0;">D4</b> 보안 회신 확인 — 저장소 공개 범위·사내 저장소 이전·AI 코딩 도구 사용 규정</div>
+    <div style="font:600 13px/1.55 Inter,Pretendard,sans-serif; color:#1D2939; padding:12px 18px; background:#F7FAFE;"><b style="color:#1428A0;">D4</b> 보안 회신 확인 — 두 저장소는 지금 GitHub 공개 상태다. 공개 범위·사내 저장소 이전·AI 코딩 도구 사용 규정과 회신 전 비공개 전환 여부를 묻는다</div>
     <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">팀장 (발표자가 회의 전에 보안 담당에 사전 문의한다)</div>
     <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">2주 점검까지</div>
     <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">안 하면: 회신 없이는 운영을 시작하지 않는다</div>
@@ -590,7 +590,7 @@
   <div style="display:grid; grid-template-columns:1fr 2fr 1.3fr 1fr; border-top:1px solid #E6EDF7;">
     <div style="font:600 13px/1.55 Inter,Pretendard,sans-serif; color:#1D2939; padding:12px 18px; background:#F7FAFE;">1인 의존</div>
     <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">공동 담당 지정과 인수 리허설 — 사내 개발자가 메뉴 1개를 만들어 본다</div>
-    <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">2주 점검에서 지정할 백엔드 담당</div>
+    <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">팀장 (공동 담당 후보를 2주 점검에 제시)</div>
     <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">시범 기간</div>
   </div>
   <div style="display:grid; grid-template-columns:1fr 2fr 1.3fr 1fr; border-top:1px solid #E6EDF7;">
@@ -631,7 +631,7 @@
   <div style="display:grid; grid-template-columns:.9fr 2fr 1.7fr; border-top:1px solid #E6EDF7;">
     <div style="font:600 13px/1.55 Inter,Pretendard,sans-serif; color:#1D2939; padding:12px 18px; background:#F7FAFE;">31/32 · 0–12장</div>
     <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">FeedbackOps 개발 묶음 완료 · 사용자 매뉴얼</div>
-    <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">FeedbackOps 개발 계획(<span style="font:500 .86em/1.4 'JetBrains Mono',monospace; color:#1D2939; background:#EDF3FB; border-radius:4px; padding:2px 6px; white-space:nowrap;">08-mvp-slice-plan</span>) · 사용자 매뉴얼</div>
+    <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">FeedbackOps GitHub 마일스톤 · 개발 계획(<span style="font:500 .86em/1.4 'JetBrains Mono',monospace; color:#1D2939; background:#EDF3FB; border-radius:4px; padding:2px 6px; white-space:nowrap;">08-mvp-slice-plan</span>) · 사용자 매뉴얼</div>
   </div>
   <div style="display:grid; grid-template-columns:.9fr 2fr 1.7fr; border-top:1px solid #E6EDF7;">
     <div style="font:600 13px/1.55 Inter,Pretendard,sans-serif; color:#1D2939; padding:12px 18px; background:#F7FAFE;">54개 · 1.07배 · 1.4배</div>
