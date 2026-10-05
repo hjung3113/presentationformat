@@ -4,40 +4,57 @@
 @order 230
 @shape headline-metric
 @title 핵심 지표 타일 — 숫자와 증감
-@use 숫자 1–4개 자체가 메시지다. 기간 대비 증감, 목표 대비 현재, 보고서 첫 화면의 요약 지표.
+@use 숫자 1–4개 자체가 메시지다. 기간 대비 증감, 목표 대비 현재, 현재 방식이 치르는 비용·손실·수작업 시간, 보고서 첫 화면의 요약 지표.
 @avoid 항목이 5개 이상이거나 서로 비교가 핵심 → bar-chart/hbar-chart. 수치가 아직 없다 → 지표 대신 "O (추후 확정)" 자리표시.
 @limits 타일 2–4
-@data tiles: 라벨=값 단위 (증감 ▲/▼ 값, good|bad) · 부가설명
+@data tiles: 라벨=값 단위 (증감 ▲/▼ 값, good|bad|problem) · 부가설명 · (추정|소유자 진술)
 HOW TO FILL
-  1. 타일 수 K에 맞춰 grid-template-columns:repeat(K,1fr). 타일 하나 = ▼REPEAT 하나.
-  2. 증감 배지 색은 방향이 아니라 좋고 나쁨으로: 좋아짐=성공색 ▲/▼, 나빠짐=경고색 ▲/▼. 증감이 없으면 배지를 지운다.
-  3. 이 문서가 가장 강조하는 지표 하나만 강조 타일 변형으로.
-  4. 아직 측정 전이면 값 자리에 굵은 O 와 회색 "(추후 확정)"을 쓴다. 경고색을 쓰지 않는다.
+  1. 타일 수 K에 맞춰 grid-template-columns:repeat(K,1fr). 타일 하나 = ▼REPEAT 하나(구조를 바꾸지 않고 그대로 복사한다).
+  2. 타일 변형은 숫자의 의미로 고른다:
+       강조 타일(highlight)  목표·개선 숫자 전용. 문서가 가장 강조하는 개선 지표 하나만.
+                             현재의 문제·비용 숫자에는 절대 쓰지 않는다(강조색 = 목표/개선).
+       문제 타일(problem)    현재 방식의 비용·손실·수작업 시간·건수. 경고 색조 타일. 증감 배지는 없어도 된다.
+       기본 타일             중립 수치.
+  3. 증감 배지 색은 방향이 아니라 좋고 나쁨으로: 좋아짐=성공색 ▲/▼, 나빠짐=경고색 ▲/▼. 증감이 없으면 배지를 지운다.
+  4. 값이 추정이거나 소유자 진술이면 값 바로 뒤에 흐린 "(추정)" 또는 "(소유자 진술)" 접미 변형(estimate)을 쓴다. 측정·문서·코드로 확인한 값에는 붙이지 않는다.
+  5. 아직 측정 전이면 값 자리에 굵은 O 와 회색 "(추후 확정)"을 쓴다. 경고색을 쓰지 않는다.
 -->
 <div data-component="kpi-row" style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px;">
-  <!-- VARIANT highlight tile (the one metric the section argues) -->
+  <!-- VARIANT highlight tile (target / improvement ONLY — never a problem number) -->
   <div style="background:⟨accent-050⟩; border:1px solid ⟨accent-line2⟩; border-radius:⟨r:card-sm⟩; padding:16px 18px;">
-    <div style="font:500 12px/1.4 ⟨f:body⟩; color:⟨body⟩;">⟦후속 연결률⟧</div>
-    <div style="display:flex; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 ⟨f:display⟩; color:⟨accent⟩;">⟦74⟧<span style="font:700 16px/1 ⟨f:display⟩;">⟦%⟧</span></span><span style="font:700 11px/1 ⟨f:mono⟩; color:⟨ok⟩; background:⟨ok-bg⟩; border-radius:⟨r:pill-sm⟩; padding:4px 7px;">⟦▲ 12p⟧</span></div>
-    <div style="font:400 11.5px/1.5 ⟨f:body⟩; color:⟨muted-400⟩; margin-top:8px;">⟦전 분기 62%⟧</div>
+    <div style="font:500 12px/1.4 ⟨f:body⟩; color:⟨body⟩;">⟦지표 A⟧</div>
+    <div style="display:flex; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 ⟨f:display⟩; color:⟨accent⟩;">⟦00⟧<span style="font:700 16px/1 ⟨f:display⟩;">⟦단위⟧</span></span><span style="font:700 11px/1 ⟨f:mono⟩; color:⟨ok⟩; background:⟨ok-bg⟩; border-radius:⟨r:pill-sm⟩; padding:4px 7px;">⟦▲ 00⟧</span></div>
+    <div style="font:400 11.5px/1.5 ⟨f:body⟩; color:⟨muted-400⟩; margin-top:8px;">⟦비교 기준 한 줄⟧</div>
   </div>
   <!-- ▼ REPEAT per tile -->
   <div style="background:⟨white⟩; border:1px solid ⟨border⟩; border-radius:⟨r:card-sm⟩; padding:16px 18px;">
-    <div style="font:500 12px/1.4 ⟨f:body⟩; color:⟨body⟩;">⟦미처리 VOC⟧</div>
-    <div style="display:flex; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 ⟨f:display⟩; color:⟨ink-900⟩;">⟦47⟧<span style="font:700 16px/1 ⟨f:display⟩;">⟦건⟧</span></span><span style="font:700 11px/1 ⟨f:mono⟩; color:⟨ok⟩; background:⟨ok-bg⟩; border-radius:⟨r:pill-sm⟩; padding:4px 7px;">⟦▼ 9⟧</span></div>
-    <div style="font:400 11.5px/1.5 ⟨f:body⟩; color:⟨muted-400⟩; margin-top:8px;">⟦지난주 56건⟧</div>
+    <div style="font:500 12px/1.4 ⟨f:body⟩; color:⟨body⟩;">⟦지표 B⟧</div>
+    <div style="display:flex; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 ⟨f:display⟩; color:⟨ink-900⟩;">⟦00⟧<span style="font:700 16px/1 ⟨f:display⟩;">⟦단위⟧</span></span><span style="font:700 11px/1 ⟨f:mono⟩; color:⟨ok⟩; background:⟨ok-bg⟩; border-radius:⟨r:pill-sm⟩; padding:4px 7px;">⟦▼ 00⟧</span></div>
+    <div style="font:400 11.5px/1.5 ⟨f:body⟩; color:⟨muted-400⟩; margin-top:8px;">⟦비교 기준 한 줄⟧</div>
   </div>
   <!-- ▲ /REPEAT -->
-  <!-- VARIANT worsened (bad direction = warning colour) -->
+  <!-- VARIANT problem tile (cost of the status quo: loss, manual hours, incident count) -->
+  <div style="background:⟨warn-bg⟩; border:1px solid ⟨warn-line⟩; border-radius:⟨r:card-sm⟩; padding:16px 18px;">
+    <div style="font:500 12px/1.4 ⟨f:body⟩; color:⟨body⟩;">⟦지표 C (현재 비용)⟧</div>
+    <div style="display:flex; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 ⟨f:display⟩; color:⟨warn⟩;">⟦00⟧<span style="font:700 16px/1 ⟨f:display⟩;">⟦단위⟧</span></span></div>
+    <div style="font:400 11.5px/1.5 ⟨f:body⟩; color:⟨warn-2⟩; margin-top:8px;">⟦산출 근거 한 줄⟧</div>
+  </div>
+  <!-- VARIANT estimate suffix (estimate / owner statement): muted "(추정)" right after the value -->
   <div style="background:⟨white⟩; border:1px solid ⟨border⟩; border-radius:⟨r:card-sm⟩; padding:16px 18px;">
-    <div style="font:500 12px/1.4 ⟨f:body⟩; color:⟨body⟩;">⟦평균 첫 응답⟧</div>
-    <div style="display:flex; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 ⟨f:display⟩; color:⟨ink-900⟩;">⟦31⟧<span style="font:700 16px/1 ⟨f:display⟩;">⟦h⟧</span></span><span style="font:700 11px/1 ⟨f:mono⟩; color:⟨warn⟩; background:⟨warn-bg⟩; border-radius:⟨r:pill-sm⟩; padding:4px 7px;">⟦▲ 6h⟧</span></div>
-    <div style="font:400 11.5px/1.5 ⟨f:body⟩; color:⟨muted-400⟩; margin-top:8px;">⟦목표 24h⟧</div>
+    <div style="font:500 12px/1.4 ⟨f:body⟩; color:⟨body⟩;">⟦지표 D⟧</div>
+    <div style="display:flex; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 ⟨f:display⟩; color:⟨ink-900⟩;">⟦00⟧<span style="font:700 16px/1 ⟨f:display⟩;">⟦단위⟧</span></span><span style="font:500 12px/1 ⟨f:body⟩; color:⟨muted-400⟩;">⟦(추정)⟧</span></div>
+    <div style="font:400 11.5px/1.5 ⟨f:body⟩; color:⟨muted-400⟩; margin-top:8px;">⟦추정 근거 한 줄⟧</div>
+  </div>
+  <!-- VARIANT worsened (bad direction = warning colour on the delta badge only) -->
+  <div style="background:⟨white⟩; border:1px solid ⟨border⟩; border-radius:⟨r:card-sm⟩; padding:16px 18px;">
+    <div style="font:500 12px/1.4 ⟨f:body⟩; color:⟨body⟩;">⟦지표 E⟧</div>
+    <div style="display:flex; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 ⟨f:display⟩; color:⟨ink-900⟩;">⟦00⟧<span style="font:700 16px/1 ⟨f:display⟩;">⟦단위⟧</span></span><span style="font:700 11px/1 ⟨f:mono⟩; color:⟨warn⟩; background:⟨warn-bg⟩; border-radius:⟨r:pill-sm⟩; padding:4px 7px;">⟦▲ 00⟧</span></div>
+    <div style="font:400 11.5px/1.5 ⟨f:body⟩; color:⟨muted-400⟩; margin-top:8px;">⟦목표 한 줄⟧</div>
   </div>
   <!-- VARIANT not yet measured -->
   <div style="background:⟨white⟩; border:1px solid ⟨border⟩; border-radius:⟨r:card-sm⟩; padding:16px 18px;">
-    <div style="font:500 12px/1.4 ⟨f:body⟩; color:⟨body⟩;">⟦결과 설문 응답률⟧</div>
-    <div style="display:flex; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 ⟨f:display⟩; color:⟨ink-900⟩;">O<span style="font:700 16px/1 ⟨f:display⟩;">%</span></span></div>
+    <div style="font:500 12px/1.4 ⟨f:body⟩; color:⟨body⟩;">⟦지표 F⟧</div>
+    <div style="display:flex; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 ⟨f:display⟩; color:⟨ink-900⟩;">O<span style="font:700 16px/1 ⟨f:display⟩;">⟦단위⟧</span></span></div>
     <div style="font:400 11.5px/1.5 ⟨f:body⟩; color:⟨muted-400⟩; margin-top:8px;">⟦(추후 확정)⟧</div>
   </div>
 </div>

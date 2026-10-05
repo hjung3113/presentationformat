@@ -9,7 +9,7 @@
 @use 화면이 어떤 영역으로 나뉘고, 사용자가 어느 영역에서 무엇을 하는지가 주장이다. UI 원칙, 화면 구성, 역할별 작업 위치, 목록+상세 구조.
 @avoid 화면을 오가는 순서 → process-row/swimlane. 기능 목록만 → card-grid. 실제 스크린샷이 있으면 이미지 + 번호 범례(같은 범례 형식)를 쓴다.
 @limits 영역 3–6, 번호 마커 3–6
-@data layout: list-detail | page | workbench | regions: ①영역명: 하는 일, ②…
+@data layout: list-detail|page|workbench | regions: ①영역명: 하는 일, ②영역명: 하는 일 …
 HOW TO FILL
   1. 레이아웃 프리셋을 고른다 (와이어프레임 상자의 grid-template-columns):
        목록+상세(list-detail)  44px 150px 1fr 200px   → 레일 · 사이드바 · 목록 · 상세 패널 (기본)
@@ -68,20 +68,20 @@ HOW TO FILL
       <!-- ▼ REPEAT per marker -->
       <div style="display:grid; grid-template-columns:22px 1fr; gap:10px; align-items:start;">
         <span style="width:20px; height:20px; border-radius:50%; background:#0F766E; color:#FFFFFF; font:700 10.5px/20px 'IBM Plex Mono',monospace; text-align:center;">1</span>
-        <div><div style="font:600 13px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦상단 바⟧</div><div style="font:400 12px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">⟦Managed System 범위 선택, 새 VOC⟧</div></div>
+        <div><div style="font:600 13px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦영역 1 이름⟧</div><div style="font:400 12px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">⟦하는 일 한 줄⟧</div></div>
       </div>
       <!-- ▲ /REPEAT -->
       <div style="display:grid; grid-template-columns:22px 1fr; gap:10px; align-items:start;">
         <span style="width:20px; height:20px; border-radius:50%; background:#0F766E; color:#FFFFFF; font:700 10.5px/20px 'IBM Plex Mono',monospace; text-align:center;">2</span>
-        <div><div style="font:600 13px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦시스템 사이드바⟧</div><div style="font:400 12px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">⟦보기·큐 전환⟧</div></div>
+        <div><div style="font:600 13px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦영역 2 이름⟧</div><div style="font:400 12px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">⟦하는 일 한 줄⟧</div></div>
       </div>
       <div style="display:grid; grid-template-columns:22px 1fr; gap:10px; align-items:start;">
         <span style="width:20px; height:20px; border-radius:50%; background:#0F766E; color:#FFFFFF; font:700 10.5px/20px 'IBM Plex Mono',monospace; text-align:center;">3</span>
-        <div><div style="font:600 13px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦목록⟧</div><div style="font:400 12px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">⟦조밀한 행으로 우선순위 스캔⟧</div></div>
+        <div><div style="font:600 13px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦영역 3 이름⟧</div><div style="font:400 12px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">⟦하는 일 한 줄⟧</div></div>
       </div>
       <div style="display:grid; grid-template-columns:22px 1fr; gap:10px; align-items:start;">
         <span style="width:20px; height:20px; border-radius:50%; background:#0F766E; color:#FFFFFF; font:700 10.5px/20px 'IBM Plex Mono',monospace; text-align:center;">4</span>
-        <div><div style="font:600 13px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦상세 패널⟧</div><div style="font:400 12px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">⟦판단하고 주 행동 실행⟧</div></div>
+        <div><div style="font:600 13px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦영역 4 이름⟧</div><div style="font:400 12px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">⟦하는 일 한 줄⟧</div></div>
       </div>
     </div>
   </div>

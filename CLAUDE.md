@@ -30,7 +30,7 @@ A further style is added by **copying the folder**, never by forking `core/` —
 | `ADDING-A-STYLE.md` | **Adding a style** — consolidated clone procedure + invariant gate (process doc; points at SSOT, owns no values) |
 | `core/runtime-spec.md` | `.dc.html` shell, `<helmet>`, `DCLogic` lifecycle, DOM contract, serving, the six **chrome-token** slots. Style-agnostic, **no HEX** |
 | `core/support.js` reference | The generated runtime; a byte-identical copy sits beside every `.dc.html` (see Requirements) |
-| `core/components.md` | **Figure contract** — shape vocabulary (Korean signal words), classification procedure, shape→component table, gate hard-fail pairs, paste/fill rules, document recipes. Style-agnostic, **no HEX** |
+| `core/components.md` | **Figure contract** — shape vocabulary (Korean signal words), classification procedure, shape→component table, gate hard-fail pairs, paste/fill rules, document recipes (explainer · status-report · proposal · feature-guide · analysis · pitch). Style-agnostic, **no HEX** |
 | `core/components/*.html` | 29 component templates (grid-placed, `⟨role⟩` placeholders, `⟦slot⟧` markers, `HOW TO FILL` header); `README.md` = generated index incl. figure-data formats |
 | `styles/<style>/components/` · `components.gallery.dc.html` | **Generated** paste-ready components + rendered gallery for that style (`node .claude/lib/components.mjs build`). Never hand-edit |
 | `styles/feedbackops-light/` | Third style: FeedbackOps Pack 17 light tokens (Inter + Pretendard, `#1428A0`, flat, 6–8px radii) — same 8-file structure |
@@ -71,7 +71,8 @@ carries no live TODOs.
    style may define its own, but one document must not mix.
 7. **Inline styles only** — no CSS classes, no shared stylesheet. Paste token values directly.
    Only global CSS allowed = what cannot be inlined (font loading, `word-break`, selection,
-   scrollbar).
+   scrollbar) plus one `@media print` block that uses attribute/element selectors only
+   (`core/runtime-spec.md §5`).
 8. **Doc ownership is strict** — each spec doc owns its layer and excludes others (see the table
    in `README.md §"What each doc owns"`). Put a change in the owning doc; don't duplicate values.
 9. **Korean line breaking** — `word-break: keep-all` is global and mandatory.

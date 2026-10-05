@@ -6,7 +6,7 @@
 @order 350
 @shape rule-table
 @title 결정 표 — 조건 조합 → 결과
-@use 몇 가지 조건의 조합에 따라 결과가 정해지는 규칙이 주장이다. 큐 포함 규칙, 분류 정책, 공개 여부, 자동화 여부. 조건들이 서로 독립적이고 행끼리 비교된다.
+@use 몇 가지 조건의 조합에 따라 결과가 정해지는 규칙이 주장이다. 목록 포함 규칙, 분류 정책, 공개 여부, 자동화 여부. 조건들이 서로 독립적이고 행끼리 비교된다.
 @avoid 판단이 순서대로 이어진다 → activity. 대상×기능의 허용 여부 → matrix.
 @limits 조건 열 2–4, 규칙 행 3–7
 @data conditions: 조건1, 조건2, 조건3 | rules: 예/아니오/— … → 결과(positive|neutral|negative)
@@ -18,9 +18,9 @@ HOW TO FILL
 -->
 <div data-component="decision-table" style="border:1px solid #E7E9F3; border-radius:12px; overflow:hidden; background:#FFFFFF;">
   <div style="display:grid; grid-template-columns:repeat(3,1fr) 1.3fr; background:#15172B;">
-    <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#FFFFFF; padding:12px 16px;"><span style="font:700 9.5px/1 'JetBrains Mono',monospace; color:#B6BBCB; display:block; margin-bottom:4px;">IF</span>⟦정책상 후속 기대⟧</div>
-    <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#FFFFFF; padding:12px 16px;"><span style="font:700 9.5px/1 'JetBrains Mono',monospace; color:#B6BBCB; display:block; margin-bottom:4px;">IF</span>⟦후속 링크 있음⟧</div>
-    <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#FFFFFF; padding:12px 16px;"><span style="font:700 9.5px/1 'JetBrains Mono',monospace; color:#B6BBCB; display:block; margin-bottom:4px;">IF</span>⟦열람 권한 있음⟧</div>
+    <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#FFFFFF; padding:12px 16px;"><span style="font:700 9.5px/1 'JetBrains Mono',monospace; color:#B6BBCB; display:block; margin-bottom:4px;">IF</span>⟦조건 1⟧</div>
+    <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#FFFFFF; padding:12px 16px;"><span style="font:700 9.5px/1 'JetBrains Mono',monospace; color:#B6BBCB; display:block; margin-bottom:4px;">IF</span>⟦조건 2⟧</div>
+    <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#FFFFFF; padding:12px 16px;"><span style="font:700 9.5px/1 'JetBrains Mono',monospace; color:#B6BBCB; display:block; margin-bottom:4px;">IF</span>⟦조건 3⟧</div>
     <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#FFFFFF; padding:12px 16px; border-left:1px solid #3A4255;"><span style="font:700 9.5px/1 'JetBrains Mono',monospace; color:#B6BBCB; display:block; margin-bottom:4px;">THEN</span>⟦결과⟧</div>
   </div>
   <!-- ▼ REPEAT per rule -->
@@ -28,26 +28,26 @@ HOW TO FILL
     <div style="padding:11px 16px; font:600 12.5px/1.3 Pretendard,sans-serif; color:#1E2233;">⟦예⟧</div>
     <div style="padding:11px 16px; font:400 12.5px/1.3 Pretendard,sans-serif; color:#8A91A6;">⟦아니오⟧</div>
     <div style="padding:11px 16px; font:600 12.5px/1.3 Pretendard,sans-serif; color:#1E2233;">⟦예⟧</div>
-    <div style="padding:9px 16px; border-left:1px solid #EDEEF4; background:#F8F9FD;"><span style="font:600 11.5px/1 Pretendard,sans-serif; color:#4338CA; background:#EEF0FF; border:1px solid #C9CEF4; border-radius:5px; padding:5px 9px;">⟦Recovery 큐에 노출⟧</span></div>
+    <div style="padding:9px 16px; border-left:1px solid #EDEEF4; background:#F8F9FD;"><span style="font:600 11.5px/1 Pretendard,sans-serif; color:#4338CA; background:#EEF0FF; border:1px solid #C9CEF4; border-radius:5px; padding:5px 9px;">⟦결과 A⟧</span></div>
   </div>
   <!-- ▲ /REPEAT -->
   <div style="display:grid; grid-template-columns:repeat(3,1fr) 1.3fr; border-top:1px solid #EDEEF4; align-items:center;">
     <div style="padding:11px 16px; font:600 12.5px/1.3 Pretendard,sans-serif; color:#1E2233;">⟦예⟧</div>
     <div style="padding:11px 16px; font:600 12.5px/1.3 Pretendard,sans-serif; color:#1E2233;">⟦예⟧</div>
     <div style="padding:11px 16px; font:400 12.5px/1.3 Pretendard,sans-serif; color:#9AA0B2;">⟦—⟧</div>
-    <div style="padding:9px 16px; border-left:1px solid #EDEEF4; background:#F8F9FD;"><span style="font:600 11.5px/1 Pretendard,sans-serif; color:#8A91A6; background:#F6F7FB; border:1px solid #DDE1EA; border-radius:5px; padding:5px 9px;">⟦이력만 기록⟧</span></div>
+    <div style="padding:9px 16px; border-left:1px solid #EDEEF4; background:#F8F9FD;"><span style="font:600 11.5px/1 Pretendard,sans-serif; color:#8A91A6; background:#F6F7FB; border:1px solid #DDE1EA; border-radius:5px; padding:5px 9px;">⟦결과 B⟧</span></div>
   </div>
   <div style="display:grid; grid-template-columns:repeat(3,1fr) 1.3fr; border-top:1px solid #EDEEF4; align-items:center;">
     <div style="padding:11px 16px; font:400 12.5px/1.3 Pretendard,sans-serif; color:#8A91A6;">⟦아니오⟧</div>
     <div style="padding:11px 16px; font:400 12.5px/1.3 Pretendard,sans-serif; color:#9AA0B2;">⟦—⟧</div>
     <div style="padding:11px 16px; font:400 12.5px/1.3 Pretendard,sans-serif; color:#9AA0B2;">⟦—⟧</div>
-    <div style="padding:9px 16px; border-left:1px solid #EDEEF4; background:#F8F9FD;"><span style="font:600 11.5px/1 Pretendard,sans-serif; color:#8A91A6; background:#F6F7FB; border:1px solid #DDE1EA; border-radius:5px; padding:5px 9px;">⟦큐 제외⟧</span></div>
+    <div style="padding:9px 16px; border-left:1px solid #EDEEF4; background:#F8F9FD;"><span style="font:600 11.5px/1 Pretendard,sans-serif; color:#8A91A6; background:#F6F7FB; border:1px solid #DDE1EA; border-radius:5px; padding:5px 9px;">⟦결과 C⟧</span></div>
   </div>
   <!-- VARIANT negative result -->
   <div style="display:grid; grid-template-columns:repeat(3,1fr) 1.3fr; border-top:1px solid #EDEEF4; align-items:center;">
     <div style="padding:11px 16px; font:600 12.5px/1.3 Pretendard,sans-serif; color:#1E2233;">⟦예⟧</div>
     <div style="padding:11px 16px; font:400 12.5px/1.3 Pretendard,sans-serif; color:#8A91A6;">⟦아니오⟧</div>
     <div style="padding:11px 16px; font:400 12.5px/1.3 Pretendard,sans-serif; color:#8A91A6;">⟦아니오⟧</div>
-    <div style="padding:9px 16px; border-left:1px solid #EDEEF4; background:#F8F9FD;"><span style="font:600 11.5px/1 Pretendard,sans-serif; color:#B4543F; background:#FBF1EE; border:1px solid #F0D7CF; border-radius:5px; padding:5px 9px;">⟦요약만 표시⟧</span></div>
+    <div style="padding:9px 16px; border-left:1px solid #EDEEF4; background:#F8F9FD;"><span style="font:600 11.5px/1 Pretendard,sans-serif; color:#B4543F; background:#FBF1EE; border:1px solid #F0D7CF; border-radius:5px; padding:5px 9px;">⟦결과 D⟧</span></div>
   </div>
 </div>

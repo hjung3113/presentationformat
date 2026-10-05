@@ -1,19 +1,33 @@
 ---
-has-as-is: <true | false — is there a current/old state to contrast? see spec §5 header keys; drives whether the dormant slate+amber half of the palette is used at /build time>
-metrics-mode: <present | absent | partial — are there measurable numbers? see spec §5 header keys; drives whether /build creates a standalone Data/Metrics section, cf. authoring-guide §4.6 (Method/Validation's no-metrics guidance — no dedicated Data/Metrics page type exists)>
-act-structure: <flat | act-grouped — flat for ~6-9 sections; act-grouped with dividers once section count exceeds ~9, cf. authoring-guide §2>
+doc-type: <explainer | status-report | proposal | feature-guide | analysis | pitch — the recipe in core/components.md §5 that seeded the TOC>
+audience: <executive | user | developer — one plan per audience, all written from the same facts.md>
+reader-action: <one line — what the reader decides or does after reading this document>
+has-as-is: <true | false — is there a current/old state to contrast? drives whether /build uses the style's AS-IS (current/problem) half of its semantic color law>
+metrics-mode: <present | absent | partial — are there measurable numbers? absent or partial means no standalone Data/Metrics section, see the style's authoring-guide §4.6>
+act-structure: <flat | act-grouped — flat for ~6-9 sections; act-grouped with dividers (a div, never a section element) once the count exceeds ~9, see the style's authoring-guide §2>
 narrative-lens: <architecture-first | use-case-first | decision-first — controls whether the section sequence explains structure, scenarios, or decision context first>
-doc-type: <optional — explainer | status-report | proposal | feature-guide | analysis; the recipe in core/components.md §5 that seeded the TOC>
-source-ref: <path/to/source.md@hash-or-mtime — every source doc consumed, with a staleness fingerprint; see spec §5 header keys>
+source-ref: <repo@sha or path@mtime for every source consumed, comma separated — a staleness fingerprint; several repos are listed one by one>
+title: <the document title printed in the hero — a noun phrase, 1-2 lines>
+thesis: <the one-sentence hero thesis; may end with a citation such as [F03]>
+cover-tokens: <2-4 hero tokens written 값=라벨 [cite] and separated by semicolons — every token cites a fact id [F07] or a source span [PRODUCT.md L12]; a token with no source is not planned>
+facts: <path to facts.md, relative to this plan — required for doc-type pitch; delete this line when there is no ledger>
+as-of: <YYYY-MM-DD, the date printed in the hero meta line; delete this line when unused>
 ---
-## <N. Noun-phrase section title — cf. authoring-guide §2 skeleton row this maps to; titles are noun phrases, not sentences>
-- intent: <one line — what this section conveys to the reader; see spec §5 per-section fields>
+## <1. Noun-phrase section title — the number N becomes the document id sN; titles are noun phrases, not sentences (the style's authoring-guide §2)>
+- intent: <one line — what this section conveys to the reader>
 - shape: <exactly one shape from core/components.md §1, chosen with the §2 procedure (first "yes" wins) — e.g. lifecycle, role-handoff, layered-structure, peer-list, none. /build maps it to a component by lookup>
-- payload: <structured content/notes drawn from source — facts and information ONLY, not final Korean prose; voice/register is /build's job per authoring-guide §3.1; see spec §5 per-section fields>
-- figure-data: <the values behind the figure in the shape's figure-data format (core/components/README.md, last column) — name every edge/transition/message/link, not just the boxes; "none" for none / peer-list / text-table>
-- source-span: <the covering citation for this section's payload, e.g. docs/source.md L12-40 — mandatory; a field with no covering span must instead become a resolved question before this template is filled in, see spec §4 step 4>
+- payload: <structured content/notes drawn from source — facts and information ONLY, not final Korean prose (voice and register are /build's job, the style's authoring-guide §3.1). Cite every number and claim with its fact id [F07]; mark estimates (추정) and owner statements (소유자 진술)>
+- figure-data: <the values behind the figure in the shape's figure-data format (core/components/README.md, last column) — start with the format's first key, name every edge/transition/message/link, not just the boxes; cite [Fnn] on numbers; "none" for none / peer-list / text-table>
+- source-span: <the covering citation for this section's payload: docs/source.md L12-40, repo@sha:path Lx-y, or fact ids [F03] [F07] — mandatory; a field with no covering span must instead become a Q row in facts.md and a resolved question before this template is filled in (/plan Step 5)>
 
-## <N+1. Next noun-phrase section title>
+## <2. Next noun-phrase section title>
+- intent: <...>
+- shape: <...>
+- payload: <...>
+- figure-data: <...>
+- source-span: <...>
+
+## <부록 — Reference appendix title (no leading number: it becomes the document id sref; delete this section when there is no appendix)>
 - intent: <...>
 - shape: <...>
 - payload: <...>

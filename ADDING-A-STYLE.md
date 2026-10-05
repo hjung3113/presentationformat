@@ -52,7 +52,10 @@ is style-scoped SSOT — none of it is shared.
      See the mapping block at the bottom of `style.md` — the new style must supply all six.
 4. **Re-mirror `design.tokens.md`** from the finished `design.md`.
 5. **Rewrite `authoring-guide.md` + `composition-guide.md`** — voice, register, density.
-6. **Paste values into `template.dc.html`**; keep the `support.js` sidecar beside it.
+6. **Paste values into `template.dc.html`**; keep the `support.js` sidecar beside it. Keep its `⟦…⟧`
+   text slots (hero, nav, section stubs, closing line) and its `@media print` block with the
+   `data-page` / `data-nav` / `data-progress` hooks (`core/runtime-spec.md §5`) — they are shared structure,
+   only the values change.
 6a. **Generate the component library** — `node .claude/lib/components.mjs build --style <new-id>`,
    then open `components.gallery.dc.html` over http and check every component reads correctly in the
    new palette (semantic colors in particular: target vs problem vs success must stay distinct).
@@ -72,10 +75,11 @@ From `CLAUDE.md §"Core rules"`. A new style is not done until every line is tru
 3. **`core/` untouched** — `git diff` shows no changes under `core/`. If it does, a value leaked; move it into the style.
 4. **Semantic split defined & unmixed** — the style states its own current/problem vs target/improved color meaning once, and no single document mixes both sides.
 5. **Answer-key-wins** — `design-system.answerkey.dc.html` renders and agrees with `design.md`; on any disagreement, fix `design.md` to match the answer key.
-6. **Inline styles only** — no CSS classes/shared stylesheet; values pasted inline. Only global CSS = what cannot be inlined (font loading, `word-break`, selection, scrollbar).
+6. **Inline styles only** — no CSS classes/shared stylesheet; values pasted inline. Only global CSS = what cannot be inlined (font loading, `word-break`, selection, scrollbar) plus the one `@media print` block (attribute selectors only).
 7. **`word-break: keep-all` global** (mandatory for Korean line-breaking).
 8. **`support.js` beside every `.dc.html`** — byte-identical copy in the folder.
 9. **Components generated and current** — `node .claude/lib/components.mjs check` passes and the gallery was reviewed; the test suite (`node --test .claude/lib/test/*.test.mjs`) is green.
+10. **A document built from the template passes the exit gate** — `node .claude/lib/verify-doc.mjs <doc> --canonical-support styles/<new-id>/support.js --style <new-id> --plan <content-plan.md>` prints `GATE PASSED` (the `palette` check requires every color literal in the document to be in this style's `design.md`).
 
 ---
 

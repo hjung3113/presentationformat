@@ -9,12 +9,12 @@
 @use 여러 작업 흐름(워크스트림·마일스톤·팀)의 현재 상태를 한눈에 보고한다. 주간·월간 상태 보고, 프로젝트 현황.
 @avoid 날짜별 사건 → timeline. 일정 계획 → gantt. 상태 전이 규칙 → state-machine.
 @limits 행 3–7
-@data rows: 작업명(담당) | 상태: 정상|주의|차단|완료|대기 | 진척 % | 메모 한 줄
+@data rows: 작업명(담당) · 상태(정상|주의|차단|완료|대기) · 진척 % · 메모 한 줄 …
 HOW TO FILL
   1. 행 하나 = ▼REPEAT 행 하나. 차단·주의를 위로, 완료를 아래로 정렬하면 읽는 사람이 먼저 볼 것을 먼저 본다.
-  2. 상태 배지 변형(글자 그대로 사용):
+  2. 상태 배지는 변형(색)과 글자를 짝지어 쓴다. 글자는 슬롯이므로 직접 채우고, 색은 복사한 행의 것을 그대로 둔다:
        정상 = 강조색 · 완료 = 성공색 · 주의 = 경고 보조색 · 차단 = 경고색 · 대기 = 회색
-  3. 진척 막대 width = 진척 %. 모르면 막대 칸에 "—".
+  3. 진척 막대 width 슬롯(%)과 오른쪽 값 글자 슬롯은 같은 값으로 함께 채운다(예: 35 와 35%). 모르면 막대 칸에 "—".
   4. 메모는 다음 행동이나 막힌 이유 한 줄(개조식).
 -->
 <div data-component="status-board" style="border:1px solid #DCE5F2; border-radius:8px; overflow:hidden; background:#FFFFFF;">
@@ -23,38 +23,38 @@ HOW TO FILL
   </div>
   <!-- VARIANT 차단 (blocked) -->
   <div style="display:grid; grid-template-columns:1.5fr 88px 1fr 1.8fr; gap:14px; padding:12px 18px; border-top:1px solid #E6EDF7; align-items:center;">
-    <div><div style="font:600 13px/1.35 Inter,Pretendard,sans-serif; color:#101828;">⟦권한 요청 승인⟧</div><div style="font:400 11.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3;">⟦Admin · 2명⟧</div></div>
-    <span style="justify-self:start; font:700 11px/1 Inter,Pretendard,sans-serif; color:#B2202B; background:#FCEDEE; border:1px solid #F3C7CB; border-radius:4px; padding:5px 8px;">차단</span>
-    <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; height:8px; background:#EDF3FB; border-radius:4px;"><div style="width:35%; height:100%; background:#B2202B; border-radius:4px;"></div></div><span style="font:600 11px/1 'JetBrains Mono',monospace; color:#667083;">⟦35%⟧</span></div>
-    <span style="font:400 12.5px/1.5 Inter,Pretendard,sans-serif; color:#475467;">⟦보안 검토 대기 — 10/12 결정 필요⟧</span>
+    <div><div style="font:600 13px/1.35 Inter,Pretendard,sans-serif; color:#101828;">⟦작업 흐름 A⟧</div><div style="font:400 11.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3;">⟦담당 · 인원⟧</div></div>
+    <span style="justify-self:start; font:700 11px/1 Inter,Pretendard,sans-serif; color:#B2202B; background:#FCEDEE; border:1px solid #F3C7CB; border-radius:4px; padding:5px 8px;">⟦차단⟧</span>
+    <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; height:8px; background:#EDF3FB; border-radius:4px;"><div style="width:⟦35⟧%; height:100%; background:#B2202B; border-radius:4px;"></div></div><span style="font:600 11px/1 'JetBrains Mono',monospace; color:#667083;">⟦35⟧%</span></div>
+    <span style="font:400 12.5px/1.5 Inter,Pretendard,sans-serif; color:#475467;">⟦막힌 이유 한 줄⟧</span>
   </div>
   <!-- VARIANT 주의 (at risk) -->
   <div style="display:grid; grid-template-columns:1.5fr 88px 1fr 1.8fr; gap:14px; padding:12px 18px; border-top:1px solid #E6EDF7; align-items:center;">
-    <div><div style="font:600 13px/1.35 Inter,Pretendard,sans-serif; color:#101828;">⟦결과 설문 연동⟧</div><div style="font:400 11.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3;">⟦Survey · 3명⟧</div></div>
-    <span style="justify-self:start; font:700 11px/1 Inter,Pretendard,sans-serif; color:#8E5500; background:#EDF3FB; border:1px solid #CBD6E6; border-radius:4px; padding:5px 8px;">주의</span>
-    <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; height:8px; background:#EDF3FB; border-radius:4px;"><div style="width:55%; height:100%; background:#3157D5; border-radius:4px;"></div></div><span style="font:600 11px/1 'JetBrains Mono',monospace; color:#667083;">⟦55%⟧</span></div>
-    <span style="font:400 12.5px/1.5 Inter,Pretendard,sans-serif; color:#475467;">⟦응답 임계치 정책 미확정⟧</span>
+    <div><div style="font:600 13px/1.35 Inter,Pretendard,sans-serif; color:#101828;">⟦작업 흐름 B⟧</div><div style="font:400 11.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3;">⟦담당 · 인원⟧</div></div>
+    <span style="justify-self:start; font:700 11px/1 Inter,Pretendard,sans-serif; color:#8E5500; background:#EDF3FB; border:1px solid #CBD6E6; border-radius:4px; padding:5px 8px;">⟦주의⟧</span>
+    <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; height:8px; background:#EDF3FB; border-radius:4px;"><div style="width:⟦55⟧%; height:100%; background:#3157D5; border-radius:4px;"></div></div><span style="font:600 11px/1 'JetBrains Mono',monospace; color:#667083;">⟦55⟧%</span></div>
+    <span style="font:400 12.5px/1.5 Inter,Pretendard,sans-serif; color:#475467;">⟦주의 사유 한 줄⟧</span>
   </div>
   <!-- ▼ REPEAT per workstream — 정상 (on track) -->
   <div style="display:grid; grid-template-columns:1.5fr 88px 1fr 1.8fr; gap:14px; padding:12px 18px; border-top:1px solid #E6EDF7; align-items:center;">
-    <div><div style="font:600 13px/1.35 Inter,Pretendard,sans-serif; color:#101828;">⟦Task Request 리뷰⟧</div><div style="font:400 11.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3;">⟦Task · 4명⟧</div></div>
-    <span style="justify-self:start; font:700 11px/1 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1px solid #B9C9F7; border-radius:4px; padding:5px 8px;">정상</span>
-    <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; height:8px; background:#EDF3FB; border-radius:4px;"><div style="width:70%; height:100%; background:#1428A0; border-radius:4px;"></div></div><span style="font:600 11px/1 'JetBrains Mono',monospace; color:#667083;">⟦70%⟧</span></div>
-    <span style="font:400 12.5px/1.5 Inter,Pretendard,sans-serif; color:#475467;">⟦일괄 검토 UI 마무리⟧</span>
+    <div><div style="font:600 13px/1.35 Inter,Pretendard,sans-serif; color:#101828;">⟦작업 흐름 C⟧</div><div style="font:400 11.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3;">⟦담당 · 인원⟧</div></div>
+    <span style="justify-self:start; font:700 11px/1 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1px solid #B9C9F7; border-radius:4px; padding:5px 8px;">⟦정상⟧</span>
+    <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; height:8px; background:#EDF3FB; border-radius:4px;"><div style="width:⟦70⟧%; height:100%; background:#1428A0; border-radius:4px;"></div></div><span style="font:600 11px/1 'JetBrains Mono',monospace; color:#667083;">⟦70⟧%</span></div>
+    <span style="font:400 12.5px/1.5 Inter,Pretendard,sans-serif; color:#475467;">⟦다음 행동 한 줄⟧</span>
   </div>
   <!-- ▲ /REPEAT -->
   <!-- VARIANT 완료 (done) -->
   <div style="display:grid; grid-template-columns:1.5fr 88px 1fr 1.8fr; gap:14px; padding:12px 18px; border-top:1px solid #E6EDF7; align-items:center;">
-    <div><div style="font:600 13px/1.35 Inter,Pretendard,sans-serif; color:#101828;">⟦VOC 트리아지 콘솔⟧</div><div style="font:400 11.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3;">⟦VOC · 3명⟧</div></div>
-    <span style="justify-self:start; font:700 11px/1 Inter,Pretendard,sans-serif; color:#10734A; background:#E7F5EE; border:1px solid #E7F5EE; border-radius:4px; padding:5px 8px;">완료</span>
-    <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; height:8px; background:#EDF3FB; border-radius:4px;"><div style="width:100%; height:100%; background:#10734A; border-radius:4px;"></div></div><span style="font:600 11px/1 'JetBrains Mono',monospace; color:#667083;">⟦100%⟧</span></div>
-    <span style="font:400 12.5px/1.5 Inter,Pretendard,sans-serif; color:#475467;">⟦9/30 배포⟧</span>
+    <div><div style="font:600 13px/1.35 Inter,Pretendard,sans-serif; color:#101828;">⟦작업 흐름 D⟧</div><div style="font:400 11.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3;">⟦담당 · 인원⟧</div></div>
+    <span style="justify-self:start; font:700 11px/1 Inter,Pretendard,sans-serif; color:#10734A; background:#E7F5EE; border:1px solid #E7F5EE; border-radius:4px; padding:5px 8px;">⟦완료⟧</span>
+    <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; height:8px; background:#EDF3FB; border-radius:4px;"><div style="width:⟦100⟧%; height:100%; background:#10734A; border-radius:4px;"></div></div><span style="font:600 11px/1 'JetBrains Mono',monospace; color:#667083;">⟦100⟧%</span></div>
+    <span style="font:400 12.5px/1.5 Inter,Pretendard,sans-serif; color:#475467;">⟦완료 사실 한 줄⟧</span>
   </div>
   <!-- VARIANT 대기 (not started) -->
   <div style="display:grid; grid-template-columns:1.5fr 88px 1fr 1.8fr; gap:14px; padding:12px 18px; border-top:1px solid #E6EDF7; align-items:center;">
-    <div><div style="font:600 13px/1.35 Inter,Pretendard,sans-serif; color:#101828;">⟦Evidence 화면⟧</div><div style="font:400 11.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3;">⟦Integration · 미정⟧</div></div>
-    <span style="justify-self:start; font:700 11px/1 Inter,Pretendard,sans-serif; color:#667083; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:4px; padding:5px 8px;">대기</span>
-    <span style="font:600 11px/1 'JetBrains Mono',monospace; color:#98A2B3;">—</span>
-    <span style="font:400 12.5px/1.5 Inter,Pretendard,sans-serif; color:#475467;">⟦다음 분기 착수⟧</span>
+    <div><div style="font:600 13px/1.35 Inter,Pretendard,sans-serif; color:#101828;">⟦작업 흐름 E⟧</div><div style="font:400 11.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3;">⟦담당 · 미정⟧</div></div>
+    <span style="justify-self:start; font:700 11px/1 Inter,Pretendard,sans-serif; color:#667083; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:4px; padding:5px 8px;">⟦대기⟧</span>
+    <span style="font:600 11px/1 'JetBrains Mono',monospace; color:#98A2B3;">⟦—⟧</span>
+    <span style="font:400 12.5px/1.5 Inter,Pretendard,sans-serif; color:#475467;">⟦착수 조건 한 줄⟧</span>
   </div>
 </div>

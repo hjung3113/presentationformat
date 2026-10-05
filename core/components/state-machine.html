@@ -4,36 +4,41 @@
 @order 50
 @shape lifecycle
 @title UML 상태 머신 — 상태와 허용된 전이
-@use 하나의 객체(요청·Task·VOC·주문 등)가 어떤 상태를 거치고, 무엇이 상태를 바꾸는지가 주장이다. 상태값·라이프사이클·재시도·반려.
+@use 하나의 객체(요청·작업·주문 등)가 어떤 상태를 거치고, 무엇이 상태를 바꾸는지가 주장이다. 상태값·라이프사이클·재시도·반려.
 @avoid 사람이 하는 작업 순서 → process-row/activity. 두 객체의 상태가 따로 움직인다 → state-machine 두 개 + callout(WARN) "자동 연동 없음".
-@limits 주 경로 상태 3–6, 기타 전이 0–5
-@data states: 대기, 검토 중, 승인, 반려 | main: 대기 →(제출) 검토 중 →(승인) 승인 | other: 검토 중 →(반려) 반려[negative] · 반려 →(재제출) 대기[retry]
+@limits 주 경로 상태 3–5, 기타 전이 0–5
+@data states: 상태 A, 상태 B, 상태 C | main: ● → 상태 A →(전이) 상태 B →(전이) 종료 상태[ok] → ◉ | other?: 상태 B →(전이) 상태 D[retry] · 상태 B →(전이) 실패 상태[negative] | callout?: WARN 한 문장
 HOW TO FILL
   1. 윗줄 = 주 경로(정상 진행): ● 시작 → 상태 → 상태 → … → ◉ 종료. ▼REPEAT(전이 화살표 + 상태)를 복사한다.
      전이 라벨(무엇이 상태를 바꾸는가)은 화살표 위에 2–6자로.
+     주 경로 상태는 최대 5개(● · ◉ 제외). 6개부터는 1366px 폭에서 줄이 꺾여 화살표가 줄 끝에 남는다.
+     상태가 더 많으면 (a) 섹션을 둘로 나누거나, (b) 정상 흐름 5개만 주 경로에 두고 나머지는 "그 밖의 전이"(figure-data 의 other)로 옮긴다.
   2. 상태 변형: 진행 상태=강조 칩, 정상 종료=성공색 칩, 반려·실패 종료=경고색 칩, 중립 종료=흰 칩.
   3. 아랫줄 "그 밖의 전이" = 주 경로에 없는 모든 전이(반려, 재시도, 취소, 되돌림)를 한 행씩.
      허용된 전이가 빠짐없이 보여야 한다. 없으면 이 블록을 지운다.
-  4. 전이 종류 태그: 반려/실패=경고색, 재시도/되돌림=강조색, 취소/보류=회색.
-  5. (선택) 상태 머신이 두 개면 맨 위 이름 배지로 구분하고 둘을 위아래로 쌓는다.
+  4. 전이 종류 태그: 반려/실패=경고색, 재시도/되돌림=강조색, 취소/보류/대안=회색.
+     figure-data 의 대괄호 표기: [ok] 정상 종료(성공색 칩, 우회·대안이면 회색 태그) · [retry] 되돌림(강조색 태그) · [negative] 반려·실패 종료(경고색 칩과 태그).
+  5. figure-data 의 ● 는 시작 점, ◉ 는 종료 점이다. → 는 ASCII 꺾쇠 형태(->)로 적어도 같은 뜻이다.
+     상태 머신에 붙는 한 줄 주의(예: 다른 상태와 자동 연동하지 않는다)는 callout WARN 한 개로 아래에 둔다.
+  6. (선택) 상태 머신이 두 개면 맨 위 이름 배지로 구분하고 둘을 위아래로 쌓는다.
 -->
 <div data-component="state-machine" style="background:⟨fig-tint⟩; border:1px solid ⟨border-fig⟩; border-radius:⟨r:card-sm⟩; padding:24px;">
   <!-- OPTIONAL name badge (use when two state machines are shown) -->
-  <div style="margin-bottom:16px;"><span style="font:700 10.5px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨white⟩; background:⟨ink-700⟩; border-radius:⟨r:pill-sm⟩; padding:5px 9px;">⟦TASK REQUEST STATUS⟧</span></div>
-  <!-- main path -->
+  <div style="margin-bottom:16px;"><span style="font:700 10.5px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨white⟩; background:⟨ink-700⟩; border-radius:⟨r:pill-sm⟩; padding:5px 9px;">⟦상태 머신 이름⟧</span></div>
+  <!-- main path (max 5 states; ● and ◉ do not count) -->
   <div style="display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:12px 6px;">
     <div style="width:16px; height:16px; border-radius:⟨r:circle⟩; background:⟨ink-900⟩; flex:none;"></div>
     <div style="display:flex; flex-direction:column; align-items:center; gap:2px; min-width:30px;"><span style="font:500 10px/1.2 ⟨f:body⟩; color:⟨muted-400⟩;">&nbsp;</span><span style="color:⟨muted-300⟩; font:400 17px/1 ⟨f:body⟩;">→</span></div>
     <!-- ▼ REPEAT per state on the main path (state + following transition) -->
-    <div style="font:600 12.5px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:⟨r:card-sm⟩; padding:11px 16px;">⟦검토 대기⟧</div>
-    <div style="display:flex; flex-direction:column; align-items:center; gap:2px; min-width:44px;"><span style="font:500 10px/1.2 ⟨f:body⟩; color:⟨muted-500⟩; white-space:nowrap;">⟦검토 시작⟧</span><span style="color:⟨muted-300⟩; font:400 17px/1 ⟨f:body⟩;">→</span></div>
+    <div style="font:600 12.5px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:⟨r:card-sm⟩; padding:11px 16px;">⟦상태 A⟧</div>
+    <div style="display:flex; flex-direction:column; align-items:center; gap:2px; min-width:44px;"><span style="font:500 10px/1.2 ⟨f:body⟩; color:⟨muted-500⟩; white-space:nowrap;">⟦전이 1⟧</span><span style="color:⟨muted-300⟩; font:400 17px/1 ⟨f:body⟩;">→</span></div>
     <!-- ▲ /REPEAT -->
-    <div style="font:600 12.5px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:⟨r:card-sm⟩; padding:11px 16px;">⟦검토 중⟧</div>
-    <div style="display:flex; flex-direction:column; align-items:center; gap:2px; min-width:44px;"><span style="font:500 10px/1.2 ⟨f:body⟩; color:⟨muted-500⟩; white-space:nowrap;">⟦승인⟧</span><span style="color:⟨muted-300⟩; font:400 17px/1 ⟨f:body⟩;">→</span></div>
-    <div style="font:600 12.5px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:⟨r:card-sm⟩; padding:11px 16px;">⟦승인됨⟧</div>
-    <div style="display:flex; flex-direction:column; align-items:center; gap:2px; min-width:44px;"><span style="font:500 10px/1.2 ⟨f:body⟩; color:⟨muted-500⟩; white-space:nowrap;">⟦Task 생성⟧</span><span style="color:⟨muted-300⟩; font:400 17px/1 ⟨f:body⟩;">→</span></div>
+    <div style="font:600 12.5px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:⟨r:card-sm⟩; padding:11px 16px;">⟦상태 B⟧</div>
+    <div style="display:flex; flex-direction:column; align-items:center; gap:2px; min-width:44px;"><span style="font:500 10px/1.2 ⟨f:body⟩; color:⟨muted-500⟩; white-space:nowrap;">⟦전이 2⟧</span><span style="color:⟨muted-300⟩; font:400 17px/1 ⟨f:body⟩;">→</span></div>
+    <div style="font:600 12.5px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:⟨r:card-sm⟩; padding:11px 16px;">⟦상태 C⟧</div>
+    <div style="display:flex; flex-direction:column; align-items:center; gap:2px; min-width:44px;"><span style="font:500 10px/1.2 ⟨f:body⟩; color:⟨muted-500⟩; white-space:nowrap;">⟦전이 3⟧</span><span style="color:⟨muted-300⟩; font:400 17px/1 ⟨f:body⟩;">→</span></div>
     <!-- VARIANT successful terminal state -->
-    <div style="font:600 12.5px/1.3 ⟨f:body⟩; color:⟨ok⟩; background:⟨ok-bg⟩; border:1.5px solid ⟨ok⟩; border-radius:⟨r:card-sm⟩; padding:11px 16px;">⟦전환 완료⟧</div>
+    <div style="font:600 12.5px/1.3 ⟨f:body⟩; color:⟨ok⟩; background:⟨ok-bg⟩; border:1.5px solid ⟨ok⟩; border-radius:⟨r:card-sm⟩; padding:11px 16px;">⟦종료 상태⟧</div>
     <div style="color:⟨muted-300⟩; font:400 17px/1 ⟨f:body⟩; padding-top:12px;">→</div>
     <div style="width:24px; height:24px; border-radius:⟨r:circle⟩; border:2px solid ⟨ok⟩; display:flex; align-items:center; justify-content:center; flex:none; box-sizing:border-box;"><div style="width:12px; height:12px; border-radius:⟨r:circle⟩; background:⟨ok⟩;"></div></div>
   </div>
@@ -43,23 +48,24 @@ HOW TO FILL
     <div style="display:flex; flex-direction:column; gap:8px; max-width:640px; margin:0 auto;">
       <!-- ▼ REPEAT per extra transition -->
       <div style="display:grid; grid-template-columns:1fr 150px 1fr 70px; align-items:center; gap:8px;">
-        <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:⟨r:card-sm⟩; padding:8px 10px; text-align:center;">⟦검토 중⟧</div>
-        <div style="display:flex; flex-direction:column; align-items:center;"><span style="font:500 10px/1.2 ⟨f:body⟩; color:⟨muted-500⟩;">⟦근거 부족⟧</span><div style="display:flex; align-items:center; width:100%;"><div style="flex:1; height:2px; background:⟨muted-300⟩;"></div><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:7px solid ⟨muted-300⟩;"></div></div></div>
-        <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:⟨r:card-sm⟩; padding:8px 10px; text-align:center;">⟦보완 요청⟧</div>
+        <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:⟨r:card-sm⟩; padding:8px 10px; text-align:center;">⟦상태 B⟧</div>
+        <div style="display:flex; flex-direction:column; align-items:center;"><span style="font:500 10px/1.2 ⟨f:body⟩; color:⟨muted-500⟩;">⟦전이 4⟧</span><div style="display:flex; align-items:center; width:100%;"><div style="flex:1; height:2px; background:⟨muted-300⟩;"></div><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:7px solid ⟨muted-300⟩;"></div></div></div>
+        <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:⟨r:card-sm⟩; padding:8px 10px; text-align:center;">⟦상태 D⟧</div>
         <span style="justify-self:start; font:700 10px/1 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border-radius:⟨r:pill-sm⟩; padding:4px 7px;">⟦되돌림⟧</span>
       </div>
       <!-- ▲ /REPEAT -->
       <!-- VARIANT negative terminal transition -->
       <div style="display:grid; grid-template-columns:1fr 150px 1fr 70px; align-items:center; gap:8px;">
-        <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:⟨r:card-sm⟩; padding:8px 10px; text-align:center;">⟦검토 중⟧</div>
-        <div style="display:flex; flex-direction:column; align-items:center;"><span style="font:500 10px/1.2 ⟨f:body⟩; color:⟨muted-500⟩;">⟦반려⟧</span><div style="display:flex; align-items:center; width:100%;"><div style="flex:1; height:2px; background:⟨muted-300⟩;"></div><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:7px solid ⟨muted-300⟩;"></div></div></div>
-        <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨warn⟩; background:⟨warn-bg⟩; border:1.5px solid ⟨warn-line⟩; border-radius:⟨r:card-sm⟩; padding:8px 10px; text-align:center;">⟦반려됨⟧</div>
+        <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:⟨r:card-sm⟩; padding:8px 10px; text-align:center;">⟦상태 B⟧</div>
+        <div style="display:flex; flex-direction:column; align-items:center;"><span style="font:500 10px/1.2 ⟨f:body⟩; color:⟨muted-500⟩;">⟦전이 5⟧</span><div style="display:flex; align-items:center; width:100%;"><div style="flex:1; height:2px; background:⟨muted-300⟩;"></div><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:7px solid ⟨muted-300⟩;"></div></div></div>
+        <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨warn⟩; background:⟨warn-bg⟩; border:1.5px solid ⟨warn-line⟩; border-radius:⟨r:card-sm⟩; padding:8px 10px; text-align:center;">⟦실패 상태⟧</div>
         <span style="justify-self:start; font:700 10px/1 ⟨f:body⟩; color:⟨warn⟩; background:⟨warn-bg⟩; border-radius:⟨r:pill-sm⟩; padding:4px 7px;">⟦종료⟧</span>
       </div>
+      <!-- VARIANT alternative path to a successful terminal state (ok chip + grey tag) -->
       <div style="display:grid; grid-template-columns:1fr 150px 1fr 70px; align-items:center; gap:8px;">
-        <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:⟨r:card-sm⟩; padding:8px 10px; text-align:center;">⟦검토 대기⟧</div>
-        <div style="display:flex; flex-direction:column; align-items:center;"><span style="font:500 10px/1.2 ⟨f:body⟩; color:⟨muted-500⟩;">⟦기존 Task 연결⟧</span><div style="display:flex; align-items:center; width:100%;"><div style="flex:1; height:2px; background:⟨muted-300⟩;"></div><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:7px solid ⟨muted-300⟩;"></div></div></div>
-        <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨ok⟩; background:⟨ok-bg⟩; border:1.5px solid ⟨ok⟩; border-radius:⟨r:card-sm⟩; padding:8px 10px; text-align:center;">⟦전환 완료⟧</div>
+        <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:⟨r:card-sm⟩; padding:8px 10px; text-align:center;">⟦상태 A⟧</div>
+        <div style="display:flex; flex-direction:column; align-items:center;"><span style="font:500 10px/1.2 ⟨f:body⟩; color:⟨muted-500⟩;">⟦전이 6⟧</span><div style="display:flex; align-items:center; width:100%;"><div style="flex:1; height:2px; background:⟨muted-300⟩;"></div><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:7px solid ⟨muted-300⟩;"></div></div></div>
+        <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨ok⟩; background:⟨ok-bg⟩; border:1.5px solid ⟨ok⟩; border-radius:⟨r:card-sm⟩; padding:8px 10px; text-align:center;">⟦종료 상태⟧</div>
         <span style="justify-self:start; font:700 10px/1 ⟨f:body⟩; color:⟨muted-500⟩; background:⟨fill-100⟩; border-radius:⟨r:pill-sm⟩; padding:4px 7px;">⟦대안⟧</span>
       </div>
     </div>

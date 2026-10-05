@@ -1,10 +1,16 @@
 ---
+doc-type: explainer
+audience: user
+reader-action: FeedbackOps의 시스템 구조와 핵심 흐름을 이해하고, 자기 역할이 어느 화면에서 무엇을 하는지 안다
 has-as-is: true
 metrics-mode: absent
 act-structure: flat
 narrative-lens: architecture-first
-doc-type: explainer
 source-ref: FeedbackOps@87948f3 — PRODUCT.md, docs/design/00-product-overview.md, docs/design/04-voc-system.md, docs/design/06-task-project-system.md, docs/design/11-entity-linking.md, docs/design/12-ui-ux-principles.md, docs/design/13-mvp-roadmap.md, docs/implementation/06-entity-linking-contract.md, docs/adr/0020-shell-taxonomy-three-route-shells-and-50px-header-rhythm.md, packages/shared/src/entity-links.ts
+title: FeedbackOps 설계 브리프 — 흔적이 이어지는 피드백 운영
+thesis: VOC·설문·실행·효과 검증을 하나의 거대한 워크플로로 합치지 않고, 각 시스템이 혼자서도 완결되게 두며 필요한 순간에만 근거와 실행의 연결을 감사 가능한 이력으로 남긴다 [docs/design/00-product-overview.md L5]
+cover-tokens: 독립=업무 시스템 VOC·Survey·Task [docs/design/00-product-overview.md L71] ; 정본=교차 이력 entity_links [PRODUCT.md L26] ; AD=사내 인증 전용 Admin › Developer › User [docs/design/00-product-overview.md L21] ; MVP=출시 범위 Alpha → Phase 2 [docs/design/13-mvp-roadmap.md L10-50]
+as-of: 2026-10-05
 ---
 ## 1. 운영 맥락 — 흩어진 피드백 흔적
 - intent: 피드백 접수부터 효과 검증까지가 도구마다 흩어진 현재와, 하나의 Workspace에서 흔적이 이어지는 목표를 대비한다
@@ -17,7 +23,7 @@ source-ref: FeedbackOps@87948f3 — PRODUCT.md, docs/design/00-product-overview.
 - intent: VOC·Task·Survey가 각자 완결되는 시스템이고, Integration Layer가 필요할 때만 잇는다는 구조를 보여 준다
 - shape: layered-structure
 - payload: 최상위 탐색은 Home, My Work, VOC, Surveys, Tasks, Integration, Admin. VOC·Task·Survey는 독립 동작하고 연결은 선택. Finding·Evidence·Entity Link·Coverage·Action Dashboard는 Integration Layer에 속한다. Core Platform이 Workspace·Actor·Managed System·권한을 맡는다. MVP 접근은 사내 AD 인증만.
-- figure-data: layers (위→아래): 독립 업무 시스템: VOC(Inbox·Triage·Cluster), Survey(Builder·Result), Task(Request·Board) | Integration Layer [optional, key]: Finding(근거 종합), Entity Link(교차 이력 정본, key), Action Dashboard(후속 공백 큐), Coverage | Core Platform: Workspace·Actor, Managed System(범위·기본값), Permission | links: 업무 시스템 ↕ Integration = 선택적 링크(entity_links) · Integration ↕ Core = 권한 확인·범위 필터 · Core ↕ 외부 = AD 인증 | external: Active Directory
+- figure-data: layers: 독립 업무 시스템: VOC(Inbox·Triage·Cluster), Survey(Builder·Result), Task(Request·Board) ‖ Integration Layer [key, optional]: Finding(근거 종합), Entity Link(교차 이력 정본, key), Action Dashboard(후속 공백 큐), Coverage ‖ Core Platform: Workspace·Actor, Managed System(범위·기본값), Permission ‖ 외부 시스템 [external]: Active Directory | links: 독립 업무 시스템↕Integration Layer 선택적 링크(entity_links) · Integration Layer↕Core Platform 권한 확인·범위 필터 · Core Platform↕외부 시스템 AD 인증
 - source-span: docs/design/00-product-overview.md L51-87; docs/design/12-ui-ux-principles.md L18-46
 
 ## 3. VOC 트리아지 — Task까지 가지 않는 결말
@@ -38,7 +44,7 @@ source-ref: FeedbackOps@87948f3 — PRODUCT.md, docs/design/00-product-overview.
 - intent: Task Request가 어떤 상태를 거치고 무엇이 상태를 바꾸는지, 그리고 Task 상태와 작성자 대면 상태가 서로 자동 연동되지 않음을 보여 준다
 - shape: lifecycle
 - payload: 검토 큐 보기는 Pending, Needs evidence, Approved, Rejected. 행동은 Approve, Reject, Request More Evidence, Convert to Task, Link Existing Task. 승인된 요청은 전환 전까지 Approved로 남을 수 있다. 결정은 감사된다. Task 상태(Backlog…Released)와 작성자 대면 VOC 상태는 별개이며 Task Done·Released가 VOC 상태를 자동으로 바꾸지 않는다.
-- figure-data: states: Pending, Needs evidence, Approved, Rejected, Converted | main: ● → Pending →(Approve) Approved →(Convert to Task) Converted[ok] → ◉ | other: Pending →(Request More Evidence) Needs evidence[retry] · Needs evidence →(근거 보완) Pending[retry] · Pending →(Reject) Rejected[negative] · Approved →(Link Existing Task) 기존 Task 연결[ok, 대안] | callout WARN: Task Done·Released는 작성자 대면 VOC 상태를 자동으로 바꾸지 않는다
+- figure-data: states: Pending, Needs evidence, Approved, Rejected, Converted | main: ● → Pending →(Approve) Approved →(Convert to Task) Converted[ok] → ◉ | other: Pending →(Request More Evidence) Needs evidence[retry] · Needs evidence →(근거 보완) Pending[retry] · Pending →(Reject) Rejected[negative] · Approved →(Link Existing Task) 기존 Task 연결[ok] | callout: WARN Task Done·Released는 작성자 대면 VOC 상태를 자동으로 바꾸지 않는다
 - source-span: docs/design/06-task-project-system.md L53-69; docs/design/06-task-project-system.md L280-294; docs/design/04-voc-system.md L86-97
 
 ## 6. 연결 모델 — entity_links 하나로 모이는 교차 이력
@@ -66,7 +72,7 @@ source-ref: FeedbackOps@87948f3 — PRODUCT.md, docs/design/00-product-overview.
 - intent: 어떤 기능이 어느 출시 단계에 들어가는지 범위를 보여 준다
 - shape: schedule
 - payload: Alpha는 Core·AD·Workspace, 기본 권한, VOC 등록·Triage·Inbox, Managed System Registry, Analytics Area Catalog, Basic Task, Entity Link. MVP는 Finding, Task Request, VOC 후속 → Task Request, 선택적 Survey → Finding → Task Request → Task, VOC 유사 추천, Action Dashboard 기본형. Phase 1은 VOC Cluster 후보 자동 생성, 권한 요청 고도화, Coverage 고도화, Analytics Area별 리포트. Phase 2는 자동 요약, root cause 후보, priority score, 외부 도구 연동, Executive Report. 날짜는 출처에 없다.
-- figure-data: periods: Alpha, MVP, Phase 1, Phase 2 | rows: Core·권한·Managed System = Alpha–Alpha (core) · VOC 등록·Triage = Alpha–Alpha (core) · Entity Link = Alpha–Alpha (core) · Finding·Task Request = MVP–MVP (core) · Action Dashboard = MVP–MVP (core), Phase 1–Phase 1 (planned, Coverage 고도화) · VOC Cluster 자동 생성 = Phase 1–Phase 1 (planned) · 자동 요약·root cause = Phase 2–Phase 2 (planned) | milestones: 없음
+- figure-data: periods: Alpha, MVP, Phase 1, Phase 2 | rows: Core·권한·Managed System = Alpha–Alpha (core) · VOC 등록·Triage = Alpha–Alpha (core) · Entity Link = Alpha–Alpha (core) · Finding·Task Request = MVP–MVP (core) · Action Dashboard = MVP–MVP (core) + Phase 1–Phase 1 (planned) · VOC Cluster 자동 생성 = Phase 1–Phase 1 (planned) · 자동 요약·root cause = Phase 2–Phase 2 (planned)
 - source-span: docs/design/13-mvp-roadmap.md L10-50
 
 ## 용어

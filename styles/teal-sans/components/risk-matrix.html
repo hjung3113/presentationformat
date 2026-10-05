@@ -7,7 +7,7 @@
 @shape risk
 @title 리스크 매트릭스 — 가능성 × 영향
 @use 리스크를 가능성과 영향 두 축으로 놓고, 무엇을 먼저 다룰지와 대응책을 보여 준다. 프로젝트 리스크, 도입 위험, 운영 위험.
-@avoid 리스크 등급이 없거나 2개 이하 → card-grid(왼쪽 강조 리스크 카드). 리스크가 아닌 일반 우선순위 → table.
+@avoid 출처가 가능성과 영향을 둘 다 등급으로 매기지 않았다(등급을 지어내지 않는다), 또는 리스크가 2개 이하 → peer-list(card-grid 의 왼쪽 강조 리스크 카드). 리스크가 아닌 일반 우선순위 → table.
 @limits 리스크 2–7
 @data risks: R1 이름 (가능성 상|중|하, 영향 상|중|하) → 대응
 HOW TO FILL
@@ -45,21 +45,21 @@ HOW TO FILL
       <!-- VARIANT top-right (high/high) risk -->
       <div style="display:grid; grid-template-columns:34px 1fr; gap:10px; align-items:start;">
         <span style="font:700 10.5px/1 'IBM Plex Mono',monospace; color:#B42318; background:#FEF2F2; border:1px solid #F7C8C1; border-radius:100px; padding:4px 0; text-align:center;">⟦R1⟧</span>
-        <div><div style="font:600 13px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦연결 누락으로 후속 공백⟧</div><div style="font:400 12px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">→ ⟦정책 기반 recovery 큐로 노출⟧</div></div>
+        <div><div style="font:600 13px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦리스크 1 이름⟧</div><div style="font:400 12px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">→ ⟦대응 한 줄⟧</div></div>
       </div>
       <!-- ▼ REPEAT per risk -->
       <div style="display:grid; grid-template-columns:34px 1fr; gap:10px; align-items:start;">
         <span style="font:700 10.5px/1 'IBM Plex Mono',monospace; color:#1E2233; background:#FFFFFF; border:1px solid #DDE1EA; border-radius:100px; padding:4px 0; text-align:center;">⟦R2⟧</span>
-        <div><div style="font:600 13px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦권한 범위 오해⟧</div><div style="font:400 12px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">→ ⟦Managed System 기준 기본값 고정⟧</div></div>
+        <div><div style="font:600 13px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦리스크 2 이름⟧</div><div style="font:400 12px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">→ ⟦대응 한 줄⟧</div></div>
       </div>
       <!-- ▲ /REPEAT -->
       <div style="display:grid; grid-template-columns:34px 1fr; gap:10px; align-items:start;">
         <span style="font:700 10.5px/1 'IBM Plex Mono',monospace; color:#1E2233; background:#FFFFFF; border:1px solid #DDE1EA; border-radius:100px; padding:4px 0; text-align:center;">⟦R3⟧</span>
-        <div><div style="font:600 13px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦설문 응답 부족⟧</div><div style="font:400 12px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">→ ⟦임계치 미만은 결과 비공개⟧</div></div>
+        <div><div style="font:600 13px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦리스크 3 이름⟧</div><div style="font:400 12px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">→ ⟦대응 한 줄⟧</div></div>
       </div>
       <div style="display:grid; grid-template-columns:34px 1fr; gap:10px; align-items:start;">
         <span style="font:700 10.5px/1 'IBM Plex Mono',monospace; color:#1E2233; background:#FFFFFF; border:1px solid #DDE1EA; border-radius:100px; padding:4px 0; text-align:center;">⟦R4⟧</span>
-        <div><div style="font:600 13px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦초기 학습 부담⟧</div><div style="font:400 12px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">→ ⟦사용자 안내서·투어 제공⟧</div></div>
+        <div><div style="font:600 13px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦리스크 4 이름⟧</div><div style="font:400 12px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">→ ⟦대응 한 줄⟧</div></div>
       </div>
     </div>
   </div>

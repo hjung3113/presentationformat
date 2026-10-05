@@ -13,9 +13,9 @@
 //   node .claude/lib/components.mjs check                  exit 1 if any output is stale
 //   node .claude/lib/components.mjs list [--style <id>]    print id · shape · use, one per line
 //   node .claude/lib/components.mjs shapes                 print shape → component map as JSON
-import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync, unlinkSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync, unlinkSync, realpathSync } from 'node:fs';
 import { join, dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const CORE_DIR = join(ROOT, 'core', 'components');
@@ -53,12 +53,12 @@ export function listStyles() {
 
 // ---------- templates ----------
 
-export function listTemplates() {
-  return readdirSync(CORE_DIR)
+export function listTemplates(dir = CORE_DIR) {
+  return readdirSync(dir)
     .filter(f => f.endsWith('.html') && !f.startsWith('_'))
     .sort()
     .map(f => {
-      const src = readFileSync(join(CORE_DIR, f), 'utf8');
+      const src = readFileSync(join(dir, f), 'utf8');
       const meta = parseMeta(src);
       // Guards the metadata comment against an early `-->` and the root against a missing marker.
       if (!bodyOf(src).startsWith(`<div data-component="${meta.component}"`))
@@ -77,15 +77,27 @@ export function parseMeta(src) {
     if (m) meta[m[1]] = m[2].trim();
   }
   meta.shapes = (meta.shape || '').split(/\s+/).filter(Boolean);
+  meta.dataKeys = parseDataKeys(meta.data);
   meta.order = Number(meta.order || 999);
   for (const k of ['component', 'kind', 'title', 'use'])
     if (!meta[k]) throw new Error(`component metadata missing @${k}`);
   return meta;
 }
 
-export function shapeMap() {
+// `@data k1: eg | k2?: eg | …` → [{ key, optional }]. The first key is the required one (never optional);
+// a `(annotation)` between key and colon is tolerated; segments without a `key:` head are prose.
+export function parseDataKeys(data) {
+  const keys = [];
+  for (const seg of (data || '').split(' | ')) {
+    const m = seg.trim().match(/^([\w-]+)\s*(?:\([^)]*\))?\s*(\?)?:/);
+    if (m) keys.push({ key: m[1], optional: !!m[2] && keys.length > 0 });
+  }
+  return keys;
+}
+
+export function shapeMap(templates = listTemplates()) {
   const map = {};
-  for (const t of listTemplates())
+  for (const t of templates)
     for (const s of t.meta.shapes) (map[s] ||= []).push(t.meta.component);
   return map;
 }
@@ -280,4 +292,8 @@ function main() {
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) main();
+// Symlink- and encoding-safe entry guard (raw `file://${argv[1]}` breaks under paths with spaces/Korean).
+const isMain = () => {
+  try { return !!process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href; } catch { return false; }
+};
+if (isMain()) main();

@@ -7,52 +7,52 @@
 @use 누가(사용자 유형·역할) 이 시스템으로 무엇을 할 수 있는지가 주장이다. 기능 범위, 역할별 사용 시나리오 개요, MVP 범위.
 @avoid 역할 간 순서·인계 → swimlane. 역할×권한의 허용/불가 비교 → matrix. 화면 위치 → screen-map.
 @limits 행위자 2–4, 행위자당 유스케이스 1–4
-@data system: 시스템 이름 | actors: 행위자: 유스케이스, 유스케이스 | 행위자: …
+@data system: 시스템 이름 | actors: 행위자 A: 유스케이스, 유스케이스 ‖ 행위자 B: 유스케이스
 HOW TO FILL
   1. R = 행위자 수. 시스템 경계 상자의 grid-row:1 / span R 의 R을 고친다.
   2. 행위자 한 명 = ▼REPEAT 묶음 세 칸(행위자 · 연결선 · 유스케이스 줄). 세 칸 모두 grid-row:K (K = 1, 2, 3 …)로 같은 행 번호를 준다.
-  3. 유스케이스 타원은 동사구 2–8자("VOC 등록", "Task 전환 승인"). 이 문서의 핵심 유스케이스 하나만 채운 강조 변형.
+  3. 유스케이스 타원은 동사구 2–8자("신청서 등록", "요청 승인"). 이 문서의 핵심 유스케이스 하나만 채운 강조 변형.
 -->
 <div data-component="use-case" style="background:⟨fig-tint⟩; border:1px solid ⟨border-fig⟩; border-radius:⟨r:card-sm⟩; padding:24px;">
   <div style="display:grid; grid-template-columns:96px 36px 1fr; align-items:center; row-gap:6px;">
     <!-- system boundary: grid-row 1 / span R -->
-    <div style="grid-column:3; grid-row:1 / span 3; align-self:stretch; border:1px solid ⟨accent-line⟩; border-radius:⟨r:card-sm⟩; background:⟨white⟩; position:relative;"><span style="position:absolute; top:8px; right:12px; font:700 10px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨muted-400⟩;">⟦SYSTEM · FeedbackOps⟧</span></div>
+    <div style="grid-column:3; grid-row:1 / span 3; align-self:stretch; border:1px solid ⟨accent-line⟩; border-radius:⟨r:card-sm⟩; background:⟨white⟩; position:relative;"><span style="position:absolute; top:8px; right:12px; font:700 10px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨muted-400⟩;">⟦SYSTEM · 시스템 이름⟧</span></div>
 
     <!-- ▼ REPEAT per actor (row K): actor · line · use cases -->
     <div style="grid-column:1; grid-row:1; display:flex; flex-direction:column; align-items:center; padding:12px 0;">
       <div style="width:14px; height:14px; border:2px solid ⟨accent⟩; border-radius:⟨r:circle⟩; box-sizing:border-box;"></div>
       <div style="width:24px; height:13px; border:2px solid ⟨accent⟩; border-bottom:none; border-radius:12px 12px 0 0; margin-top:2px; box-sizing:border-box;"></div>
-      <div style="font:600 11.5px/1.3 ⟨f:body⟩; color:⟨ink-700⟩; text-align:center; margin-top:5px;">⟦작성자⟧</div>
+      <div style="font:600 11.5px/1.3 ⟨f:body⟩; color:⟨ink-700⟩; text-align:center; margin-top:5px;">⟦행위자 A⟧</div>
     </div>
     <div style="grid-column:2; grid-row:1; height:2px; background:⟨accent-line⟩;"></div>
     <div style="grid-column:3; grid-row:1; position:relative; display:flex; flex-wrap:wrap; gap:10px; padding:16px 18px;">
-      <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:50%; padding:11px 24px; text-align:center;">⟦VOC 등록⟧</div>
-      <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:50%; padding:11px 24px; text-align:center;">⟦처리 상태 확인⟧</div>
+      <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:50%; padding:11px 24px; text-align:center;">⟦유스케이스 A1⟧</div>
+      <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:50%; padding:11px 24px; text-align:center;">⟦유스케이스 A2⟧</div>
     </div>
     <!-- ▲ /REPEAT -->
 
     <div style="grid-column:1; grid-row:2; display:flex; flex-direction:column; align-items:center; padding:12px 0;">
       <div style="width:14px; height:14px; border:2px solid ⟨accent⟩; border-radius:⟨r:circle⟩; box-sizing:border-box;"></div>
       <div style="width:24px; height:13px; border:2px solid ⟨accent⟩; border-bottom:none; border-radius:12px 12px 0 0; margin-top:2px; box-sizing:border-box;"></div>
-      <div style="font:600 11.5px/1.3 ⟨f:body⟩; color:⟨ink-700⟩; text-align:center; margin-top:5px;">⟦VOC 담당⟧</div>
+      <div style="font:600 11.5px/1.3 ⟨f:body⟩; color:⟨ink-700⟩; text-align:center; margin-top:5px;">⟦행위자 B⟧</div>
     </div>
     <div style="grid-column:2; grid-row:2; height:2px; background:⟨accent-line⟩;"></div>
     <div style="grid-column:3; grid-row:2; position:relative; display:flex; flex-wrap:wrap; gap:10px; padding:16px 18px;">
-      <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:50%; padding:11px 24px; text-align:center;">⟦트리아지⟧</div>
+      <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:50%; padding:11px 24px; text-align:center;">⟦유스케이스 B1⟧</div>
       <!-- VARIANT core use case (filled) -->
-      <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨white⟩; background:⟨accent⟩; border:1.5px solid ⟨accent⟩; border-radius:50%; padding:11px 24px; text-align:center;">⟦Task Request 생성⟧</div>
-      <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:50%; padding:11px 24px; text-align:center;">⟦공개 업데이트⟧</div>
+      <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨white⟩; background:⟨accent⟩; border:1.5px solid ⟨accent⟩; border-radius:50%; padding:11px 24px; text-align:center;">⟦핵심 유스케이스 B2⟧</div>
+      <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:50%; padding:11px 24px; text-align:center;">⟦유스케이스 B3⟧</div>
     </div>
 
     <div style="grid-column:1; grid-row:3; display:flex; flex-direction:column; align-items:center; padding:12px 0;">
       <div style="width:14px; height:14px; border:2px solid ⟨accent⟩; border-radius:⟨r:circle⟩; box-sizing:border-box;"></div>
       <div style="width:24px; height:13px; border:2px solid ⟨accent⟩; border-bottom:none; border-radius:12px 12px 0 0; margin-top:2px; box-sizing:border-box;"></div>
-      <div style="font:600 11.5px/1.3 ⟨f:body⟩; color:⟨ink-700⟩; text-align:center; margin-top:5px;">⟦PM⟧</div>
+      <div style="font:600 11.5px/1.3 ⟨f:body⟩; color:⟨ink-700⟩; text-align:center; margin-top:5px;">⟦행위자 C⟧</div>
     </div>
     <div style="grid-column:2; grid-row:3; height:2px; background:⟨accent-line⟩;"></div>
     <div style="grid-column:3; grid-row:3; position:relative; display:flex; flex-wrap:wrap; gap:10px; padding:16px 18px;">
-      <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:50%; padding:11px 24px; text-align:center;">⟦Task 전환 승인⟧</div>
-      <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:50%; padding:11px 24px; text-align:center;">⟦큐 점검⟧</div>
+      <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:50%; padding:11px 24px; text-align:center;">⟦유스케이스 C1⟧</div>
+      <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:50%; padding:11px 24px; text-align:center;">⟦유스케이스 C2⟧</div>
     </div>
   </div>
 </div>
