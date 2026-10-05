@@ -312,6 +312,24 @@
 | F251 | FeedbackOps의 게이트(스테이지 2 개발자가 알아야 할 것). `pnpm --filter backend test:integration`(DB를 truncate+재시드)+`pnpm typecheck`+`pnpm check:boundaries`+`pnpm gate:db-migration-drift`+`pnpm gate:fe-typecheck`+`pnpm gate:fe-lint`, 페이지 단위 프런트 작업은 픽셀 비교 하네스까지. 백엔드 통합 스위트는 DB 없이는 모두 skip되므로 `pnpm test`만으로는 게이트가 아니다 | 게이트 명령 6개 | 개 | doc | implemented | FO@87948f3:AGENTS.md L102 | 2026-10-05 | dev |
 | F252 | 이 조사에서 테스트·lint·E2E를 실행하지 않았다. 위 개수(E2E 54개 등)는 정적 대조다. 실제 통과 여부와 E2E 실행 시간은 측정하지 않았다 | 미측정 | — | measured | n/a | AP@c20074d:AGENTS.md L47 | 2026-10-05 | dev |
 
+## T — 용어
+
+| 용어 | 뜻 | 처음 나올 때 | 쓰지 않을 말 |
+|---|---|---|---|
+| 메뉴 | 플랫폼에 등록되는 화면 하나(manifest 하나) | 메뉴 | 업무 화면 |
+| 메뉴 패키지 | 그룹당 하나인 `@ap/menu-<group>` 패키지 | 메뉴 패키지 | 메뉴 모듈 |
+| 공간 | 사이드바 그룹을 묶는 최상위 단위(분석·운영 콘솔·피드백) | 공간(Space) | 워크스페이스, 스페이스 |
+| Scope | 조회 한 번에 고르는 접근 범위(Site 안의 room_name 기준) | Scope(조회 범위) | 스코프 |
+| Context | 메뉴 사이를 오가는 분석 문맥(기간·설비 등 8개 키) | Context(분석 문맥) | 컨텍스트 |
+| 화면 유형 | Page Archetype 5종 | 화면 유형(Page Archetype) | 아키타입, 페이지 타입 |
+| 문의자 | VOC를 올린 사람 | 문의자(Reporter) | 리포터, 신고자 |
+| 작업 | FeedbackOps의 Task | 작업(Task) | 태스크 |
+| 작업 요청 | 승인 전의 실행 후보(Task Request) | 작업 요청(Task Request) | 실행 요청 |
+| 묶음 | 같은 문제를 말하는 VOC 모음(VOC Cluster) | 묶음(클러스터) | 군집 |
+| 진행 안내 | 담당자가 문의자에게 보내는 공개 글(Public Update) | 진행 안내(공개 업데이트) | 공개 답변 |
+| 화면 이전 | FeedbackOps 화면을 플랫폼 메뉴로 옮기는 2단계 | 화면 이전(2단계) | 셸 편입 |
+| 실어댑터 | 사내 서버로 가는 HTTP 어댑터(계획) | 실어댑터(HTTP 어댑터) | 실제 어댑터 |
+
 ## Q — 열린 질문
 
 | id | 질문 | 필요 섹션 | 누구 | 상태 |

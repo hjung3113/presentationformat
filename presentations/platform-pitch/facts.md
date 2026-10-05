@@ -56,6 +56,21 @@ AP = hjung3113/analytics-platform, FO = hjung3113/FeedbackOps. 줄 번호는 위
 | F47 | FeedbackOps가 먼저 만들어졌다: 첫 슬라이스 완료 2026-05-16, 플랫폼 레포 생성은 2026-09-17 | 2026-05-16 | 날짜 | doc | implemented | FO@87948f3:docs/implementation/08-mvp-slice-plan.md L16; F01 | 2026-10-05 | exec |
 | F48 | FeedbackOps는 사내 SSO 없이도 개발용 가짜 로그인(MockAuthProvider, 운영 환경에서는 꺼짐)으로 시연할 수 있다 — 회의에서 5분 시연(제안): VOC 2건 묶기 → 작업 요청 → 승인 → 공개 업데이트 → 문의자 '내 VOC' | — | — | doc | implemented | FO@87948f3:docs/adr/0006-authentication-and-actor-provisioning.md L18 | 2026-10-05 | exec |
 | F49 | 운영 콘솔의 '메뉴 활용률'로 어떤 메뉴가 실제로 쓰이는지 잰다 | — | — | code | implemented | AP@c20074d:menus/admin/src/index.ts L29-31 | 2026-10-05 | exec |
+| F80 | FeedbackOps 사용자 역할 4가지: 관리자(설정·권한·승인), 개발자(분류·근거 정리·작업 처리·진행 안내), 일반 사용자(VOC 등록·내 VOC 확인·설문 응답), 문의자(자기가 올린 VOC에 대한 관계) | 4 | 역할 | doc | implemented | FO@87948f3:PRODUCT.md L13-16 | 2026-10-05 | exec |
+| F81 | FeedbackOps의 흐름 5단계: 접수 → 분류 → 근거 정리 → 실행(작업 요청 → 작업) → 결과 확인(설문) | 5 | 단계 | doc | implemented | FO@87948f3:PRODUCT.md L24-28 | 2026-10-05 | exec |
+| F82 | FeedbackOps는 사내 계정으로 로그인하는 단일 업무 공간용 운영 도구다(외부 공개용 아님) | — | — | doc | designed | FO@87948f3:PRODUCT.md L9 | 2026-10-05 | exec |
+| F83 | 사용자 매뉴얼의 장 제목이 곧 할 수 있는 일이다: 문제 알리기, 내 VOC 진행 보기, 들어온 VOC 처리, 문의자에게 알리기, 반복되는 VOC 묶기, 근거로 판단 남기기, 작업으로 넘기기, 고친 뒤 효과 확인, 권한 요청, 업무 공간 관리 | 10 | 장 | doc | implemented | FO@87948f3:docs/USER-MANUAL.md L55-298 | 2026-10-05 | exec,user |
+| F84 | 결과 확인 설문은 응답이 5건 미만인 구간을 결과에서 숨긴다(관리자도 예외 없음) | 5 | 건 | code | implemented | FO@87948f3:docs/USER-MANUAL.md L249 | 2026-10-05 | exec |
+| F85 | FeedbackOps 화면 캡처 35장이 사용자 안내서에 있다 | 35 | 장 | measured | implemented | FO@87948f3:docs/user-guide/screens/ | 2026-10-05 | exec |
+| F86 | 플랫폼의 주 사용자: 공정·설비 엔지니어, 기준정보·지표 관리자, 운영 관리자, 현업 문의자 | 4 | 사용자군 | doc | designed | AP@c20074d:docs/07_app_shell_wireframe.md L9 | 2026-10-05 | exec |
+| F87 | 플랫폼의 목적은 업무 화면을 만드는 것이 아니라 그 화면들이 얹힐 공통 기반을 만드는 것이다. 레포의 화면은 견본이고 실제 업무 화면은 사내에서 새로 만든다 | — | — | doc | designed | AP@c20074d:AGENTS.md L5 | 2026-10-05 | exec |
+| F88 | 플랫폼 공통 기반의 다섯 갈래: 화면 등록·문맥·권한·변경 기록, 공통 화면 부품(표·상세·감사 이력), 차트 공통 동작, 화면 유형 5종, 화면 사이 이동 | 5 | 갈래 | doc | implemented | AP@c20074d:AGENTS.md L7-13 | 2026-10-05 | exec,dev |
+| F89 | 새 업무 화면을 만드는 사람은 제목·경로·즐겨찾기·문맥 표시줄·조회 범위 확인을 직접 만들지 않는다 — 공통 화면 틀이 자동으로 그린다 | — | — | code | implemented | AP@c20074d:apps/platform-web/README.md L35; packages/components/src/PlatformPage.tsx | 2026-10-05 | exec,dev |
+| F90 | 화면 사이 이동이 견본 화면에 구현돼 있다: 사이클타임 상세의 느린 실행 행 → 실행 상세 | — | — | code | implemented | AP@c20074d:menus/analytics/src/pages/CycleTimeDrilldown.tsx L115-117, L149, L245 | 2026-10-05 | exec,dev |
+| F91 | 새 업무 화면 묶음의 뼈대(파일 11개)를 생성기가 만들고, 손대지 않았으면 그대로 되돌린다 | 11 | 개 | code | implemented | AP@c20074d:tooling/gen-menu/src/templates.ts L50-68; docs/integration/platform-packages.md L79-99 | 2026-10-05 | exec,dev |
+| F92 | 디자인 규칙 6가지를 코드 검사가 강제한다(임의 색·임의 값 등 금지) | 6 | 규칙 | code | implemented | AP@c20074d:AGENTS.md L45; tooling/AGENTS.md L8 | 2026-10-05 | exec,dev |
+| F93 | 두 시스템을 잇는 방식 결정(2026-09-26): FeedbackOps는 따로 운영하고, 사내 통합 로그인·디자인·서로 오가는 링크로 연결한 뒤, 판단이 서면 플랫폼 안으로 옮긴다 | 2026-09-26 | 날짜 | doc | designed | AP@c20074d:docs/integration/repository-layout.md L79-84 | 2026-10-05 | exec |
+
 
 ### 소유자 진술 (종류 owner — 문서 근거가 아님, 렌더 시 "(소유자 진술)")
 
@@ -86,6 +101,31 @@ AP = hjung3113/analytics-platform, FO = hjung3113/FeedbackOps. 줄 번호는 위
 | F77 | 판정 규칙(제안): 두 판정 지표가 모두 기준선보다 나아지고 데이터 사고(VOC 유실·권한 밖 노출) 0건이면 두 결정을 올린다 — 그 팀 VOC 접수 일원화, FeedbackOps 화면을 플랫폼으로 옮기는 단계 착수. 미달이면 시범 팀은 FeedbackOps 사용을 멈춘다(Jira 접수는 그대로 있다) | 0 | 건(데이터 사고) | estimate | planned | 이 문서 §6(제안) | 2026-10-05 | exec |
 | F78 | 새 예산 요청은 없다. 시범에는 사내 서버·DB가 필요하며 기존 자원 사용 여부와 비용은 인프라 회신 뒤 보고한다 | — | — | estimate | planned | 이 문서 §7(제안); Q03 | 2026-10-05 | exec |
 | F79 | 오늘 승인 요청은 준비 단계 2주다 — 기준선 추출, 보안 사전 문의, 시범 팀 동의, SSO·인프라 협조 요청, 병행 기간 VOC 접수 경로 확정. 운영 8주는 2주 뒤 기준선 숫자와 함께 다시 올린다 | 2 | 주 | estimate | planned | 이 문서 §1·§7(제안) | 2026-10-05 | exec |
+
+## T — 용어
+
+| 용어 | 뜻 | 처음 나올 때 | 쓰지 않을 말 |
+|---|---|---|---|
+| 플랫폼 | analytics-platform — 업무 화면이 얹히는 공통 기반 | analytics-platform(이하 플랫폼) | 메뉴 기반, 통합 플랫폼, 분석 플랫폼 |
+| FeedbackOps | VOC·작업·설문을 한 흐름으로 다루는 운영 도구 | FeedbackOps(VOC·작업 운영 도구) | 피드백옵스 |
+| VOC | 사내 사용자가 올린 문의·요청 | VOC(사용자 문의·요청) | 고객의 소리 |
+| 문의자 | VOC를 올린 사람 | 문의자 | 리포터, 신고자, 요청자 |
+| 작업 | 개발자가 실제로 처리하는 일 단위 | 작업(Task) | 태스크, 일감 |
+| 작업 요청 | 승인 전의 실행 후보 — 승인되면 작업이 된다 | 작업 요청(Task Request) | 실행 요청 |
+| 묶음 | 같은 문제를 말하는 VOC를 하나로 모은 것 | 묶음(클러스터) | 군집 |
+| 진행 안내 | 담당자가 문의자에게 보내는 공개 글 | 진행 안내(공개 업데이트) | 공개 답변 |
+| 할 일 목록 | 팀장 화면에 모이는 처리 대기 항목 | 할 일 목록 | 행동 큐, 액션 큐 |
+| 업무 화면 | 플랫폼에 얹히는 메뉴 하나 | 업무 화면(메뉴) | 메뉴 화면 |
+| 공통 기반 | 플랫폼이 한 번 만들어 모든 업무 화면이 함께 쓰는 기능 | 공통 기반 | 커널, Kernel |
+| 시험용 데이터 | 실제 서버 대신 쓰는 가짜 데이터 | 시험용 데이터 | 가짜 데이터, mock, 목업 |
+| 사내 통합 로그인 | 회사 계정 한 번으로 들어가는 로그인 | 사내 통합 로그인(SSO) | 사내 로그인 |
+| 자동 검사 | 사람 대신 프로그램이 매번 확인하는 검사 | 자동 검사 | E2E, 계약 검사 |
+| 기준선 | 시범 전 Jira 기록으로 만든 비교 기준 | 기준선(지금의 Jira 기록) | baseline |
+| 평가 지표 | 시범 결과를 판정하는 지표 | 평가 지표 | 판정 지표 |
+| 참고 지표 | 판정에는 쓰지 않고 함께 보고하는 지표 | 참고 지표 | 운영 점검 |
+| 화면 이전 | FeedbackOps 화면을 플랫폼 안으로 옮기는 일 | 화면 이전 | 셸 편입, 2단계 편입, A안 |
+| 준비 단계 | 시범의 첫 2주 — 오늘 승인을 요청하는 범위 | 준비 단계 | 1–2주차 준비 |
+
 
 ## Q — 열린 질문
 
