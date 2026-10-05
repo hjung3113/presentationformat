@@ -31,7 +31,7 @@ cover-tokens: 5종=화면 유형(Page Archetype) [F047] ; 8개=권한 키 [F166]
 - intent: 모든 메뉴 화면이 다섯 화면 유형 중 하나를 고르고, 유형마다 정해진 구역과 공통 레이아웃이 있다는 것을 표로 보여 준다
 - shape: text-table
 - payload: Page Archetype은 5종이고 manifest의 pageType이 고른다 [F047]. Overview = 상태 요약 + 다음 행동(슬롯 summary·trend·attention·trust) [F048]; Analysis = 조건 → 시각화 → 선택 → 드릴다운 → 상세 검증(kpi·chart·annotation·breakdown·trust), 공통 레이아웃 AnalysisLayout [F049][F057]; Management = 기준정보·사용자·설정 관리(filter·table·actions·drawer·history), 공통 레이아웃 ManagementLayout(필터 레일) [F050][F056]; Catalog = 정의·버전·사용처(list·definition·version·ownership·coverage·usage·history) [F051]; Workflow = 상태 전이가 있는 객체(queue·filter·detail·timeline·comments·related) — 쓰는 메뉴도 공통 레이아웃도 아직 없고 FeedbackOps 이전의 선행 과제 [F052][F060][F062]. 견본 17개 분포: management 9·analysis 3·catalog 3·overview 2·workflow 0 [F059].
-- figure-data: none
+- figure-data: columns: 유형(pageType), 다루는 화면, 콘텐츠 슬롯, 공통 레이아웃 · 견본 | rows: overview · 상태 요약 + 다음 행동 진입 · summary·trend·attention·trust · 점선 뼈대만, 견본 2개 ; analysis · 조건 → 시각화 → 선택 → 드릴다운 → 상세 검증 · kpi·chart·annotation·breakdown·trust · AnalysisLayout, 견본 3개 ; management · 기준정보·사용자·설정 관리 · filter·table·actions·drawer·history · ManagementLayout(필터 레일), 견본 9개 ; catalog · 정의·버전·사용처가 중요한 객체 · list·definition·version·ownership·coverage·usage·history · 점선 뼈대만, 견본 3개 ; workflow · 상태 전이가 있는 객체 · queue·filter·detail·timeline·comments·related · 레이아웃 없음(미구현), 견본 0개
 - source-span: facts.md F047–F062
 
 ## 4. 화면 한 장의 구역 — 누가 무엇을 그리나
@@ -87,5 +87,5 @@ cover-tokens: 5종=화면 유형(Page Archetype) [F047] ; 8개=권한 키 [F166]
 - intent: 자주 나오는 용어, 커밋 전에 돌릴 검증, 아직 열린 질문을 한곳에 모은다
 - shape: text-table
 - payload: 용어: Registry, manifest, pageType, Scope, Context, PlatformAdapter, envelope, mock, linkTo, Managed System. 검증: 커밋 전 pnpm lint && typecheck && test && build, 화면이 바뀌면 브라우저, Kernel·셸·공통 컴포넌트를 바꾸면 pnpm e2e [F243]; 계약 E2E 54개는 재시도 없이 통과해야 한다 [F235][F236]; lint의 디자인 규칙 6개 [F244]. 열린 질문: facts.md Q01–Q25 중 개발자에게 직접 걸리는 것(쓰기 계약, 사용자 설정 저장 위치, Line·Site 키 등). 숫자는 모두 정적 대조값이며 실행 결과가 아니다 [F252].
-- figure-data: none
+- figure-data: columns: 열린 질문, 지금 상태, 정하는 쪽 | rows: 쓰기 계약 · 메뉴 조회 포트는 읽기 전용, 쓰기 계약은 소비자가 늘 때까지 미룸 · 플랫폼 ; 사용자 설정 저장 위치 · 즐겨찾기·Scope·언어·표 열이 브라우저에만 저장 · 사용자(제품 결정) ; Line·Site 전역 Context 키 · 문서는 독립 축, 코드에 키 없음 · 사용자(제품 결정) ; 엔드포인트 선언 원본 · TS ↔ FastAPI 선언 공유(#148) · 사용자 + 사내 백엔드 담당 ; 메뉴 개발 위치 · 이 모노레포 vs 별도 저장소 · 사용자 — 용어 목록과 검증 명령은 표가 아니라 정의 목록·짧은 문단으로 둔다
 - source-span: facts.md F235–F252, Q01–Q25

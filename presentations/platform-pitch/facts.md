@@ -18,7 +18,7 @@ AP = hjung3113/analytics-platform, FO = hjung3113/FeedbackOps. 줄 번호는 위
 | F09 | 필터 입력을 다섯 곳에서 각자 만들고 있었다 → 공통 필터 바로 통일 | 5 | 곳 | doc | implemented | AP@c20074d:docs/adr/0016-page-filter-bar.md L8 | 2026-10-05 | exec,dev |
 | F10 | 플랫폼 성공 기준: "새 메뉴가 추가될 때 플랫폼 코드를 계속 고쳐야 한다면 플랫폼 설계가 실패한 것" | — | — | doc | designed | AP@c20074d:docs/06_platform_ui_contract.md L1195 | 2026-10-05 | exec,dev |
 | F11 | 메뉴 개발 규칙: 메뉴 작업 중에 플랫폼 공통 코드(packages/*)를 고치지 않는다 | 0 | 건(목표) | doc | designed | AP@c20074d:docs/integration/in-house-rollout.md L105 | 2026-10-05 | dev |
-| F12 | 사내 SSO 사양(#150) 답 하나가 풀어 주는 작업: #86·#98·#154·#155 | 4 | 건 | doc | planned | AP@c20074d:.planning/README.md L78 | 2026-10-05 | exec,dev |
+| F12 | 사내 SSO 사양(#150) 답이 선행 조건인 작업: #86(실제 VOC 이력)·#98(권한 쓰기)·#154(실어댑터)·#155(플랫폼 API). #154는 #148·#149도, #155는 사내 백엔드 담당의 구현도 필요하다 | 4 | 건 | doc | planned | AP@c20074d:.planning/README.md L78-87; docs/integration/in-house-rollout.md L25-31 | 2026-10-05 | exec,dev |
 | F13 | 사내 답을 기다리는 항목: SSO(#150, SSO 담당)·인프라(#151, 인프라 담당)·전송 형식(#149)·FastAPI 플랫폼 API(#155, 백엔드 담당) | 3 | 담당 영역 | doc | planned | AP@c20074d:.planning/README.md L78-81; docs/integration/in-house-rollout.md L25-31 | 2026-10-05 | exec |
 | F14 | 플랫폼 쪽 사내 적용 준비는 끝났고, 남은 일의 대부분은 사내 입력(SSO 사양·배포 환경·백엔드 합의)에 막혀 있다 | — | — | doc | implemented | AP@c20074d:docs/integration/in-house-rollout.md L7-9 | 2026-10-05 | exec |
 | F15 | 모든 메뉴 데이터는 mock 어댑터로 적합성 검사를 통과했다. 사내 실서버 대상 검증은 아직 0건 | 0 | 건(실서버 검증) | doc | planned | AP@c20074d:docs/integration/in-house-rollout.md L7, L29 | 2026-10-05 | exec,dev |
@@ -53,6 +53,9 @@ AP = hjung3113/analytics-platform, FO = hjung3113/FeedbackOps. 줄 번호는 위
 | F44 | 두 레포 모두 GitHub 공개(private=false) | — | — | measured | n/a | GitHub API: hjung3113/analytics-platform, hjung3113/FeedbackOps | 2026-10-05 | exec |
 | F45 | 두 레포의 개발·결정은 사실상 1인(AI 코딩 에이전트와 함께)이 해 왔다 | 1 | 명 | measured | n/a | AP·FO git log 작성자(동일 소유자 계정), ADR 결정자 "사용자" | 2026-10-05 | exec |
 | F46 | 플랫폼 단계 6(FeedbackOps 1단계) 남은 4건 중 실 VOC 어댑터(#86)는 SSO(#150) 다음 | — | — | doc | planned | AP@c20074d:.planning/README.md L87 | 2026-10-05 | dev |
+| F47 | FeedbackOps가 먼저 만들어졌다: 첫 슬라이스 완료 2026-05-16, 플랫폼 레포 생성은 2026-09-17 | 2026-05-16 | 날짜 | doc | implemented | FO@87948f3:docs/implementation/08-mvp-slice-plan.md L16; F01 | 2026-10-05 | exec |
+| F48 | FeedbackOps는 사내 SSO 없이도 개발용 가짜 로그인(MockAuthProvider, 운영 환경에서는 꺼짐)으로 시연할 수 있다 — 회의에서 5분 시연(제안): VOC 2건 묶기 → 작업 요청 → 승인 → 공개 업데이트 → 문의자 '내 VOC' | — | — | doc | implemented | FO@87948f3:docs/adr/0006-authentication-and-actor-provisioning.md L18 | 2026-10-05 | exec |
+| F49 | 운영 콘솔의 '메뉴 활용률'로 어떤 메뉴가 실제로 쓰이는지 잰다 | — | — | code | implemented | AP@c20074d:menus/admin/src/index.ts L29-31 | 2026-10-05 | exec |
 
 ### 소유자 진술 (종류 owner — 문서 근거가 아님, 렌더 시 "(소유자 진술)")
 
@@ -73,14 +76,16 @@ AP = hjung3113/analytics-platform, FO = hjung3113/FeedbackOps. 줄 번호는 위
 
 | id | 사실 | 값 | 단위 | 종류 | 상태 | 출처 | as-of | 독자 |
 |---|---|---|---|---|---|---|---|---|
-| F70 | 오늘 요청하는 결정 수(D1 시범 승인, D2 SSO·인프라 담당, D3 백엔드 담당, D4 보안·규정 확인) | 4 | 건 | derived | n/a | 이 문서 §7 | 2026-10-05 | exec |
-| F71 | 시범 기간: 사내 답·기준선 2주 + 운영 8주 + 판정 2주 | 12 | 주 | estimate | planned | 이 문서 §6(제안) | 2026-10-05 | exec |
-| F72 | 시범 범위: 1개 팀(1 Managed System), 1개 Site/Line — 플랫폼 시작 범위와 같다 | 1 | 팀·라인 | estimate | planned | 이 문서 §6(제안); F39 | 2026-10-05 | exec |
-| F73 | 지정 요청하는 사내 담당: SSO·인프라·백엔드 | 3 | 명 | derived | n/a | F13 | 2026-10-05 | exec |
-| F74 | 사내 담당 답변 기한 | 2 | 주 | estimate | planned | 이 문서 §7(제안) | 2026-10-05 | exec |
-| F75 | 기준선: 해당 팀의 지난 6개월 Jira VOC 기록(건수·첫 응답·처리 시간·재문의) | 6 | 개월 | estimate | planned | 이 문서 §6(제안) | 2026-10-05 | exec |
-| F76 | 판정선(제안, 기준선 확인 뒤 1주 안에 확정): 첫 응답 리드타임 30% 단축 · VOC→Task 연결률 80% 이상 · 릴리스 후 문의자 통지율 90% 이상 · 재문의 25% 감소 · 시범 메뉴 개발 중 플랫폼 공통 코드 수정 0건 | 30/80/90/25/0 | % / 건 | estimate | planned | 이 문서 §6(제안); F11; F27 | 2026-10-05 | exec |
-| F77 | 판정 규칙(제안): 5개 중 4개 이상 충족 + 데이터 사고 0건이면 확대, 아니면 원인별 조정 또는 현행(Jira) 유지 | 4/5 | 지표 | estimate | planned | 이 문서 §6(제안) | 2026-10-05 | exec |
+| F70 | 오늘 요청하는 결정 수(D1 준비 단계 승인과 시범 후보 팀, D2 SSO·인프라 협조 요청, D3 발표자 시간 배분, D4 보안 회신 확인) | 4 | 건 | derived | n/a | 이 문서 §7 | 2026-10-05 | exec |
+| F71 | 시범 기간: 준비 2주 + 운영 8주 + 판정 2주. 12주는 착수일부터 센다 — 사내 로그인 연결이 늦으면 착수일을 미룬다 | 12 | 주 | estimate | planned | 이 문서 §6(제안); F21 | 2026-10-05 | exec |
+| F72 | 시범 범위: 1개 팀 — 그 팀장의 사전 동의를 받는다 | 1 | 팀 | estimate | planned | 이 문서 §6(제안) | 2026-10-05 | exec |
+| F73 | 협조를 요청하는 사내 담당: SSO·인프라. 백엔드 담당은 플랫폼 실서버 연결에만 필요하므로 2주 뒤 함께 올린다 | 2 | 영역 | derived | n/a | F13; F16 | 2026-10-05 | exec |
+| F74 | 사내 담당 회신 요청 기한 | 2 | 주 | estimate | planned | 이 문서 §7(제안) | 2026-10-05 | exec |
+| F75 | 기준선: 후보 팀의 지난 6개월 Jira VOC 기록 — 월 건수·첫 댓글까지 시간·재문의·중복 표본·개발 이슈가 연결된 비율 | 6 | 개월 | estimate | planned | 이 문서 §6(제안) | 2026-10-05 | exec |
+| F76 | 판정 지표: Jira와 비교할 수 있는 두 가지(첫 응답 리드타임, 재문의)만 판정에 쓰고, 연결률·통지율·사내 메뉴 1개 개발 기간은 운영 점검으로 보고한다. 판정선 숫자는 기준선을 본 뒤 정한다 | 2 | 지표 | estimate | planned | 이 문서 §6(제안); F27 | 2026-10-05 | exec |
+| F77 | 판정 규칙(제안): 두 판정 지표가 모두 기준선보다 나아지고 데이터 사고(VOC 유실·권한 밖 노출) 0건이면 두 결정을 올린다 — 그 팀 VOC 접수 일원화, FeedbackOps 화면을 플랫폼으로 옮기는 단계 착수. 미달이면 시범 팀은 FeedbackOps 사용을 멈춘다(Jira 접수는 그대로 있다) | 0 | 건(데이터 사고) | estimate | planned | 이 문서 §6(제안) | 2026-10-05 | exec |
+| F78 | 새 예산 요청은 없다. 시범에는 사내 서버·DB가 필요하며 기존 자원 사용 여부와 비용은 인프라 회신 뒤 보고한다 | — | — | estimate | planned | 이 문서 §7(제안); Q03 | 2026-10-05 | exec |
+| F79 | 오늘 승인 요청은 준비 단계 2주다 — 기준선 추출, 보안 사전 문의, 시범 팀 동의, SSO·인프라 협조 요청, 병행 기간 VOC 접수 경로 확정. 운영 8주는 2주 뒤 기준선 숫자와 함께 다시 올린다 | 2 | 주 | estimate | planned | 이 문서 §1·§7(제안) | 2026-10-05 | exec |
 
 ## Q — 열린 질문
 
@@ -91,7 +96,10 @@ AP = hjung3113/analytics-platform, FO = hjung3113/FeedbackOps. 줄 번호는 위
 | Q03 | on-prem 서버·DB 비용 | 7 | 인프라 담당 | open — #151 답 뒤 별도 보고 |
 | Q04 | 사내 기존 도구·상용 VOC 도구와의 비교가 필요한가 | 5 | 부서장 | open — 이번 문서는 현행·Jira 보강·CLAS 확장·본 안만 비교 |
 | Q05 | EES 데스크톱 분석 앱을 플랫폼으로 옮길지 | 4 | 부서장 | open — 이번 요청 범위 밖 |
-| Q06 | 시범 팀을 어느 팀으로 할지 | 6 | 팀장 | open — D1에서 정한다 |
+| Q06 | 시범 팀을 어느 팀으로 할지, 그 팀장이 동의하는지 | 6 | 팀장 | open — D1에서 후보를 정하고 준비 단계에 동의를 받는다 |
+| Q07 | 병행 기간에 VOC가 FeedbackOps로 들어오는 경로(문의자 직접 등록 / Jira 건 이관, 이중 입력 여부) | 6 | 발표자·시범 팀장 | open — 준비 단계 과제 |
+| Q08 | 레포 공개 범위·사내 정보 포함 여부·AI 코딩 도구 사용 규정 | 7 | 발표자 → 보안 담당 | open — 회의 전 사전 문의, 회신은 D4 |
+| Q09 | Jira 보강안의 실현성 — 문의자가 Jira 계정·화면을 쓰는지, 워크플로·필드 변경 권한이 누구에게 있는지 | 3 | 발표자 | open — 준비 단계에서 확인 |
 
 ## C — 주장
 
@@ -100,6 +108,7 @@ AP = hjung3113/analytics-platform, FO = hjung3113/FeedbackOps. 줄 번호는 위
 | C01 | 지금은 VOC 처리가 성과로 남지 않는다 | F50, F51, F55, F56, F57 | 소유자 진술, 정량 기준선 없음(Q01) |
 | C02 | 묶기·Task화·문의자 통지·성과 집계 기능은 이미 만들어져 있다 | F22–F28, F06, F07 | 실사용 배포 전(F21), 실데이터 0건(F15) |
 | C03 | 공통 기반이 메뉴마다 반복되는 일을 줄인다 | F08, F09, F10, F40, F41 | 레포 안 견본 메뉴의 사례, 사내 메뉴로는 미검증 |
-| C04 | 막힌 것은 기술이 아니라 사내 담당 지정이다 | F12, F13, F14, F21 | — |
+| C04 | 다음 단계는 사내 담당 회신과 보안 확인 없이는 진행할 수 없다 | F12, F13, F14, F21 | 플랫폼 API(#155)는 사내 백엔드 담당이 구현해야 한다(in-house-rollout §2) — 회신만으로 끝나지 않는다 |
 | C05 | 빠르게, 검증하며 만들었다 | F01, F03, F04, F05 | 1인 집중(F45) |
-| C06 | 시범은 작고 되돌릴 수 있다 | F71, F72, F77, F29 | 시범 기간에는 Jira와 병행이라 도구가 하나 는다 |
+| C06 | 시범은 작고 되돌릴 수 있다 | F71, F72, F77, F79, F29 | 시범 기간에는 Jira와 병행이라 도구가 하나 늘고, 접수 경로(Q07)에 따라 이중 입력 부담이 생길 수 있다 |
+| C07 | 팀장에게 직접 이로운 기능이 이미 있다 — 행동 큐, 연결 지표, 말 없는 상태 변경 차단 | F22, F26, F27 | 실사용 전(F21) |
