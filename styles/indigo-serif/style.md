@@ -5,7 +5,7 @@
 | Field | Value |
 |-------|-------|
 | **id** | `indigo-serif` |
-| **status** | default (only style today) |
+| **status** | default |
 | **identity** | Serif display headings (Noto Serif KR) over sans body (Pretendard); single indigo `#4338CA` accent carrying meaning, never decorative; semantic split slate+amber (as-is/problem) vs indigo (to-be/improved). |
 | **when to use** | Explanatory / before→after / architecture briefs where a calm, editorial "same-author" feel is wanted. |
 | **display font** | Noto Serif KR |
@@ -21,7 +21,8 @@
 - `composition-guide.md` — density budgets, layout, pacing.
 - `template.dc.html` — runnable skeleton with this style's pasted values.
 - `design-system.answerkey.dc.html` — rendered answer key (wins vs `design.md` on conflict).
-- `support.js` — byte-identical generated runtime sidecar for the two `.dc.html` files here.
+- `components/` + `components.gallery.dc.html` — **generated** paste-ready figure components (from `../../core/components/`) and their rendered gallery. Regenerate with `node .claude/lib/components.mjs build`; never hand-edit.
+- `support.js` — byte-identical generated runtime sidecar for the `.dc.html` files here.
 
 ## Chrome tokens consumed by `core/runtime-spec.md`
 The shared runtime names six slots; this style supplies them from `design.md`:

@@ -1,0 +1,51 @@
+<!--
+@component bar-chart
+@kind chart
+@order 200
+@shape quantity trend
+@title 세로 막대 차트 — 항목·기간별 수치
+@use 몇 개 항목(또는 기간)의 크기를 비교하는 것이 주장이다. 유형별 건수, 월별 처리량, 전후 비교(두 차트 나란히).
+@avoid 항목명이 길거나 8개 초과 → hbar-chart. 전체 중 비율 → stacked-bar. 숫자 1–4개가 메시지 → kpi-row.
+@limits 막대 3–8
+@data bars: 라벨=값, 라벨=값 … | unit?: 건 | highlight?: 라벨 | baseline?: 라벨(이전 상태)
+HOW TO FILL
+  1. max = 가장 큰 값. 막대마다 height 슬롯(값 ÷ max × 100, %)과 막대 위 값 글자 슬롯을 같은 막대에서 함께 채운다(정수로 반올림).
+       예) max 100 → 값 70 은 70%, 값 30 은 30%. max 120 → 값 90 은 75%
+  2. 막대 하나 = ▼REPEAT 막대 칸 하나 + 아래 라벨 줄의 라벨 하나. 막대 수와 라벨 수를 같게.
+  3. 색 변형: 기본=보조 강조색, 주장하는 막대 한 개=강조색, 이전·기준선=회색, 문제 급증=경고색.
+  4. 시간 추이면 라벨을 기간(1월, 2월 …)으로, 왼쪽에서 오른쪽으로 시간 순서.
+  5. 전후 비교는 이 차트 두 개를 grid-template-columns:1fr 1fr 로 나란히 두고 각 위에 AS-IS/TO-BE 배지를 단다.
+-->
+<div data-component="bar-chart" style="background:⟨fig-tint⟩; border:1px solid ⟨border-fig⟩; border-radius:⟨r:card-sm⟩; padding:22px 24px 20px;">
+  <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px;"><span style="font:600 13px/1.4 ⟨f:body⟩; color:⟨ink-900⟩;">⟦차트 제목⟧</span><span style="font:500 11px/1 ⟨f:mono⟩; color:⟨muted-400⟩;">⟦단위⟧</span></div>
+  <!-- plot -->
+  <div style="display:flex; align-items:flex-end; gap:16px; height:180px; padding:22px 8px 0; border-bottom:1.5px solid ⟨border-node⟩;">
+    <!-- ▼ REPEAT per bar: height = value / max × 100 % -->
+    <div style="flex:1; height:100%; display:flex; align-items:flex-end; justify-content:center;">
+      <div style="position:relative; width:100%; max-width:56px; height:⟦100⟧%; background:⟨accent⟩; border-radius:4px 4px 0 0;"><span style="position:absolute; bottom:100%; left:0; right:0; text-align:center; padding-bottom:5px; font:700 11px/1 ⟨f:mono⟩; color:⟨ink-800⟩;">⟦100⟧</span></div>
+    </div>
+    <!-- ▲ /REPEAT -->
+    <div style="flex:1; height:100%; display:flex; align-items:flex-end; justify-content:center;">
+      <div style="position:relative; width:100%; max-width:56px; height:⟦70⟧%; background:⟨accent-soft⟩; border-radius:4px 4px 0 0;"><span style="position:absolute; bottom:100%; left:0; right:0; text-align:center; padding-bottom:5px; font:700 11px/1 ⟨f:mono⟩; color:⟨ink-800⟩;">⟦70⟧</span></div>
+    </div>
+    <div style="flex:1; height:100%; display:flex; align-items:flex-end; justify-content:center;">
+      <div style="position:relative; width:100%; max-width:56px; height:⟦50⟧%; background:⟨accent-soft⟩; border-radius:4px 4px 0 0;"><span style="position:absolute; bottom:100%; left:0; right:0; text-align:center; padding-bottom:5px; font:700 11px/1 ⟨f:mono⟩; color:⟨ink-800⟩;">⟦50⟧</span></div>
+    </div>
+    <div style="flex:1; height:100%; display:flex; align-items:flex-end; justify-content:center;">
+      <div style="position:relative; width:100%; max-width:56px; height:⟦30⟧%; background:⟨accent-soft⟩; border-radius:4px 4px 0 0;"><span style="position:absolute; bottom:100%; left:0; right:0; text-align:center; padding-bottom:5px; font:700 11px/1 ⟨f:mono⟩; color:⟨ink-800⟩;">⟦30⟧</span></div>
+    </div>
+    <!-- VARIANT baseline / previous = grey -->
+    <div style="flex:1; height:100%; display:flex; align-items:flex-end; justify-content:center;">
+      <div style="position:relative; width:100%; max-width:56px; height:⟦10⟧%; background:⟨slate-bar⟩; border-radius:4px 4px 0 0;"><span style="position:absolute; bottom:100%; left:0; right:0; text-align:center; padding-bottom:5px; font:700 11px/1 ⟨f:mono⟩; color:⟨muted-500⟩;">⟦10⟧</span></div>
+    </div>
+  </div>
+  <!-- x labels: same count and order as bars -->
+  <div style="display:flex; gap:16px; padding:8px 8px 0;">
+    <div style="flex:1; text-align:center; font:500 11.5px/1.35 ⟨f:body⟩; color:⟨body⟩;">⟦항목 A⟧</div>
+    <div style="flex:1; text-align:center; font:500 11.5px/1.35 ⟨f:body⟩; color:⟨body⟩;">⟦항목 B⟧</div>
+    <div style="flex:1; text-align:center; font:500 11.5px/1.35 ⟨f:body⟩; color:⟨body⟩;">⟦항목 C⟧</div>
+    <div style="flex:1; text-align:center; font:500 11.5px/1.35 ⟨f:body⟩; color:⟨body⟩;">⟦항목 D⟧</div>
+    <div style="flex:1; text-align:center; font:500 11.5px/1.35 ⟨f:body⟩; color:⟨body⟩;">⟦항목 E⟧</div>
+  </div>
+  <div style="font:400 11.5px/1.55 ⟨f:body⟩; color:⟨muted-400⟩; margin-top:12px;">* ⟦기준 시점·출처⟧</div>
+</div>

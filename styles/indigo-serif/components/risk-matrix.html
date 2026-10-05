@@ -1,0 +1,66 @@
+<!-- GENERATED for style "indigo-serif" from core/components/risk-matrix.html by .claude/lib/components.mjs — do not edit here.
+     Paste the <div data-component="risk-matrix"> block into a section, then replace EVERY ⟦…⟧ (the exit gate fails on any left over). -->
+<!--
+@component risk-matrix
+@kind report
+@order 330
+@shape risk
+@title 리스크 매트릭스 — 가능성 × 영향
+@use 리스크를 가능성과 영향 두 축으로 놓고, 무엇을 먼저 다룰지와 대응책을 보여 준다. 프로젝트 리스크, 도입 위험, 운영 위험.
+@avoid 출처가 가능성과 영향을 둘 다 등급으로 매기지 않았다(등급을 지어내지 않는다), 또는 리스크가 2개 이하 → peer-list(card-grid 의 왼쪽 강조 리스크 카드). 리스크가 아닌 일반 우선순위 → table.
+@limits 리스크 2–7
+@data risks: R1 이름 (가능성 상|중|하, 영향 상|중|하) → 대응
+HOW TO FILL
+  1. 9칸은 이미 색이 정해져 있다(오른쪽 위로 갈수록 위험). 칸 색을 바꾸지 않는다.
+  2. 리스크마다 R1, R2 … 칩을 맞는 칸에 넣는다(가능성 = 행, 영향 = 열). 한 칸에 여러 칩 가능.
+  3. 오른쪽 목록에 같은 번호로 "이름 — 대응"을 적는다. 칩 수 = 목록 수.
+  4. 상·상 칸에 든 리스크는 목록에서 경고색 번호 변형을 쓴다.
+-->
+<div data-component="risk-matrix" style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:24px;">
+  <div style="display:grid; grid-template-columns:1fr 1.1fr; gap:24px; align-items:start;">
+    <!-- matrix: rows = 가능성(상→하), columns = 영향(하→상) -->
+    <div>
+      <div style="display:grid; grid-template-columns:44px repeat(3,1fr); grid-template-rows:repeat(3,64px) 28px; gap:4px;">
+        <div style="font:600 11px/1.2 Pretendard,sans-serif; color:#8A91A6; display:flex; align-items:center;">상</div>
+        <div style="background:#F6F7FB; border-radius:5px; display:flex; flex-wrap:wrap; gap:4px; align-content:center; justify-content:center; padding:4px;"></div>
+        <div style="background:#FBF1EE; border-radius:5px; display:flex; flex-wrap:wrap; gap:4px; align-content:center; justify-content:center; padding:4px;"><span style="font:700 10.5px/1 'JetBrains Mono',monospace; color:#1E2233; background:#FFFFFF; border:1px solid #DDE1EA; border-radius:100px; padding:4px 7px;">⟦R2⟧</span></div>
+        <div style="background:#FBF1EE; border:1px solid #F0D7CF; border-radius:5px; display:flex; flex-wrap:wrap; gap:4px; align-content:center; justify-content:center; padding:4px;"><span style="font:700 10.5px/1 'JetBrains Mono',monospace; color:#B4543F; background:#FFFFFF; border:1px solid #F0D7CF; border-radius:100px; padding:4px 7px;">⟦R1⟧</span></div>
+        <div style="font:600 11px/1.2 Pretendard,sans-serif; color:#8A91A6; display:flex; align-items:center;">중</div>
+        <div style="background:#FFFFFF; border:1px solid #E7E9F3; border-radius:5px; display:flex; flex-wrap:wrap; gap:4px; align-content:center; justify-content:center; padding:4px;"></div>
+        <div style="background:#F6F7FB; border-radius:5px; display:flex; flex-wrap:wrap; gap:4px; align-content:center; justify-content:center; padding:4px;"><span style="font:700 10.5px/1 'JetBrains Mono',monospace; color:#1E2233; background:#FFFFFF; border:1px solid #DDE1EA; border-radius:100px; padding:4px 7px;">⟦R3⟧</span></div>
+        <div style="background:#FBF1EE; border-radius:5px; display:flex; flex-wrap:wrap; gap:4px; align-content:center; justify-content:center; padding:4px;"></div>
+        <div style="font:600 11px/1.2 Pretendard,sans-serif; color:#8A91A6; display:flex; align-items:center;">하</div>
+        <div style="background:#FFFFFF; border:1px solid #E7E9F3; border-radius:5px; display:flex; flex-wrap:wrap; gap:4px; align-content:center; justify-content:center; padding:4px;"></div>
+        <div style="background:#FFFFFF; border:1px solid #E7E9F3; border-radius:5px; display:flex; flex-wrap:wrap; gap:4px; align-content:center; justify-content:center; padding:4px;"><span style="font:700 10.5px/1 'JetBrains Mono',monospace; color:#1E2233; background:#FFFFFF; border:1px solid #DDE1EA; border-radius:100px; padding:4px 7px;">⟦R4⟧</span></div>
+        <div style="background:#F6F7FB; border-radius:5px; display:flex; flex-wrap:wrap; gap:4px; align-content:center; justify-content:center; padding:4px;"></div>
+        <div></div>
+        <div style="font:600 11px/28px Pretendard,sans-serif; color:#8A91A6; text-align:center;">하</div>
+        <div style="font:600 11px/28px Pretendard,sans-serif; color:#8A91A6; text-align:center;">중</div>
+        <div style="font:600 11px/28px Pretendard,sans-serif; color:#8A91A6; text-align:center;">상</div>
+      </div>
+      <div style="display:flex; justify-content:space-between; font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#9AA0B2; margin-top:4px; padding-left:48px;"><span>↑ 가능성</span><span>영향 →</span></div>
+    </div>
+    <!-- legend: same numbers as the chips -->
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <!-- VARIANT top-right (high/high) risk -->
+      <div style="display:grid; grid-template-columns:34px 1fr; gap:10px; align-items:start;">
+        <span style="font:700 10.5px/1 'JetBrains Mono',monospace; color:#B4543F; background:#FBF1EE; border:1px solid #F0D7CF; border-radius:100px; padding:4px 0; text-align:center;">⟦R1⟧</span>
+        <div><div style="font:600 13px/1.4 Pretendard,sans-serif; color:#15172B;">⟦리스크 1 이름⟧</div><div style="font:400 12px/1.6 Pretendard,sans-serif; color:#5A6175;">→ ⟦대응 한 줄⟧</div></div>
+      </div>
+      <!-- ▼ REPEAT per risk -->
+      <div style="display:grid; grid-template-columns:34px 1fr; gap:10px; align-items:start;">
+        <span style="font:700 10.5px/1 'JetBrains Mono',monospace; color:#1E2233; background:#FFFFFF; border:1px solid #DDE1EA; border-radius:100px; padding:4px 0; text-align:center;">⟦R2⟧</span>
+        <div><div style="font:600 13px/1.4 Pretendard,sans-serif; color:#15172B;">⟦리스크 2 이름⟧</div><div style="font:400 12px/1.6 Pretendard,sans-serif; color:#5A6175;">→ ⟦대응 한 줄⟧</div></div>
+      </div>
+      <!-- ▲ /REPEAT -->
+      <div style="display:grid; grid-template-columns:34px 1fr; gap:10px; align-items:start;">
+        <span style="font:700 10.5px/1 'JetBrains Mono',monospace; color:#1E2233; background:#FFFFFF; border:1px solid #DDE1EA; border-radius:100px; padding:4px 0; text-align:center;">⟦R3⟧</span>
+        <div><div style="font:600 13px/1.4 Pretendard,sans-serif; color:#15172B;">⟦리스크 3 이름⟧</div><div style="font:400 12px/1.6 Pretendard,sans-serif; color:#5A6175;">→ ⟦대응 한 줄⟧</div></div>
+      </div>
+      <div style="display:grid; grid-template-columns:34px 1fr; gap:10px; align-items:start;">
+        <span style="font:700 10.5px/1 'JetBrains Mono',monospace; color:#1E2233; background:#FFFFFF; border:1px solid #DDE1EA; border-radius:100px; padding:4px 0; text-align:center;">⟦R4⟧</span>
+        <div><div style="font:600 13px/1.4 Pretendard,sans-serif; color:#15172B;">⟦리스크 4 이름⟧</div><div style="font:400 12px/1.6 Pretendard,sans-serif; color:#5A6175;">→ ⟦대응 한 줄⟧</div></div>
+      </div>
+    </div>
+  </div>
+</div>

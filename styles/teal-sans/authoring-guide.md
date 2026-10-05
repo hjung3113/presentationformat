@@ -3,7 +3,7 @@
 > A reusable guide for producing scroll-style HTML explainer documents that feel authored by the same person — **whatever the subject** (a system redesign, a research summary, a process proposal, a product brief…).
 > This file governs **voice, structure, content patterns, and when-to-use decisions.** For exact visual values, see `design.md`. The two are meant to be used together: this guide tells you *what to write and which device to reach for*; `design.md` tells you *exactly how it should look*.
 >
-> **This doc owns:** voice (incl. Korean register, §3), skeleton, the page-type registry (§4), situation→device tables, and the color **intent→token-name** map (§5.2).
+> **This doc owns:** voice (incl. Korean register, §3), skeleton, the page-type registry (§4), and the color **intent→token-name** map (§5.2). The situation→figure mapping is shared by all styles in `../../core/components.md`.
 > **This doc does NOT cover:** exact HEX/px values → `design.md`; the document shell + JS + naming contract → `../../core/runtime-spec.md`. Start a build from `template.dc.html`; read `README.md` for the doc map.
 
 ---
@@ -11,10 +11,11 @@
 ## 1. Document DNA (applies to any topic)
 
 - **Genre:** a peer-to-peer **"direction / explainer" document**, not a slide deck. It says *"here is how we're thinking about this and where it's going,"* and explains rather than persuades. A document may be **decision-framed** when the source asks for it, but that means visible decision context / open questions / recommendation tradeoffs — not a hidden approval request dressed as an explainer.
+- **Exception — `doc-type: pitch` (필요성·투자 설득).** A pitch exists to ask for something, so an explicit ask (요청) is **required**: one `decision` section, placed **last** (`../../core/components.md` §5 recipe F). That follows the same principle as above — the ask is visible and explicit, never tucked into a card. The disclaimer opener "본 문서는 승인 요청서가 아니라 …" is **not** used in a pitch. Voice and hype rules are unchanged: no exaggeration, no suspense, no verdict punchlines; an estimate is marked "(추정)", an owner's statement is marked as such ("(소유자 진술)"), and a designed or planned item is never written as if it already exists.
 - **Reader:** a knowledgeable peer. Assume domain literacy → don't over-explain basics; push glossaries to a low-emphasis appendix.
 - **Density:** keep the substance plus the *necessary* elaboration. Trim secondary asides, not the core. (One-sentence compression ✗ / a tight 1–2 line paragraph ✓.) Rough budgets: lead 2–4 sentences (≤760px), card body ≤3 sentences, card grids 3–6 items, tables ≤7 rows. **Quantified per-section/per-viewport budgets, focal hierarchy, column-count and arrangement rules live in `composition-guide.md`** — consult it once page types are chosen, before placing components.
 - **Voice:** calm, explanatory, declarative. No drama, no suspense, no hype, no imperative punchlines. Titles describe; they don't deliver verdicts.
-- **Contrastive framing is allowed and encouraged** — delivered flatly, to *scope* a claim, not to build suspense: `A가 아니라 B`, `A일 뿐 B가 아니다`, `A를 넘어 B`. The reference opens on exactly this ("본 문서는 승인 요청서가 아니라 … 실행 방향 공유 자료이다"). What's banned is the *hype* version: suspenseful reveals ("놀랍게도", "X일까? 아니다"), exclamation, verdict punchlines.
+- **Contrastive framing is allowed and encouraged** — delivered flatly, to *scope* a claim, not to build suspense: `A가 아니라 B`, `A일 뿐 B가 아니다`, `A를 넘어 B`. The reference opens on exactly this ("본 문서는 승인 요청서가 아니라 … 실행 방향 공유 자료이다") — for explainer-type documents; a `pitch` does not use that opener (see Genre). What's banned is the *hype* version: suspenseful reveals ("놀랍게도", "X일까? 아니다"), exclamation, verdict punchlines.
 
 ---
 
@@ -35,7 +36,8 @@ A document in this voice almost always follows this arc. Rename freely; keep the
 | Scope / Plan | Now vs later; **roadmap**; open questions | `08 · SCOPE` |
 | Reference | Glossary / appendix (de-emphasized) | `REFERENCE` |
 
-- **Section count:** target ~6–9 numbered sections + a reference appendix. Below 4, merge skeleton rows; above ~9, group into acts with a section divider (`design.md §6.2`) and keep nav labels short (2–4 chars). Rows commonly merge — e.g. Mapping+Outcome → one section, Scope+Open-questions → one; drop Risk/Method if not applicable. The reference ships 8 numbered + 1 reference from the 10-row skeleton.
+- **Section count:** target ~6–9 numbered sections + a reference appendix. Below 4, merge skeleton rows; above ~9, group into acts with a section divider (`design.md §6.2`; markup is a `<div>`, never a `<section>`) and keep nav labels short (2–4 chars). Rows commonly merge — e.g. Mapping+Outcome → one section, Scope+Open-questions → one; drop Risk/Method if not applicable. The reference ships 8 numbered + 1 reference from the 10-row skeleton.
+- **Other document types.** Status report, decision proposal, feature guide, analysis and **pitch** follow the recipes in `../../core/components.md` §5 (record the id as the plan's `doc-type`); the cover, voice and page-type rules in this guide still apply. A pitch additionally requires the explicit, last-placed ask (Genre exception, §1).
 - **Eyebrows:** section eyebrows are `NN · ENGLISH (UPPERCASE)` where ENGLISH is the **category** (one or two words: BACKGROUND, PROBLEMS, DIRECTION, NON-FUNCTIONAL, TESTING, OUTCOME, RISK, SCOPE, REFERENCE) — *not* a translation of the Korean title. The **cover** eyebrow is `ENGLISH TAG · 한국어 한 줄 부제` ("PROJECT BRIEF · 실행 방향 공유 자료"). Nav and on-screen labels stay Korean.
 - **Titles are noun phrases** ("Current Problems", "Direction — Separation of Concerns"), never punchy sentences. The titles read end-to-end like a table of contents: a reader skimming only the headings should follow the whole story.
 
@@ -78,7 +80,7 @@ The output is Korean technical prose; these morphology rules carry more of the f
 > Match the page's *job* to its density, structure, and devices. (Visual values: `design.md` §6.)
 
 ### 4.1 Cover
-Write: an eyebrow tag, a noun-phrase title (1–2 lines), one paragraph stating the thesis, an optional one-line "purpose of this doc" note, and 3–4 **framing tokens** (number + 2-line label). Nothing else. No bullet lists. A framing token need not be a number — when the topic has no metrics, use a 1–2-char word (`MVP`, `단계`, `Phase`) in the display-numeral slot. Pick 4 tokens that frame the doc (scale · scope · stage · approach).
+Write: an eyebrow tag, a noun-phrase title (1–2 lines), one paragraph stating the thesis, an optional one-line "purpose of this doc" note, and 3–4 **framing tokens** (number + 2-line label). Nothing else. No bullet lists. A framing token need not be a number — when the topic has no metrics, use a 1–2-char word (`MVP`, `단계`, `Phase`) in the display-numeral slot. Pick 4 tokens that frame the doc (scale · scope · stage · approach). The hero text — title, thesis, tokens, date — comes only from the plan's `title` / `thesis` / `cover-tokens` / `as-of` header; never invent a hero token (a token with no source is dropped, not decorated).
 
 ### 4.2 Background / Overview
 Write: a lead paragraph that frames *why this matters* and the current state in 2–4 sentences, then either a short set of "current limitations" cards **or** a single orienting diagram (a current-state flow). Low density; let it breathe. Background may carry a short (≤4) **thematic** limitations summary; Problems (next page) expands the same themes into **enumerated** numbered detail. Keep Background thematic, Problems enumerated — the overlap is by design, not duplication.
@@ -106,10 +108,10 @@ Write: a lead on the overall strategy, make the single most important mechanism 
 Write: a 3-column matrix (e.g. problem / fix / effect). Then split outcomes into "near-term" vs "end-state" using a highlight card and a dark summary card for contrast.
 
 ### 4.8 Risks
-Write: risk cards with a left teal accent border — each = risk name + (muted) description + `→` mitigation. Keep symmetrical.
+Write: risk cards with a left teal accent border — each = risk name + (muted) description + `→` mitigation. Keep symmetrical. Use the `risk-matrix` component only when the source grades both likelihood and impact (`../../core/components.md` §2 #6); never invent grades.
 
 ### 4.9 Scope / Plan
-Write: paired "Now (MVP)" highlight card + "Later" outline card, then a **roadmap/Gantt** encoding *when × how-much*, then an open-questions table (item / current direction / needs-decision). If the document has a decision ask, it must appear as a visible **decision block** or open-question table in this section or the opening decision-framed section. It must never live only inside a peer mini-card.
+Write: paired "Now (MVP)" highlight card + "Later" outline card, then a **roadmap/Gantt** encoding *when × how-much*, then an open-questions table (item / current direction / needs-decision). If the document has a decision ask, it must appear as a visible **decision block** or open-question table in this section or the opening decision-framed section. It must never live only inside a peer mini-card. A document carries at most 1–2 `decision` sections.
 
 ### 4.10 Reference
 Write: compact two-column term lists, muted styling, at the very end. Short definitions only.
@@ -118,50 +120,36 @@ Write: compact two-column term lists, muted styling, at the very end. Short defi
 
 ## 5. Decision tables
 
-### 5.1 Situation → diagram (if it's diagrammable, diagram it)
+### 5.1 Situation → figure (shared contract)
 
-Use the content shape, not visual variety, to pick the device.
+**Use `../../core/components.md`.** It holds the closed list of content **shapes** (with Korean signal
+words), the first-"yes"-wins classification procedure, the shape → component table, the paste/fill
+rules, and the document-type recipes. It is the same for every style, so this guide no longer keeps
+its own copy. Build each figure by pasting this style's `components/<component>.html` (index:
+`components/README.md`, rendered: `components.gallery.dc.html`) — never hand-assemble a diagram the
+library already has.
 
-| Content shape | Use | Do not use | Reviewer question |
-|---|---|---|---|
-| Current vs target **structure** | Before/After comparison panel | Two unrelated card grids | Is the AS-IS/TO-BE contrast the claim? |
-| Linear happy path only, 3–5 steps | Process step row or vertical flow | UML activity | Are there no branch states, bypass paths, or loops? |
-| Workflow with optional synthesis, bypass, approval, rejection, or needs-more-evidence | UML activity, conditional dashed box, or swimlane | Flat process row | Does every terminal/loop state have a visible path? |
-| Actor-specific operational flow | UML swimlane | Generic card grid | Can the reader see who acts next? |
-| Lifecycle/status transitions | UML state machine | Status chips under a process row | Are allowed transitions visible? |
-| One source with several valid terminal outcomes, including "do nothing" | UML activity with decision diamond + terminal outcome cards | Single happy-path pipeline | Are the non-Task / no-op / rejected outcomes visible as first-class outcomes? |
-| A forbidden conversion alongside allowed alternatives | Forbidden-path comparison (allowed panel + red blocked panel) | Footnote-only warning | Can the reader see both what is forbidden and what replaces it? |
-| Two independent state machines that must not auto-map | Parallel state-machine lanes + explicit "no automatic mapping" callout | One merged status row | Is the independence of the two lifecycles impossible to miss? |
-| Recovery / queue inclusion logic | Decision table / check matrix | Flowchart | Are policy, visibility, and resolution conditions compared row-by-row? |
-| Transform / converge (X becomes Y, paths merge) | Horizontal flow with merge label | Equal cards | Is the merge/convergence the point? |
-| Bounded systems plus optional integration layer | Layered architecture map or component map | Tree of boxes only | Are ownership, optionality, and connectors visible? |
-| Hierarchy / partition without operational handoff | Tree or 3-up role grid | Swimlane | Is it just grouping, not action ownership? |
-| Ownership across domain objects | Matrix | Equal cards | Are rows/columns carrying distinct meanings? |
-| Entity link as conceptual centralization | Hub-and-spoke or before scattered chips → after hub | Table | Is the point centralization rather than schema detail? |
-| Entity link relation names/cardinality/rules | Table or matrix | Decorative relation chips | Are relation names schema facts? |
-| UI principles by user role | Surface map or lane map | Principle cards only | Can the reader see screen, action, and handoff per role? |
-| System / topology | Tree (parent→children→leaves) | Layered map | Is optionality/connectors not the main claim? |
-| Data / log example | Mono-font box (start=green, end=red) | Decorative screenshot | Is the exact example text the evidence? |
-| Plain many-to-many comparison | Table | Peer cards | Do rows and columns each carry meaning? |
-| Quantities / load / time | Bar chart | Stat cards only | Does length/height encode the claim? |
-| Values across ≤8 items | Vertical bar (`design.md §5.8`) / horizontal bar when labels long | Table | Is comparison by magnitude the point? |
-| Share of whole (one big ratio) | Donut (`design.md §5.12`); many parts → stacked bar (`§5.10`) | Pie with many slices | Is it one ratio, not a catalog? |
-| Trend over time (direction is the point) | Area / trend chart (`§5.11`) | Point-in-time stat grid | Does the slope matter? |
-| Before/after single number | KPI + delta (`§5.13`); a few headline numbers → stat grid (`§5.9`) or dark stat band (`§4.11`) | Full chart | Is the number itself the message? |
-| Progress / attainment of 3–5 items | Progress rings (`§5.14`) or horizontal bars | Checklist cards | Is attainment level visible? |
-| 2-D intensity (when × where) | Heatmap (`§5.15`) | Two separate bar charts | Do both axes matter at once? |
-| Options × criteria verdict | Check matrix (`§4.14`) | Narrative cards | Can the reader compare options column-by-column? |
-| Who calls whom, in order | UML sequence (`§5.17`) | Process row | Are participants and message order both important? |
-| Code structure / inheritance | UML class (`§5.19`) | Tree | Are attributes/methods or inheritance the claim? |
-| Module provides/requires | UML component (`§5.20`) | System topology tree | Are interfaces the claim? |
-| Actor → system functions | UML use case (`§5.21`) | Feature cards | Are actor boundaries the claim? |
-| Concurrent tasks that rejoin | UML fork/join (`§5.23`) | Parallel cards | Must all branches complete before proceeding? |
-| Executive decision | Decision block or open-question table | Peer mini-card | Is the ask visually impossible to miss? |
-| One principle to imprint | Pull quote (`§4.10`) | Callout grid | Is this one message, not a list? |
-| A caution / recommendation aside | Callout box — KEY/OK/WARN/NOTE (`§4.8`) | Primary content grid | Is it truly aside content? |
-| Break a long doc into acts | Section divider (`§4.12`) | Empty section | Does the reader need a pacing reset? |
+Still diagram only what is diagrammable: a section of shape `none` gets a lead (and at most one
+callout), and peer items (`peer-list`) stay a card grid. But a section whose shape is a flow,
+structure, lifecycle, interaction, schedule, or quantity **must** carry its component — the exit gate
+fails it otherwise.
 
-> The full chart/viz gallery, UML library, and slide-format components each carry a **"언제 쓰나"** usage note in `design.md §5.8–§5.23 / §4.8–§4.14` — read it before reaching for one. Charts are pure CSS (no SVG/chart lib). Still obey "diagram only if diagrammable": a bare enumerated list stays a card grid/table.
+Devices outside the component library (visual specs in `design.md`). They are **support only —
+never a section's main figure**: a section whose shape requires a component fails `plan-shapes` if one
+of these stands in for it.
+
+| Content | Device | `design.md` |
+|---|---|---|
+| One principle to imprint | Pull quote | §4.10 |
+| Break a long doc into acts | Section divider | §4.12 |
+| A few headline numbers between sections | Dark stat band | §4.11 |
+| One or two numbers *are* the message (large) | Stat-card grid (support only; the section's figure is `kpi-row`) | §5.9 |
+| Trend where the slope is the point (single series) | Area / trend chart (support only; the section's figure is `bar-chart`) | §5.11 |
+| One ratio (core vs rest) | Donut | §5.12 |
+| Attainment of 3–5 items, compact | Progress rings (support only; the section's figure is `hbar-chart`) | §5.14 |
+| 2-D intensity (when × where) | Heatmap | §5.15 |
+| Exact log/code text is the evidence | Mono log box | §5.7 |
+| One optional step inside a flow | Conditional dashed box + qualifier badge | §5.3 |
 
 ### 5.2 Situation → color (intent → token name)
 
@@ -169,7 +157,8 @@ Map by intent; copy the **exact HEX from `design.md`** (the single source of tru
 
 | Intent | Token (see `design.md`) |
 |--------|-------------------------|
-| Current / legacy / problem (AS-IS) | `slate` (badge + bar) + ink body |
+| Current / legacy / problem (AS-IS) | `slate` (badge + bar) + ink body — a legacy system, or a legacy gantt bar (병행 운영), is `slate` too |
+| External system (not ours, not being replaced) | neutral dashed outline (`hairline`) — not `slate`, not `warn` |
 | Pain point emphasis (AS-IS) | `warn` (red on `warn-bg`/`warn-line`) |
 | Semantic WARN / Don't / regression | `warn` (red) — WARN callout, Don't row, `▼` delta (`design.md §4.8`) |
 | Improvement / target / key (TO-BE) | `accent` (teal) + `accent-050` |
@@ -201,7 +190,7 @@ This is the **content/voice** pre-ship list. For visual reproduction, also run `
 3. [ ] Every section lead is 16px/1.85, max-width 760; lead flows long, cards stay short.
 4. [ ] **Korean register (§3.1):** all body in `~한다` 문어체 (no `~합니다`); chips/labels 개조식; AS-IS pain as flat capability gap.
 5. [ ] AS-IS = slate + red, TO-BE = teal — never violated. Red only for AS-IS pain or a semantic WARN/Don't/regression signal; never decorative, never for an unknown value.
-6. [ ] Diagrammable content is diagrammed; **enumerated peer lists (problems/risks/glossary) are NOT** — card grids/tables instead.
+6. [ ] Every section has a shape (`../../core/components.md`); figure shapes carry their pasted component (`data-component`, no `⟦…⟧` left); **enumerated peer lists (problems/ungraded risks/glossary) are NOT diagrammed** — card grids/tables instead.
 7. [ ] Diagrammed subsections are "text → diagram (figure panel)" — top→below, or text-left/diagram-right for tall-narrow figures.
 8. [ ] `·` tight (no spaces); acronyms `한국어(ACRONYM)` once; numbers bold + counter; unknowns `O … (추후 확정)`.
 9. [ ] ≤ 1–2 bold emphases per paragraph; no drama/hype; contrastive `A가 아니라 B` is OK if flat.
@@ -214,7 +203,7 @@ This is the **content/voice** pre-ship list. For visual reproduction, also run `
 1. Declare the **narrative lens**: `architecture-first` | `use-case-first` | `decision-first`. If `use-case-first`, the first numbered sections follow actor/scenario/journey and architecture supports the journey later. If `decision-first`, the opening states the decision context and the deck proves it through tradeoffs/open questions. If `architecture-first`, use cases are examples, not the main spine.
 2. Write the **title sequence first** (one noun-phrase title per section). Read them back as a TOC; revise until they tell the story alone. Aim for ~6–9 sections + reference (§2).
 3. Lay out the skeleton (§2) and decide each page's **type** (§4 / `design.md` §6). If the topic is greenfield (no AS-IS) or metric-less, read §4.4 / §4.6 first.
-4. **Clone `template.dc.html`** (it carries the shell + runtime JS from `../../core/runtime-spec.md`). For each section: lead paragraph → core content → **decide if it's diagrammable (§5.1)** → build the figure.
+4. **Clone `template.dc.html`** (it carries the shell + runtime JS from `../../core/runtime-spec.md`). For each section: lead paragraph → core content → **classify its shape (`../../core/components.md` §2)** → paste and fill that shape's component from `components/`.
 5. Apply color/emphasis by intent (§5.2–5.3); copy exact visual values from `design.md`. Write in the §3.1 Korean register.
 6. Run the §6 content checklist **and** `design.md §9` visual checklist before shipping.
 

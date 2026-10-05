@@ -1,0 +1,58 @@
+<!--
+@component before-after
+@kind figure
+@order 10
+@shape before-after
+@title 현재 → 목표 비교 (AS-IS / TO-BE)
+@use 지금의 구조·방식과 바꾸려는 구조·방식을 나란히 대비한다. "현재는 한 덩어리 → 목표는 분리" 같은 구조 대비가 섹션의 주장일 때.
+@avoid 현재 상태가 없는 신규 설계 → layer-map 또는 pipeline. 수치만 바뀐다 → kpi-row.
+@limits 양쪽 노드 2–5개씩, 태그 2–3개씩
+@data before: 요소 A, 요소 B(통점) | after: 루트 노드 / 핵심 노드, 노드 | before-tags?: … | after-tags?: …
+HOW TO FILL
+  1. 왼쪽(AS-IS) 칸에는 현재 상태만 넣는다. 통점(pain)은 경고색 셀로, 나머지는 흰 셀로.
+  2. 오른쪽(TO-BE) 칸에는 목표 상태만 넣는다. 가장 중요한 노드 하나만 강조(루트) 노드로 둔다.
+  3. 색의 의미를 섞지 않는다: AS-IS 칸에 강조색 금지, TO-BE 칸에 경고색 금지.
+  4. 셀을 늘리려면 ▼REPEAT 블록을 복사한다. 태그는 칸마다 2–3개.
+-->
+<div data-component="before-after" style="border:1px solid ⟨border⟩; border-radius:⟨r:panel⟩; padding:28px; background:⟨paper-tint⟩;">
+  <div style="display:grid; grid-template-columns:1fr 50px 1fr; align-items:stretch;">
+    <!-- AS-IS column -->
+    <div style="display:flex; flex-direction:column; justify-content:center;">
+      <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="font:700 11px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨white⟩; background:⟨slate⟩; border-radius:⟨r:pill-sm⟩; padding:6px 10px;">AS-IS</span><span style="font:600 15px/1.3 ⟨f:body⟩; color:⟨body⟩;">⟦현재 — 한 줄 요약⟧</span></div>
+      <div style="background:⟨mono-tint⟩; border:1.5px dashed ⟨mono-dashed⟩; border-radius:⟨r:card⟩; padding:16px 14px;">
+        <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨muted-500⟩; text-align:center; margin-bottom:12px;">⟦현재 구조 한 줄 설명⟧</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <!-- ▼ REPEAT per current element (2–6) -->
+          <div style="font:500 12px/1.35 ⟨f:body⟩; color:⟨body⟩; background:⟨white⟩; border:1px solid ⟨border-chip⟩; border-radius:⟨r:node⟩; padding:10px 8px; text-align:center;">⟦요소 A⟧</div>
+          <!-- ▲ /REPEAT -->
+          <div style="font:500 12px/1.35 ⟨f:body⟩; color:⟨body⟩; background:⟨white⟩; border:1px solid ⟨border-chip⟩; border-radius:⟨r:node⟩; padding:10px 8px; text-align:center;">⟦요소 B⟧</div>
+          <!-- VARIANT pain point cell: warning colour, AS-IS side only -->
+          <div style="font:500 12px/1.35 ⟨f:body⟩; color:⟨warn⟩; background:⟨warn-bg⟩; border:1px solid ⟨warn-line⟩; border-radius:⟨r:node⟩; padding:10px 8px; text-align:center;">⟦통점 A⟧</div>
+          <div style="font:500 12px/1.35 ⟨f:body⟩; color:⟨warn⟩; background:⟨warn-bg⟩; border:1px solid ⟨warn-line⟩; border-radius:⟨r:node⟩; padding:10px 8px; text-align:center;">⟦통점 B⟧</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:13px;">
+        <span style="font:500 11px/1 ⟨f:body⟩; border-radius:⟨r:pill⟩; padding:6px 11px; color:⟨warn-2⟩; background:⟨warn-bg⟩;">⟦부정 태그 A⟧</span>
+        <span style="font:500 11px/1 ⟨f:body⟩; border-radius:⟨r:pill⟩; padding:6px 11px; color:⟨warn-2⟩; background:⟨warn-bg⟩;">⟦부정 태그 B⟧</span>
+      </div>
+    </div>
+    <!-- pivot arrow -->
+    <div style="display:flex; align-items:center; justify-content:center;"><div style="width:36px; height:36px; border-radius:⟨r:circle⟩; background:⟨accent⟩; color:⟨white⟩; display:flex; align-items:center; justify-content:center; font:400 17px/1 ⟨f:body⟩;">→</div></div>
+    <!-- TO-BE column -->
+    <div style="display:flex; flex-direction:column; justify-content:center;">
+      <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="font:700 11px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨white⟩; background:⟨accent⟩; border-radius:⟨r:pill-sm⟩; padding:6px 10px;">TO-BE</span><span style="font:600 15px/1.3 ⟨f:body⟩; color:⟨ink-900⟩;">⟦목표 — 한 줄 요약⟧</span></div>
+      <div style="font:700 13px/1.3 ⟨f:body⟩; color:⟨white⟩; background:⟨accent⟩; border-radius:⟨r:node-lg⟩; padding:12px; text-align:center;">⟦중심 노드⟧</div>
+      <div style="text-align:center; color:⟨muted-300⟩; font:400 13px/1 ⟨f:body⟩; padding:6px 0;">↓</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+        <!-- ▼ REPEAT per target element (2–6) -->
+        <div style="font:600 12px/1.35 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:⟨r:node⟩; padding:10px 8px; text-align:center;">⟦분리된 요소 A⟧</div>
+        <!-- ▲ /REPEAT -->
+        <div style="font:600 12px/1.35 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:10px 8px; text-align:center;">⟦분리된 요소 B⟧</div>
+      </div>
+      <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:13px;">
+        <span style="font:500 11px/1 ⟨f:body⟩; border-radius:⟨r:pill⟩; padding:6px 11px; color:⟨accent⟩; background:⟨accent-050⟩;">⟦긍정 태그 A⟧</span>
+        <span style="font:500 11px/1 ⟨f:body⟩; border-radius:⟨r:pill⟩; padding:6px 11px; color:⟨accent⟩; background:⟨accent-050⟩;">⟦긍정 태그 B⟧</span>
+      </div>
+    </div>
+  </div>
+</div>

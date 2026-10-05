@@ -1,0 +1,44 @@
+<!-- GENERATED for style "teal-sans" from core/components/card-grid.html by .claude/lib/components.mjs — do not edit here.
+     Paste the <div data-component="card-grid"> block into a section, then replace EVERY ⟦…⟧ (the exit gate fails on any left over). -->
+<!--
+@component card-grid
+@kind content
+@order 400
+@shape peer-list
+@title 번호 카드 그리드 — 동급 항목 나열
+@use 서로 동등한 항목 3–6개를 나열한다: 문제점, 발견 사항, 원칙, 리스크(등급 없음), 요구사항. 항목 사이에 순서·흐름·관계가 없다.
+@avoid 항목 사이에 순서가 있다 → process-row. 관계·연결이 있다 → er-relations/layer-map. 행과 열이 모두 의미가 있다 → table/matrix. 이미 도식이 있는 섹션에 "더 자세히"를 덧붙이는 용도로 쓰지 않는다.
+@limits 카드 3–6 (2열), 짧은 글로스면 3열
+@data items: 번호 · 제목(명사구) · 설명 1–3문장
+HOW TO FILL
+  1. 카드 본문이 한 문단이면 2열(기본), 두 줄 이하 글로스면 grid-template-columns:repeat(3,1fr).
+  2. 카드 하나 = ▼REPEAT 하나. 번호 칩은 섹션 번호.항목 번호(2.1, 2.2 …).
+  3. 카드 4개 이상이면 아래 결론 칩(→ 한 줄 종합)으로 그리드를 닫는다. 아니면 지운다.
+  4. 리스크(대응책 포함)는 "왼쪽 강조선 카드" 변형을 쓴다.
+-->
+<div data-component="card-grid">
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+    <!-- ▼ REPEAT per card -->
+    <div style="border:1px solid #E7E9F3; border-radius:10px; padding:20px 22px; background:#FFFFFF;">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:9px;"><span style="font:700 12px/1 'IBM Plex Mono',monospace; color:#0F766E; background:#ECFDF8; border-radius:5px; padding:6px 9px;">⟦2.1⟧</span><span style="font:600 15.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦항목 1 제목⟧</span></div>
+      <div style="font:400 14px/1.7 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">⟦항목 1 설명 (1–3문장)⟧</div>
+    </div>
+    <!-- ▲ /REPEAT -->
+    <div style="border:1px solid #E7E9F3; border-radius:10px; padding:20px 22px; background:#FFFFFF;">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:9px;"><span style="font:700 12px/1 'IBM Plex Mono',monospace; color:#0F766E; background:#ECFDF8; border-radius:5px; padding:6px 9px;">⟦2.2⟧</span><span style="font:600 15.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦항목 2 제목⟧</span></div>
+      <div style="font:400 14px/1.7 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">⟦항목 2 설명 (1–3문장)⟧</div>
+    </div>
+    <div style="border:1px solid #E7E9F3; border-radius:10px; padding:20px 22px; background:#FFFFFF;">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:9px;"><span style="font:700 12px/1 'IBM Plex Mono',monospace; color:#0F766E; background:#ECFDF8; border-radius:5px; padding:6px 9px;">⟦2.3⟧</span><span style="font:600 15.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦항목 3 제목⟧</span></div>
+      <div style="font:400 14px/1.7 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">⟦항목 3 설명 (1–3문장)⟧</div>
+    </div>
+    <!-- VARIANT risk card (left accent rule + mitigation) -->
+    <div style="border:1px solid #E7E9F3; border-left:3px solid #0F766E; border-radius:0 12px 12px 0; padding:16px 20px; background:#FFFFFF;">
+      <div style="font:600 15px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B; margin-bottom:6px;">⟦리스크 이름⟧</div>
+      <div style="font:400 13px/1.65 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#8A91A6;">⟦리스크 설명 한 줄⟧</div>
+      <div style="font:400 13px/1.65 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175; margin-top:4px;">→ ⟦대응 한 줄⟧</div>
+    </div>
+  </div>
+  <!-- OPTIONAL closing takeaway chip (4+ cards) -->
+  <div style="margin-top:14px; background:#ECFDF8; border:1px solid #CCFBF1; border-radius:12px; padding:11px 16px; font:500 12.5px/1.5 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#0F766E;">→ ⟦종합 한 줄⟧</div>
+</div>

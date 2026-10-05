@@ -1,0 +1,94 @@
+<!-- GENERATED for style "indigo-serif" from core/components/layer-map.html by .claude/lib/components.mjs — do not edit here.
+     Paste the <div data-component="layer-map"> block into a section, then replace EVERY ⟦…⟧ (the exit gate fails on any left over). -->
+<!--
+@component layer-map
+@kind figure
+@order 70
+@shape layered-structure
+@title 계층 아키텍처 맵 — 레이어·모듈·연결
+@use 시스템이 어떤 층(사용자 접점·서비스·통합·데이터·외부)으로 나뉘고, 각 층에 어떤 모듈이 있으며, 층 사이가 무엇으로 연결되는지가 주장이다. 시스템 구성도, 아키텍처 개요, 공통 기반 위에 서비스가 얹히는 구조.
+@avoid 데이터가 단계를 따라 흘러간다 → pipeline. 상하 소속(조직도·메뉴 트리) → tree. 한 허브가 여럿을 잇는다 → hub-spoke.
+@limits 레이어 2–5(외부·레거시 층 포함), 레이어당 모듈 1–5
+@data layers: 위 레이어명 [key|optional|external|legacy]: 모듈(부가설명), 모듈 [planned] ‖ 다음 레이어명: 모듈(부가설명), 모듈 | links?: 레이어1↕레이어2 연결 방식
+HOW TO FILL
+  1. 레이어 하나 = ▼REPEAT 블록 하나(왼쪽 라벨 칸 + 오른쪽 모듈 칸). 위에서 아래로 사용자에 가까운 층부터.
+  2. 레이어 사이에는 연결 행을 둔다: ↕ 기호 + 연결 방식(API 호출, 이벤트, 링크 테이블…). 연결이 없으면 행을 지운다.
+     연결 방식을 비워 두지 않는다 — 화살표 없는 박스 더미는 이 도식의 실패다.
+  3. 레이어 변형(figure-data 에서는 레이어명 뒤 대괄호 태그로 적는다):
+       [key]       핵심 레이어(이 문서의 주제) → 강조 변형. 핵심 모듈 하나는 모듈 뒤 ", key" 로 강조 노드.
+       [optional]  선택적 레이어(없어도 각 시스템이 동작) → "선택" 배지(OPTIONAL 블록). 핵심이면서 선택이면 [key, optional].
+       [external]  외부(우리 소유 아님) → 외부 변형. 중립 점선이다 — 문제·레거시 색이 아니다.
+       [legacy]    기존 체제(AS-IS, 교체·이관 대상) → 레거시 변형. slate 계열 AS-IS 색이다. 목표 쪽 강조색을 쓰지 않는다.
+  4. 모듈은 이름 + 한 줄 부가설명. 핵심 모듈 하나만 강조 노드로.
+     아직 없는 모듈(계획·예정·미설계)은 모듈 뒤 "[planned]" 태그 → 예정 모듈 변형(흐린 점선 + 상태 칩).
+     칩 문구는 출처의 상태 그대로(예정·계획·미설계·대기). 구축된 모듈과 같은 모양으로 그리지 않는다 — 없는 것을 있는 것처럼 보이게 하는 것이 이 도식의 가장 흔한 과장이다.
+  5. figure-data 의 여러 레이어는 ‖ 로 구분한다(위에서 아래 순서). 연결 방식은 links 에 "레이어1↕레이어2 방식" 으로 모두 적는다.
+-->
+<div data-component="layer-map" style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:24px;">
+  <!-- ▼ REPEAT per layer -->
+  <div style="display:grid; grid-template-columns:160px 1fr; border:1px solid #E2E5F0; border-radius:9px; background:#FFFFFF; overflow:hidden;">
+    <div style="padding:12px 14px; background:#F8F9FD; border-right:1px solid #E2E5F0; display:flex; flex-direction:column; justify-content:center;">
+      <div style="font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#8A91A6; margin-bottom:6px;">⟦LAYER A⟧</div>
+      <div style="font:600 13px/1.35 Pretendard,sans-serif; color:#15172B;">⟦상위 층 이름⟧</div>
+    </div>
+    <div style="padding:12px; display:flex; flex-wrap:wrap; gap:8px; align-content:center;">
+      <div style="flex:1 1 130px; font:600 12px/1.35 Pretendard,sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:9px 10px; text-align:center;">⟦모듈 A⟧<span style="display:block; font:400 10.5px/1.4 Pretendard,sans-serif; color:#9AA0B2; margin-top:2px;">⟦부가 설명⟧</span></div>
+      <div style="flex:1 1 130px; font:600 12px/1.35 Pretendard,sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:9px 10px; text-align:center;">⟦모듈 B⟧<span style="display:block; font:400 10.5px/1.4 Pretendard,sans-serif; color:#9AA0B2; margin-top:2px;">⟦부가 설명⟧</span></div>
+      <div style="flex:1 1 130px; font:600 12px/1.35 Pretendard,sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:9px 10px; text-align:center;">⟦모듈 C⟧<span style="display:block; font:400 10.5px/1.4 Pretendard,sans-serif; color:#9AA0B2; margin-top:2px;">⟦부가 설명⟧</span></div>
+      <!-- VARIANT planned module ([planned]): not built yet — muted dashed box + state chip, never the built look -->
+      <div style="flex:1 1 130px; font:600 12px/1.35 Pretendard,sans-serif; color:#8A91A6; background:#F8F9FD; border:1px dashed #B6BBCB; border-radius:8px; padding:9px 10px; text-align:center;">⟦예정 모듈⟧ <span style="font:700 9px/1 Pretendard,sans-serif; color:#8A91A6; background:#FFFFFF; border:1px solid #B6BBCB; border-radius:5px; padding:2px 5px; vertical-align:1px;">⟦예정⟧</span><span style="display:block; font:400 10.5px/1.4 Pretendard,sans-serif; color:#9AA0B2; margin-top:2px;">⟦부가 설명⟧</span></div>
+    </div>
+  </div>
+  <!-- ▲ /REPEAT -->
+  <!-- connector between layers: ALWAYS name how they connect -->
+  <div style="text-align:center; font:500 11px/1.4 Pretendard,sans-serif; color:#8A91A6; padding:7px 0;"><span style="color:#4338CA; font:400 14px/1 Pretendard,sans-serif;">↕</span> ⟦연결 방식 1⟧</div>
+  <!-- VARIANT key layer (the subject of the document) -->
+  <div style="display:grid; grid-template-columns:160px 1fr; border:1.5px solid #4338CA; border-radius:9px; background:#FFFFFF; overflow:hidden;">
+    <div style="padding:12px 14px; background:#EEF0FF; border-right:1px solid #C9CEF4; display:flex; flex-direction:column; justify-content:center;">
+      <div style="font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#4338CA; margin-bottom:6px;">⟦LAYER B⟧</div>
+      <!-- OPTIONAL badge: only when this layer is optional ([optional]) -->
+      <div style="font:600 13px/1.35 Pretendard,sans-serif; color:#4338CA;">⟦핵심 층 이름⟧ <span style="font:700 9px/1 Pretendard,sans-serif; color:#FFFFFF; background:#4338CA; border-radius:5px; padding:3px 5px; vertical-align:2px;">⟦선택⟧</span></div>
+    </div>
+    <div style="padding:12px; display:flex; flex-wrap:wrap; gap:8px; align-content:center;">
+      <div style="flex:1 1 130px; font:600 12px/1.35 Pretendard,sans-serif; color:#4338CA; background:#EEF0FF; border:1.5px solid #4338CA; border-radius:8px; padding:9px 10px; text-align:center;">⟦핵심 모듈⟧<span style="display:block; font:400 10.5px/1.4 Pretendard,sans-serif; color:#5A6175; margin-top:2px;">⟦부가 설명⟧</span></div>
+      <div style="flex:1 1 130px; font:600 12px/1.35 Pretendard,sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:9px 10px; text-align:center;">⟦모듈 D⟧<span style="display:block; font:400 10.5px/1.4 Pretendard,sans-serif; color:#9AA0B2; margin-top:2px;">⟦부가 설명⟧</span></div>
+      <div style="flex:1 1 130px; font:600 12px/1.35 Pretendard,sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:9px 10px; text-align:center;">⟦모듈 E⟧<span style="display:block; font:400 10.5px/1.4 Pretendard,sans-serif; color:#9AA0B2; margin-top:2px;">⟦부가 설명⟧</span></div>
+    </div>
+  </div>
+  <div style="text-align:center; font:500 11px/1.4 Pretendard,sans-serif; color:#8A91A6; padding:7px 0;"><span style="color:#4338CA; font:400 14px/1 Pretendard,sans-serif;">↕</span> ⟦연결 방식 2⟧</div>
+  <div style="display:grid; grid-template-columns:160px 1fr; border:1px solid #E2E5F0; border-radius:9px; background:#FFFFFF; overflow:hidden;">
+    <div style="padding:12px 14px; background:#F8F9FD; border-right:1px solid #E2E5F0; display:flex; flex-direction:column; justify-content:center;">
+      <div style="font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#8A91A6; margin-bottom:6px;">⟦LAYER C⟧</div>
+      <div style="font:600 13px/1.35 Pretendard,sans-serif; color:#15172B;">⟦기반 층 이름⟧</div>
+    </div>
+    <div style="padding:12px; display:flex; flex-wrap:wrap; gap:8px; align-content:center;">
+      <div style="flex:1 1 130px; font:600 12px/1.35 Pretendard,sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:9px 10px; text-align:center;">⟦모듈 F⟧</div>
+      <div style="flex:1 1 130px; font:600 12px/1.35 Pretendard,sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:9px 10px; text-align:center;">⟦모듈 G⟧</div>
+      <div style="flex:1 1 130px; font:600 12px/1.35 Pretendard,sans-serif; color:#1E2233; background:#FFFFFF; border:1px dashed #B9BEDB; border-radius:8px; padding:9px 10px; text-align:center;">⟦저장소 모듈⟧<span style="display:block; font:400 10.5px/1.4 Pretendard,sans-serif; color:#9AA0B2; margin-top:2px;">⟦저장소⟧</span></div>
+    </div>
+  </div>
+  <div style="text-align:center; font:500 11px/1.4 Pretendard,sans-serif; color:#8A91A6; padding:7px 0;"><span style="color:#B6BBCB; font:400 14px/1 Pretendard,sans-serif;">↕</span> ⟦연결 방식 3⟧</div>
+  <!-- VARIANT external layer (not ours): NEUTRAL dashed — not a problem / legacy colour -->
+  <div style="display:grid; grid-template-columns:160px 1fr; border:1px dashed #C2C8D4; border-radius:9px; background:#F8F9FD; overflow:hidden;">
+    <div style="padding:12px 14px; display:flex; flex-direction:column; justify-content:center;">
+      <div style="font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#9AA0B2; margin-bottom:6px;">EXTERNAL</div>
+      <div style="font:600 13px/1.35 Pretendard,sans-serif; color:#8A91A6;">⟦외부 시스템 이름⟧</div>
+    </div>
+    <div style="padding:12px; display:flex; flex-wrap:wrap; gap:8px; align-content:center;">
+      <div style="flex:1 1 130px; font:500 12px/1.35 Pretendard,sans-serif; color:#8A91A6; background:#FFFFFF; border:1px dashed #C2C8D4; border-radius:8px; padding:9px 10px; text-align:center;">⟦외부 모듈 A⟧</div>
+      <div style="flex:1 1 130px; font:500 12px/1.35 Pretendard,sans-serif; color:#8A91A6; background:#FFFFFF; border:1px dashed #C2C8D4; border-radius:8px; padding:9px 10px; text-align:center;">⟦외부 모듈 B⟧</div>
+    </div>
+  </div>
+  <div style="text-align:center; font:500 11px/1.4 Pretendard,sans-serif; color:#8A91A6; padding:7px 0;"><span style="color:#B6BBCB; font:400 14px/1 Pretendard,sans-serif;">↕</span> ⟦연결·이관 방식⟧</div>
+  <!-- VARIANT legacy layer (AS-IS, to be replaced): slate family, never the target accent -->
+  <div style="display:grid; grid-template-columns:160px 1fr; border:1.5px dashed #B7BECC; border-radius:9px; background:#F1F3F7; overflow:hidden;">
+    <div style="padding:12px 14px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;">
+      <span style="font:700 9.5px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#FFFFFF; background:#94A0B4; border-radius:5px; padding:4px 6px;">AS-IS</span>
+      <div style="font:600 13px/1.35 Pretendard,sans-serif; color:#8A91A6; margin-top:6px;">⟦기존 시스템 이름⟧</div>
+    </div>
+    <div style="padding:12px; display:flex; flex-wrap:wrap; gap:8px; align-content:center;">
+      <div style="flex:1 1 130px; font:500 12px/1.35 Pretendard,sans-serif; color:#5A6175; background:#FFFFFF; border:1px solid #DDE1EA; border-radius:8px; padding:9px 10px; text-align:center;">⟦기존 모듈 A⟧</div>
+      <div style="flex:1 1 130px; font:500 12px/1.35 Pretendard,sans-serif; color:#5A6175; background:#FFFFFF; border:1px solid #DDE1EA; border-radius:8px; padding:9px 10px; text-align:center;">⟦기존 모듈 B⟧</div>
+    </div>
+  </div>
+</div>

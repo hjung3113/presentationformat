@@ -215,15 +215,19 @@ eyebrow → h2 → lead(≤760px) → [무게중심 블록] → (보조 블록)
 
 HTML을 쓰기 전에 모든 numbered section에 대해 아래 표를 채운다. 이 프리플라이트는 authoring/build 단계의 hard gate다. 자동 verifier는 calibration 전까지 warning만 낸다.
 
-| Section | Page type | Claim type | Primary device | Why not cards/table? | Expected count | Figure budget |
-|---|---|---|---|---|---:|---:|
-| 05 실행 흐름 | Direction / workflow | Branching process | UML activity | Review outcomes branch and loop | 4 decisions | 1 figure |
+| Section | Page type | Shape (`core/components.md` §1) | Component (lookup) | Lead promises | Figure budget |
+|---|---|---|---|---:|---:|
+| 05 실행 흐름 | Direction / workflow | `branching-flow` | `activity` | 결말 4개 | 1 figure |
+| 06 상태 규칙 | Deep-dive | `lifecycle` | `state-machine` | 상태 5개 | 1 figure |
 
-Hard fail:
-- `claim type = branching process`인데 `primary device = process row`.
-- `claim type = ownership`인데 equal cards만 있다.
-- `claim type = UI operation`인데 UI surface, role lane, or screen/action map이 없다.
-- figure의 판독 과제를 설명하려면 "and" / "그리고"가 필요하다. figure당 한 아이디어(P2) 위반이다.
+`Shape`는 `../../core/components.md` §2 절차(첫 "예"가 이긴다)로 고르고, `Component`는 §1 표에서 그대로 옮긴다 — 고르지 않는다.
+
+Hard fail (shape가 figure를 요구하는데 다른 것으로 그렸다 — exit gate `--plan`이 `plan-shapes`로 잡는다):
+- `branching-flow`인데 `process-row`나 카드로 그렸다.
+- `capability-matrix`(소유·권한)인데 동급 카드만 있다.
+- `ui-surface`인데 `screen-map`이 없다(원칙 카드만).
+- `layered-structure`·`entity-relations`인데 연결선·관계명 없는 박스 더미다.
+- figure의 판독 과제를 설명하려면 "and" / "그리고"가 필요하다. figure당 한 아이디어(P2) 위반이다 — 섹션을 나눈다.
 
 1. [ ] **섹션 세로 1.0–3.0밴드.** 2.5 초과면 분할 검토, 3.0(≈2700px) 초과면 서브섹션/divider로 강제 분할.
 2. [ ] **뷰포트당 동시 의미 블록 ≤2**, 섹션당 최상위 블록 ≤3(권장 1–2). 3번째는 구분 간격으로 다음 밴드로.

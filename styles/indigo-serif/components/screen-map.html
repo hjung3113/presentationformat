@@ -1,0 +1,88 @@
+<!-- GENERATED for style "indigo-serif" from core/components/screen-map.html by .claude/lib/components.mjs — do not edit here.
+     Paste the <div data-component="screen-map"> block into a section, then replace EVERY ⟦…⟧ (the exit gate fails on any left over). -->
+<!--
+@component screen-map
+@kind figure
+@order 130
+@shape ui-surface
+@title 화면 맵 — 화면 영역과 그곳에서 하는 일
+@use 화면이 어떤 영역으로 나뉘고, 사용자가 어느 영역에서 무엇을 하는지가 주장이다. UI 원칙, 화면 구성, 역할별 작업 위치, 목록+상세 구조.
+@avoid 화면을 오가는 순서 → process-row/swimlane. 기능 목록만 → card-grid. 실제 스크린샷이 있으면 이미지 + 번호 범례(같은 범례 형식)를 쓴다.
+@limits 영역 3–6, 번호 마커 3–6
+@data layout: list-detail|page|workbench | regions: ①영역명: 하는 일, ②영역명: 하는 일 …
+HOW TO FILL
+  1. 레이아웃 프리셋을 고른다 (와이어프레임 상자의 grid-template-columns):
+       목록+상세(list-detail)  44px 150px 1fr 200px   → 레일 · 사이드바 · 목록 · 상세 패널 (기본)
+       페이지(page)            44px 150px 1fr          → 상세 패널 칸을 지운다
+       작업대(workbench)       44px 1fr 240px          → 사이드바 칸을 지운다
+  2. 각 영역 안 회색 막대는 내용 자리표시(skeleton)다. 글자를 쓰지 않는다. 영역 이름만 mono 라벨로.
+  3. 사용자가 행동하는 곳에 번호 마커(①②③…)를 둔다. 오른쪽 범례에 같은 번호로 "영역 — 하는 일"을 적는다.
+     마커 수 = 범례 수. 강조색 칸(선택 행·주 버튼)은 문서가 말하는 핵심 행동 한 곳에만.
+-->
+<div data-component="screen-map" style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:24px;">
+  <div style="display:grid; grid-template-columns:1.45fr 1fr; gap:22px; align-items:start;">
+    <!-- wireframe: preset list-detail -->
+    <div style="display:grid; grid-template-columns:44px 150px 1fr 200px; grid-template-rows:34px 236px; border:1px solid #E2E5F0; border-radius:9px; overflow:hidden; background:#FFFFFF;">
+      <!-- top bar -->
+      <div style="grid-column:1 / -1; display:flex; align-items:center; gap:8px; padding:0 10px; background:#F8F9FD; border-bottom:1px solid #E2E5F0;">
+        <span style="font:700 9.5px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#8A91A6;">TOP BAR</span>
+        <div style="flex:1; height:6px; max-width:120px; border-radius:3px; background:#E7E9F3;"></div>
+        <span style="margin-left:auto; width:18px; height:18px; border-radius:50%; background:#4338CA; color:#FFFFFF; font:700 10px/18px 'JetBrains Mono',monospace; text-align:center;">1</span>
+      </div>
+      <!-- rail -->
+      <div style="background:#1E2233; display:flex; flex-direction:column; align-items:center; gap:10px; padding-top:12px;">
+        <div style="width:16px; height:16px; border-radius:4px; background:#4338CA;"></div>
+        <div style="width:14px; height:14px; border-radius:4px; background:#3A4255;"></div>
+        <div style="width:14px; height:14px; border-radius:4px; background:#3A4255;"></div>
+        <div style="width:14px; height:14px; border-radius:4px; background:#3A4255;"></div>
+      </div>
+      <!-- sidebar -->
+      <div style="background:#F6F7FB; border-right:1px solid #E2E5F0; padding:10px; display:flex; flex-direction:column; gap:7px;">
+        <div style="display:flex; align-items:center; justify-content:space-between;"><span style="font:700 9.5px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#8A91A6;">⟦SIDEBAR⟧</span><span style="width:18px; height:18px; border-radius:50%; background:#4338CA; color:#FFFFFF; font:700 10px/18px 'JetBrains Mono',monospace; text-align:center;">2</span></div>
+        <div style="height:6px; width:80%; border-radius:3px; background:#E7E9F3;"></div>
+        <div style="height:6px; width:65%; border-radius:3px; background:#E7E9F3;"></div>
+        <div style="height:6px; width:72%; border-radius:3px; background:#E7E9F3;"></div>
+        <div style="height:6px; width:58%; border-radius:3px; background:#E7E9F3;"></div>
+      </div>
+      <!-- main list -->
+      <div style="padding:10px; display:flex; flex-direction:column; gap:6px;">
+        <div style="display:flex; align-items:center; justify-content:space-between;"><span style="font:700 9.5px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#8A91A6;">⟦LIST⟧</span><span style="width:18px; height:18px; border-radius:50%; background:#4338CA; color:#FFFFFF; font:700 10px/18px 'JetBrains Mono',monospace; text-align:center;">3</span></div>
+        <div style="height:26px; border:1px solid #E7E9F3; border-radius:4px; display:flex; align-items:center; padding:0 8px;"><div style="height:6px; width:60%; border-radius:3px; background:#E7E9F3;"></div></div>
+        <!-- selected row = accent -->
+        <div style="height:26px; border:1px solid #4338CA; background:#EEF0FF; border-radius:4px; display:flex; align-items:center; padding:0 8px;"><div style="height:6px; width:70%; border-radius:3px; background:#C9CEF4;"></div></div>
+        <div style="height:26px; border:1px solid #E7E9F3; border-radius:4px; display:flex; align-items:center; padding:0 8px;"><div style="height:6px; width:52%; border-radius:3px; background:#E7E9F3;"></div></div>
+        <div style="height:26px; border:1px solid #E7E9F3; border-radius:4px; display:flex; align-items:center; padding:0 8px;"><div style="height:6px; width:64%; border-radius:3px; background:#E7E9F3;"></div></div>
+      </div>
+      <!-- detail panel -->
+      <div style="border-left:1px solid #E2E5F0; padding:10px; display:flex; flex-direction:column; gap:7px; background:#FFFFFF;">
+        <div style="display:flex; align-items:center; justify-content:space-between;"><span style="font:700 9.5px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#8A91A6;">⟦DETAIL⟧</span><span style="width:18px; height:18px; border-radius:50%; background:#4338CA; color:#FFFFFF; font:700 10px/18px 'JetBrains Mono',monospace; text-align:center;">4</span></div>
+        <div style="height:8px; width:75%; border-radius:3px; background:#C2C8D4;"></div>
+        <div style="height:6px; width:90%; border-radius:3px; background:#E7E9F3;"></div>
+        <div style="height:6px; width:82%; border-radius:3px; background:#E7E9F3;"></div>
+        <div style="height:46px; border-radius:4px; background:#F6F7FB;"></div>
+        <div style="margin-top:auto; height:24px; border-radius:4px; background:#4338CA;"></div>
+      </div>
+    </div>
+    <!-- legend: same numbers as the markers -->
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <!-- ▼ REPEAT per marker -->
+      <div style="display:grid; grid-template-columns:22px 1fr; gap:10px; align-items:start;">
+        <span style="width:20px; height:20px; border-radius:50%; background:#4338CA; color:#FFFFFF; font:700 10.5px/20px 'JetBrains Mono',monospace; text-align:center;">1</span>
+        <div><div style="font:600 13px/1.35 Pretendard,sans-serif; color:#15172B;">⟦영역 1 이름⟧</div><div style="font:400 12px/1.6 Pretendard,sans-serif; color:#5A6175;">⟦하는 일 한 줄⟧</div></div>
+      </div>
+      <!-- ▲ /REPEAT -->
+      <div style="display:grid; grid-template-columns:22px 1fr; gap:10px; align-items:start;">
+        <span style="width:20px; height:20px; border-radius:50%; background:#4338CA; color:#FFFFFF; font:700 10.5px/20px 'JetBrains Mono',monospace; text-align:center;">2</span>
+        <div><div style="font:600 13px/1.35 Pretendard,sans-serif; color:#15172B;">⟦영역 2 이름⟧</div><div style="font:400 12px/1.6 Pretendard,sans-serif; color:#5A6175;">⟦하는 일 한 줄⟧</div></div>
+      </div>
+      <div style="display:grid; grid-template-columns:22px 1fr; gap:10px; align-items:start;">
+        <span style="width:20px; height:20px; border-radius:50%; background:#4338CA; color:#FFFFFF; font:700 10.5px/20px 'JetBrains Mono',monospace; text-align:center;">3</span>
+        <div><div style="font:600 13px/1.35 Pretendard,sans-serif; color:#15172B;">⟦영역 3 이름⟧</div><div style="font:400 12px/1.6 Pretendard,sans-serif; color:#5A6175;">⟦하는 일 한 줄⟧</div></div>
+      </div>
+      <div style="display:grid; grid-template-columns:22px 1fr; gap:10px; align-items:start;">
+        <span style="width:20px; height:20px; border-radius:50%; background:#4338CA; color:#FFFFFF; font:700 10.5px/20px 'JetBrains Mono',monospace; text-align:center;">4</span>
+        <div><div style="font:600 13px/1.35 Pretendard,sans-serif; color:#15172B;">⟦영역 4 이름⟧</div><div style="font:400 12px/1.6 Pretendard,sans-serif; color:#5A6175;">⟦하는 일 한 줄⟧</div></div>
+      </div>
+    </div>
+  </div>
+</div>

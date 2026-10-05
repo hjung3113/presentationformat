@@ -1,0 +1,41 @@
+<!-- GENERATED for style "feedbackops-light" from core/components/table.html by .claude/lib/components.mjs — do not edit here.
+     Paste the <div data-component="table"> block into a section, then replace EVERY ⟦…⟧ (the exit gate fails on any left over). -->
+<!--
+@component table
+@kind content
+@order 420
+@shape text-table
+@title 표 — 행과 열 모두 의미가 있는 문장 비교
+@use 행(항목)과 열(관점) 모두 의미가 있고 칸마다 짧은 문장이 들어간다. 문제↔해결↔효과 대응, 미정 질문(항목 / 현재 방향 / 결정 필요), 용어 대응.
+@avoid 칸이 ✓/✕ → matrix. 조건 조합 → decision-table. 열이 하나뿐 → card-grid.
+@limits 열 2–4, 행 3–7
+@data columns: 열1, 열2, 열3 | rows: 값 · 값 · 값 …
+HOW TO FILL
+  1. 열 수와 비율을 모든 행의 grid-template-columns 에 같게 쓴다(첫 열은 핵심어라 좁게, 예: 1fr 1.6fr 1.6fr).
+  2. 첫 열은 핵심어(굵게). 나머지 칸은 한 문장 이하.
+  3. 행 하나 = ▼REPEAT 하나. 7행을 넘기면 두 표로 나누거나 부록으로 옮긴다.
+-->
+<div data-component="table" style="border:1px solid #DCE5F2; border-radius:8px; overflow:hidden; background:#FFFFFF;">
+  <div style="display:grid; grid-template-columns:1fr 1.6fr 1.6fr; background:#101828;">
+    <div style="font:600 12.5px/1.35 Inter,Pretendard,sans-serif; color:#FFFFFF; padding:13px 18px;">⟦열 1 제목⟧</div>
+    <div style="font:600 12.5px/1.35 Inter,Pretendard,sans-serif; color:#FFFFFF; padding:13px 18px;">⟦열 2 제목⟧</div>
+    <div style="font:600 12.5px/1.35 Inter,Pretendard,sans-serif; color:#FFFFFF; padding:13px 18px;">⟦열 3 제목⟧</div>
+  </div>
+  <!-- ▼ REPEAT per row -->
+  <div style="display:grid; grid-template-columns:1fr 1.6fr 1.6fr; border-top:1px solid #E6EDF7;">
+    <div style="font:600 13px/1.55 Inter,Pretendard,sans-serif; color:#1D2939; padding:12px 18px; background:#F7FAFE;">⟦핵심어 A⟧</div>
+    <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">⟦한 문장 설명⟧</div>
+    <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">⟦한 문장 설명⟧</div>
+  </div>
+  <!-- ▲ /REPEAT -->
+  <div style="display:grid; grid-template-columns:1fr 1.6fr 1.6fr; border-top:1px solid #E6EDF7;">
+    <div style="font:600 13px/1.55 Inter,Pretendard,sans-serif; color:#1D2939; padding:12px 18px; background:#F7FAFE;">⟦핵심어 B⟧</div>
+    <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">⟦한 문장 설명⟧</div>
+    <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">⟦한 문장 설명⟧</div>
+  </div>
+  <div style="display:grid; grid-template-columns:1fr 1.6fr 1.6fr; border-top:1px solid #E6EDF7;">
+    <div style="font:600 13px/1.55 Inter,Pretendard,sans-serif; color:#1D2939; padding:12px 18px; background:#F7FAFE;">⟦핵심어 C⟧</div>
+    <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">⟦한 문장 설명⟧</div>
+    <div style="font:400 13px/1.6 Inter,Pretendard,sans-serif; color:#475467; padding:12px 18px;">⟦한 문장 설명⟧</div>
+  </div>
+</div>

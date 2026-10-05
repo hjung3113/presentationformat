@@ -2,7 +2,7 @@
 
 > The host container and JavaScript every document runs inside. A document built only from a style's `design.md` (visual values) and `authoring-guide.md` (voice) **will not render or behave correctly** without the scaffold and scripts on this page.
 >
-> **This doc owns:** the `.dc.html` document shell, the `<x-dc>` / `<helmet>` elements, the `data-dc-script` / `DCLogic` lifecycle, the two runtime scripts (scroll-progress + active-nav), the DOM naming contract (`id="sN"` ↔ `data-navlink`), and serving requirements.
+> **This doc owns:** the `.dc.html` document shell, the `<x-dc>` / `<helmet>` elements, the `data-dc-script` / `DCLogic` lifecycle, the two runtime scripts (scroll-progress + active-nav), the DOM naming contract (`id="sN"` ↔ `data-navlink`, plus the three print hooks), the print block (§5), and serving requirements.
 > **This doc does NOT cover:** visual values (→ the active style's `design.md`), voice/content (→ the active style's authoring guide). For a ready-to-fill skeleton, copy the active style's `template.dc.html`.
 >
 > **Style-agnostic:** this file is shared by every style and contains **no hardcoded colors**. The runtime touches exactly six *chrome tokens* (§0.1); the snippets below reference them by name (`⟨accent⟩`, …). When you build, paste the concrete HEX for each from your active style's `design.md`. The one place those values physically live is the style's `template.dc.html`.
@@ -64,10 +64,17 @@ The shell and the two runtime scripts color exactly six slots. This file names t
       p, h1, h2, h3, div, span, li, a { word-break: keep-all; }
       *::selection { background:⟨selection⟩; }
       .nav-scroll::-webkit-scrollbar { height:0; }
+      @media print {
+        * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+        [data-page] { background:white !important; }
+        [data-nav] { position:static !important; }
+        [data-progress] { display:none !important; }
+        [data-component] { break-inside:avoid; }
+      }
     </style>
   </helmet>
 
-  <div style="font-family:Pretendard,sans-serif; color:⟨ink⟩; background:⟨bg-canvas⟩; min-height:100vh;">
+  <div data-page style="font-family:Pretendard,sans-serif; color:⟨ink⟩; background:⟨bg-canvas⟩; min-height:100vh;">
     <!-- progress bar, sticky nav, hero, paper sheet, sections … (see the active style's template.dc.html) -->
   </div>
 </x-dc>
@@ -98,8 +105,12 @@ Rules:
 | Nav brand link | `href="#top"` | scrolls to hero |
 | Each section | `id="sN"` (`s1…s8`), appendix `id="sref"` | `<section id="s3" …>` |
 | Each section | `data-screen-label="NN <Korean title>"` | `data-screen-label="03 개선 방향"` (human-readable label used by host tooling; mirror the eyebrow number) |
+| Act divider (long documents) | a `<div>`, never a `<section>` | it is not a numbered section: no `id`, no nav link, and the `sN` count must still equal the plan's sections |
 | Each nav link | `data-navlink="sN"` **and** `href="#sN"` | `<a data-navlink="s3" href="#s3">` |
 | Progress bar inner div | `id="rprog"` | `<div id="rprog" style="width:0%">` |
+| Progress bar wrapper (the fixed strip) | `data-progress` | hidden by the print block (§5) |
+| Sticky nav bar | `data-nav` | made static by the print block (§5) |
+| Outermost page wrapper | `data-page` | given a white background by the print block (§5) |
 | Nav link row | `class="nav-scroll"` + `overflow-x:auto` | scrollbar hidden via global CSS |
 
 **`data-navlink="sN"`, the section `id="sN"`, and the `href="#sN"` must all agree.** Rename a section id → update its nav link's `data-navlink` and `href` together, or the active-nav observer goes inert.
@@ -113,7 +124,7 @@ Page-level interaction JS lives in `componentDidMount`; teardown handles go on `
 ### 3.1 Scroll-progress bar
 Markup (fixed, above the nav — `z-index:60` vs nav `z-index:50`):
 ```html
-<div style="position:fixed; top:0; left:0; right:0; height:3px; background:transparent; z-index:60;">
+<div data-progress style="position:fixed; top:0; left:0; right:0; height:3px; background:transparent; z-index:60;">
   <div id="rprog" style="height:100%; width:0%; background:⟨accent⟩;"></div>
 </div>
 ```
@@ -161,4 +172,21 @@ this._cleanup = () => { window.removeEventListener('scroll', onScroll); io.disco
 - Serve over **http(s)**, not `file://`. `support.js` does `fetch(location.href)` to re-parse the live template and `fetch('./<Name>.dc.html')` for sibling components; `file://` breaks these.
 - The page needs **outbound network**: React/ReactDOM UMD (unpkg), Pretendard (jsdelivr), Google Fonts. `support.js` injects React itself — do not add your own React tags.
 - Filename must end **`.dc.html`**; `support.js` must sit in the same directory.
-- **No media queries in the shared runtime shell.** The runtime provides only intrinsic baseline behavior: wrapped flex rows and horizontally scrollable nav. Supported review viewports, narrow-width acceptance, and breakpoint rules belong to the active style's docs.
+- **No responsive media queries in the shared runtime shell.** The runtime provides only intrinsic baseline behavior: wrapped flex rows and horizontally scrollable nav. Supported review viewports, narrow-width acceptance, and breakpoint rules belong to the active style's docs. The one exception is the print block below.
+
+---
+
+## 5. Print / PDF handout
+
+A document is read on screen, but a reader may also print it or save it as a PDF. The shell therefore
+carries **one** `@media print` block, inside the same global `<style>` as the other allowed globals
+(§1). It uses **attribute and element selectors only** — no CSS classes — and does exactly this:
+
+- keep every figure whole across pages: `[data-component]{break-inside:avoid}`;
+- make the sticky nav static (`[data-nav]`) and hide the reading-progress strip (`[data-progress]`);
+- give the page wrapper (`[data-page]`) a white background, and force background colors to print
+  (`print-color-adjust:exact`) so the hero and the figure fills survive.
+
+The layout is inline-styled, so a print rule that overrides an inline `position` or `background`
+needs `!important`. The hooks are the three attributes in the §2 table; each style's
+`template.dc.html` already carries the block and the attributes — clone it, do not rewrite it.

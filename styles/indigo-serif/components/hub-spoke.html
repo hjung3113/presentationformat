@@ -1,0 +1,58 @@
+<!-- GENERATED for style "indigo-serif" from core/components/hub-spoke.html by .claude/lib/components.mjs — do not edit here.
+     Paste the <div data-component="hub-spoke"> block into a section, then replace EVERY ⟦…⟧ (the exit gate fails on any left over). -->
+<!--
+@component hub-spoke
+@kind figure
+@order 110
+@shape hub
+@title 허브 앤 스포크 — 하나가 여럿을 잇는 중심
+@use 하나의 중심(링크 테이블·통합 계층·게이트웨이·공통 서비스)이 여러 대상과 연결된다는 "중앙화"가 주장이다.
+@avoid 관계마다 이름·카디널리티가 중요 → er-relations. 층 구조 → layer-map. 순서 있는 흐름 → pipeline.
+@limits 스포크 2–8 (좌우 각 1–4)
+@data hub: 이름(설명) | left: 대상(연결 내용), … | right: 대상(연결 내용), …
+HOW TO FILL
+  1. 가운데 허브는 강조 채움 노드 하나. 좌우 칸에 스포크를 나눠 넣는다(한쪽 최대 4).
+  2. 스포크 한 개 = ▼REPEAT 행 하나: [대상 노드][↔ 연결 라벨]. 오른쪽 칸은 [↔ 라벨][대상 노드] 순서.
+  3. 단방향이면 ↔ 대신 → 또는 ←. 연결 라벨은 하나만, 2–8자 개조식 또는 관계 이름 하나(예: converted_to).
+     라벨이 길면 줄바꿈된다 — 여러 관계를 한 라벨에 몰지 말고 대표 하나만 적고 각주로 보충한다.
+-->
+<div data-component="hub-spoke" style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:24px;">
+  <div style="display:grid; grid-template-columns:1fr 200px 1fr; align-items:center; max-width:820px; margin:0 auto;">
+    <!-- left spokes -->
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <!-- ▼ REPEAT per left spoke -->
+      <div style="display:grid; grid-template-columns:1fr 74px; align-items:center;">
+        <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:10px; text-align:center;">⟦대상 A⟧</div>
+        <div style="display:flex; flex-direction:column; align-items:center; padding:0 4px;"><span style="font:500 10px/1.25 Pretendard,sans-serif; color:#8A91A6; text-align:center; overflow-wrap:anywhere;">⟦연결 라벨 A⟧</span><span style="color:#4338CA; font:400 15px/1 Pretendard,sans-serif;">↔</span></div>
+      </div>
+      <!-- ▲ /REPEAT -->
+      <div style="display:grid; grid-template-columns:1fr 74px; align-items:center;">
+        <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:10px; text-align:center;">⟦대상 B⟧</div>
+        <div style="display:flex; flex-direction:column; align-items:center; padding:0 4px;"><span style="font:500 10px/1.25 Pretendard,sans-serif; color:#8A91A6; text-align:center; overflow-wrap:anywhere;">⟦연결 라벨 B⟧</span><span style="color:#4338CA; font:400 15px/1 Pretendard,sans-serif;">↔</span></div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 74px; align-items:center;">
+        <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:10px; text-align:center;">⟦대상 C⟧</div>
+        <div style="display:flex; flex-direction:column; align-items:center; padding:0 4px;"><span style="font:500 10px/1.25 Pretendard,sans-serif; color:#8A91A6; text-align:center; overflow-wrap:anywhere;">⟦연결 라벨 C⟧</span><span style="color:#4338CA; font:400 15px/1 Pretendard,sans-serif;">↔</span></div>
+      </div>
+    </div>
+    <!-- hub -->
+    <div style="font:700 13.5px/1.35 Pretendard,sans-serif; color:#FFFFFF; background:#4338CA; border-radius:12px; padding:22px 14px; text-align:center;"><span style="display:block; font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.08em; color:#C9CEF4; margin-bottom:8px;">HUB</span>⟦허브 이름⟧<span style="display:block; font:400 11px/1.45 Pretendard,sans-serif; color:#EEF0FF; margin-top:6px;">⟦허브 역할 한 줄⟧</span></div>
+    <!-- right spokes -->
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <!-- ▼ REPEAT per right spoke -->
+      <div style="display:grid; grid-template-columns:74px 1fr; align-items:center;">
+        <div style="display:flex; flex-direction:column; align-items:center; padding:0 4px;"><span style="font:500 10px/1.25 Pretendard,sans-serif; color:#8A91A6; text-align:center; overflow-wrap:anywhere;">⟦연결 라벨 D⟧</span><span style="color:#4338CA; font:400 15px/1 Pretendard,sans-serif;">↔</span></div>
+        <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:10px; text-align:center;">⟦대상 D⟧</div>
+      </div>
+      <!-- ▲ /REPEAT -->
+      <div style="display:grid; grid-template-columns:74px 1fr; align-items:center;">
+        <div style="display:flex; flex-direction:column; align-items:center; padding:0 4px;"><span style="font:500 10px/1.25 Pretendard,sans-serif; color:#8A91A6; text-align:center; overflow-wrap:anywhere;">⟦연결 라벨 E⟧</span><span style="color:#4338CA; font:400 15px/1 Pretendard,sans-serif;">↔</span></div>
+        <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:10px; text-align:center;">⟦대상 E⟧</div>
+      </div>
+      <div style="display:grid; grid-template-columns:74px 1fr; align-items:center;">
+        <div style="display:flex; flex-direction:column; align-items:center; padding:0 4px;"><span style="font:500 10px/1.25 Pretendard,sans-serif; color:#8A91A6; text-align:center; overflow-wrap:anywhere;">⟦연결 라벨 F⟧</span><span style="color:#4338CA; font:400 15px/1 Pretendard,sans-serif;">→</span></div>
+        <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:10px; text-align:center;">⟦대상 F⟧</div>
+      </div>
+    </div>
+  </div>
+</div>

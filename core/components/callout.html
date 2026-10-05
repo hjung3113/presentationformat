@@ -1,0 +1,23 @@
+<!--
+@component callout
+@kind content
+@order 410
+@title 콜아웃 — 핵심·권장·주의·참고 한 줄
+@use 본문 흐름 밖의 한 문장(aside): 꼭 기억할 핵심(KEY), 권장 방식(OK), 주의·금지(WARN), 낮은 우선순위 참고(NOTE).
+@avoid 섹션의 주 내용 → 도식이나 card-grid. 여러 개를 나란히 → 쓰지 않는다(밴드당 최대 2개, 서로 다른 변형 3개 이상 동시 금지).
+@limits 섹션당 0–2
+@data variant: KEY|OK|WARN|NOTE · 한 문장
+HOW TO FILL
+  1. 네 변형 중 하나만 남기고 나머지는 지운다. 의미로 고른다(장식으로 고르지 않는다).
+  2. 본문은 한 문장. 라벨은 그대로 둔다.
+-->
+<div data-component="callout" style="display:flex; flex-direction:column; gap:10px;">
+  <!-- VARIANT KEY -->
+  <div style="display:flex; gap:12px; align-items:baseline; background:⟨accent-050⟩; border-left:3px solid ⟨accent⟩; border-radius:0 ⟨r:node-lg⟩ ⟨r:node-lg⟩ 0; padding:13px 16px;"><span style="font:700 11px/1 ⟨f:body⟩; letter-spacing:.04em; color:⟨accent⟩; white-space:nowrap;">핵심</span><span style="font:400 13px/1.65 ⟨f:body⟩; color:⟨body-lead⟩;">⟦핵심 한 문장.⟧</span></div>
+  <!-- VARIANT OK -->
+  <div style="display:flex; gap:12px; align-items:baseline; background:⟨ok-bg⟩; border-left:3px solid ⟨ok⟩; border-radius:0 ⟨r:node-lg⟩ ⟨r:node-lg⟩ 0; padding:13px 16px;"><span style="font:700 11px/1 ⟨f:body⟩; letter-spacing:.04em; color:⟨ok⟩; white-space:nowrap;">권장</span><span style="font:400 13px/1.65 ⟨f:body⟩; color:⟨body-lead⟩;">⟦권장 한 문장.⟧</span></div>
+  <!-- VARIANT WARN -->
+  <div style="display:flex; gap:12px; align-items:baseline; background:⟨warn-bg⟩; border-left:3px solid ⟨warn⟩; border-radius:0 ⟨r:node-lg⟩ ⟨r:node-lg⟩ 0; padding:13px 16px;"><span style="font:700 11px/1 ⟨f:body⟩; letter-spacing:.04em; color:⟨warn⟩; white-space:nowrap;">주의</span><span style="font:400 13px/1.65 ⟨f:body⟩; color:⟨body-lead⟩;">⟦주의 한 문장.⟧</span></div>
+  <!-- VARIANT NOTE -->
+  <div style="display:flex; gap:12px; align-items:baseline; background:⟨fill-50⟩; border-left:3px solid ⟨muted-300⟩; border-radius:0 ⟨r:node-lg⟩ ⟨r:node-lg⟩ 0; padding:13px 16px;"><span style="font:700 11px/1 ⟨f:body⟩; letter-spacing:.04em; color:⟨muted-500⟩; white-space:nowrap;">참고</span><span style="font:400 13px/1.65 ⟨f:body⟩; color:⟨body⟩;">⟦참고 한 문장.⟧</span></div>
+</div>
