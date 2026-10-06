@@ -45,6 +45,7 @@ A further style is added by **copying the folder**, never by forking `core/` —
 | `examples/feedbackops-design-report/` | Second worked example + desktop/mobile renders |
 | `presentations/platform-pitch/` | Management pitch (feedbackops-light): `content-plan.md` + `facts.md` ledger → `.dc.html`, full pipeline, gate passing with `--plan` |
 | `presentations/platform-guide/` | Developer guide (feedbackops-light): `content-plan.md` + `facts.md` ledger → `.dc.html`, full pipeline, gate passing with `--plan` |
+| `presentations/filegateway-intro/` | API explainer (indigo-serif): copy of the deck kept in the FileGateway repo (`docs/presentation/`), full pipeline, gate passing with `--plan` |
 | `archive/parserimprove/` | **Archived.** Old design reference (semiconductor log-parser docs). Not part of this project — kept only for provenance |
 
 Worked examples live in `examples/`. `archive/parserimprove/` is a frozen historical
