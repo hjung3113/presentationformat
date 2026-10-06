@@ -116,6 +116,19 @@ test('chart-proportions probe: the 대기 row has no bar and no marker, a non-nu
   assert.match(viol(chart('status-board', srow(50, 35)))[0], /row 1 .*width 50% but the label shows 35%/);
 });
 
+test('chart-proportions: a status-board without its progress column draws no bar, so it has nothing to mark — not unmarked, no NOTE; the same board with a bar and no data-value still is', () => {
+  const plain = '<div style="display:flex;"><div>작업 F</div><div style="flex:0 0 88px;"><span>정상</span></div><span>다음 행동</span></div>';
+  const noProgress = chartProportions(chart('status-board', plain, plain));
+  assert.deepEqual(noProgress, { charts: 0, values: 0, unmarked: [], partial: [], violations: [] });
+  const gate = runGate(page(chart('status-board', plain, plain) + '<p>plain</p>'), opts);
+  assert.equal(gate.ok, true, JSON.stringify(gate.checks.filter(c => !c.ok)));
+  assert.equal(gate.notes.filter(n => n.name === 'chart-proportions').length, 0); // the "carries no data-value" NOTE does not fire
+  assert.equal(row(gate, 'chart-proportions'), undefined);
+  const withBar = '<div style="display:flex;"><div>작업</div><div style="flex:1; height:8px;"><div style="width:35%; height:100%;"></div></div><span>35%</span></div>';
+  assert.deepEqual(chartProportions(chart('status-board', withBar)).unmarked, ['status-board']); // a bar the gate cannot read is still said out loud
+  assert.deepEqual(chartProportions(chart('status-board', plain, srow(35, 35))).violations, []); // a board with progress marks every row that has a bar
+});
+
 test('chart-proportions: a marked element with no height/width to compare fails (a misplaced marker); markup in HTML comments and scripts is not read', () => {
   assert.match(viol(chart('bar-chart', '<div data-value="70"><span>70</span></div>'))[0], /data-value 70 but no height:N% on the bar/);
   assert.match(viol(chart('hbar-chart', '<div data-value="70"><span>70%</span></div>'))[0], /no width:N% inside the row/);

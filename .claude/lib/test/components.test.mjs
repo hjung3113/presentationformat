@@ -4,8 +4,8 @@ import { readFileSync, readdirSync, mkdtempSync, writeFileSync, rmSync } from 'n
 import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { listTemplates, listStyles, buildStyle, staleFiles, shapeMap, parseMeta, parseDataKeys, loadTokens, stripSlots, CORE_DIR } from '../components.mjs';
-import { figureChecks, zoneRoles, markup, elementsWith, htmlOf, attrOf } from '../figures.mjs';
+import { listTemplates, listStyles, buildStyle, staleFiles, shapeMap, parseMeta, parseDataKeys, loadTokens, renderTemplate, stripSlots, CORE_DIR } from '../components.mjs';
+import { figureChecks, chartProportions, zoneRoles, markup, elementsWith, htmlOf, attrOf } from '../figures.mjs';
 import { findHeadlessChrome } from '../verify-doc.mjs';
 
 const CORE = join(CORE_DIR, '..');
@@ -355,4 +355,261 @@ test('documents: every element drawn in the planned look (muted dashed box on th
     assert.ok(looks.length, `${file} draws planned things`);
     for (const el of looks) assert.equal(attrOf(el.attrs, 'data-state'), 'planned', `${file}: <${el.name}> "${htmlOf(mk, el).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 30)}" has the planned look but no data-state="planned"`);
   }
+});
+
+// ---- the 390px phone: five components that did not survive a real document (core/components.md §4 "Narrow widths") ----
+// A 390px viewport leaves the sheet 343px (design.md §8.1), a figure root 341px inside its border and its content 293px inside its padding.
+
+const PHONE = 343;
+// The generated component of a style with slots and comments stripped — what a document pastes.
+const pasted = (id, style = 'feedbackops-light') => stripSlots(buildStyle(style)[join('components', `${id}.html`)].replace(/<!--[\s\S]*?-->/g, '')).trim();
+
+// Runs `probe(host, R, broken)` in headless Chrome over `html` and returns its JSON, or null (and skips) when no browser can run.
+// `host(width, markup?)` mounts the component in a block of that width and returns the block; `R(el)` is its bounding rect;
+// `broken(el)` lists the words the browser wrapped mid-word. The system fonts are whatever the machine has — the floors are tested with margin.
+function inChrome(t, html, probe) {
+  const chrome = findHeadlessChrome();
+  if (!chrome) { t.skip('no headless browser'); return null; }
+  const page = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0; word-break:keep-all"><pre id="out"></pre><script>
+    const HTML = ${JSON.stringify(html).replace(/</g, '\\u003c')};
+    const host = (width, markup = HTML) => { const d = document.createElement('div'); d.style.cssText = 'width:' + width + 'px; margin:0 0 24px;'; d.innerHTML = markup; document.body.appendChild(d); return d; };
+    const R = (e) => e.getBoundingClientRect();
+    const broken = (el) => { const out = [], w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      for (let n; (n = w.nextNode());) for (const m of n.textContent.matchAll(/\\S+/g)) {
+        if (m[0].length < 3) continue;
+        const r = document.createRange(); r.setStart(n, m.index); r.setEnd(n, m.index + m[0].length);
+        if (new Set([...r.getClientRects()].map(x => Math.round(x.top / 4))).size > 1) out.push(m[0]);
+      } return out; };
+    document.getElementById('out').textContent = encodeURIComponent(JSON.stringify((${probe.toString()})(host, R, broken)));
+  </script></body></html>`;
+  const dir = mkdtempSync(join(tmpdir(), 'phone-'));
+  try {
+    writeFileSync(join(dir, 'p.html'), page);
+    let out;
+    try { out = execFileSync(chrome, ['--headless=new', ...(process.getuid?.() === 0 ? ['--no-sandbox'] : []), '--disable-gpu', '--dump-dom', `file://${join(dir, 'p.html')}`], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 30000 }); }
+    catch (e) { t.skip(`browser cannot run here: ${e.message.split('\n')[0]}`); return null; }
+    return JSON.parse(decodeURIComponent(out.match(/<pre id="out">([\s\S]*?)<\/pre>/)[1]));
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+}
+
+test('activity: the outcome grid reflows (K in one row, else two per row) instead of scrolling — K in the rail and in both 100cqw switches, 104px floor + 10px gap = 114', () => {
+  const t = tpl('activity');
+  const body = live(t);
+  const grid = body.match(/grid-template-columns:repeat\(auto-fit,minmax\(clamp\(104px,calc\(\((\d) \* 114px - 10px - 100cqw\) \* 999\),calc\(50% - 6px\)\),1fr\)\);/);
+  const rail = body.match(/margin:0 clamp\(calc\(50% \/ (\d)\), calc\(\((\d) \* 114px - 10px - 100cqw\) \* 999\), 25%\);/);
+  assert.ok(grid && rail, 'grid and rail carry the cqw switch');
+  assert.deepEqual([grid[1], rail[1], rail[2]], ['4', '4', '4']); // the template shows K = 4, and every K in it is the same one
+  assert.match(body, /<div style="align-self:stretch; container-type:inline-size;">\s*<div style="height:12px; margin:0 clamp/); // rail and grid share the container 100cqw measures
+  assert.doesNotMatch(body, /repeat\(4,minmax\(84px,1fr\)\)/); // the 84px-floor grid that needed 414px for four outcomes is gone
+  assert.match(t.src, /HOW TO FILL[\s\S]*calc\(50% \/ K\)[\s\S]*K \* 114px - 10px - 100cqw[\s\S]*두 칸씩 줄이 바뀌고/);
+});
+
+test('activity in a browser: at the phone width K = 2…5 outcomes wrap in pairs with nothing clipped or scrolling and the rail over the first row; at 700px they share one row', (t) => {
+  const got = inChrome(t, pasted('activity'), (host, R) => {
+    const rows = [];
+    for (const K of [2, 3, 4, 5]) for (const width of [343, 700]) {
+      const d = host(width, HTML.replaceAll('4 * 114px', `${K} * 114px`).replace('calc(50% / 4)', `calc(50% / ${K})`));
+      const grid = d.querySelector('[style*="auto-fit"]');
+      while (grid.children.length > K) grid.lastElementChild.remove();
+      while (grid.children.length < K) grid.appendChild(grid.children[1].cloneNode(true));
+      const root = d.firstElementChild, rail = grid.previousElementSibling, outs = [...grid.children];
+      const box = R(root), firstRow = outs.filter(o => Math.abs(R(o).top - R(outs[0]).top) < 4), centre = (e) => R(e).left + R(e).width / 2;
+      rows.push({
+        K, width, scroll: [root, ...root.querySelectorAll('*')].some(e => e.scrollWidth > e.clientWidth + 1 && /auto|scroll/.test(getComputedStyle(e).overflowX)),
+        inside: outs.every(o => R(o).left >= box.left && R(o).right <= box.right), perRow: firstRow.length,
+        railLeft: Math.round(R(rail).left - centre(outs[0])), railRight: Math.round(R(rail).right - centre(firstRow.at(-1))),
+      });
+      d.remove();
+    }
+    return rows;
+  });
+  if (!got) return;
+  assert.equal(got.length, 8);
+  for (const g of got) {
+    const at = `K=${g.K} at ${g.width}px`;
+    assert.equal(g.scroll, false, `${at}: no hidden scroll`);
+    assert.equal(g.inside, true, `${at}: every outcome inside the figure`);
+    assert.equal(g.perRow, g.width === PHONE ? Math.min(g.K, 2) : g.K, `${at}: outcomes per row`);
+    assert.ok(Math.abs(g.railLeft) <= 4 && Math.abs(g.railRight) <= 4, `${at}: the rail runs from the first outcome's centre to the last one of the first row (off by ${g.railLeft}, ${g.railRight}px)`);
+  }
+});
+
+test('use-case: the system label is in flow in grid row 1 (never absolute) and the actors start at row 2, under a boundary that spans R + 1 rows', () => {
+  const t = tpl('use-case');
+  const body = live(t);
+  assert.doesNotMatch(body, /position:absolute/); // the label that overlapped the first oval at 390px is gone
+  assert.match(body, /<div style="grid-column:3; grid-row:1; align-self:start; padding:8px 12px 0; text-align:right;[^"]*">⟦SYSTEM⟧ · ⟦시스템 이름⟧<\/div>/);
+  const rows = (col) => [...body.matchAll(new RegExp(`grid-column:${col}; grid-row:(\\d)`, 'g'))].map(m => Number(m[1]));
+  assert.deepEqual(rows(1), [2, 3, 4]); // actor K sits in row K + 1 …
+  assert.deepEqual(rows(2), [2, 3, 4]); // … with its line …
+  assert.deepEqual(rows(3), [1, 1, 2, 3, 4]); // … and its use cases; the boundary and the label take row 1
+  assert.match(body, /grid-row:1 \/ span 4; align-self:stretch;/); // R + 1 rows for R = 3 actors
+  assert.match(t.src, /HOW TO FILL[\s\S]*grid-row:1 \/ span R\+1[\s\S]*grid-row:K \(K = 2, 3, 4/);
+});
+
+test('use-case in a browser: at 343, 500 and 760px the label never touches a use case, whatever its length and however the ovals wrap', (t) => {
+  const got = inChrome(t, pasted('use-case'), (host, R) => {
+    const rows = [];
+    for (const text of ['SYSTEM · 시스템 이름', 'SYSTEM · 파일 게이트웨이 업로드 처리 시스템 전체 이름이 아주 긴 경우']) for (const width of [343, 500, 760]) {
+      const d = host(width);
+      const label = [...d.querySelectorAll('div')].find(e => e.textContent.startsWith('SYSTEM · ') && e.children.length === 0);
+      label.textContent = text;
+      const ovals = [...d.querySelectorAll('div')].filter(e => getComputedStyle(e).borderRadius === '50%' && e.children.length === 0 && R(e).width > 40);
+      const l = R(label), box = R(label.parentElement.firstElementChild);
+      rows.push({ text: text.length, width, position: getComputedStyle(label).position, ovals: ovals.length,
+        clear: ovals.every(o => R(o).top >= l.bottom - 0.5 || R(o).bottom <= l.top + 0.5 || R(o).left >= l.right || R(o).right <= l.left),
+        gap: Math.round(Math.min(...ovals.map(o => R(o).top)) - l.bottom), inBox: l.left >= box.left && l.right <= box.right && l.top >= box.top });
+      d.remove();
+    }
+    return rows;
+  });
+  if (!got) return;
+  assert.equal(got.length, 6);
+  for (const g of got) {
+    const at = `${g.text}-char label at ${g.width}px`;
+    assert.equal(g.ovals, 10, `${at}: use cases found`);
+    assert.equal(g.position, 'static', at);
+    assert.equal(g.clear, true, `${at}: label clear of every use case`);
+    assert.ok(g.gap >= 4, `${at}: the first use case starts ${g.gap}px under the label`);
+    assert.equal(g.inBox, true, `${at}: label inside the system box`);
+  }
+});
+
+test('decision-table: condition floors 120px and result floor 140px in every row (a short key stays whole); the narrow fallback is the sanctioned scroll inside the box', () => {
+  const t = tpl('decision-table');
+  const body = live(t);
+  const grids = [...body.matchAll(/grid-template-columns:([^;"]*)/g)].map(m => m[1]);
+  assert.equal(grids.length, 5); // the header and the four rules the template draws
+  assert.deepEqual([...new Set(grids)], ['repeat(3,minmax(120px,1fr)) minmax(140px,1.3fr)']);
+  assert.ok(120 - 2 * 16 >= 88, 'a condition column keeps 88px of text beside its 16px side padding: "Continuous" (10 letters, about 75px at 12.5px) stays whole');
+  for (const c of [2, 3, 4]) assert.ok(c * 120 + 140 > PHONE - 2, `${c} conditions are wider than the 341px figure, so the table scrolls inside its box instead of squeezing a key`);
+  assert.match(body, /overflow-x:auto;[^"]*">\s*<div style="min-width:min-content;">/);
+  assert.match(t.src, /HOW TO FILL[\s\S]*repeat\(C,minmax\(120px,1fr\)\) minmax\(140px,1\.3fr\)[\s\S]*가로로 스크롤/);
+});
+
+test('decision-table in a browser: at the phone width "Continuous 로그" is not split mid-word and the table scrolls in its own box; at 760px it fits without scrolling', (t) => {
+  const got = inChrome(t, pasted('decision-table'), (host, R, broken) => [343, 760].map(width => {
+    const d = host(width);
+    const keys = [...d.querySelectorAll('div')].filter(e => e.children.length === 0 && e.textContent === '예');
+    ['Continuous 로그', 'Streaming 로그', 'Batch 로그'].forEach((text, i) => { keys[i].textContent = text; });
+    const root = d.firstElementChild;
+    const out = { width, broken: broken(root), scrolls: root.scrollWidth > root.clientWidth + 1, scrollWidth: root.scrollWidth, client: root.clientWidth };
+    d.remove();
+    return out;
+  }));
+  if (!got) return;
+  const [phone, desk] = got;
+  assert.deepEqual(phone.broken, [], 'no word split across lines at the phone width');
+  assert.equal(phone.scrolls, true, `the table scrolls inside its box (${phone.scrollWidth}px in ${phone.client}px)`);
+  assert.deepEqual(desk.broken, []);
+  assert.equal(desk.scrolls, false, 'three conditions fit a 760px sheet');
+});
+
+// The status-board variant without a progress column, as a pasteable board: the template's own root, the header and the row its VARIANT comment holds.
+const noProgressVariant = () => {
+  const variant = tpl('status-board').src.match(/<!-- VARIANT no progress column[^\n]*\n([\s\S]*?)\n\s*-->/)[1];
+  const markupOnly = variant.split('\n').filter(l => l.trim().startsWith('<')).join('\n'); // the comment's two prose lines are not markup
+  const cut = markupOnly.indexOf('</div>\n    <div') + 6;
+  return { markupOnly, header: markupOnly.slice(0, cut), row: markupOnly.slice(cut + 1) };
+};
+const noProgressBoard = (style = 'feedbackops-light') => {
+  const { header, row } = noProgressVariant();
+  const root = pasted('status-board', style).match(/^<div data-component="status-board"[^>]*>/)[0];
+  return stripSlots(renderTemplate(`${root}<div style="min-width:min-content;">${header}${row}${row}${row}</div></div>`, loadTokens(style)).out);
+};
+
+test('status-board: rows are flex-wrap lines over floored flex-basis-0 cells (the old 1.5fr 88px 1fr 1.8fr), the header collapses at the width the four floors need on one line, and a no-progress variant is documented', () => {
+  const t = tpl('status-board');
+  const body = live(t);
+  assert.doesNotMatch(body, /grid-template-columns/); // the grid whose floors summed to 502px and pushed the memo behind a scroll
+  const rows = [...body.matchAll(/<div style="display:flex; flex-wrap:wrap; align-items:center; gap:6px 14px; padding:12px 18px; border-top:1px solid ⟨border-row⟩;"/g)];
+  assert.equal(rows.length, 5); // blocked · at risk · on track · done · not started
+  assert.equal([...body.matchAll(/flex:1\.5 1 0px; min-width:96px;/g)].length, 6); // the name cell of every row and of the header
+  assert.equal([...body.matchAll(/flex:0 0 88px;/g)].length, 6);
+  assert.equal([...body.matchAll(/flex:1\.8 1 0px; min-width:120px;/g)].length, 6);
+  assert.equal([...body.matchAll(/flex:1 1 0px; min-width:120px;/g)].length, 6); // progress cell (a bar or the — of a row not started)
+  const need = 96 + 88 + 120 + 120 + 3 * 14 + 2 * 18; // the four floors, three gaps and the row's side padding
+  const collapse = [...body.matchAll(/clamp\(0px,calc\(\(100cqw - (\d+)px\) \* 999\),(\d+)px\)/g)].map(m => [Number(m[1]), Number(m[2])]);
+  assert.deepEqual(collapse, [[need - 1, 11], [need - 1, 12]]); // padding and font-size, one threshold: 501 = the 502px below which a row wraps
+  assert.match(body, /overflow-wrap:anywhere; container-type:inline-size;">/); // 100cqw is the board's own width
+  // the variant without a progress column
+  const { markupOnly } = noProgressVariant();
+  assert.doesNotMatch(markupOnly, /data-value|width:⟦|⟦진척⟧/); // no bar, no marker, no progress label
+  assert.deepEqual([...markupOnly.matchAll(/100cqw - (\d+)px/g)].map(m => Number(m[1])), [96 + 88 + 120 + 2 * 14 + 2 * 18 - 1, 96 + 88 + 120 + 2 * 14 + 2 * 18 - 1]); // 367: the three floors, two gaps, the side padding
+  assert.match(t.meta.data, /진척 %\(출처에 진척이 없으면 이 열을 뺀다\)/);
+  assert.match(t.src, /HOW TO FILL[\s\S]*VARIANT no progress[\s\S]*data-value 속성을 지운다[\s\S]*NOTE 도 나오지 않는다[\s\S]*두 줄이 된다/);
+  assert.match(readFileSync(join(CORE, 'components.md'), 'utf8'), /`status-board` without its\s+progress column/);
+});
+
+test('status-board in a browser: at the phone width every row wraps to two lines with the memo in view and the header folded away; at 760px it is one line under its header — with and without the progress column', (t) => {
+  const got = inChrome(t, `${pasted('status-board')}<!--SPLIT-->${noProgressBoard()}`, (host, R) => {
+    const [full, none] = HTML.split('<!--SPLIT-->');
+    const out = [];
+    for (const [name, markup] of [['progress', full], ['no progress', none]]) for (const width of [343, 760]) {
+      const d = host(width, markup), root = d.firstElementChild, box = root.firstElementChild, [header, ...rows] = [...box.children];
+      const cells = (row) => [...row.children]; // cells of one line share a vertical centre (align-items:center); a new line is 8px+ lower
+      const lines = (row) => cells(row).map(c => R(c).top + R(c).height / 2).sort((a, b) => a - b).reduce((n, y, i, all) => n + (i && y - all[i - 1] > 8 ? 1 : 0), 1);
+      out.push({
+        name, width, scroll: [root, box, ...root.querySelectorAll('*')].some(e => e.scrollWidth > e.clientWidth + 1 && /auto|scroll/.test(getComputedStyle(e).overflowX)),
+        header: Math.round(R(header).height), rows: rows.length, lines: [...new Set(rows.map(lines))],
+        memoSeen: rows.every(r => { const m = cells(r).at(-1); return R(m).right <= R(root).right - 1 && R(m).left >= R(root).left && R(m).width >= 110 && R(m).height > 10; }),
+        aligned: width === 760 ? cells(header).every((h, i) => rows.every(r => Math.abs(R(h).left - R(cells(r)[i]).left) <= 1)) : null,
+        cellsPerRow: [...new Set(rows.map(r => cells(r).length))],
+      });
+      d.remove();
+    }
+    return out;
+  });
+  if (!got) return;
+  for (const g of got) {
+    const at = `${g.name} board at ${g.width}px`;
+    assert.equal(g.scroll, false, `${at}: no scroll, so no memo behind one`);
+    assert.equal(g.memoSeen, true, `${at}: the memo is inside the board and wide enough to read`);
+    assert.deepEqual(g.cellsPerRow, [g.name === 'progress' ? 4 : 3], at);
+    if (g.width === 343) { assert.equal(g.header, 0, `${at}: header folded`); assert.deepEqual(g.lines, [2], `${at}: two lines per row`); }
+    else { assert.ok(g.header >= 20, `${at}: header shown`); assert.deepEqual(g.lines, [1], `${at}: one line per row`); assert.equal(g.aligned, true, `${at}: header labels sit over their columns`); }
+  }
+});
+
+test('status-board without a progress column: the gate reads no bar, so chart-proportions has nothing to mark — no "carries no data-value" NOTE, no failure; a board that keeps its progress column is still checked', () => {
+  const { colors } = loadTokens('feedbackops-light');
+  const opts = { accentHex: colors.accent, zoneRoles: zoneRoles(colors) };
+  const board = noProgressBoard();
+  assert.equal((board.match(/data-value/g) || []).length, 0);
+  assert.deepEqual(chartProportions(board), { charts: 0, values: 0, unmarked: [], partial: [], violations: [] });
+  const r = figureChecks(board, opts);
+  assert.deepEqual(r.checks, []);
+  assert.deepEqual(r.notes, []);
+  const withProgress = figureChecks(pasted('status-board'), opts);
+  assert.deepEqual(withProgress.checks.map(c => [c.name, c.ok]), [['chart-proportions', true]]);
+  assert.equal(chartProportions(pasted('status-board').replaceAll(/ data-value="[^"]*"/g, '')).unmarked.length, 1); // strip the markers and it is noted again
+});
+
+test('sequence: every track has a 144px floor (the message label width between neighbours), so 3+ participants scroll inside the box at 343px instead of crushing labels', () => {
+  const t = tpl('sequence');
+  const body = live(t);
+  const tracks = [...body.matchAll(/repeat\((\d),minmax\((\d+)px,1fr\)\)/g)].map(m => `${m[1]}/${m[2]}`);
+  assert.ok(tracks.length >= 8);
+  assert.deepEqual([...new Set(tracks)], ['3/144']);
+  assert.doesNotMatch(body, /minmax\(96px,1fr\)/);
+  assert.ok(3 * 144 > PHONE - 2 - 48, 'three participants are wider than the 293px a phone leaves inside the figure padding');
+  assert.ok(2 * 144 <= PHONE - 2 - 48, 'two participants still fit it without scrolling');
+  assert.match(t.src, /HOW TO FILL[\s\S]*repeat\(N,minmax\(144px,1fr\)\)[\s\S]*\/v1\/files\/complete[\s\S]*가로로 스크롤/);
+});
+
+test('sequence in a browser: at the phone width a long identifier label is not split mid-word and the figure scrolls in its own box; at 760px it fits without scrolling', (t) => {
+  const got = inChrome(t, pasted('sequence').replace('요청 1', 'POST /v1/files/complete'), (host, R, broken) => [343, 760].map(width => {
+    const d = host(width);
+    const root = d.firstElementChild, label = [...root.querySelectorAll('span')].find(e => e.textContent.includes('/v1/files/complete'));
+    const out = { width, broken: broken(root), scrolls: root.scrollWidth > root.clientWidth + 1, label: Math.round(R(label).width) };
+    d.remove();
+    return out;
+  }));
+  if (!got) return;
+  const [phone, desk] = got;
+  assert.ok(phone.label >= 130, `the label has ${phone.label}px`);
+  assert.deepEqual(phone.broken, [], 'no identifier split across lines');
+  assert.equal(phone.scrolls, true);
+  assert.deepEqual(desk.broken, []);
+  assert.equal(desk.scrolls, false);
 });

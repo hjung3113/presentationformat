@@ -480,6 +480,11 @@ test('narrow width: every style\'s component gallery has no mobile-overflow and 
     assert.ok(res.warnings.some(w => w.name === 'composition:narrow-metrics' && /at 390x844/.test(w.detail)), `${style}: the 390px viewport rendered`);
     const bad = res.warnings.filter(w => /^composition:(mobile|figure)-overflow$/.test(w.name));
     assert.deepEqual(bad.map(w => `${w.name} ${w.detail}`), [], `${style} overflows at 390px`);
+    // Which figures scroll inside their own box at 390px (the INFO row) is part of the contract: activity, status-board and use-case
+    // reflow — a scroll there hides an outcome or the memo — while decision-table and sequence scroll rather than crush a key or a label.
+    const scrolling = (res.warnings.find(w => w.name === 'composition:mobile-scroll-figure')?.detail.match(/^(.*?) scroll sideways/)?.[1] || '').split(', ').map(x => x.replace(/×\d+$/, ''));
+    for (const id of ['activity', 'status-board', 'use-case']) assert.equal(scrolling.includes(id), false, `${style}: ${id} reflows at 390px instead of scrolling (${scrolling})`);
+    for (const id of ['decision-table', 'sequence']) assert.equal(scrolling.includes(id), true, `${style}: ${id} keeps its legibility floors and scrolls inside its box at 390px (${scrolling})`);
   }
 });
 

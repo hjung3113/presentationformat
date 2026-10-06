@@ -192,28 +192,30 @@
             <div style="position:absolute; left:41px; top:14px; width:68px; height:68px; transform:rotate(45deg); background:#FFFFFF; border:1.5px solid #1428A0; border-radius:6px;"></div>
             <div style="position:relative; font:600 11.5px/1.3 Inter,Pretendard,sans-serif; color:#1428A0; text-align:center; max-width:120px;">후속 경로?</div>
           </div>
-          <div style="align-self:stretch; height:12px; margin:0 10%; border:2px solid #B8C4D6; border-bottom:none; border-radius:6px 6px 0 0;"></div>
-          <div style="align-self:stretch; display:grid; grid-template-columns:repeat(5,minmax(84px,1fr)); gap:10px;">
-            <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-              <span style="font:700 10.5px/1 Inter,Pretendard,sans-serif; color:#10734A; background:#E7F5EE; border-radius:4px; padding:4px 8px;">조치 명확</span>
-              <div style="align-self:stretch; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:6px; padding:10px 8px; text-align:center;">Task Request<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#475467; margin-top:3px;">검토 큐로</span></div>
-            </div>
-            <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-              <span style="font:700 10.5px/1 Inter,Pretendard,sans-serif; color:#667083; background:#EDF3FB; border-radius:4px; padding:4px 8px;">근거 종합</span>
-              <div style="align-self:stretch; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px 8px; text-align:center;">Finding<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3; margin-top:3px;">여러 근거 요약</span></div>
-            </div>
-            <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-              <span style="font:700 10.5px/1 Inter,Pretendard,sans-serif; color:#667083; background:#EDF3FB; border-radius:4px; padding:4px 8px;">알림만</span>
-              <div style="align-self:stretch; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px 8px; text-align:center;">공개 업데이트<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3; margin-top:3px;">작성자에게 진행 공유</span></div>
-            </div>
-            <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-              <span style="font:700 10.5px/1 Inter,Pretendard,sans-serif; color:#667083; background:#EDF3FB; border-radius:4px; padding:4px 8px;">정보 부족</span>
-              <div style="align-self:stretch; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px 8px; text-align:center;">정보 요청<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3; margin-top:3px;">Needs More Information</span></div>
-              <span style="font:500 10.5px/1.3 Inter,Pretendard,sans-serif; color:#1428A0; border:1px dashed #B9C9F7; border-radius:100px; padding:4px 9px;">↺ 답변 후 트리아지로</span>
-            </div>
-            <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-              <span style="font:700 10.5px/1 Inter,Pretendard,sans-serif; color:#B2202B; background:#FCEDEE; border-radius:4px; padding:4px 8px;">조치 없음</span>
-              <div style="align-self:stretch; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#B2202B; background:#FCEDEE; border:1px solid #F3C7CB; border-radius:6px; padding:10px 8px; text-align:center;">후속 없음 종료<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#8E5500; margin-top:3px;">사유 기록</span></div>
+          <div style="align-self:stretch; container-type:inline-size;">
+            <div style="height:12px; margin:0 clamp(calc(50% / 5), calc((5 * 114px - 10px - 100cqw) * 999), 25%); border:2px solid #B8C4D6; border-bottom:none; border-radius:6px 6px 0 0;"></div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(clamp(104px,calc((5 * 114px - 10px - 100cqw) * 999),calc(50% - 6px)),1fr)); gap:14px 10px;">
+              <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                <span style="font:700 10.5px/1 Inter,Pretendard,sans-serif; color:#10734A; background:#E7F5EE; border-radius:4px; padding:4px 8px;">조치 명확</span>
+                <div style="align-self:stretch; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:6px; padding:10px 8px; text-align:center;">Task Request<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#475467; margin-top:3px;">검토 큐로</span></div>
+              </div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                <span style="font:700 10.5px/1 Inter,Pretendard,sans-serif; color:#667083; background:#EDF3FB; border-radius:4px; padding:4px 8px;">근거 종합</span>
+                <div style="align-self:stretch; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px 8px; text-align:center;">Finding<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3; margin-top:3px;">여러 근거 요약</span></div>
+              </div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                <span style="font:700 10.5px/1 Inter,Pretendard,sans-serif; color:#667083; background:#EDF3FB; border-radius:4px; padding:4px 8px;">알림만</span>
+                <div style="align-self:stretch; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px 8px; text-align:center;">공개 업데이트<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3; margin-top:3px;">작성자에게 진행 공유</span></div>
+              </div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                <span style="font:700 10.5px/1 Inter,Pretendard,sans-serif; color:#667083; background:#EDF3FB; border-radius:4px; padding:4px 8px;">정보 부족</span>
+                <div style="align-self:stretch; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px 8px; text-align:center;">정보 요청<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3; margin-top:3px;">Needs More Information</span></div>
+                <span style="font:500 10.5px/1.3 Inter,Pretendard,sans-serif; color:#1428A0; border:1px dashed #B9C9F7; border-radius:100px; padding:4px 9px;">↺ 답변 후 트리아지로</span>
+              </div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                <span style="font:700 10.5px/1 Inter,Pretendard,sans-serif; color:#B2202B; background:#FCEDEE; border-radius:4px; padding:4px 8px;">조치 없음</span>
+                <div style="align-self:stretch; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#B2202B; background:#FCEDEE; border:1px solid #F3C7CB; border-radius:6px; padding:10px 8px; text-align:center;">후속 없음 종료<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#8E5500; margin-top:3px;">사유 기록</span></div>
+              </div>
             </div>
           </div>
         </div>

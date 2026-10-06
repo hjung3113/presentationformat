@@ -62,7 +62,7 @@ shape and move the other to the next section. One primary figure per idea.
 | `text-table` | 행·열 모두 의미, 칸마다 짧은 문장: 문제↔해결↔효과, 미정 질문 | `table` | 카드 |
 | `decision` | 결정 요청·승인 필요·선택지와 권고·"언제까지 누가 정하나" | `decision-block` | 작은 카드 안에 숨긴 질문 |
 | `risk` | 리스크 + 가능성·영향 두 등급을 출처가 모두 매긴 경우, 대응책 | `risk-matrix` | 등급을 지어낸 매트릭스 |
-| `status` | 워크스트림·팀별 현재 상태(정상/주의/차단/완료), 진척 | `status-board` | 문단 |
+| `status` | 워크스트림·팀별 현재 상태(정상/주의/차단/완료)와 메모, 진척(수치가 있을 때만 — 없으면 진척 열 없는 변형) | `status-board` | 문단 |
 | `milestones` | 날짜가 붙은 사건: 완료 이력·현재·다음 일정 | `timeline` | 단계 행 |
 | `schedule` | 기간에 걸친 작업 계획, 겹침, 로드맵, MVP/이후 범위, 이관·병행·컷오버·전환 일정 | `gantt` | 날짜 목록 |
 | `headline-metric` | 숫자 1–4개 자체가 메시지, 증감, 목표 대비, 현재 방식의 비용·손실·수작업 시간·건수 | `kpi-row` | 차트 |
@@ -179,7 +179,10 @@ component's `@limits-x` allows (a tree child with seven leaves, a use-case actor
   them: copy a unit and its marker goes along, delete a unit and it goes too, and a unit you add gets one. `data-value` is filled with
   the number the unit's label shows; `data-zone` follows the unit's meaning (a legacy bar is `as-is` whatever its text says);
   `data-state` follows the variant, so changing a variant changes it. Never
-  remove a marker to pass a check — an unmarked figure is simply not checked.
+  remove a marker to pass a check — an unmarked figure is simply not checked. The one honest absence is a `status-board` without its
+  progress column (the template's VARIANT no progress column, for sources that give a status but no progress figure): it draws no bar,
+  so it has no `data-value` to carry and the gate prints no "carries no data-value" NOTE for it — no bar, nothing to mark. A board that
+  keeps the column marks every row that has a bar.
 - **Replace every `⟦…⟧`.** The text inside is an example, not a default. Unknown values become the
   style's placeholder (`O` + muted "(추후 확정)"), never invented facts.
 - **Repeat, don't redraw.** `▼ REPEAT … ▲ /REPEAT` marks the unit to copy for more items; delete
@@ -197,14 +200,21 @@ component's `@limits-x` allows (a tree child with seven leaves, a use-case actor
   `overflow:hidden`) and the active style's `design.md §8.1` owns the shell paddings that leave a phone about 343px of sheet.
   Pasted components already carry the recipe — keep it. A grid reflows with `repeat(auto-fit,minmax(min(100%,Npx),1fr))` (the
   column count is not a slot) or wraps with `flex-wrap` over a `flex-basis` floor; a fixed-ratio grid uses `minmax(0,Nfr)` tracks; a
-  component whose geometry is inherently wide (wireframe, Gantt, table or matrix with 4+ columns, sequence or swimlane with 4+
-  columns, activity, tree, class diagram, pipeline) scrolls **inside itself** — `overflow-x:auto` on its root (or on its scroll
-  wrapper) over tracks with a `minmax(Npx,…)` floor and a `min-width:min-content` box — and the page never moves. Every root carries
+  component whose geometry is inherently wide (wireframe, Gantt, table or matrix with 4+ columns, `decision-table`, sequence with 3+
+  participants or swimlane with 4+ columns, tree, class diagram, pipeline) scrolls **inside itself** — `overflow-x:auto` on its root (or
+  on its scroll wrapper) over tracks with a `minmax(Npx,…)` floor and a `min-width:min-content` box — and the page never moves.
+  The floor is what keeps a word whole, so it is set for legibility, not to make the figure fit: a `decision-table` key column is
+  120px (result 140px) and a `sequence` column 144px (the width of a message label between neighbours); never lower a floor to avoid the
+  scroll. Two components do not scroll at all because a scroll there hides content: `activity` reflows its outcomes (K in one row, else
+  two per row, the branch rail following — the `100cqw` switch below) and `status-board` wraps each row into two lines with the memo
+  in view (`flex-wrap` over floored `flex-basis:0` cells, its header folded to 0px by the same `100cqw` step). Every root carries
   `overflow-wrap:anywhere`. Hand-written content follows the same rule: an unbreakable run (mono identifier, path, URL, signature)
   takes `overflow-wrap:anywhere`, a grid cell takes `min-width:0` or a `minmax(0,Nfr)` track. Never pass the check by hiding the
-  overflow; the probe reports a clipped figure. A glyph that must follow the layout (the `before-after` pivot: → side by side, ↓
-  stacked) is pasted twice and switched without a media query: each copy's `flex-basis` and glyph `font-size` are `clamp(0px,calc(… 100cqw …
-  * 999),…)` — 0 outside its layout — over a row that is a `container-type:inline-size`. Keep both, and the container.
+  overflow; the probe reports a clipped figure. A glyph or rail that must follow the layout (the `before-after` pivot: → side by side, ↓
+  stacked; the `activity` branch rail, 50 / K % over K outcomes in one row, 25% over the first pair when they wrap) is switched without a
+  media query: its `flex-basis`, `font-size`, `margin` or the grid floor is `clamp(…, calc(… 100cqw … * 999), …)` — one value on each side
+  of the switch width — over an ancestor that is a `container-type:inline-size`; the pivot is pasted twice (each copy 0 outside its
+  layout). Keep the switch and the container.
 - **Percentages are slots tied to their label.** A bar's `width`/`height` slot and the value shown on
   it (`35` and `35%`) are filled with the same value, and the bar's `data-value` carries that value a third time (the gate's
   `chart-proportions` compares the drawn size, the label and `data-value`); a matrix cell glyph (`✓`/`✕`/short text) is a slot
@@ -261,7 +271,8 @@ component's `@limits-x` allows (a tree child with seven leaves, a use-case actor
   The labels change; the colors, geometry and the semantic split do not (a `지금` badge is still the AS-IS color).
   Never mix: an executive document with `01 · SUMMARY` eyebrows and a `지금` badge is half-converted.
 - **Lookup, don't compute geometry.** Every spanning connector uses the same table: span S columns →
-  `margin:0 X%` with S=2 → 25%, 3 → 16.667%, 4 → 12.5%, 5 → 10%. Gantt bars: period k starts at grid
+  `margin:0 X%` with S=2 → 25%, 3 → 16.667%, 4 → 12.5%, 5 → 10% (the `activity` branch rail is the same 50 / K %, written
+  `calc(50% / K)` inside its narrow-width `clamp(…)`, §4). Gantt bars: period k starts at grid
   line k+1. Bar heights: one scale per chart (usually value ÷ max × 100).
 - **Placement.** Lead paragraph first, then the figure (full width). Never put the figure before the
   lead. One primary figure per section; a support block (callout or small table) may follow it.

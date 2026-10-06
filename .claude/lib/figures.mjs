@@ -126,6 +126,7 @@ const ordinal = (comps, c) => `${c.value}#${comps.filter(x => x.value === c.valu
 //   stacked-bar   width% ≈ value, and the marked segments add up to 100
 // The label test is the same everywhere: data-value must equal a numeral the element shows (a textless segment is skipped).
 // A chart that marks some of its bars and not others is reported in `partial` (the unmarked ones are not read).
+// A chart that draws no bar at all (a `status-board` built without its progress column) has nothing to mark and is not counted as `unmarked`.
 // → { charts, values, unmarked: [component id…], partial: [string…], violations: [string…] }
 export const OVERFLOW = 102; // percent a bar may reach: 100 + the rounding of the largest one
 const SIZE_PROP = { 'bar-chart': 'height', 'hbar-chart': 'width', 'status-board': 'width', 'stacked-bar': 'width' };
@@ -168,7 +169,10 @@ export function chartProportions(html) {
       const fragment = htmlOf(mk, m);
       return { v: valueOf(m.value), raw: m.value, own: attrOf(m.attrs, 'style'), fragment, text: textOf(fragment) };
     });
-    if (!mine.length) { res.unmarked.push(c.value); continue; }
+    if (!mine.length) { // nothing marked: a chart that draws bars the gate cannot read is noted; one that draws none (a status-board without its 진척 column) has nothing to mark
+      if (unmarkedBars(mk, c, marked, SIZE_PROP[c.value]).length) res.unmarked.push(c.value);
+      continue;
+    }
     res.charts++;
     const id = ordinal(comps, c);
     const loose = unmarkedBars(mk, c, marked, SIZE_PROP[c.value]).length;
