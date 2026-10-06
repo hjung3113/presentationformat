@@ -19,8 +19,8 @@ HOW TO FILL
   5. 시스템 경계 상자의 이름표 ⟦SYSTEM⟧ · ⟦시스템 이름⟧ 는 슬롯이다. ⟦SYSTEM⟧ 은 라벨(예시는 영문 기본, labels: en)이고
      labels: ko 문서(경영진·사용자용)는 "시스템" 으로 바꾼다(core/components.md §4 "라벨 언어"). 시스템 이름은 plan 의 system: 값 그대로.
 -->
-<div data-component="use-case" style="background:⟨fig-tint⟩; border:1px solid ⟨border-fig⟩; border-radius:⟨r:card-sm⟩; padding:24px;">
-  <div style="display:grid; grid-template-columns:96px 36px 1fr; align-items:center; row-gap:6px;">
+<div data-component="use-case" style="background:⟨fig-tint⟩; border:1px solid ⟨border-fig⟩; border-radius:⟨r:card-sm⟩; padding:24px; overflow-wrap:anywhere;">
+  <div style="display:grid; grid-template-columns:96px 36px minmax(0,1fr); align-items:center; row-gap:6px;">
     <!-- system boundary: grid-row 1 / span R -->
     <div style="grid-column:3; grid-row:1 / span 3; align-self:stretch; border:1px solid ⟨accent-line⟩; border-radius:⟨r:card-sm⟩; background:⟨white⟩; position:relative;"><span style="position:absolute; top:8px; right:12px; font:700 10px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨muted-text⟩;">⟦SYSTEM⟧ · ⟦시스템 이름⟧</span></div>
 

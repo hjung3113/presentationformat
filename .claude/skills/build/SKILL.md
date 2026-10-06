@@ -140,7 +140,7 @@ band takes `margin:24px 0 0` as the first block and `margin:8px 0 0` after a sec
 4. Paste the `<div data-component="…">` block under the section's lead paragraph and fill it from
    the section's `figure-data`: replace every `⟦…⟧`, copy `▼ REPEAT` units to match the item count,
    pick `VARIANT`s by meaning, delete unused `OPTIONAL` blocks, and set only the values the header
-   names (column count — the same N in **every** `repeat(N,1fr)` and `calc(100% / N)` — a
+   names (column count — the same N in **every** `repeat(N,…)` and `calc(100% / N)` — a
    `grid-column`, a percentage slot together with its label, or a margin from its lookup table).
    **A thing the plan marks `[planned]` (or whose fact is `designed`/`planned`) is drawn with the component's
    planned variant** — muted dashed outline + state chip (11px bold) — never the built look (`core/components.md` §4). A `[state: 텍스트]`
@@ -279,7 +279,7 @@ The gate runs two tiers:
     re-paste it from `styles/<style>/components/`.
   - `palette` — a color literal is not in the style's `design.md`: it was invented or copied from
     another style; replace it with that style's own token value.
-  - `grid-consistency` — a component's `repeat(M,1fr)` differs from its `calc(100% / N)`: make the
+  - `grid-consistency` — a component's `repeat(M,…)` differs from its `calc(100% / N)`: make the
     count the same everywhere in that component (every row, header and background).
   - `known-components`, `plan-alignment`, `plan-shapes` — every `data-component` is a real component, the
     document's `<section>` ids equal the plan's `sN`/`sref` ids (act dividers are `<div>`s), and every

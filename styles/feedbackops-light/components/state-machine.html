@@ -27,7 +27,7 @@ HOW TO FILL
      상태 머신에 붙는 한 줄 주의(예: 다른 상태와 자동 연동하지 않는다)는 callout WARN 한 개로 아래에 둔다.
   6. (선택) 상태 머신이 두 개면 맨 위 이름 배지로 구분하고 둘을 위아래로 쌓는다.
 -->
-<div data-component="state-machine" style="background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:24px;">
+<div data-component="state-machine" style="background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:24px; overflow-wrap:anywhere;">
   <!-- OPTIONAL name badge (use when two state machines are shown) -->
   <div style="margin-bottom:16px;"><span style="font:700 10.5px/1 'JetBrains Mono',Pretendard,monospace; letter-spacing:.06em; color:#FFFFFF; background:#374151; border-radius:4px; padding:5px 9px;">⟦상태 머신 이름⟧</span></div>
   <!-- main path (max 5 states; ● and ◉ do not count) -->
@@ -58,7 +58,7 @@ HOW TO FILL
     <div style="display:flex; flex-direction:column; gap:8px; max-width:640px; margin:0 auto;">
       <!-- every chip (left = from-state, right = to-state) takes the variant of the STATE it names: in-progress/retry = accent, success = ok, failure = negative, neutral end = white -->
       <!-- ▼ REPEAT per extra transition -->
-      <div style="display:grid; grid-template-columns:1fr 150px 1fr 70px; align-items:center; gap:8px;">
+      <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(64px,min(150px,24%)) minmax(0,1fr) minmax(48px,min(70px,16%)); align-items:center; gap:8px;">
         <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:8px; padding:8px 10px; text-align:center;">⟦상태 B⟧</div>
         <div style="display:flex; flex-direction:column; align-items:center;"><span style="font:500 10px/1.2 Inter,Pretendard,sans-serif; color:#5D6679;">⟦전이 4⟧</span><div style="display:flex; align-items:center; width:100%;"><div style="flex:1; height:2px; background:#B8C4D6;"></div><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:7px solid #B8C4D6;"></div></div></div>
         <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:8px; padding:8px 10px; text-align:center;">⟦상태 D⟧</div>
@@ -66,42 +66,42 @@ HOW TO FILL
       </div>
       <!-- ▲ /REPEAT -->
       <!-- VARIANT negative terminal transition -->
-      <div style="display:grid; grid-template-columns:1fr 150px 1fr 70px; align-items:center; gap:8px;">
+      <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(64px,min(150px,24%)) minmax(0,1fr) minmax(48px,min(70px,16%)); align-items:center; gap:8px;">
         <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:8px; padding:8px 10px; text-align:center;">⟦상태 B⟧</div>
         <div style="display:flex; flex-direction:column; align-items:center;"><span style="font:500 10px/1.2 Inter,Pretendard,sans-serif; color:#5D6679;">⟦전이 5⟧</span><div style="display:flex; align-items:center; width:100%;"><div style="flex:1; height:2px; background:#B8C4D6;"></div><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:7px solid #B8C4D6;"></div></div></div>
         <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#B2202B; background:#FCEDEE; border:1.5px solid #F3C7CB; border-radius:8px; padding:8px 10px; text-align:center;">⟦실패 상태⟧</div>
         <span style="justify-self:start; font:700 10px/1 Inter,Pretendard,sans-serif; color:#B2202B; background:#FCEDEE; border-radius:4px; padding:4px 7px;">⟦종료⟧</span>
       </div>
       <!-- VARIANT alternative path to a successful terminal state (ok chip + grey tag) -->
-      <div style="display:grid; grid-template-columns:1fr 150px 1fr 70px; align-items:center; gap:8px;">
+      <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(64px,min(150px,24%)) minmax(0,1fr) minmax(48px,min(70px,16%)); align-items:center; gap:8px;">
         <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:8px; padding:8px 10px; text-align:center;">⟦상태 A⟧</div>
         <div style="display:flex; flex-direction:column; align-items:center;"><span style="font:500 10px/1.2 Inter,Pretendard,sans-serif; color:#5D6679;">⟦전이 6⟧</span><div style="display:flex; align-items:center; width:100%;"><div style="flex:1; height:2px; background:#B8C4D6;"></div><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:7px solid #B8C4D6;"></div></div></div>
         <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#10734A; background:#E7F5EE; border:1.5px solid #10734A; border-radius:8px; padding:8px 10px; text-align:center;">⟦종료 상태⟧</div>
         <span style="justify-self:start; font:700 10px/1 Inter,Pretendard,sans-serif; color:#5D6679; background:#EDF3FB; border-radius:4px; padding:4px 7px;">⟦대안⟧</span>
       </div>
       <!-- VARIANT neutral terminal transition (취소·보류·폐기: white chip + grey tag) -->
-      <div style="display:grid; grid-template-columns:1fr 150px 1fr 70px; align-items:center; gap:8px;">
+      <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(64px,min(150px,24%)) minmax(0,1fr) minmax(48px,min(70px,16%)); align-items:center; gap:8px;">
         <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:8px; padding:8px 10px; text-align:center;">⟦상태 B⟧</div>
         <div style="display:flex; flex-direction:column; align-items:center;"><span style="font:500 10px/1.2 Inter,Pretendard,sans-serif; color:#5D6679;">⟦전이 7⟧</span><div style="display:flex; align-items:center; width:100%;"><div style="flex:1; height:2px; background:#B8C4D6;"></div><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:7px solid #B8C4D6;"></div></div></div>
         <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1.5px solid #B8C4D6; border-radius:8px; padding:8px 10px; text-align:center;">⟦중립 종료 상태⟧</div>
         <span style="justify-self:start; font:700 10px/1 Inter,Pretendard,sans-serif; color:#5D6679; background:#EDF3FB; border-radius:4px; padding:4px 7px;">⟦종료⟧</span>
       </div>
       <!-- VARIANT from a negative state (source chip = negative) -->
-      <div style="display:grid; grid-template-columns:1fr 150px 1fr 70px; align-items:center; gap:8px;">
+      <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(64px,min(150px,24%)) minmax(0,1fr) minmax(48px,min(70px,16%)); align-items:center; gap:8px;">
         <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#B2202B; background:#FCEDEE; border:1.5px solid #F3C7CB; border-radius:8px; padding:8px 10px; text-align:center;">⟦실패 상태⟧</div>
         <div style="display:flex; flex-direction:column; align-items:center;"><span style="font:500 10px/1.2 Inter,Pretendard,sans-serif; color:#5D6679;">⟦전이 8⟧</span><div style="display:flex; align-items:center; width:100%;"><div style="flex:1; height:2px; background:#B8C4D6;"></div><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:7px solid #B8C4D6;"></div></div></div>
         <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:8px; padding:8px 10px; text-align:center;">⟦상태 A⟧</div>
         <span style="justify-self:start; font:700 10px/1 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border-radius:4px; padding:4px 7px;">⟦되돌림⟧</span>
       </div>
       <!-- VARIANT from a neutral state (source chip = white) -->
-      <div style="display:grid; grid-template-columns:1fr 150px 1fr 70px; align-items:center; gap:8px;">
+      <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(64px,min(150px,24%)) minmax(0,1fr) minmax(48px,min(70px,16%)); align-items:center; gap:8px;">
         <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1.5px solid #B8C4D6; border-radius:8px; padding:8px 10px; text-align:center;">⟦중립 종료 상태⟧</div>
         <div style="display:flex; flex-direction:column; align-items:center;"><span style="font:500 10px/1.2 Inter,Pretendard,sans-serif; color:#5D6679;">⟦전이 9⟧</span><div style="display:flex; align-items:center; width:100%;"><div style="flex:1; height:2px; background:#B8C4D6;"></div><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:7px solid #B8C4D6;"></div></div></div>
         <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:8px; padding:8px 10px; text-align:center;">⟦상태 A⟧</div>
         <span style="justify-self:start; font:700 10px/1 Inter,Pretendard,sans-serif; color:#5D6679; background:#EDF3FB; border-radius:4px; padding:4px 7px;">⟦재개⟧</span>
       </div>
       <!-- VARIANT from a successful state (source chip = ok) -->
-      <div style="display:grid; grid-template-columns:1fr 150px 1fr 70px; align-items:center; gap:8px;">
+      <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(64px,min(150px,24%)) minmax(0,1fr) minmax(48px,min(70px,16%)); align-items:center; gap:8px;">
         <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#10734A; background:#E7F5EE; border:1.5px solid #10734A; border-radius:8px; padding:8px 10px; text-align:center;">⟦종료 상태⟧</div>
         <div style="display:flex; flex-direction:column; align-items:center;"><span style="font:500 10px/1.2 Inter,Pretendard,sans-serif; color:#5D6679;">⟦전이 10⟧</span><div style="display:flex; align-items:center; width:100%;"><div style="flex:1; height:2px; background:#B8C4D6;"></div><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:7px solid #B8C4D6;"></div></div></div>
         <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:8px; padding:8px 10px; text-align:center;">⟦상태 A⟧</div>

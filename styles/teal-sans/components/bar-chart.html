@@ -18,36 +18,38 @@ HOW TO FILL
   4. 시간 추이면 라벨을 기간(1월, 2월 …)으로, 왼쪽에서 오른쪽으로 시간 순서.
   5. 전후 비교는 이 차트 두 개를 grid-template-columns:1fr 1fr 로 나란히 두고 각 위에 AS-IS/TO-BE 배지를 단다.
 -->
-<div data-component="bar-chart" style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:22px 24px 20px;">
-  <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px;"><span style="font:600 13px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦차트 제목⟧</span><span style="font:500 11px/1 'IBM Plex Mono','IBM Plex Sans KR',monospace; color:#6A7187;">⟦단위⟧</span></div>
-  <!-- plot -->
-  <div style="display:flex; align-items:flex-end; gap:16px; height:180px; padding:22px 8px 0; border-bottom:1.5px solid #E2E5F0;">
-    <!-- ▼ REPEAT per bar: height = value / max × 100 % -->
-    <div style="flex:1; height:100%; display:flex; align-items:flex-end; justify-content:center;">
-      <div style="position:relative; width:100%; max-width:56px; height:⟦100⟧%; background:#0F766E; border-radius:4px 4px 0 0;"><span style="position:absolute; bottom:100%; left:0; right:0; text-align:center; padding-bottom:5px; font:700 11px/1 'IBM Plex Mono','IBM Plex Sans KR',monospace; color:#1E2233;">⟦100⟧</span></div>
+<div data-component="bar-chart" style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:22px 24px 20px; overflow-x:auto; overflow-wrap:anywhere;">
+  <div style="min-width:min-content;">
+    <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px;"><span style="font:600 13px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦차트 제목⟧</span><span style="font:500 11px/1 'IBM Plex Mono','IBM Plex Sans KR',monospace; color:#6A7187;">⟦단위⟧</span></div>
+    <!-- plot -->
+    <div style="display:flex; align-items:flex-end; gap:16px; height:180px; padding:22px 8px 0; border-bottom:1.5px solid #E2E5F0;">
+      <!-- ▼ REPEAT per bar: height = value / max × 100 % -->
+      <div style="flex:1 0 32px; height:100%; display:flex; align-items:flex-end; justify-content:center;">
+        <div style="position:relative; width:100%; max-width:56px; height:⟦100⟧%; background:#0F766E; border-radius:4px 4px 0 0;"><span style="position:absolute; bottom:100%; left:0; right:0; text-align:center; padding-bottom:5px; font:700 11px/1 'IBM Plex Mono','IBM Plex Sans KR',monospace; color:#1E2233;">⟦100⟧</span></div>
+      </div>
+      <!-- ▲ /REPEAT -->
+      <div style="flex:1 0 32px; height:100%; display:flex; align-items:flex-end; justify-content:center;">
+        <div style="position:relative; width:100%; max-width:56px; height:⟦70⟧%; background:#0D9488; border-radius:4px 4px 0 0;"><span style="position:absolute; bottom:100%; left:0; right:0; text-align:center; padding-bottom:5px; font:700 11px/1 'IBM Plex Mono','IBM Plex Sans KR',monospace; color:#1E2233;">⟦70⟧</span></div>
+      </div>
+      <div style="flex:1 0 32px; height:100%; display:flex; align-items:flex-end; justify-content:center;">
+        <div style="position:relative; width:100%; max-width:56px; height:⟦50⟧%; background:#0D9488; border-radius:4px 4px 0 0;"><span style="position:absolute; bottom:100%; left:0; right:0; text-align:center; padding-bottom:5px; font:700 11px/1 'IBM Plex Mono','IBM Plex Sans KR',monospace; color:#1E2233;">⟦50⟧</span></div>
+      </div>
+      <div style="flex:1 0 32px; height:100%; display:flex; align-items:flex-end; justify-content:center;">
+        <div style="position:relative; width:100%; max-width:56px; height:⟦30⟧%; background:#0D9488; border-radius:4px 4px 0 0;"><span style="position:absolute; bottom:100%; left:0; right:0; text-align:center; padding-bottom:5px; font:700 11px/1 'IBM Plex Mono','IBM Plex Sans KR',monospace; color:#1E2233;">⟦30⟧</span></div>
+      </div>
+      <!-- VARIANT baseline / previous = grey -->
+      <div style="flex:1 0 32px; height:100%; display:flex; align-items:flex-end; justify-content:center;">
+        <div style="position:relative; width:100%; max-width:56px; height:⟦10⟧%; background:#C2C8D4; border-radius:4px 4px 0 0;"><span style="position:absolute; bottom:100%; left:0; right:0; text-align:center; padding-bottom:5px; font:700 11px/1 'IBM Plex Mono','IBM Plex Sans KR',monospace; color:#6A7187;">⟦10⟧</span></div>
+      </div>
     </div>
-    <!-- ▲ /REPEAT -->
-    <div style="flex:1; height:100%; display:flex; align-items:flex-end; justify-content:center;">
-      <div style="position:relative; width:100%; max-width:56px; height:⟦70⟧%; background:#0D9488; border-radius:4px 4px 0 0;"><span style="position:absolute; bottom:100%; left:0; right:0; text-align:center; padding-bottom:5px; font:700 11px/1 'IBM Plex Mono','IBM Plex Sans KR',monospace; color:#1E2233;">⟦70⟧</span></div>
+    <!-- x labels: same count and order as bars -->
+    <div style="display:flex; gap:16px; padding:8px 8px 0;">
+      <div style="flex:1 0 32px; text-align:center; font:500 11.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">⟦항목 A⟧</div>
+      <div style="flex:1 0 32px; text-align:center; font:500 11.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">⟦항목 B⟧</div>
+      <div style="flex:1 0 32px; text-align:center; font:500 11.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">⟦항목 C⟧</div>
+      <div style="flex:1 0 32px; text-align:center; font:500 11.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">⟦항목 D⟧</div>
+      <div style="flex:1 0 32px; text-align:center; font:500 11.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">⟦항목 E⟧</div>
     </div>
-    <div style="flex:1; height:100%; display:flex; align-items:flex-end; justify-content:center;">
-      <div style="position:relative; width:100%; max-width:56px; height:⟦50⟧%; background:#0D9488; border-radius:4px 4px 0 0;"><span style="position:absolute; bottom:100%; left:0; right:0; text-align:center; padding-bottom:5px; font:700 11px/1 'IBM Plex Mono','IBM Plex Sans KR',monospace; color:#1E2233;">⟦50⟧</span></div>
-    </div>
-    <div style="flex:1; height:100%; display:flex; align-items:flex-end; justify-content:center;">
-      <div style="position:relative; width:100%; max-width:56px; height:⟦30⟧%; background:#0D9488; border-radius:4px 4px 0 0;"><span style="position:absolute; bottom:100%; left:0; right:0; text-align:center; padding-bottom:5px; font:700 11px/1 'IBM Plex Mono','IBM Plex Sans KR',monospace; color:#1E2233;">⟦30⟧</span></div>
-    </div>
-    <!-- VARIANT baseline / previous = grey -->
-    <div style="flex:1; height:100%; display:flex; align-items:flex-end; justify-content:center;">
-      <div style="position:relative; width:100%; max-width:56px; height:⟦10⟧%; background:#C2C8D4; border-radius:4px 4px 0 0;"><span style="position:absolute; bottom:100%; left:0; right:0; text-align:center; padding-bottom:5px; font:700 11px/1 'IBM Plex Mono','IBM Plex Sans KR',monospace; color:#6A7187;">⟦10⟧</span></div>
-    </div>
+    <div style="font:400 11.5px/1.55 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#6A7187; margin-top:12px;">* ⟦기준 시점·출처⟧</div>
   </div>
-  <!-- x labels: same count and order as bars -->
-  <div style="display:flex; gap:16px; padding:8px 8px 0;">
-    <div style="flex:1; text-align:center; font:500 11.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">⟦항목 A⟧</div>
-    <div style="flex:1; text-align:center; font:500 11.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">⟦항목 B⟧</div>
-    <div style="flex:1; text-align:center; font:500 11.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">⟦항목 C⟧</div>
-    <div style="flex:1; text-align:center; font:500 11.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">⟦항목 D⟧</div>
-    <div style="flex:1; text-align:center; font:500 11.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">⟦항목 E⟧</div>
-  </div>
-  <div style="font:400 11.5px/1.55 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#6A7187; margin-top:12px;">* ⟦기준 시점·출처⟧</div>
 </div>

@@ -25,14 +25,14 @@ HOW TO FILL
   6. 배지 문구 ⟦AS-IS⟧ · ⟦TO-BE⟧ 는 슬롯이다. 예시는 영문 기본(labels: en)이다. labels: ko 문서(경영진·사용자용)는 "지금" · "목표" 로 바꾼다
      (core/components.md §4 "라벨 언어"). 색(slate / accent)은 문구와 무관하게 그대로다.
 -->
-<div data-component="before-after" style="border:1px solid #DCE5F2; border-radius:12px; padding:28px; background:#FBFDFF;">
-  <div style="display:grid; grid-template-columns:1fr 50px 1fr; align-items:stretch;">
+<div data-component="before-after" style="border:1px solid #DCE5F2; border-radius:12px; padding:28px; background:#FBFDFF; overflow-wrap:anywhere;">
+  <div style="display:flex; flex-wrap:wrap; justify-content:center; align-items:stretch;">
     <!-- AS-IS column -->
-    <div style="display:flex; flex-direction:column; justify-content:center;">
-      <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="font:700 11px/1 'JetBrains Mono',Pretendard,monospace; letter-spacing:.06em; color:#FFFFFF; background:#94A3B8; border-radius:4px; padding:6px 10px;">⟦AS-IS⟧</span><span style="font:600 15px/1.3 Inter,Pretendard,sans-serif; color:#475467;">⟦현재 — 한 줄 요약⟧</span></div>
+    <div style="display:flex; flex-direction:column; justify-content:center; flex:1 1 260px; min-width:0;">
+      <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="font:700 11px/1 'JetBrains Mono',Pretendard,monospace; letter-spacing:.06em; color:#FFFFFF; background:#94A3B8; border-radius:4px; padding:6px 10px; white-space:nowrap; flex:none;">⟦AS-IS⟧</span><span style="font:600 15px/1.3 Inter,Pretendard,sans-serif; color:#475467;">⟦현재 — 한 줄 요약⟧</span></div>
       <div style="background:#EEF2F7; border:1.5px dashed #B8C4D6; border-radius:8px; padding:16px 14px;">
         <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#5D6679; text-align:center; margin-bottom:12px;">⟦현재 구조 한 줄 설명⟧</div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+        <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:8px;">
           <!-- ▼ REPEAT per current element (2–6) -->
           <div style="font:500 12px/1.35 Inter,Pretendard,sans-serif; color:#475467; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px 8px; text-align:center;">⟦요소 A⟧</div>
           <!-- ▲ /REPEAT -->
@@ -48,13 +48,13 @@ HOW TO FILL
       </div>
     </div>
     <!-- pivot arrow -->
-    <div style="display:flex; align-items:center; justify-content:center;"><div style="width:36px; height:36px; border-radius:50%; background:#1428A0; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font:400 17px/1 Inter,Pretendard,sans-serif;">→</div></div>
+    <div style="display:flex; align-items:center; justify-content:center; flex:0 0 50px; padding:8px 0;"><div style="width:36px; height:36px; border-radius:50%; background:#1428A0; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font:400 17px/1 Inter,Pretendard,sans-serif;">→</div></div>
     <!-- TO-BE column -->
-    <div style="display:flex; flex-direction:column; justify-content:center;">
-      <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="font:700 11px/1 'JetBrains Mono',Pretendard,monospace; letter-spacing:.06em; color:#FFFFFF; background:#1428A0; border-radius:4px; padding:6px 10px;">⟦TO-BE⟧</span><span style="font:600 15px/1.3 Inter,Pretendard,sans-serif; color:#101828;">⟦목표 — 한 줄 요약⟧</span></div>
+    <div style="display:flex; flex-direction:column; justify-content:center; flex:1 1 260px; min-width:0;">
+      <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="font:700 11px/1 'JetBrains Mono',Pretendard,monospace; letter-spacing:.06em; color:#FFFFFF; background:#1428A0; border-radius:4px; padding:6px 10px; white-space:nowrap; flex:none;">⟦TO-BE⟧</span><span style="font:600 15px/1.3 Inter,Pretendard,sans-serif; color:#101828;">⟦목표 — 한 줄 요약⟧</span></div>
       <div style="font:700 13px/1.3 Inter,Pretendard,sans-serif; color:#FFFFFF; background:#1428A0; border-radius:8px; padding:12px; text-align:center;">⟦중심 노드⟧</div>
       <div style="text-align:center; color:#B8C4D6; font:400 13px/1 Inter,Pretendard,sans-serif; padding:6px 0;">↓</div>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+      <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:8px;">
         <!-- ▼ REPEAT per target element (2–6) -->
         <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:6px; padding:10px 8px; text-align:center;">⟦분리된 요소 A⟧</div>
         <!-- ▲ /REPEAT -->

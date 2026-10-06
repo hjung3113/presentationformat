@@ -9,16 +9,16 @@
 @limits 엔티티 카드 0–6, 관계 행 2–7
 @data entities: 이름(핵심 필드, 필드) … | relations: A 1—N B "관계명" [owned|link|forbidden]
 HOW TO FILL
-  1. (선택) 위 엔티티 카드 줄: 등장하는 엔티티와 핵심 필드 2–4개(mono). 3개 이하면 repeat(3,1fr), 4개 이상이면 repeat(4,1fr) 또는 두 줄.
+  1. (선택) 위 엔티티 카드 줄: 등장하는 엔티티와 핵심 필드 2–4개(mono). 칸 수는 auto-fit 이 맞춘다(고칠 값 없음, 한 줄에 최대 4개 — 5개 이상이면 두 줄).
      figure-data 의 entities 는 카드를 그리지 않을 때도 관계 행에 나오는 엔티티 이름으로 항상 적는다.
   2. 관계 한 개 = 관계 행 한 개: [왼쪽 엔티티] [관계명 + 카디널리티 선] [오른쪽 엔티티].
      카디널리티는 선 양 끝에: 1 · N · 0..1 · 0..N.
   3. 선 변형: 필수 소유(실선 강조색) / 선택적 링크(점선) / 금지된 관계(경고색 + ✕). 범례 줄을 남긴다.
   4. 관계명은 동사구 2–8자(“근거로 묶음”, “전환됨”). 비워 두지 않는다.
 -->
-<div data-component="er-relations" style="background:⟨fig-tint⟩; border:1px solid ⟨border-fig⟩; border-radius:⟨r:card-sm⟩; padding:24px;">
+<div data-component="er-relations" style="background:⟨fig-tint⟩; border:1px solid ⟨border-fig⟩; border-radius:⟨r:card-sm⟩; padding:24px; overflow-wrap:anywhere;">
   <!-- OPTIONAL entity cards -->
-  <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:20px;">
+  <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(max(min(100%,140px),calc(25% - 10px)),1fr)); gap:10px; margin-bottom:20px;">
     <!-- ▼ REPEAT per entity -->
     <div style="border:1px solid ⟨accent⟩; border-radius:⟨r:node⟩; overflow:hidden; background:⟨white⟩;">
       <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; padding:8px 12px; border-bottom:1px solid ⟨accent-line⟩;">⟦엔티티 A⟧</div>
@@ -41,7 +41,7 @@ HOW TO FILL
   <!-- relation rows -->
   <div style="display:flex; flex-direction:column; gap:10px; max-width:700px; margin:0 auto;">
     <!-- ▼ REPEAT per relation — owned (solid) -->
-    <div style="display:grid; grid-template-columns:1fr 210px 1fr; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(96px,min(210px,40%)) minmax(0,1fr); align-items:center;">
       <div style="font:600 12.5px/1.3 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:10px; text-align:center;">⟦엔티티 B⟧</div>
       <div style="padding:0 8px;">
         <div style="font:500 10.5px/1.3 ⟨f:body⟩; color:⟨ink-700⟩; text-align:center; margin-bottom:4px;">⟦관계명 1⟧</div>
@@ -51,7 +51,7 @@ HOW TO FILL
     </div>
     <!-- ▲ /REPEAT -->
     <!-- VARIANT optional link (dashed) -->
-    <div style="display:grid; grid-template-columns:1fr 210px 1fr; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(96px,min(210px,40%)) minmax(0,1fr); align-items:center;">
       <div style="font:600 12.5px/1.3 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:10px; text-align:center;">⟦엔티티 C⟧</div>
       <div style="padding:0 8px;">
         <div style="font:500 10.5px/1.3 ⟨f:body⟩; color:⟨ink-700⟩; text-align:center; margin-bottom:4px;">⟦관계명 2⟧</div>
@@ -59,7 +59,7 @@ HOW TO FILL
       </div>
       <div style="font:600 12.5px/1.3 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:10px; text-align:center;">⟦엔티티 D⟧</div>
     </div>
-    <div style="display:grid; grid-template-columns:1fr 210px 1fr; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(96px,min(210px,40%)) minmax(0,1fr); align-items:center;">
       <div style="font:600 12.5px/1.3 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:10px; text-align:center;">⟦엔티티 A⟧</div>
       <div style="padding:0 8px;">
         <div style="font:500 10.5px/1.3 ⟨f:body⟩; color:⟨ink-700⟩; text-align:center; margin-bottom:4px;">⟦관계명 3⟧</div>
@@ -68,7 +68,7 @@ HOW TO FILL
       <div style="font:600 12.5px/1.3 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:10px; text-align:center;">⟦엔티티 C⟧</div>
     </div>
     <!-- VARIANT forbidden relation (warning colour + ✕) -->
-    <div style="display:grid; grid-template-columns:1fr 210px 1fr; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(96px,min(210px,40%)) minmax(0,1fr); align-items:center;">
       <div style="font:600 12.5px/1.3 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:10px; text-align:center;">⟦엔티티 E⟧</div>
       <div style="padding:0 8px;">
         <div style="font:600 10.5px/1.3 ⟨f:body⟩; color:⟨warn⟩; text-align:center; margin-bottom:4px;">✕ ⟦금지 이유⟧</div>

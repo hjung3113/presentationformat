@@ -45,7 +45,7 @@ The gate itself is zero-dependency Node under `.claude/lib/`:
   including: generated outputs up to date, every template renders in every style with no unresolved
   token, `core/` carries zero HEX, `core/components.md` §1 matches the templates' `@shape` metadata,
   each template's first `@data` key matches the figure-data contract, no template hard-codes an English label
-  outside a `⟦slot⟧` (label language), the visual tier's local-asset routing (`localAssetFor`: hosts, scoped packages, misses, path traversal) and its 390px probe, informative text uses `⟨muted-text⟩` and every style's `muted-text` is ≥4.5:1 on
+  outside a `⟦slot⟧` (label language), the visual tier's local-asset routing (`localAssetFor`: hosts, scoped packages, misses, path traversal) and its 390px probe (page overflow, figure overflow, silent clipping; the three component galleries must be clean at 390px), the narrow-width template contract (no bare `Nfr` track outside `minmax()`, `overflow-wrap:anywhere` on every root, a scrolling root has its `min-width:min-content` box), informative text uses `⟨muted-text⟩` and every style's `muted-text` is ≥4.5:1 on
   white with a mono stack that ends in its Korean body font, the optional `labels: en|ko` plan key, the three CLIs run from a
   path with spaces/Korean and through a symlink (they once exited 0 without running), the worked
   example (`test/fixtures/example-brief/`) passes every plan-aware check, and the text half of the gate
@@ -85,7 +85,7 @@ Every check is hard-fail unless marked non-blocking.
 | `inline-only` | no class selector in any `<style>` — including `.a, .b {` lists, `div.x {` and rules inside `@media`. Attribute/element/pseudo selectors, `@font-face`, `::selection` and `::-webkit-scrollbar` stay allowed |
 | `slots-filled` · `no-role-placeholders` | no `⟦…⟧` slot and no `⟨role⟩` token left outside HTML comments |
 | `palette` (`--style`) | every `#RGB` / `#RRGGBB` in a `style` attribute (or `fill`/`stroke`/… attribute) or `<style>` text is in the style's `design.md` (case-insensitive, `#abc` = `#AABBCC`). Comments, `<script>`, `&#…;` entities, `href`/`id` fragments and `url(#…)` are ignored |
-| `grid-consistency` | inside each `[data-component]` root that uses `calc(100% / N)`, every `repeat(M, 1fr)` has M = N (nested components are judged on their own) |
+| `grid-consistency` | inside each `[data-component]` root that uses `calc(100% / N)`, every `repeat(M, 1fr)` / `repeat(M, minmax(0, 1fr))` / floored `repeat(M, minmax(<length>, 1fr))` has M = N (nested components are judged on their own) |
 | `known-components` | every `data-component` is a template id |
 | `plan-alignment` (`--plan`) | plan sections map to ids — a numbered title `N.` → `sN`, an unnumbered title → `sref` — and every one exists in the document; the document has no numbered `sN` the plan lacks. Act dividers must be `<div>`, never `<section>` |
 | `plan-shapes` (`--plan`) | each section (looked up by id) carries the component its shape requires |
@@ -219,7 +219,8 @@ INVALID.
 
   | row | level | printed when |
   |---|---|---|
-  | `composition:mobile-overflow` | WARN | at 390px the page scrolls sideways (`scrollWidth` > viewport + 2). Lists the offending `data-component` ids as `id×n (+Npx)` (n figures with an overflowing node, N the largest overshoot), then non-figure offenders as `<section> <tag>×n "text"`. A node inside an ancestor with `overflow-x` auto, scroll, hidden or clip is clipped or scrolls, so it is not an offender. Page level only: a figure wider than its own frame that still ends inside the side padding is not reported |
+  | `composition:mobile-overflow` | WARN | at 390px the page scrolls sideways (`scrollWidth` > viewport + 2). Lists the offending `data-component` ids as `id×n (+Npx)` (n figures with an overflowing node, N the largest overshoot), then non-figure offenders as `<section> <tag>×n "text"`. A node inside an ancestor with `overflow-x` auto, scroll, hidden or clip is clipped or scrolls, so it is not an offender. Page level only — the next row covers a figure that is too wide without making the page scroll |
+  | `composition:figure-overflow` | WARN | at 390px a `data-component` root is wider than its frame — also when the page itself does not scroll sideways — or silently loses content. Two parts, each `id×n (+Npx)`: `wider than their frame:` — the root's border box extends past its parent's content box (so it ends inside the sheet's side padding), or its own contents spill out of it (`overflow-x` visible and `scrollWidth` > `clientWidth` + 2); `content clipped by overflow:hidden:` — the root or a node inside it has `overflow-x` hidden or clip and `scrollWidth` > `clientWidth` + 2 (a `text-overflow: ellipsis` truncation is intended and ignored). A root whose parent scrolls, or that scrolls itself (`overflow-x` auto or scroll), is not reported here: that is `composition:mobile-scroll-figure` |
   | `composition:mobile-scroll-figure` | INFO | a figure root, or a node inside it, has `overflow-x` auto or scroll and really scrolls at 390px — the intended narrow fallback, listed so it is visible rather than counted as overflow |
   | `composition:narrow-metrics` | INFO | the 390px viewport rendered; carries the section count and the document `scrollWidth` |
   | `local-assets` | INFO | `--local-assets` is active; names the directory and any host that was blocked |

@@ -17,28 +17,28 @@ HOW TO FILL
   3. 색 변형: 목표 달성·높음=강조색, 중간=보조 강조색, 목표 미달=회색(값 글자도 회색).
   4. (선택) 목표선: 막대 칸 안 점선 left = 목표 값 %. 모든 행에 같은 값으로 넣는다.
 -->
-<div data-component="hbar-chart" style="background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:22px 24px 20px;">
+<div data-component="hbar-chart" style="background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:22px 24px 20px; overflow-wrap:anywhere;">
   <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:16px;"><span style="font:600 13px/1.4 Inter,Pretendard,sans-serif; color:#101828;">⟦차트 제목⟧</span><span style="font:500 11px/1 'JetBrains Mono',Pretendard,monospace; color:#5D6679;">⟦점선 = 목표 값⟧</span></div>
   <div style="display:flex; flex-direction:column; gap:12px;">
     <!-- ▼ REPEAT per row -->
-    <div style="display:grid; grid-template-columns:170px 1fr 52px; gap:14px; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(80px,min(170px,35%)) minmax(0,1fr) 52px; gap:14px; align-items:center;">
       <span style="font:500 12.5px/1.35 Inter,Pretendard,sans-serif; color:#374151;">⟦항목 A⟧</span>
       <div style="position:relative; height:18px; background:#EDF3FB; border-radius:5px;"><div style="width:⟦90⟧%; height:100%; background:#1428A0; border-radius:5px;"></div><div style="position:absolute; left:80%; top:-4px; bottom:-4px; border-left:2px dashed #374151;"></div></div>
       <span style="font:700 12px/1 'JetBrains Mono',Pretendard,monospace; color:#1428A0; text-align:right;">⟦90%⟧</span>
     </div>
     <!-- ▲ /REPEAT -->
-    <div style="display:grid; grid-template-columns:170px 1fr 52px; gap:14px; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(80px,min(170px,35%)) minmax(0,1fr) 52px; gap:14px; align-items:center;">
       <span style="font:500 12.5px/1.35 Inter,Pretendard,sans-serif; color:#374151;">⟦항목 B⟧</span>
       <div style="position:relative; height:18px; background:#EDF3FB; border-radius:5px;"><div style="width:⟦70⟧%; height:100%; background:#3157D5; border-radius:5px;"></div><div style="position:absolute; left:80%; top:-4px; bottom:-4px; border-left:2px dashed #374151;"></div></div>
       <span style="font:700 12px/1 'JetBrains Mono',Pretendard,monospace; color:#3157D5; text-align:right;">⟦70%⟧</span>
     </div>
     <!-- VARIANT below target = grey -->
-    <div style="display:grid; grid-template-columns:170px 1fr 52px; gap:14px; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(80px,min(170px,35%)) minmax(0,1fr) 52px; gap:14px; align-items:center;">
       <span style="font:500 12.5px/1.35 Inter,Pretendard,sans-serif; color:#374151;">⟦항목 C⟧</span>
       <div style="position:relative; height:18px; background:#EDF3FB; border-radius:5px;"><div style="width:⟦30⟧%; height:100%; background:#CBD6E6; border-radius:5px;"></div><div style="position:absolute; left:80%; top:-4px; bottom:-4px; border-left:2px dashed #374151;"></div></div>
       <span style="font:700 12px/1 'JetBrains Mono',Pretendard,monospace; color:#5D6679; text-align:right;">⟦30%⟧</span>
     </div>
-    <div style="display:grid; grid-template-columns:170px 1fr 52px; gap:14px; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(80px,min(170px,35%)) minmax(0,1fr) 52px; gap:14px; align-items:center;">
       <span style="font:500 12.5px/1.35 Inter,Pretendard,sans-serif; color:#374151;">⟦항목 D⟧</span>
       <div style="position:relative; height:18px; background:#EDF3FB; border-radius:5px;"><div style="width:⟦10⟧%; height:100%; background:#CBD6E6; border-radius:5px;"></div><div style="position:absolute; left:80%; top:-4px; bottom:-4px; border-left:2px dashed #374151;"></div></div>
       <span style="font:700 12px/1 'JetBrains Mono',Pretendard,monospace; color:#5D6679; text-align:right;">⟦10%⟧</span>

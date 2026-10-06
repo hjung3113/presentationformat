@@ -244,6 +244,49 @@ const analyze = () => {
       if (others.size) parts.push('other: ' + cap([...others].sort((a, b) => b[1].n - a[1].n || b[1].max - a[1].max).map(([k, o]) => k + '×' + o.n + (o.sample ? ' "' + o.sample + '"' : '') + ' (+' + o.max + 'px)')));
       rows.push({ name: 'composition:mobile-overflow', detail: 'document scrollWidth ' + root.scrollWidth + ' exceeds viewport ' + vw + ' (+' + (root.scrollWidth - vw) + 'px); ' + (parts.join('; ') || 'offender not located') });
     }
+    // Figure level: what the page-level check cannot see — a figure wider than its own frame that still ends inside the sheet's side
+    // padding, and content cut off by overflow:hidden|clip (nothing scrolls, nothing overflows the page, the text is just gone).
+    // A figure whose parent scrolls, or that scrolls itself, is the intended fallback (mobile-scroll-figure below), not a finding.
+    const px = (v) => parseFloat(v) || 0;
+    const past = new Map(); // data-component id → { n, max } for roots that extend past their parent's content box
+    const clipped = new Map(); // data-component id → { n, max } for roots with content cut off silently
+    const tally = (map, id, amount) => {
+      const t = map.get(id) || { n: 0, max: 0 };
+      t.n++;
+      t.max = Math.max(t.max, amount);
+      map.set(id, t);
+    };
+    for (const fig of document.querySelectorAll('[data-component]')) {
+      if (!visible(fig)) continue;
+      const id = fig.getAttribute('data-component');
+      const parent = fig.parentElement;
+      let over = 0;
+      if (parent) {
+        const ps = getComputedStyle(parent);
+        if (!/^(auto|scroll)$/.test(ps.overflowX)) {
+          const pr = parent.getBoundingClientRect();
+          const r = fig.getBoundingClientRect();
+          over = Math.max(r.right - (pr.right - px(ps.borderRightWidth) - px(ps.paddingRight)), (pr.left + px(ps.borderLeftWidth) + px(ps.paddingLeft)) - r.left);
+        }
+      }
+      // the figure's own contents spilling out of its box (overflow visible) is the same finding one level down
+      if (getComputedStyle(fig).overflowX === 'visible' && fig.scrollWidth > fig.clientWidth + 2) over = Math.max(over, fig.scrollWidth - fig.clientWidth);
+      if (over > 1) tally(past, id, Math.round(over));
+      let cut = 0;
+      for (const n of [fig, ...fig.querySelectorAll('*')]) {
+        const s = getComputedStyle(n);
+        if (!/^(hidden|clip)$/.test(s.overflowX) || s.textOverflow === 'ellipsis') continue; // an ellipsis is a visible, intended truncation
+        if (n.scrollWidth > n.clientWidth + 2) cut = Math.max(cut, n.scrollWidth - n.clientWidth);
+      }
+      if (cut) tally(clipped, id, Math.round(cut));
+    }
+    if (past.size || clipped.size) {
+      const list = (map) => [...map].sort((a, b) => b[1].n - a[1].n || b[1].max - a[1].max).map(([id, t]) => id + '×' + t.n + ' (+' + t.max + 'px)').join(', ');
+      const parts = [];
+      if (past.size) parts.push('wider than their frame: ' + list(past));
+      if (clipped.size) parts.push('content clipped by overflow:hidden: ' + list(clipped));
+      rows.push({ name: 'composition:figure-overflow', detail: parts.join('; ') + ' at ' + vw + 'px' });
+    }
     const scrolling = new Map();
     for (const fig of document.querySelectorAll('[data-component]')) {
       if (!visible(fig)) continue;
@@ -267,7 +310,7 @@ const analyze = () => {
     const ref = isReference(section);
     const gridEls = [...section.querySelectorAll('[style*="display:grid"], [style*="display: grid"]')]
       .filter(el => visible(el) && el.getBoundingClientRect().height >= 120);
-    const repeat4 = [...section.querySelectorAll('[style*="repeat(4,1fr)"], [style*="repeat(4, 1fr)"]')].filter(visible);
+    const repeat4 = [...section.querySelectorAll('[style*="repeat(4,1fr)"], [style*="repeat(4, 1fr)"], [style*="repeat(4,minmax("], [style*="repeat(4, minmax("]')].filter(visible);
     const statContext = /(지표|수치|metric|stat|kpi|%|건|명|개|count|number)/i.test(text);
     const figureIntent = /(workflow|flow|map|matrix|state|surface|lane|architecture|ownership|흐름|상태|매트릭스|맵|구조|소유|역할|ui|화면|의사결정|결정)/i.test(text);
     const blockCount = topLevelBlocks(section).length;

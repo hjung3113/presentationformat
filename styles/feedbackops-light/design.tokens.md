@@ -104,7 +104,8 @@ rounded:
   circle: "50%"
 spacing:
   sheet-max: "1100px"
-  sheet-pad: "64px"
+  sheet-pad: "min(64px,6vw)"
+  shell-pad-x: "min(40px,5vw)"
   section-pad: "56px"
   lead-max: "760px"
   card-pad: "22px"
@@ -231,7 +232,7 @@ Body/UI font **Inter + Pretendard**; display/heading font **Inter + Pretendard**
 
 ## Layout
 
-Full-bleed flat Samsung-blue hero → white paper sheet (`max-width: 1100px`, `−44px` overlap) on a `#F3F7FE` page. Section padding `56px 0` (first section `60px`, no border-top); lead/body max-width `760px`; sheet horizontal padding `64px`. Block rhythm: `18px` between stacked cards, `30–38px` between distinct sub-blocks. No media queries by default (desktop-first ~1100px). Full spacing tokens + responsive contract: `design.md §3`, `§8.1`.
+Full-bleed flat Samsung-blue hero → white paper sheet (`max-width: 1100px`, `−44px` overlap) on a `#F3F7FE` page. Section padding `56px 0` (first section `60px`, no border-top); lead/body max-width `760px`; sheet horizontal padding `min(64px,6vw)` (nav / hero `min(40px,5vw)`). Block rhythm: `18px` between stacked cards, `30–38px` between distinct sub-blocks. No media queries (desktop-first ~1100px, fluid paddings and component reflow down to a 390px floor). Full spacing tokens + responsive contract: `design.md §3`, `§8.1`.
 
 ## Elevation & Depth
 

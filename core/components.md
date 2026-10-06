@@ -158,12 +158,23 @@ sections (group into acts — the section count follows the content, §5), a dev
   copies for fewer. `VARIANT` marks alternative looks (pick by meaning). `OPTIONAL` blocks may be
   deleted. Comments may be deleted after filling.
 - **Only change what HOW TO FILL names.** Typically: the column count `N` in
-  `repeat(N,1fr)` / `calc(100% / N)`, a `grid-column` start/end, a `width`/`height` percentage, or a
+  `repeat(N,…)` / `calc(100% / N)`, a `grid-column` start/end, a `width`/`height` percentage, or a
   margin from the lookup table in the header. Never edit colors, radii, or fonts in a pasted component.
-- **N appears in EVERY `repeat(N,1fr)` and `calc(100% / N)` in the component** — every row, the header,
+- **N appears in EVERY `repeat(N,…)` and `calc(100% / N)` in the component** — every row, the header,
   and the lifeline/lane/period background, not just "the main grid". Change all of them together; the
-  gate's `grid-consistency` check fails a component whose `repeat(M,1fr)` differs from its
+  gate's `grid-consistency` check fails a component whose `repeat(M,…)` differs from its
   `calc(100% / N)`.
+- **Narrow widths (390px floor).** A document must not scroll sideways at a 390px viewport; the visual tier checks it
+  (`composition:mobile-overflow` for the page, `composition:figure-overflow` for a figure wider than its frame or cut off by
+  `overflow:hidden`) and the active style's `design.md §8.1` owns the shell paddings that leave a phone about 343px of sheet.
+  Pasted components already carry the recipe — keep it. A grid reflows with `repeat(auto-fit,minmax(min(100%,Npx),1fr))` (the
+  column count is not a slot) or wraps with `flex-wrap` over a `flex-basis` floor; a fixed-ratio grid uses `minmax(0,Nfr)` tracks; a
+  component whose geometry is inherently wide (wireframe, Gantt, table or matrix with 4+ columns, sequence or swimlane with 4+
+  columns, activity, tree, class diagram, pipeline) scrolls **inside itself** — `overflow-x:auto` on its root (or on its scroll
+  wrapper) over tracks with a `minmax(Npx,…)` floor and a `min-width:min-content` box — and the page never moves. Every root carries
+  `overflow-wrap:anywhere`. Hand-written content follows the same rule: an unbreakable run (mono identifier, path, URL, signature)
+  takes `overflow-wrap:anywhere`, a grid cell takes `min-width:0` or a `minmax(0,Nfr)` track. Never pass the check by hiding the
+  overflow; the probe reports a clipped figure.
 - **Percentages are slots tied to their label.** A bar's `width`/`height` slot and the value shown on
   it (`35` and `35%`) are filled with the same value; a matrix cell glyph (`✓`/`✕`/short text) is a slot
   whose color follows its shape (copy a cell of that shape).

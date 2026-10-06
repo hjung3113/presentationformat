@@ -37,7 +37,7 @@
 
   <!-- sticky nav (z-index 50). Keep nav labels Korean & short (2-4 chars). -->
   <div data-nav style="position:sticky; top:0; z-index:50; background:rgba(255,255,255,.86); backdrop-filter:blur(10px); border-bottom:1px solid #CBD6E6;">
-    <div style="max-width:1100px; margin:0 auto; padding:0 40px; display:flex; align-items:center; gap:20px; height:54px;">
+    <div style="max-width:1100px; margin:0 auto; padding:0 min(40px,5vw); display:flex; align-items:center; gap:20px; height:54px;">
       <a href="#top" style="text-decoration:none; font:700 14px/1 Inter,Pretendard,sans-serif; color:#101828; white-space:nowrap; letter-spacing:-.01em;">FeedbackOps <span style="color:#1428A0;">설계 브리프</span></a>
       <div class="nav-scroll" style="display:flex; gap:18px; overflow-x:auto; margin-left:auto;">
         <a data-navlink="s1" href="#s1" style="text-decoration:none; font:500 13px/1 Inter,Pretendard,sans-serif; color:#667083; white-space:nowrap;">맥락</a>
@@ -55,7 +55,7 @@
   </div>
 
   <!-- HERO -->
-  <div id="top" style="background:#1428A0; color:#fff; padding:64px 40px 84px; position:relative; overflow:hidden;">
+  <div id="top" style="background:#1428A0; color:#fff; padding:64px min(40px,5vw) 84px; position:relative; overflow:hidden;">
     <div style="position:absolute; inset:0; background-image:none; pointer-events:none;"></div>
     <div style="max-width:1020px; margin:0 auto; position:relative;">
       <div style="display:inline-flex; align-items:center; gap:9px; font:600 12px/1 Inter,Pretendard,sans-serif; letter-spacing:.1em; color:#D8E7FB; background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.18); border-radius:100px; padding:9px 16px; margin-bottom:30px;">DESIGN BRIEF · 피드백에서 실행까지</div>
@@ -74,20 +74,20 @@
   </div>
 
   <!-- PAPER SHEET (-44px overlaps hero) -->
-  <div style="max-width:1100px; margin:-44px auto 0; background:#fff; border-radius:12px 12px 0 0; box-shadow:0 -24px 60px rgba(16,24,40,.08); padding:8px 64px 100px; position:relative;">
+  <div style="max-width:1100px; margin:-44px auto 0; background:#fff; border-radius:12px 12px 0 0; box-shadow:0 -24px 60px rgba(16,24,40,.08); padding:8px min(64px,6vw) 100px; position:relative;">
 
     <!-- 01 — shape before-after → before-after -->
     <section id="s1" data-screen-label="01 맥락" style="padding:60px 0 56px;">
       <div style="font:700 13px/1 Inter,Pretendard,sans-serif; letter-spacing:.08em; color:#1428A0; margin-bottom:14px;">01 · CONTEXT</div>
       <h2 style="font:600 28px/1.32 Inter,Pretendard,sans-serif; color:#101828; margin:0 0 12px; letter-spacing:-.01em;">운영 맥락 — 흩어진 피드백 흔적</h2>
       <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 28px; max-width:760px;">피드백 운영의 비용은 VOC를 받는 일보다, 그 VOC가 어떤 판단과 실행으로 이어졌는지를 나중에 설명하는 일에서 더 크게 생긴다. 접수·트리아지·근거 수집·실행 추적·결과 검증이 서로 다른 도구에 흩어져 있으면 그 흔적은 사람이 손으로 재구성해야 하고, FeedbackOps는 이 흔적을 <b style="color:#1428A0;">entity_links</b> 하나에 정본으로 남겨 감사 가능한 운영 자산으로 만든다.</p>
-      <div data-component="before-after" style="border:1px solid #DCE5F2; border-radius:12px; padding:28px; background:#FBFDFF;">
-        <div style="display:grid; grid-template-columns:1fr 50px 1fr; align-items:stretch;">
-          <div style="display:flex; flex-direction:column; justify-content:center;">
-            <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="font:700 11px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#FFFFFF; background:#94A3B8; border-radius:4px; padding:6px 10px;">AS-IS</span><span style="font:600 15px/1.3 Inter,Pretendard,sans-serif; color:#475467;">도구마다 끊긴 흔적</span></div>
+      <div data-component="before-after" style="border:1px solid #DCE5F2; border-radius:12px; padding:28px; background:#FBFDFF; overflow-wrap:anywhere;">
+        <div style="display:flex; flex-wrap:wrap; justify-content:center; align-items:stretch;">
+          <div style="display:flex; flex-direction:column; justify-content:center; flex:1 1 260px; min-width:0;">
+            <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="font:700 11px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#FFFFFF; background:#94A3B8; border-radius:4px; padding:6px 10px; white-space:nowrap; flex:none;">AS-IS</span><span style="font:600 15px/1.3 Inter,Pretendard,sans-serif; color:#475467;">도구마다 끊긴 흔적</span></div>
             <div style="background:#EEF2F7; border:1.5px dashed #B8C4D6; border-radius:8px; padding:16px 14px;">
               <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#667083; text-align:center; margin-bottom:12px;">단계마다 다른 도구</div>
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:8px;">
                 <div style="font:500 12px/1.35 Inter,Pretendard,sans-serif; color:#475467; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px 8px; text-align:center;">접수 도구</div>
                 <div style="font:500 12px/1.35 Inter,Pretendard,sans-serif; color:#475467; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px 8px; text-align:center;">트리아지 메모</div>
                 <div style="font:500 12px/1.35 Inter,Pretendard,sans-serif; color:#B2202B; background:#FCEDEE; border:1px solid #F3C7CB; border-radius:6px; padding:10px 8px; text-align:center;">근거 수집 — 수작업 연결</div>
@@ -99,12 +99,12 @@
               <span style="font:500 11px/1 Inter,Pretendard,sans-serif; border-radius:100px; padding:6px 11px; color:#8E5500; background:#FCEDEE;">도구마다 단절</span>
             </div>
           </div>
-          <div style="display:flex; align-items:center; justify-content:center;"><div style="width:36px; height:36px; border-radius:50%; background:#1428A0; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font:400 17px/1 Inter,Pretendard,sans-serif;">→</div></div>
-          <div style="display:flex; flex-direction:column; justify-content:center;">
-            <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="font:700 11px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#FFFFFF; background:#1428A0; border-radius:4px; padding:6px 10px;">TO-BE</span><span style="font:600 15px/1.3 Inter,Pretendard,sans-serif; color:#101828;">한 Workspace에서 이어진 흔적</span></div>
+          <div style="display:flex; align-items:center; justify-content:center; flex:0 0 50px; padding:8px 0;"><div style="width:36px; height:36px; border-radius:50%; background:#1428A0; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font:400 17px/1 Inter,Pretendard,sans-serif;">→</div></div>
+          <div style="display:flex; flex-direction:column; justify-content:center; flex:1 1 260px; min-width:0;">
+            <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="font:700 11px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#FFFFFF; background:#1428A0; border-radius:4px; padding:6px 10px; white-space:nowrap; flex:none;">TO-BE</span><span style="font:600 15px/1.3 Inter,Pretendard,sans-serif; color:#101828;">한 Workspace에서 이어진 흔적</span></div>
             <div style="font:700 13px/1.3 Inter,Pretendard,sans-serif; color:#FFFFFF; background:#1428A0; border-radius:8px; padding:12px; text-align:center;">FeedbackOps Workspace</div>
             <div style="text-align:center; color:#B8C4D6; font:400 13px/1 Inter,Pretendard,sans-serif; padding:6px 0;">↓</div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:8px;">
               <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:6px; padding:10px 8px; text-align:center;">entity_links 정본</div>
               <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px 8px; text-align:center;">VOC · Finding</div>
               <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px 8px; text-align:center;">Task Request</div>
@@ -124,20 +124,20 @@
       <div style="font:700 13px/1 Inter,Pretendard,sans-serif; letter-spacing:.08em; color:#1428A0; margin-bottom:14px;">02 · ARCHITECTURE</div>
       <h2 style="font:600 28px/1.32 Inter,Pretendard,sans-serif; color:#101828; margin:0 0 12px; letter-spacing:-.01em;">시스템 구조 — 독립 시스템과 선택적 통합 계층</h2>
       <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 28px; max-width:760px;">VOC·Survey·Task는 각자 혼자서도 완결되는 업무 시스템이고, 시스템 사이 연결은 필수 흐름이 아니라 <b style="color:#101828;">선택 기능</b>이다. Finding·Entity Link·Action Dashboard를 담은 Integration Layer가 필요한 순간에만 근거와 실행을 잇고, 그 아래 Core Platform이 Workspace·Managed System·권한을 공통으로 맡는다.</p>
-      <div data-component="layer-map" style="background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:24px;">
-        <div style="display:grid; grid-template-columns:160px 1fr; border:1px solid #CBD6E6; border-radius:8px; background:#FFFFFF; overflow:hidden;">
+      <div data-component="layer-map" style="background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:24px; overflow-wrap:anywhere;">
+        <div style="display:grid; grid-template-columns:minmax(96px,min(160px,35%)) minmax(0,1fr); border:1px solid #CBD6E6; border-radius:8px; background:#FFFFFF; overflow:hidden;">
           <div style="padding:12px 14px; background:#F3F7FE; border-right:1px solid #CBD6E6; display:flex; flex-direction:column; justify-content:center;">
             <div style="font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#667083; margin-bottom:6px;">LAYER A</div>
             <div style="font:600 13px/1.35 Inter,Pretendard,sans-serif; color:#101828;">독립 업무 시스템</div>
           </div>
           <div style="padding:12px; display:flex; flex-wrap:wrap; gap:8px; align-content:center;">
-            <div style="flex:1 1 130px; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:9px 10px; text-align:center;">VOC<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3; margin-top:2px;">Inbox·Triage·Cluster</span></div>
-            <div style="flex:1 1 130px; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:9px 10px; text-align:center;">Survey<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3; margin-top:2px;">Builder·Result</span></div>
-            <div style="flex:1 1 130px; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:9px 10px; text-align:center;">Task<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3; margin-top:2px;">Request·Board</span></div>
+            <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:9px 10px; text-align:center;">VOC<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3; margin-top:2px;">Inbox·Triage·Cluster</span></div>
+            <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:9px 10px; text-align:center;">Survey<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3; margin-top:2px;">Builder·Result</span></div>
+            <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:9px 10px; text-align:center;">Task<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3; margin-top:2px;">Request·Board</span></div>
           </div>
         </div>
         <div style="text-align:center; font:500 11px/1.4 Inter,Pretendard,sans-serif; color:#667083; padding:7px 0;"><span style="color:#1428A0; font:400 14px/1 Inter,Pretendard,sans-serif;">↕</span> 선택적 링크 (entity_links)</div>
-        <div style="display:grid; grid-template-columns:160px 1fr; border:1.5px solid #1428A0; border-radius:8px; background:#FFFFFF; overflow:hidden;">
+        <div style="display:grid; grid-template-columns:minmax(96px,min(160px,35%)) minmax(0,1fr); border:1.5px solid #1428A0; border-radius:8px; background:#FFFFFF; overflow:hidden;">
           <div style="padding:12px 14px; background:#E7EFFC; border-right:1px solid #B9C9F7; display:flex; flex-direction:column; justify-content:center;">
             <div style="font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#1428A0; margin-bottom:6px;">LAYER B</div>
             <div style="font:600 13px/1.35 Inter,Pretendard,sans-serif; color:#1428A0;">Integration Layer <span style="font:700 9px/1 Inter,Pretendard,sans-serif; color:#FFFFFF; background:#1428A0; border-radius:4px; padding:3px 5px; vertical-align:2px;">선택</span></div>
@@ -150,25 +150,25 @@
           </div>
         </div>
         <div style="text-align:center; font:500 11px/1.4 Inter,Pretendard,sans-serif; color:#667083; padding:7px 0;"><span style="color:#1428A0; font:400 14px/1 Inter,Pretendard,sans-serif;">↕</span> 권한 확인 · Managed System 범위 필터</div>
-        <div style="display:grid; grid-template-columns:160px 1fr; border:1px solid #CBD6E6; border-radius:8px; background:#FFFFFF; overflow:hidden;">
+        <div style="display:grid; grid-template-columns:minmax(96px,min(160px,35%)) minmax(0,1fr); border:1px solid #CBD6E6; border-radius:8px; background:#FFFFFF; overflow:hidden;">
           <div style="padding:12px 14px; background:#F3F7FE; border-right:1px solid #CBD6E6; display:flex; flex-direction:column; justify-content:center;">
             <div style="font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#667083; margin-bottom:6px;">LAYER C</div>
             <div style="font:600 13px/1.35 Inter,Pretendard,sans-serif; color:#101828;">Core Platform</div>
           </div>
           <div style="padding:12px; display:flex; flex-wrap:wrap; gap:8px; align-content:center;">
-            <div style="flex:1 1 130px; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:9px 10px; text-align:center;">Workspace · Actor</div>
-            <div style="flex:1 1 130px; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:9px 10px; text-align:center;">Managed System<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3; margin-top:2px;">범위·기본값</span></div>
-            <div style="flex:1 1 130px; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:9px 10px; text-align:center;">Permission<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3; margin-top:2px;">Admin › Developer › User</span></div>
+            <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:9px 10px; text-align:center;">Workspace · Actor</div>
+            <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:9px 10px; text-align:center;">Managed System<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3; margin-top:2px;">범위·기본값</span></div>
+            <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:9px 10px; text-align:center;">Permission<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3; margin-top:2px;">Admin › Developer › User</span></div>
           </div>
         </div>
         <div style="text-align:center; font:500 11px/1.4 Inter,Pretendard,sans-serif; color:#667083; padding:7px 0;"><span style="color:#B8C4D6; font:400 14px/1 Inter,Pretendard,sans-serif;">↕</span> 사내 AD 인증</div>
-        <div style="display:grid; grid-template-columns:160px 1fr; border:1px dashed #CBD6E6; border-radius:8px; background:#F3F7FE; overflow:hidden;">
+        <div style="display:grid; grid-template-columns:minmax(96px,min(160px,35%)) minmax(0,1fr); border:1px dashed #CBD6E6; border-radius:8px; background:#F3F7FE; overflow:hidden;">
           <div style="padding:12px 14px; display:flex; flex-direction:column; justify-content:center;">
             <div style="font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#98A2B3; margin-bottom:6px;">EXTERNAL</div>
             <div style="font:600 13px/1.35 Inter,Pretendard,sans-serif; color:#667083;">외부</div>
           </div>
           <div style="padding:12px; display:flex; flex-wrap:wrap; gap:8px; align-content:center;">
-            <div style="flex:1 1 130px; font:500 12px/1.35 Inter,Pretendard,sans-serif; color:#667083; background:#FFFFFF; border:1px dashed #CBD6E6; border-radius:6px; padding:9px 10px; text-align:center;">Active Directory</div>
+            <div style="flex:1 1 min(130px,100%); min-width:0; font:500 12px/1.35 Inter,Pretendard,sans-serif; color:#667083; background:#FFFFFF; border:1px dashed #CBD6E6; border-radius:6px; padding:9px 10px; text-align:center;">Active Directory</div>
           </div>
         </div>
       </div>
@@ -179,8 +179,8 @@
       <div style="font:700 13px/1 Inter,Pretendard,sans-serif; letter-spacing:.08em; color:#1428A0; margin-bottom:14px;">03 · TRIAGE</div>
       <h2 style="font:600 28px/1.32 Inter,Pretendard,sans-serif; color:#101828; margin:0 0 12px; letter-spacing:-.01em;">VOC 트리아지 — Task까지 가지 않는 결말</h2>
       <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 28px; max-width:760px;">새 VOC는 Untriaged로 들어오고, 담당과 심각도·분류를 정한 뒤 후속 경로를 <b style="color:#101828;">다섯 갈래</b> 중 하나로 결정한다. VOC는 Task를 만들기 위한 입력 양식이 아니므로, 공개 업데이트만 하거나 후속 없이 종료하는 것도 사유가 기록되는 정당한 결말이다.</p>
-      <div data-component="activity" style="background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:26px 24px;">
-        <div style="max-width:820px; margin:0 auto; display:flex; flex-direction:column; align-items:center;">
+      <div data-component="activity" style="background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:26px 24px; overflow-x:auto; overflow-wrap:anywhere;">
+        <div style="max-width:820px; margin:0 auto; display:flex; flex-direction:column; align-items:center; min-width:min-content;">
           <div style="font:600 12px/1 Inter,Pretendard,sans-serif; color:#FFFFFF; background:#101828; border-radius:100px; padding:10px 18px;">● VOC 접수 (Untriaged)</div>
           <div style="color:#B8C4D6; font:400 14px/1 Inter,Pretendard,sans-serif; padding:6px 0;">↓</div>
           <div style="width:100%; max-width:300px; font:600 12.5px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:8px; padding:11px 12px; text-align:center;">담당 지정<span style="display:block; font:400 10.5px/1.45 Inter,Pretendard,sans-serif; color:#98A2B3; margin-top:3px;">기본 담당 규칙이 있으면 미리 채움</span></div>
@@ -192,7 +192,7 @@
             <div style="position:relative; font:600 11.5px/1.3 Inter,Pretendard,sans-serif; color:#1428A0; text-align:center; max-width:120px;">후속 경로?</div>
           </div>
           <div style="align-self:stretch; height:12px; margin:0 10%; border:2px solid #B8C4D6; border-bottom:none; border-radius:6px 6px 0 0;"></div>
-          <div style="align-self:stretch; display:grid; grid-template-columns:repeat(5,1fr); gap:10px;">
+          <div style="align-self:stretch; display:grid; grid-template-columns:repeat(5,minmax(84px,1fr)); gap:10px;">
             <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
               <span style="font:700 10.5px/1 Inter,Pretendard,sans-serif; color:#10734A; background:#E7F5EE; border-radius:4px; padding:4px 8px;">조치 명확</span>
               <div style="align-self:stretch; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:6px; padding:10px 8px; text-align:center;">Task Request<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#475467; margin-top:3px;">검토 큐로</span></div>
@@ -225,17 +225,17 @@
       <div style="font:700 13px/1 Inter,Pretendard,sans-serif; letter-spacing:.08em; color:#1428A0; margin-bottom:14px;">04 · HANDOFF</div>
       <h2 style="font:600 28px/1.32 Inter,Pretendard,sans-serif; color:#101828; margin:0 0 12px; letter-spacing:-.01em;">실행 요청 인계 — 요청자·검토자·실행 담당</h2>
       <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 28px; max-width:760px;">후속 실행은 Task를 바로 만들지 않고 <b style="color:#1428A0;">Task Request</b>라는 완충 객체를 거친다. 요청자가 근거와 함께 실행 후보를 올리면 같은 범위의 검토자가 판단하고, 승인된 요청만 Convert to Task로 Backlog Task가 되어 실행 담당에게 넘어간다.</p>
-      <div data-component="swimlane" style="border:1px solid #DCE5F2; border-radius:8px; overflow:hidden; background:#FFFFFF;">
-        <div style="display:grid; grid-template-columns:repeat(3,1fr); border-bottom:1px solid #DCE5F2;">
+      <div data-component="swimlane" style="border:1px solid #DCE5F2; border-radius:8px; overflow-x:auto; background:#FFFFFF; overflow-wrap:anywhere;"><div style="min-width:min-content;">
+        <div style="display:grid; grid-template-columns:repeat(3,minmax(88px,1fr)); border-bottom:1px solid #DCE5F2;">
           <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1428A0; background:#EEF4FB; padding:10px 8px; text-align:center; border-right:1px solid #DCE5F2;">요청자 (기여자)</div>
           <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#475467; background:#F3F7FE; padding:10px 8px; text-align:center; border-right:1px solid #DCE5F2;">검토자 (Admin · 같은 범위 Developer)</div>
           <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#475467; background:#F3F7FE; padding:10px 8px; text-align:center;">실행 담당</div>
         </div>
         <div style="padding:16px 0 18px; background-image:linear-gradient(90deg, transparent calc(100% - 1px), #DCE5F2 calc(100% - 1px)); background-size:calc(100% / 3) 100%;">
-          <div style="display:grid; grid-template-columns:repeat(3,1fr);">
+          <div style="display:grid; grid-template-columns:repeat(3,minmax(88px,1fr));">
             <div style="grid-column:1; justify-self:center; width:80%; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:9px 8px; text-align:center;">Request Task<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3; margin-top:2px;">근거 요약 포함</span></div>
           </div>
-          <div style="display:grid; grid-template-columns:repeat(3,1fr);">
+          <div style="display:grid; grid-template-columns:repeat(3,minmax(88px,1fr));">
             <div style="grid-column:1 / 3; margin:0 25%; position:relative; height:28px;">
               <div style="position:absolute; left:-1px; top:0; height:12px; border-left:2px solid #B8C4D6;"></div>
               <div style="position:absolute; left:-1px; right:-1px; top:12px; border-top:2px solid #B8C4D6;"></div>
@@ -243,16 +243,16 @@
               <div style="position:absolute; right:-5px; bottom:0; width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent; border-top:6px solid #B8C4D6;"></div>
             </div>
           </div>
-          <div style="display:grid; grid-template-columns:repeat(3,1fr);">
+          <div style="display:grid; grid-template-columns:repeat(3,minmax(88px,1fr));">
             <div style="grid-column:2; justify-self:center; width:80%; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1428A0; background:#FFFFFF; border:1.5px solid #1428A0; border-radius:6px; padding:9px 8px; text-align:center;">◇ 실행할 가치가 있는가</div>
           </div>
-          <div style="display:grid; grid-template-columns:repeat(3,1fr);">
+          <div style="display:grid; grid-template-columns:repeat(3,minmax(88px,1fr));">
             <div style="grid-column:2; text-align:center; font:600 10px/1 Inter,Pretendard,sans-serif; padding:6px 0;"><span style="color:#B8C4D6; font:400 14px/1 Inter,Pretendard,sans-serif;">↓</span> <span style="color:#10734A; background:#E7F5EE; border-radius:4px; padding:2px 6px;">승인</span></div>
           </div>
-          <div style="display:grid; grid-template-columns:repeat(3,1fr);">
+          <div style="display:grid; grid-template-columns:repeat(3,minmax(88px,1fr));">
             <div style="grid-column:2; justify-self:center; width:80%; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:9px 8px; text-align:center;">Convert to Task<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3; margin-top:2px;">제목·담당·우선순위·기한 확정</span></div>
           </div>
-          <div style="display:grid; grid-template-columns:repeat(3,1fr);">
+          <div style="display:grid; grid-template-columns:repeat(3,minmax(88px,1fr));">
             <div style="grid-column:2 / 4; margin:0 25%; position:relative; height:28px;">
               <div style="position:absolute; left:-1px; top:0; height:12px; border-left:2px solid #B8C4D6;"></div>
               <div style="position:absolute; left:-1px; right:-1px; top:12px; border-top:2px solid #B8C4D6;"></div>
@@ -260,16 +260,16 @@
               <div style="position:absolute; right:-5px; bottom:0; width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent; border-top:6px solid #B8C4D6;"></div>
             </div>
           </div>
-          <div style="display:grid; grid-template-columns:repeat(3,1fr);">
+          <div style="display:grid; grid-template-columns:repeat(3,minmax(88px,1fr));">
             <div style="grid-column:3; justify-self:center; width:80%; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:9px 8px; text-align:center;">Backlog Task<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#98A2B3; margin-top:2px;">출처 Finding·Evidence 링크 보존</span></div>
           </div>
-          <div style="display:grid; grid-template-columns:repeat(3,1fr);">
+          <div style="display:grid; grid-template-columns:repeat(3,minmax(88px,1fr));">
             <div style="grid-column:3; text-align:center; color:#B8C4D6; font:400 14px/1 Inter,Pretendard,sans-serif; padding:6px 0;">↓</div>
           </div>
-          <div style="display:grid; grid-template-columns:repeat(3,1fr);">
+          <div style="display:grid; grid-template-columns:repeat(3,minmax(88px,1fr));">
             <div style="grid-column:3; justify-self:center; width:80%; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:9px 8px; text-align:center;">Todo · Doing 실행</div>
           </div>
-          <div style="display:grid; grid-template-columns:repeat(3,1fr);">
+          <div style="display:grid; grid-template-columns:repeat(3,minmax(88px,1fr));">
             <div style="grid-column:1 / 4; margin:0 16.667%; position:relative; height:28px;">
               <div style="position:absolute; right:-1px; top:0; height:12px; border-left:2px solid #B8C4D6;"></div>
               <div style="position:absolute; left:-1px; right:-1px; top:12px; border-top:2px solid #B8C4D6;"></div>
@@ -277,11 +277,11 @@
               <div style="position:absolute; left:-5px; bottom:0; width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent; border-top:6px solid #B8C4D6;"></div>
             </div>
           </div>
-          <div style="display:grid; grid-template-columns:repeat(3,1fr);">
+          <div style="display:grid; grid-template-columns:repeat(3,minmax(88px,1fr));">
             <div style="grid-column:1; justify-self:center; width:80%; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:6px; padding:9px 8px; text-align:center;">근거와 함께 추적<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#475467; margin-top:2px;">Task 상세에서 출처 확인</span></div>
           </div>
         </div>
-      </div>
+      </div></div>
       <p style="font:400 11.5px/1.55 Inter,Pretendard,sans-serif; color:#98A2B3; margin:12px 0 0;">* 승인과 전환은 별개 결정으로 감사된다. 반려·근거 보완 요청은 다음 섹션의 상태 머신에서 다룬다.</p>
     </section>
 
@@ -290,7 +290,7 @@
       <div style="font:700 13px/1 Inter,Pretendard,sans-serif; letter-spacing:.08em; color:#1428A0; margin-bottom:14px;">05 · LIFECYCLE</div>
       <h2 style="font:600 28px/1.32 Inter,Pretendard,sans-serif; color:#101828; margin:0 0 12px; letter-spacing:-.01em;">Task Request 상태 — 승인과 전환의 분리</h2>
       <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 28px; max-width:760px;">Task Request는 검토 대기에서 출발해 승인·반려·근거 보완 요청 중 하나로 갈리고, 승인된 요청은 새 Task로 전환되거나 기존 Task에 연결될 때까지 승인 상태로 남는다. 모든 결정은 감사되며, 이 상태는 작성자에게 보이는 VOC 상태와 <b style="color:#101828;">자동으로 연동되지 않는다</b>.</p>
-      <div data-component="state-machine" style="background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:24px;">
+      <div data-component="state-machine" style="background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:24px; overflow-wrap:anywhere;">
         <div style="margin-bottom:16px;"><span style="font:700 10.5px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#FFFFFF; background:#374151; border-radius:4px; padding:5px 9px;">TASK REQUEST STATUS</span></div>
         <div style="display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:12px 6px;">
           <div style="width:16px; height:16px; border-radius:50%; background:#101828; flex:none;"></div>
@@ -306,25 +306,25 @@
         <div style="margin-top:20px; border-top:1px dashed #DCE5F2; padding-top:14px;">
           <div style="font:700 10.5px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#667083; margin-bottom:10px;">그 밖의 전이</div>
           <div style="display:flex; flex-direction:column; gap:8px; max-width:660px; margin:0 auto;">
-            <div style="display:grid; grid-template-columns:1fr 170px 1fr 70px; align-items:center; gap:8px;">
+            <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(64px,min(170px,24%)) minmax(0,1fr) minmax(48px,min(70px,16%)); align-items:center; gap:8px;">
               <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:8px; padding:8px 10px; text-align:center;">Pending</div>
               <div style="display:flex; flex-direction:column; align-items:center;"><span style="font:500 10px/1.2 Inter,Pretendard,sans-serif; color:#667083;">Request More Evidence</span><div style="display:flex; align-items:center; width:100%;"><div style="flex:1; height:2px; background:#B8C4D6;"></div><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:7px solid #B8C4D6;"></div></div></div>
               <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:8px; padding:8px 10px; text-align:center;">Needs evidence</div>
               <span style="justify-self:start; font:700 10px/1 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border-radius:4px; padding:4px 7px;">보완</span>
             </div>
-            <div style="display:grid; grid-template-columns:1fr 170px 1fr 70px; align-items:center; gap:8px;">
+            <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(64px,min(170px,24%)) minmax(0,1fr) minmax(48px,min(70px,16%)); align-items:center; gap:8px;">
               <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:8px; padding:8px 10px; text-align:center;">Needs evidence</div>
               <div style="display:flex; flex-direction:column; align-items:center;"><span style="font:500 10px/1.2 Inter,Pretendard,sans-serif; color:#667083;">근거 보완 후 재검토</span><div style="display:flex; align-items:center; width:100%;"><div style="flex:1; height:2px; background:#B8C4D6;"></div><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:7px solid #B8C4D6;"></div></div></div>
               <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:8px; padding:8px 10px; text-align:center;">Pending</div>
               <span style="justify-self:start; font:700 10px/1 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border-radius:4px; padding:4px 7px;">되돌림</span>
             </div>
-            <div style="display:grid; grid-template-columns:1fr 170px 1fr 70px; align-items:center; gap:8px;">
+            <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(64px,min(170px,24%)) minmax(0,1fr) minmax(48px,min(70px,16%)); align-items:center; gap:8px;">
               <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:8px; padding:8px 10px; text-align:center;">Pending</div>
               <div style="display:flex; flex-direction:column; align-items:center;"><span style="font:500 10px/1.2 Inter,Pretendard,sans-serif; color:#667083;">Reject</span><div style="display:flex; align-items:center; width:100%;"><div style="flex:1; height:2px; background:#B8C4D6;"></div><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:7px solid #B8C4D6;"></div></div></div>
               <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#B2202B; background:#FCEDEE; border:1.5px solid #F3C7CB; border-radius:8px; padding:8px 10px; text-align:center;">Rejected</div>
               <span style="justify-self:start; font:700 10px/1 Inter,Pretendard,sans-serif; color:#B2202B; background:#FCEDEE; border-radius:4px; padding:4px 7px;">종료</span>
             </div>
-            <div style="display:grid; grid-template-columns:1fr 170px 1fr 70px; align-items:center; gap:8px;">
+            <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(64px,min(170px,24%)) minmax(0,1fr) minmax(48px,min(70px,16%)); align-items:center; gap:8px;">
               <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:8px; padding:8px 10px; text-align:center;">Approved</div>
               <div style="display:flex; flex-direction:column; align-items:center;"><span style="font:500 10px/1.2 Inter,Pretendard,sans-serif; color:#667083;">Link Existing Task</span><div style="display:flex; align-items:center; width:100%;"><div style="flex:1; height:2px; background:#B8C4D6;"></div><div style="width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:7px solid #B8C4D6;"></div></div></div>
               <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#10734A; background:#E7F5EE; border:1.5px solid #10734A; border-radius:8px; padding:8px 10px; text-align:center;">기존 Task에 연결</div>
@@ -333,7 +333,7 @@
           </div>
         </div>
       </div>
-      <div data-component="callout" style="display:flex; flex-direction:column; gap:10px; margin-top:16px;">
+      <div data-component="callout" style="display:flex; flex-direction:column; gap:10px; margin-top:16px; overflow-wrap:anywhere;">
         <div style="display:flex; gap:12px; align-items:baseline; background:#FCEDEE; border-left:3px solid #B2202B; border-radius:0 8px 8px 0; padding:13px 16px;"><span style="font:700 11px/1 Inter,Pretendard,sans-serif; letter-spacing:.04em; color:#B2202B; white-space:nowrap;">주의</span><span style="font:400 13px/1.65 Inter,Pretendard,sans-serif; color:#374151;">Task Done·Released는 작성자 대면 VOC 상태를 자동으로 바꾸지 않는다 — 상태 변경은 VOC마다 감사되는 별도 결정이다.</span></div>
       </div>
     </section>
@@ -343,33 +343,33 @@
       <div style="font:700 13px/1 Inter,Pretendard,sans-serif; letter-spacing:.08em; color:#1428A0; margin-bottom:14px;">06 · LINKING</div>
       <h2 style="font:600 28px/1.32 Inter,Pretendard,sans-serif; color:#101828; margin:0 0 12px; letter-spacing:-.01em;">연결 모델 — entity_links 하나로 모이는 교차 이력</h2>
       <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 28px; max-width:760px;">시스템 사이 관계는 각 객체가 외래키로 직접 소유하지 않고, source·target·relation_type·visibility를 담은 <b style="color:#1428A0;">core.entity_links</b> 한 곳에 정본으로 남는다. 링크를 해제해도 행을 지우지 않고 detached로 남기므로, "무엇을 근거로 무엇을 했는가"는 언제든 되짚을 수 있다.</p>
-      <div data-component="hub-spoke" style="background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:24px;">
-        <div style="display:grid; grid-template-columns:1fr 200px 1fr; align-items:center; max-width:880px; margin:0 auto;">
-          <div style="display:flex; flex-direction:column; gap:10px;">
-            <div style="display:grid; grid-template-columns:1fr 128px; align-items:center;">
+      <div data-component="hub-spoke" style="background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:24px; overflow-wrap:anywhere;">
+        <div style="display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:14px 0; max-width:880px; margin:0 auto;">
+          <div style="display:flex; flex-direction:column; gap:10px; flex:1 1 250px; min-width:0;">
+            <div style="display:grid; grid-template-columns:minmax(0,1fr) 128px; align-items:center;">
               <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px; text-align:center;">VOC</div>
               <div style="display:flex; flex-direction:column; align-items:center; padding:0 4px;"><span style="font:500 10px/1.25 'JetBrains Mono',monospace; color:#667083; text-align:center; overflow-wrap:anywhere;">created_finding</span><span style="color:#1428A0; font:400 15px/1 Inter,Pretendard,sans-serif;">↔</span></div>
             </div>
-            <div style="display:grid; grid-template-columns:1fr 128px; align-items:center;">
+            <div style="display:grid; grid-template-columns:minmax(0,1fr) 128px; align-items:center;">
               <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px; text-align:center;">Survey Response</div>
               <div style="display:flex; flex-direction:column; align-items:center; padding:0 4px;"><span style="font:500 10px/1.25 'JetBrains Mono',monospace; color:#667083; text-align:center; overflow-wrap:anywhere;">generated_finding</span><span style="color:#1428A0; font:400 15px/1 Inter,Pretendard,sans-serif;">↔</span></div>
             </div>
-            <div style="display:grid; grid-template-columns:1fr 128px; align-items:center;">
+            <div style="display:grid; grid-template-columns:minmax(0,1fr) 128px; align-items:center;">
               <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px; text-align:center;">VOC Cluster</div>
               <div style="display:flex; flex-direction:column; align-items:center; padding:0 4px;"><span style="font:500 10px/1.25 'JetBrains Mono',monospace; color:#667083; text-align:center; overflow-wrap:anywhere;">evidence_of</span><span style="color:#1428A0; font:400 15px/1 Inter,Pretendard,sans-serif;">↔</span></div>
             </div>
           </div>
-          <div style="font:700 13.5px/1.35 Inter,Pretendard,sans-serif; color:#FFFFFF; background:#1428A0; border-radius:8px; padding:22px 14px; text-align:center;"><span style="display:block; font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.08em; color:#B9C9F7; margin-bottom:8px;">HUB</span>core.entity_links<span style="display:block; font:400 11px/1.45 Inter,Pretendard,sans-serif; color:#E7EFFC; margin-top:6px;">교차 이력의 단일 정본 · 해제해도 이력 보존</span></div>
-          <div style="display:flex; flex-direction:column; gap:10px;">
-            <div style="display:grid; grid-template-columns:128px 1fr; align-items:center;">
+          <div style="font:700 13.5px/1.35 Inter,Pretendard,sans-serif; color:#FFFFFF; background:#1428A0; border-radius:8px; padding:22px 14px; text-align:center; flex:0 0 200px; box-sizing:border-box;"><span style="display:block; font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.08em; color:#B9C9F7; margin-bottom:8px;">HUB</span>core.entity_links<span style="display:block; font:400 11px/1.45 Inter,Pretendard,sans-serif; color:#E7EFFC; margin-top:6px;">교차 이력의 단일 정본 · 해제해도 이력 보존</span></div>
+          <div style="display:flex; flex-direction:column; gap:10px; flex:1 1 250px; min-width:0;">
+            <div style="display:grid; grid-template-columns:128px minmax(0,1fr); align-items:center;">
               <div style="display:flex; flex-direction:column; align-items:center; padding:0 4px;"><span style="font:500 10px/1.25 'JetBrains Mono',monospace; color:#667083; text-align:center; overflow-wrap:anywhere;">created_finding</span><span style="color:#1428A0; font:400 15px/1 Inter,Pretendard,sans-serif;">↔</span></div>
               <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px; text-align:center;">Finding</div>
             </div>
-            <div style="display:grid; grid-template-columns:128px 1fr; align-items:center;">
+            <div style="display:grid; grid-template-columns:128px minmax(0,1fr); align-items:center;">
               <div style="display:flex; flex-direction:column; align-items:center; padding:0 4px;"><span style="font:500 10px/1.25 'JetBrains Mono',monospace; color:#667083; text-align:center; overflow-wrap:anywhere;">requested_task</span><span style="color:#1428A0; font:400 15px/1 Inter,Pretendard,sans-serif;">↔</span></div>
               <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px; text-align:center;">Task Request</div>
             </div>
-            <div style="display:grid; grid-template-columns:128px 1fr; align-items:center;">
+            <div style="display:grid; grid-template-columns:128px minmax(0,1fr); align-items:center;">
               <div style="display:flex; flex-direction:column; align-items:center; padding:0 4px;"><span style="font:500 10px/1.25 'JetBrains Mono',monospace; color:#667083; text-align:center; overflow-wrap:anywhere;">converted_to</span><span style="color:#1428A0; font:400 15px/1 Inter,Pretendard,sans-serif;">↔</span></div>
               <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px; text-align:center;">Task</div>
             </div>
@@ -384,21 +384,21 @@
       <div style="font:700 13px/1 Inter,Pretendard,sans-serif; letter-spacing:.08em; color:#1428A0; margin-bottom:14px;">07 · INVARIANT</div>
       <h2 style="font:600 28px/1.32 Inter,Pretendard,sans-serif; color:#101828; margin:0 0 12px; letter-spacing:-.01em;">금지된 변환 — 설문 응답은 VOC가 되지 않는다</h2>
       <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 28px; max-width:760px;">VOC는 사내 AD로 인증된 사용자가 직접 제출한 목소리만 담는다. 그래서 설문 응답을 새 VOC로 바꾸는 지름길은 막혀 있고(generated_voc는 금지 관계), 설문 결과는 Finding·Task Request의 <b style="color:#101828;">근거</b>로 연결되거나 기존 VOC에 첨부된다.</p>
-      <div data-component="forbidden-path" style="background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:24px;">
-        <div style="display:grid; grid-template-columns:1fr 44px 1fr; gap:14px; align-items:center;">
-          <div style="background:#FFFFFF; border:1px solid #B9C9F7; border-radius:8px; padding:18px;">
+      <div data-component="forbidden-path" style="background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:24px; overflow-wrap:anywhere;">
+        <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:14px; align-items:center;">
+          <div style="background:#FFFFFF; border:1px solid #B9C9F7; border-radius:8px; padding:18px; flex:1 1 230px; min-width:0;">
             <div style="margin-bottom:12px;"><span style="font:700 10.5px/1 Inter,Pretendard,sans-serif; color:#10734A; background:#E7F5EE; border-radius:4px; padding:4px 8px;">✓ 허용</span></div>
             <div style="font:600 12.5px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px; text-align:center;">Survey Response</div>
             <div style="text-align:center; color:#B8C4D6; font:400 14px/1 Inter,Pretendard,sans-serif; padding:6px 0;">↓</div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:8px;">
               <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:6px; padding:9px 8px; text-align:center;">Finding 생성 근거</div>
               <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:6px; padding:9px 8px; text-align:center;">Finding 증거 연결</div>
               <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:6px; padding:9px 8px; text-align:center;">Task Request 근거</div>
               <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:6px; padding:9px 8px; text-align:center;">기존 VOC에 근거 첨부</div>
             </div>
           </div>
-          <div style="width:36px; height:36px; border-radius:50%; background:#FFFFFF; border:1.5px solid #F3C7CB; color:#B2202B; display:flex; align-items:center; justify-content:center; font:700 17px/1 Inter,Pretendard,sans-serif; justify-self:center;">≠</div>
-          <div style="background:#FCEDEE; border:1px solid #F3C7CB; border-radius:8px; padding:18px;">
+          <div style="width:36px; height:36px; border-radius:50%; background:#FFFFFF; border:1.5px solid #F3C7CB; color:#B2202B; display:flex; align-items:center; justify-content:center; font:700 17px/1 Inter,Pretendard,sans-serif; flex:none; margin:0 3px;">≠</div>
+          <div style="background:#FCEDEE; border:1px solid #F3C7CB; border-radius:8px; padding:18px; flex:1 1 230px; min-width:0;">
             <div style="margin-bottom:12px;"><span style="font:700 10.5px/1 Inter,Pretendard,sans-serif; color:#B2202B; background:#FFFFFF; border:1px solid #F3C7CB; border-radius:4px; padding:4px 8px;">✕ 금지</span></div>
             <div style="font:600 12.5px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px; text-align:center;">Survey Response</div>
             <div style="text-align:center; color:#B2202B; font:600 12px/1 Inter,Pretendard,sans-serif; padding:7px 0;">✕ ↓</div>
@@ -415,11 +415,11 @@
       <div style="font:700 13px/1 Inter,Pretendard,sans-serif; letter-spacing:.08em; color:#1428A0; margin-bottom:14px;">08 · INTERFACE</div>
       <h2 style="font:600 28px/1.32 Inter,Pretendard,sans-serif; color:#101828; margin:0 0 12px; letter-spacing:-.01em;">화면 구성 — 목록 우선 운영 화면</h2>
       <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 28px; max-width:760px;">모든 화면은 PageShell·ListShell·WorkbenchShell 세 가지 셸 중 하나이고, VOC Inbox·Task Requests·Findings 같은 운영 화면은 <b style="color:#101828;">ListShell</b>을 쓴다. 조밀한 목록으로 우선순위를 훑고, 행을 고르면 오른쪽 상세 패널에서 근거·연결·다음 행동을 판단한다.</p>
-      <div data-component="screen-map" style="background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:24px;">
-        <div style="display:grid; grid-template-columns:1.45fr 1fr; gap:22px; align-items:start;">
-          <div style="display:grid; grid-template-columns:44px 150px 1fr 200px; grid-template-rows:34px 236px; border:1px solid #CBD6E6; border-radius:8px; overflow:hidden; background:#FFFFFF;">
+      <div data-component="screen-map" style="background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:24px; overflow-wrap:anywhere;">
+        <div style="display:flex; flex-wrap:wrap; gap:22px; align-items:flex-start;">
+          <div style="flex:1.45 1 480px; min-width:0; overflow-x:auto;"><div style="display:grid; grid-template-columns:44px 150px minmax(112px,1fr) 200px; grid-template-rows:34px 236px; border:1px solid #CBD6E6; border-radius:8px; min-width:min-content; overflow:hidden; background:#FFFFFF;">
             <div style="grid-column:1 / -1; display:flex; align-items:center; gap:8px; padding:0 10px; background:#F3F7FE; border-bottom:1px solid #CBD6E6;">
-              <span style="font:700 9.5px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#667083;">TOOLBAR</span>
+              <span style="font:700 9.5px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#667083; white-space:nowrap;">TOOLBAR</span>
               <div style="flex:1; height:6px; max-width:120px; border-radius:3px; background:#DCE5F2;"></div>
               <span style="margin-left:auto; width:18px; height:18px; border-radius:50%; background:#1428A0; color:#FFFFFF; font:700 10px/18px 'JetBrains Mono',monospace; text-align:center;">1</span>
             </div>
@@ -430,42 +430,42 @@
               <div style="width:14px; height:14px; border-radius:4px; background:#374151;"></div>
             </div>
             <div style="background:#EDF3FB; border-right:1px solid #CBD6E6; padding:10px; display:flex; flex-direction:column; gap:7px;">
-              <div style="display:flex; align-items:center; justify-content:space-between;"><span style="font:700 9.5px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#667083;">SIDEBAR</span><span style="width:18px; height:18px; border-radius:50%; background:#1428A0; color:#FFFFFF; font:700 10px/18px 'JetBrains Mono',monospace; text-align:center;">2</span></div>
+              <div style="display:flex; align-items:center; justify-content:space-between;"><span style="font:700 9.5px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#667083; white-space:nowrap;">SIDEBAR</span><span style="width:18px; height:18px; border-radius:50%; background:#1428A0; color:#FFFFFF; font:700 10px/18px 'JetBrains Mono',monospace; text-align:center;">2</span></div>
               <div style="height:6px; width:80%; border-radius:3px; background:#DCE5F2;"></div>
               <div style="height:6px; width:65%; border-radius:3px; background:#DCE5F2;"></div>
               <div style="height:6px; width:72%; border-radius:3px; background:#DCE5F2;"></div>
               <div style="height:6px; width:58%; border-radius:3px; background:#DCE5F2;"></div>
             </div>
             <div style="padding:10px; display:flex; flex-direction:column; gap:6px;">
-              <div style="display:flex; align-items:center; justify-content:space-between;"><span style="font:700 9.5px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#667083;">LIST</span><span style="width:18px; height:18px; border-radius:50%; background:#1428A0; color:#FFFFFF; font:700 10px/18px 'JetBrains Mono',monospace; text-align:center;">3</span></div>
+              <div style="display:flex; align-items:center; justify-content:space-between;"><span style="font:700 9.5px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#667083; white-space:nowrap;">LIST</span><span style="width:18px; height:18px; border-radius:50%; background:#1428A0; color:#FFFFFF; font:700 10px/18px 'JetBrains Mono',monospace; text-align:center;">3</span></div>
               <div style="height:26px; border:1px solid #DCE5F2; border-radius:4px; display:flex; align-items:center; padding:0 8px;"><div style="height:6px; width:60%; border-radius:3px; background:#DCE5F2;"></div></div>
               <div style="height:26px; border:1px solid #1428A0; background:#E7EFFC; border-radius:4px; display:flex; align-items:center; padding:0 8px;"><div style="height:6px; width:70%; border-radius:3px; background:#B9C9F7;"></div></div>
               <div style="height:26px; border:1px solid #DCE5F2; border-radius:4px; display:flex; align-items:center; padding:0 8px;"><div style="height:6px; width:52%; border-radius:3px; background:#DCE5F2;"></div></div>
               <div style="height:26px; border:1px solid #DCE5F2; border-radius:4px; display:flex; align-items:center; padding:0 8px;"><div style="height:6px; width:64%; border-radius:3px; background:#DCE5F2;"></div></div>
             </div>
             <div style="border-left:1px solid #CBD6E6; padding:10px; display:flex; flex-direction:column; gap:7px; background:#FFFFFF;">
-              <div style="display:flex; align-items:center; justify-content:space-between;"><span style="font:700 9.5px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#667083;">DETAIL</span><span style="width:18px; height:18px; border-radius:50%; background:#1428A0; color:#FFFFFF; font:700 10px/18px 'JetBrains Mono',monospace; text-align:center;">4</span></div>
+              <div style="display:flex; align-items:center; justify-content:space-between;"><span style="font:700 9.5px/1 'JetBrains Mono',monospace; letter-spacing:.06em; color:#667083; white-space:nowrap;">DETAIL</span><span style="width:18px; height:18px; border-radius:50%; background:#1428A0; color:#FFFFFF; font:700 10px/18px 'JetBrains Mono',monospace; text-align:center;">4</span></div>
               <div style="height:8px; width:75%; border-radius:3px; background:#CBD6E6;"></div>
               <div style="height:6px; width:90%; border-radius:3px; background:#DCE5F2;"></div>
               <div style="height:6px; width:82%; border-radius:3px; background:#DCE5F2;"></div>
               <div style="height:46px; border-radius:4px; background:#EDF3FB;"></div>
               <div style="margin-top:auto; height:24px; border-radius:4px; background:#1428A0;"></div>
             </div>
-          </div>
-          <div style="display:flex; flex-direction:column; gap:12px;">
-            <div style="display:grid; grid-template-columns:22px 1fr; gap:10px; align-items:start">
+          </div></div>
+          <div style="display:flex; flex-direction:column; gap:12px; flex:1 1 331px; min-width:0;">
+            <div style="display:grid; grid-template-columns:22px minmax(0,1fr); gap:10px; align-items:start">
               <span style="width:20px; height:20px; border-radius:50%; background:#1428A0; color:#FFFFFF; font:700 10.5px/20px 'JetBrains Mono',monospace; text-align:center;">1</span>
               <div><div style="font:600 13px/1.35 Inter,Pretendard,sans-serif; color:#101828;">툴바</div><div style="font:400 12px/1.6 Inter,Pretendard,sans-serif; color:#475467;">보기 탭·필터·검색·주 행동</div></div>
             </div>
-            <div style="display:grid; grid-template-columns:22px 1fr; gap:10px; align-items:start;">
+            <div style="display:grid; grid-template-columns:22px minmax(0,1fr); gap:10px; align-items:start;">
               <span style="width:20px; height:20px; border-radius:50%; background:#1428A0; color:#FFFFFF; font:700 10.5px/20px 'JetBrains Mono',monospace; text-align:center;">2</span>
               <div><div style="font:600 13px/1.35 Inter,Pretendard,sans-serif; color:#101828;">시스템 사이드바</div><div style="font:400 12px/1.6 Inter,Pretendard,sans-serif; color:#475467;">전역 레일과 별개 층 — 선택한 시스템의 보기·큐</div></div>
             </div>
-            <div style="display:grid; grid-template-columns:22px 1fr; gap:10px; align-items:start;">
+            <div style="display:grid; grid-template-columns:22px minmax(0,1fr); gap:10px; align-items:start;">
               <span style="width:20px; height:20px; border-radius:50%; background:#1428A0; color:#FFFFFF; font:700 10.5px/20px 'JetBrains Mono',monospace; text-align:center;">3</span>
               <div><div style="font:600 13px/1.35 Inter,Pretendard,sans-serif; color:#101828;">목록</div><div style="font:400 12px/1.6 Inter,Pretendard,sans-serif; color:#475467;">조밀한 행으로 우선순위 스캔</div></div>
             </div>
-            <div style="display:grid; grid-template-columns:22px 1fr; gap:10px; align-items:start;">
+            <div style="display:grid; grid-template-columns:22px minmax(0,1fr); gap:10px; align-items:start;">
               <span style="width:20px; height:20px; border-radius:50%; background:#1428A0; color:#FFFFFF; font:700 10.5px/20px 'JetBrains Mono',monospace; text-align:center;">4</span>
               <div><div style="font:600 13px/1.35 Inter,Pretendard,sans-serif; color:#101828;">상세 패널</div><div style="font:400 12px/1.6 Inter,Pretendard,sans-serif; color:#475467;">핵심 필드·Evidence·Linked Entities·Public Update·Next Action</div></div>
             </div>
@@ -479,8 +479,8 @@
       <div style="font:700 13px/1 Inter,Pretendard,sans-serif; letter-spacing:.08em; color:#1428A0; margin-bottom:14px;">09 · SCOPE</div>
       <h2 style="font:600 28px/1.32 Inter,Pretendard,sans-serif; color:#101828; margin:0 0 12px; letter-spacing:-.01em;">출시 범위 — Alpha에서 Phase 2까지</h2>
       <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 28px; max-width:760px;">Alpha가 Core·권한·VOC·Entity Link의 바닥을 깔고, MVP가 Finding·Task Request·Action Dashboard로 근거에서 실행까지의 연결을 완성한다. 자동화·고도화는 Phase 1·2로 미루며, 출시 단계는 날짜가 아니라 <b style="color:#101828;">범위</b>로 정의한다.</p>
-      <div data-component="gantt" style="background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:22px 24px 18px;">
-        <div style="display:grid; grid-template-columns:170px repeat(4,1fr); margin-bottom:4px;">
+      <div data-component="gantt" style="background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:22px 24px 18px; overflow-x:auto; overflow-wrap:anywhere;"><div style="min-width:min-content;">
+        <div style="display:grid; grid-template-columns:170px repeat(4,minmax(72px,1fr)); margin-bottom:4px;">
           <div></div>
           <div style="font:600 11px/1 'JetBrains Mono',monospace; color:#667083; text-align:center; padding:6px 0;">Alpha</div>
           <div style="font:700 11px/1 'JetBrains Mono',monospace; color:#1428A0; text-align:center; padding:6px 0;">MVP</div>
@@ -488,32 +488,32 @@
           <div style="font:600 11px/1 'JetBrains Mono',monospace; color:#667083; text-align:center; padding:6px 0;">Phase 2</div>
         </div>
         <div style="padding-left:170px; background-image:linear-gradient(90deg, #DCE5F2 1px, transparent 1px); background-size:calc(100% / 4) 100%; background-origin:content-box; background-clip:content-box; border-top:1px solid #DCE5F2; border-bottom:1px solid #DCE5F2; padding-top:6px; padding-bottom:6px;">
-          <div style="display:grid; grid-template-columns:170px repeat(4,1fr); margin-left:-170px; align-items:center; min-height:34px;">
+          <div style="display:grid; grid-template-columns:170px repeat(4,minmax(72px,1fr)); margin-left:-170px; align-items:center; min-height:34px;">
             <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1D2939; padding-right:10px;">Core · 권한 · Managed System</div>
             <div style="grid-column:2 / 3; height:24px; margin:0 3px; background:#1428A0; border-radius:4px;"></div>
           </div>
-          <div style="display:grid; grid-template-columns:170px repeat(4,1fr); margin-left:-170px; align-items:center; min-height:34px;">
+          <div style="display:grid; grid-template-columns:170px repeat(4,minmax(72px,1fr)); margin-left:-170px; align-items:center; min-height:34px;">
             <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1D2939; padding-right:10px;">VOC 등록 · Triage</div>
             <div style="grid-column:2 / 3; height:24px; margin:0 3px; background:#1428A0; border-radius:4px;"></div>
           </div>
-          <div style="display:grid; grid-template-columns:170px repeat(4,1fr); margin-left:-170px; align-items:center; min-height:34px;">
+          <div style="display:grid; grid-template-columns:170px repeat(4,minmax(72px,1fr)); margin-left:-170px; align-items:center; min-height:34px;">
             <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1D2939; padding-right:10px;">Entity Link</div>
             <div style="grid-column:2 / 3; height:24px; margin:0 3px; background:#1428A0; border-radius:4px;"></div>
           </div>
-          <div style="display:grid; grid-template-columns:170px repeat(4,1fr); margin-left:-170px; align-items:center; min-height:34px;">
+          <div style="display:grid; grid-template-columns:170px repeat(4,minmax(72px,1fr)); margin-left:-170px; align-items:center; min-height:34px;">
             <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1D2939; padding-right:10px;">Finding · Task Request</div>
             <div style="grid-column:3 / 4; height:24px; margin:0 3px; background:#1428A0; border-radius:4px;"></div>
           </div>
-          <div style="display:grid; grid-template-columns:170px repeat(4,1fr); margin-left:-170px; align-items:center; min-height:34px;">
+          <div style="display:grid; grid-template-columns:170px repeat(4,minmax(72px,1fr)); margin-left:-170px; align-items:center; min-height:34px;">
             <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1D2939; padding-right:10px;">Action Dashboard</div>
-            <div style="grid-column:3 / 4; height:24px; margin:0 3px; background:#1428A0; border-radius:4px; color:#FFFFFF; font:600 10.5px/24px Inter,Pretendard,sans-serif; text-align:center; white-space:nowrap; overflow:hidden;">기본형</div>
-            <div style="grid-column:4 / 5; height:24px; margin:0 3px; background:#E7EFFC; border:1px solid #B9C9F7; box-sizing:border-box; border-radius:4px; color:#1428A0; font:600 10.5px/22px Inter,Pretendard,sans-serif; text-align:center; white-space:nowrap; overflow:hidden;">Coverage 고도화</div>
+            <div style="grid-column:3 / 4; height:24px; margin:0 3px; background:#1428A0; border-radius:4px; color:#FFFFFF; font:600 10.5px/24px Inter,Pretendard,sans-serif; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">기본형</div>
+            <div style="grid-column:4 / 5; height:24px; margin:0 3px; background:#E7EFFC; border:1px solid #B9C9F7; box-sizing:border-box; border-radius:4px; color:#1428A0; font:600 10.5px/22px Inter,Pretendard,sans-serif; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Coverage 고도화</div>
           </div>
-          <div style="display:grid; grid-template-columns:170px repeat(4,1fr); margin-left:-170px; align-items:center; min-height:34px;">
+          <div style="display:grid; grid-template-columns:170px repeat(4,minmax(72px,1fr)); margin-left:-170px; align-items:center; min-height:34px;">
             <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1D2939; padding-right:10px;">VOC Cluster 자동 생성</div>
             <div style="grid-column:4 / 5; height:24px; margin:0 3px; background:#E7EFFC; border:1px solid #B9C9F7; box-sizing:border-box; border-radius:4px;"></div>
           </div>
-          <div style="display:grid; grid-template-columns:170px repeat(4,1fr); margin-left:-170px; align-items:center; min-height:34px;">
+          <div style="display:grid; grid-template-columns:170px repeat(4,minmax(72px,1fr)); margin-left:-170px; align-items:center; min-height:34px;">
             <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1D2939; padding-right:10px;">자동 요약 · root cause</div>
             <div style="grid-column:5 / 6; height:24px; margin:0 3px; background:#E7EFFC; border:1px solid #B9C9F7; box-sizing:border-box; border-radius:4px;"></div>
           </div>
@@ -522,7 +522,7 @@
           <span style="display:inline-flex; align-items:center; gap:6px; font:500 11.5px/1 Inter,Pretendard,sans-serif; color:#475467;"><span style="width:12px; height:12px; border-radius:3px; background:#1428A0;"></span>Alpha·MVP 범위</span>
           <span style="display:inline-flex; align-items:center; gap:6px; font:500 11.5px/1 Inter,Pretendard,sans-serif; color:#475467;"><span style="width:12px; height:12px; border-radius:3px; background:#E7EFFC; border:1px solid #B9C9F7; box-sizing:border-box;"></span>Phase 1·2 예정</span>
         </div>
-      </div>
+      </div></div>
       <p style="font:400 11.5px/1.55 Inter,Pretendard,sans-serif; color:#98A2B3; margin:12px 0 0;">* 막대의 위치는 출시 단계를 나타낸다. 출처 로드맵에 날짜가 없어 기간은 단계로만 표시하며, 일부 Phase 1 항목은 부분 출시 상태다.</p>
     </section>
 

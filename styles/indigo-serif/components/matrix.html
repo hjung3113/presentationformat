@@ -11,7 +11,7 @@
 @limits 행 3–7, 열 2–5
 @data columns: 열1, 열2, 열3 | rows: 행이름: ✓ ✕ — ✓ 한정어 부분(설명) 중립 글자 …
 HOW TO FILL
-  1. C = 열 수. 모든 행의 grid-template-columns:1.4fr repeat(C,1fr) 의 C를 고친다.
+  1. C = 열 수. 모든 행의 grid-template-columns:minmax(96px,1.4fr) repeat(C,minmax(60px,1fr)) 의 C를 고친다.
   2. 칸 값은 여섯 가지 모양만이고, 모양마다 글자와 색이 한 묶음이다. 모든 칸이 슬롯이므로 빠짐없이 채운다:
        ✓ = 충족·허용(성공색) · ✕ = 불가(연한 회색) · — = 해당 없음(더 연한 회색 — 가능·불가의 문제가 아니라 대상 밖)
        ✓ + 한정어 = 충족하되 범위가 붙는다(성공색 ✓ + 짧은 한정어, 예: "✓ 전체")
@@ -24,46 +24,48 @@ HOW TO FILL
   5. 행 하나 = ▼REPEAT 하나. 아래 범례 줄을 남긴다. 범례는 이 매트릭스가 실제로 쓴 칸 모양만 적는다:
      각 모양의 뜻을 문서에 맞게 슬롯에 쓰고(예: ✓ 지원 · ✕ 미지원 · — 해당 없음), 쓰지 않은 모양은 항목째 지운다.
 -->
-<div data-component="matrix" style="border:1px solid #E7E9F3; border-radius:12px; overflow:hidden; background:#FFFFFF;">
-  <div style="display:grid; grid-template-columns:1.4fr repeat(3,1fr); background:#15172B;">
-    <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#B6BBCB; padding:12px 16px;">⟦행 기준⟧</div>
-    <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#FFFFFF; padding:12px 10px; text-align:center;">⟦열 1⟧</div>
-    <!-- VARIANT highlighted column header -->
-    <div style="font:700 12px/1.35 Pretendard,sans-serif; color:#FFFFFF; padding:12px 10px; text-align:center; background:#4338CA;">⟦열 2⟧</div>
-    <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#FFFFFF; padding:12px 10px; text-align:center;">⟦열 3⟧</div>
+<div data-component="matrix" style="border:1px solid #E7E9F3; border-radius:12px; overflow-x:auto; background:#FFFFFF; overflow-wrap:anywhere;">
+  <div style="min-width:min-content;">
+    <div style="display:grid; grid-template-columns:minmax(96px,1.4fr) repeat(3,minmax(60px,1fr)); background:#15172B;">
+      <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#B6BBCB; padding:12px 16px;">⟦행 기준⟧</div>
+      <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#FFFFFF; padding:12px 10px; text-align:center;">⟦열 1⟧</div>
+      <!-- VARIANT highlighted column header -->
+      <div style="font:700 12px/1.35 Pretendard,sans-serif; color:#FFFFFF; padding:12px 10px; text-align:center; background:#4338CA;">⟦열 2⟧</div>
+      <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#FFFFFF; padding:12px 10px; text-align:center;">⟦열 3⟧</div>
+    </div>
+    <!-- ▼ REPEAT per row -->
+    <div style="display:grid; grid-template-columns:minmax(96px,1.4fr) repeat(3,minmax(60px,1fr)); border-top:1px solid #EDEEF4; align-items:center;">
+      <div style="font:600 12.5px/1.35 Pretendard,sans-serif; color:#1E2233; padding:11px 16px; background:#FAFBFE;">⟦행 A⟧</div>
+      <!-- VARIANT ✓ cell -->
+      <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#1F8A5B;">⟦✓⟧</div>
+      <!-- VARIANT ✓ + short qualifier cell (green ✓ + qualifier 11.5px, e.g. ✓ 전체) -->
+      <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#1F8A5B;">✓ <span style="font:600 11.5px/1.3 Pretendard,sans-serif;">⟦전체⟧</span></div>
+      <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#1F8A5B;">⟦✓⟧</div>
+    </div>
+    <!-- ▲ /REPEAT -->
+    <div style="display:grid; grid-template-columns:minmax(96px,1.4fr) repeat(3,minmax(60px,1fr)); border-top:1px solid #EDEEF4; align-items:center;">
+      <div style="font:600 12.5px/1.35 Pretendard,sans-serif; color:#1E2233; padding:11px 16px; background:#FAFBFE;">⟦행 B⟧</div>
+      <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#1F8A5B;">⟦✓⟧</div>
+      <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#1F8A5B;">⟦✓⟧</div>
+      <!-- VARIANT ✕ cell -->
+      <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#C2C8D4;">⟦✕⟧</div>
+    </div>
+    <div style="display:grid; grid-template-columns:minmax(96px,1.4fr) repeat(3,minmax(60px,1fr)); border-top:1px solid #EDEEF4; align-items:center;">
+      <div style="font:600 12.5px/1.35 Pretendard,sans-serif; color:#1E2233; padding:11px 16px; background:#FAFBFE;">⟦행 C⟧</div>
+      <!-- VARIANT partial / conditional cell (the only amber-family text) -->
+      <div style="text-align:center; font:600 12px/1.3 Pretendard,sans-serif; color:#94724F;">⟦조건부 설명⟧</div>
+      <!-- VARIANT neutral text cell (muted ink: a fact, not a verdict) -->
+      <div style="text-align:center; font:600 12px/1.3 Pretendard,sans-serif; color:#6A7187;">⟦중립 글자⟧</div>
+      <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#C2C8D4;">⟦✕⟧</div>
+    </div>
+    <div style="display:grid; grid-template-columns:minmax(96px,1.4fr) repeat(3,minmax(60px,1fr)); border-top:1px solid #EDEEF4; align-items:center;">
+      <div style="font:600 12.5px/1.35 Pretendard,sans-serif; color:#1E2233; padding:11px 16px; background:#FAFBFE;">⟦행 D⟧</div>
+      <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#C2C8D4;">⟦✕⟧</div>
+      <!-- VARIANT N/A cell (— : outside the scope of this row) -->
+      <div style="text-align:center; font:400 15px/1 Pretendard,sans-serif; color:#B6BBCB;">⟦—⟧</div>
+      <div style="text-align:center; font:400 15px/1 Pretendard,sans-serif; color:#B6BBCB;">⟦—⟧</div>
+    </div>
+    <!-- legend: one item per cell shape actually used — write each meaning for this matrix, delete unused items -->
+    <div style="padding:9px 16px; border-top:1px solid #EDEEF4; font:400 11.5px/1.5 Pretendard,sans-serif; color:#6A7187; background:#FAFBFE;"><span style="color:#1F8A5B; font-weight:600;">✓</span> ⟦허용⟧ · <span style="color:#C2C8D4; font-weight:600;">✕</span> ⟦불가⟧ · <span style="color:#B6BBCB;">—</span> ⟦해당 없음⟧ · <span style="color:#94724F; font-weight:600;">글자</span> = ⟦조건부⟧ · <span style="color:#6A7187; font-weight:600;">글자</span> = ⟦참고⟧</div>
   </div>
-  <!-- ▼ REPEAT per row -->
-  <div style="display:grid; grid-template-columns:1.4fr repeat(3,1fr); border-top:1px solid #EDEEF4; align-items:center;">
-    <div style="font:600 12.5px/1.35 Pretendard,sans-serif; color:#1E2233; padding:11px 16px; background:#FAFBFE;">⟦행 A⟧</div>
-    <!-- VARIANT ✓ cell -->
-    <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#1F8A5B;">⟦✓⟧</div>
-    <!-- VARIANT ✓ + short qualifier cell (green ✓ + qualifier 11.5px, e.g. ✓ 전체) -->
-    <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#1F8A5B;">✓ <span style="font:600 11.5px/1.3 Pretendard,sans-serif;">⟦전체⟧</span></div>
-    <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#1F8A5B;">⟦✓⟧</div>
-  </div>
-  <!-- ▲ /REPEAT -->
-  <div style="display:grid; grid-template-columns:1.4fr repeat(3,1fr); border-top:1px solid #EDEEF4; align-items:center;">
-    <div style="font:600 12.5px/1.35 Pretendard,sans-serif; color:#1E2233; padding:11px 16px; background:#FAFBFE;">⟦행 B⟧</div>
-    <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#1F8A5B;">⟦✓⟧</div>
-    <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#1F8A5B;">⟦✓⟧</div>
-    <!-- VARIANT ✕ cell -->
-    <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#C2C8D4;">⟦✕⟧</div>
-  </div>
-  <div style="display:grid; grid-template-columns:1.4fr repeat(3,1fr); border-top:1px solid #EDEEF4; align-items:center;">
-    <div style="font:600 12.5px/1.35 Pretendard,sans-serif; color:#1E2233; padding:11px 16px; background:#FAFBFE;">⟦행 C⟧</div>
-    <!-- VARIANT partial / conditional cell (the only amber-family text) -->
-    <div style="text-align:center; font:600 12px/1.3 Pretendard,sans-serif; color:#94724F;">⟦조건부 설명⟧</div>
-    <!-- VARIANT neutral text cell (muted ink: a fact, not a verdict) -->
-    <div style="text-align:center; font:600 12px/1.3 Pretendard,sans-serif; color:#6A7187;">⟦중립 글자⟧</div>
-    <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#C2C8D4;">⟦✕⟧</div>
-  </div>
-  <div style="display:grid; grid-template-columns:1.4fr repeat(3,1fr); border-top:1px solid #EDEEF4; align-items:center;">
-    <div style="font:600 12.5px/1.35 Pretendard,sans-serif; color:#1E2233; padding:11px 16px; background:#FAFBFE;">⟦행 D⟧</div>
-    <div style="text-align:center; font:600 15px/1 Pretendard,sans-serif; color:#C2C8D4;">⟦✕⟧</div>
-    <!-- VARIANT N/A cell (— : outside the scope of this row) -->
-    <div style="text-align:center; font:400 15px/1 Pretendard,sans-serif; color:#B6BBCB;">⟦—⟧</div>
-    <div style="text-align:center; font:400 15px/1 Pretendard,sans-serif; color:#B6BBCB;">⟦—⟧</div>
-  </div>
-  <!-- legend: one item per cell shape actually used — write each meaning for this matrix, delete unused items -->
-  <div style="padding:9px 16px; border-top:1px solid #EDEEF4; font:400 11.5px/1.5 Pretendard,sans-serif; color:#6A7187; background:#FAFBFE;"><span style="color:#1F8A5B; font-weight:600;">✓</span> ⟦허용⟧ · <span style="color:#C2C8D4; font-weight:600;">✕</span> ⟦불가⟧ · <span style="color:#B6BBCB;">—</span> ⟦해당 없음⟧ · <span style="color:#94724F; font-weight:600;">글자</span> = ⟦조건부⟧ · <span style="color:#6A7187; font-weight:600;">글자</span> = ⟦참고⟧</div>
 </div>

@@ -188,8 +188,39 @@ test('table: two cell variants (first-column detail line, stacked lines with a m
   const t = tpl('table');
   assert.match(t.src, /<!-- VARIANT first-column detail line[^>]*-->\s*<div[^>]*>\s*<div[^>]*>⟦핵심어 B⟧<span style="display:block; font:400 12px\/1\.5 ⟨f:body⟩; color:⟨muted-text⟩/);
   assert.match(t.src, /<!-- VARIANT stacked cell[^>]*-->[\s\S]*⟦값 줄 1⟧<div style="border-top:1px solid ⟨border-row⟩;[^"]*">⟦값 줄 2⟧<\/div>/);
-  assert.match(t.src, /<!-- VARIANT definition list[\s\S]*?<div data-component="table" style="display:grid; grid-template-columns:1fr 1fr; gap:0 40px;">/);
+  assert.match(t.src, /<!-- VARIANT definition list[\s\S]*?<div data-component="table" style="display:grid; grid-template-columns:repeat\(auto-fit,minmax\(min\(100%,380px\),1fr\)\); gap:0 40px; overflow-wrap:anywhere;">/);
   assert.match(t.src, /본문 표는 7행까지[\s\S]*부록\(sref\)[\s\S]*10행/);
   assert.match(t.meta.limits, /10행/);
   assert.match(readFileSync(join(CORE, 'components.md'), 'utf8'), /appendix glossary or source table may be longer/);
+});
+
+// ---- narrow widths (core/components.md §4 "Narrow widths"): static guards for what the 390px gallery probe verifies in a browser ----
+// A grid track is `Nfr`, i.e. minmax(auto, Nfr): its automatic minimum is the widest unbreakable run, so it widens past its frame.
+// Only a minmax(...) track (a floor, or 0) keeps a fr track in bounds.
+const withoutMinmax = (value) => {
+  let out = '';
+  for (let i = 0; i < value.length;) {
+    if (value.startsWith('minmax(', i)) {
+      let depth = 0, j = i + 'minmax'.length;
+      for (; j < value.length; j++) { if (value[j] === '(') depth++; else if (value[j] === ')' && --depth === 0) break; }
+      i = j + 1;
+    } else out += value[i++];
+  }
+  return out;
+};
+
+test('narrow width: no template has a bare `Nfr` grid track outside minmax() (comments included: a pasted variant must not reintroduce one)', () => {
+  for (const t of listTemplates()) {
+    for (const m of bodyOf(t.src).matchAll(/grid-template-columns:([^;"]*)/g))
+      assert.doesNotMatch(withoutMinmax(m[1]), /\d(?:\.\d+)?fr\b/, `${t.file}: bare fr track in "${m[1].trim()}" — wrap it in minmax(0,Nfr) or a floored minmax(Npx,Nfr)`);
+  }
+});
+
+test('narrow width: every template root carries overflow-wrap:anywhere, and a root that scrolls (overflow-x:auto) has a min-width:min-content box inside it', () => {
+  for (const t of listTemplates()) {
+    const root = live(t).match(/^<div data-component="[\w-]+"(?: style="([^"]*)")?>/);
+    assert.ok(root && root[1] && /overflow-wrap:anywhere;/.test(root[1]), `${t.file}: root lacks overflow-wrap:anywhere`);
+    const body = live(t);
+    if (/overflow-x:auto/.test(root[1])) assert.match(body, /min-width:min-content;/, `${t.file}: scrolls but has no min-width:min-content box to scroll`);
+  }
 });

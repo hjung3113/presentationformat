@@ -28,41 +28,41 @@ HOW TO FILL
   6. 라벨 언어: 층 이름표 ⟦LAYER A⟧ · 외부 층 ⟦EXTERNAL⟧ · 기존 층 ⟦AS-IS⟧ 는 슬롯이다. 슬롯 예시는 영문 기본(labels: en)이다.
      labels: ko 문서(경영진·사용자용)는 "층 A" · "외부" · "지금" 으로 바꾼다 (core/components.md §4 "라벨 언어").
 -->
-<div data-component="layer-map" style="background:⟨fig-tint⟩; border:1px solid ⟨border-fig⟩; border-radius:⟨r:card-sm⟩; padding:24px;">
+<div data-component="layer-map" style="background:⟨fig-tint⟩; border:1px solid ⟨border-fig⟩; border-radius:⟨r:card-sm⟩; padding:24px; overflow-wrap:anywhere;">
   <!-- ▼ REPEAT per layer -->
-  <div style="display:grid; grid-template-columns:160px 1fr; border:1px solid ⟨border-node⟩; border-radius:⟨r:node-lg⟩; background:⟨white⟩; overflow:hidden;">
+  <div style="display:grid; grid-template-columns:minmax(96px,min(160px,35%)) minmax(0,1fr); border:1px solid ⟨border-node⟩; border-radius:⟨r:node-lg⟩; background:⟨white⟩; overflow:hidden;">
     <div style="padding:12px 14px; background:⟨fill-50⟩; border-right:1px solid ⟨border-node⟩; display:flex; flex-direction:column; justify-content:center;">
       <div style="font:700 10px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨muted-text⟩; margin-bottom:6px;">⟦LAYER A⟧</div>
       <div style="font:600 13px/1.35 ⟨f:body⟩; color:⟨ink-900⟩;">⟦상위 층 이름⟧</div>
     </div>
     <div style="padding:12px; display:flex; flex-wrap:wrap; gap:8px; align-content:center;">
-      <div style="flex:1 1 130px; font:600 12px/1.35 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦모듈 A⟧<span style="display:block; font:400 10.5px/1.4 ⟨f:body⟩; color:⟨muted-text⟩; margin-top:2px;">⟦부가 설명⟧</span></div>
-      <div style="flex:1 1 130px; font:600 12px/1.35 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦모듈 B⟧<span style="display:block; font:400 10.5px/1.4 ⟨f:body⟩; color:⟨muted-text⟩; margin-top:2px;">⟦부가 설명⟧</span></div>
-      <div style="flex:1 1 130px; font:600 12px/1.35 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦모듈 C⟧<span style="display:block; font:400 10.5px/1.4 ⟨f:body⟩; color:⟨muted-text⟩; margin-top:2px;">⟦부가 설명⟧</span></div>
+      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦모듈 A⟧<span style="display:block; font:400 10.5px/1.4 ⟨f:body⟩; color:⟨muted-text⟩; margin-top:2px;">⟦부가 설명⟧</span></div>
+      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦모듈 B⟧<span style="display:block; font:400 10.5px/1.4 ⟨f:body⟩; color:⟨muted-text⟩; margin-top:2px;">⟦부가 설명⟧</span></div>
+      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦모듈 C⟧<span style="display:block; font:400 10.5px/1.4 ⟨f:body⟩; color:⟨muted-text⟩; margin-top:2px;">⟦부가 설명⟧</span></div>
       <!-- VARIANT planned module ([planned]): not built yet — muted dashed box + state chip, never the built look -->
-      <div style="flex:1 1 130px; font:600 12px/1.35 ⟨f:body⟩; color:⟨muted-text⟩; background:⟨fill-50⟩; border:1px dashed ⟨muted-300⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦예정 모듈⟧ <span style="font:700 11px/1 ⟨f:body⟩; color:⟨muted-text⟩; background:⟨white⟩; border:1px solid ⟨muted-300⟩; border-radius:⟨r:pill-sm⟩; padding:2px 6px; white-space:nowrap; vertical-align:1px;">⟦예정⟧</span><span style="display:block; font:400 10.5px/1.4 ⟨f:body⟩; color:⟨muted-text⟩; margin-top:2px;">⟦부가 설명⟧</span></div>
+      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 ⟨f:body⟩; color:⟨muted-text⟩; background:⟨fill-50⟩; border:1px dashed ⟨muted-300⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦예정 모듈⟧ <span style="font:700 11px/1 ⟨f:body⟩; color:⟨muted-text⟩; background:⟨white⟩; border:1px solid ⟨muted-300⟩; border-radius:⟨r:pill-sm⟩; padding:2px 6px; white-space:nowrap; vertical-align:1px;">⟦예정⟧</span><span style="display:block; font:400 10.5px/1.4 ⟨f:body⟩; color:⟨muted-text⟩; margin-top:2px;">⟦부가 설명⟧</span></div>
       <!-- VARIANT state-chip module ([state: 텍스트]): BUILT (solid outline, built look) but on sample data / with a caveat — the chip carries the source's own words -->
-      <div style="flex:1 1 130px; font:600 12px/1.35 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦상태 모듈⟧ <span style="font:700 11px/1 ⟨f:body⟩; color:⟨ink-700⟩; background:⟨fill-100⟩; border:1px solid ⟨border-chip⟩; border-radius:⟨r:pill-sm⟩; padding:2px 6px; white-space:nowrap; vertical-align:1px;">⟦가짜 데이터⟧</span><span style="display:block; font:400 10.5px/1.4 ⟨f:body⟩; color:⟨muted-text⟩; margin-top:2px;">⟦부가 설명⟧</span></div>
+      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦상태 모듈⟧ <span style="font:700 11px/1 ⟨f:body⟩; color:⟨ink-700⟩; background:⟨fill-100⟩; border:1px solid ⟨border-chip⟩; border-radius:⟨r:pill-sm⟩; padding:2px 6px; white-space:nowrap; vertical-align:1px;">⟦가짜 데이터⟧</span><span style="display:block; font:400 10.5px/1.4 ⟨f:body⟩; color:⟨muted-text⟩; margin-top:2px;">⟦부가 설명⟧</span></div>
     </div>
   </div>
   <!-- ▲ /REPEAT -->
   <!-- connector between layers: ALWAYS name how they connect -->
   <div style="text-align:center; font:500 11px/1.4 ⟨f:body⟩; color:⟨muted-text⟩; padding:7px 0;"><span style="color:⟨accent⟩; font:400 14px/1 ⟨f:body⟩;">↕</span> ⟦연결 방식 1⟧</div>
   <!-- VARIANT key layer (the subject of the document) -->
-  <div style="display:grid; grid-template-columns:160px 1fr; border:1.5px solid ⟨accent⟩; border-radius:⟨r:node-lg⟩; background:⟨white⟩; overflow:hidden;">
+  <div style="display:grid; grid-template-columns:minmax(96px,min(160px,35%)) minmax(0,1fr); border:1.5px solid ⟨accent⟩; border-radius:⟨r:node-lg⟩; background:⟨white⟩; overflow:hidden;">
     <div style="padding:12px 14px; background:⟨accent-050⟩; border-right:1px solid ⟨accent-line⟩; display:flex; flex-direction:column; justify-content:center;">
       <div style="font:700 10px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨accent⟩; margin-bottom:6px;">⟦LAYER B⟧</div>
       <!-- OPTIONAL badge: only when this layer is optional ([optional]) -->
       <div style="font:600 13px/1.35 ⟨f:body⟩; color:⟨accent⟩;">⟦핵심 층 이름⟧ <span style="font:700 11px/1 ⟨f:body⟩; color:⟨white⟩; background:⟨accent⟩; border-radius:⟨r:pill-sm⟩; padding:3px 6px; white-space:nowrap; vertical-align:1px;">⟦선택⟧</span></div>
     </div>
     <div style="padding:12px; display:flex; flex-wrap:wrap; gap:8px; align-content:center;">
-      <div style="flex:1 1 130px; font:600 12px/1.35 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦핵심 모듈⟧<span style="display:block; font:400 10.5px/1.4 ⟨f:body⟩; color:⟨body⟩; margin-top:2px;">⟦부가 설명⟧</span></div>
-      <div style="flex:1 1 130px; font:600 12px/1.35 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦모듈 D⟧<span style="display:block; font:400 10.5px/1.4 ⟨f:body⟩; color:⟨muted-text⟩; margin-top:2px;">⟦부가 설명⟧</span></div>
-      <div style="flex:1 1 130px; font:600 12px/1.35 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦모듈 E⟧<span style="display:block; font:400 10.5px/1.4 ⟨f:body⟩; color:⟨muted-text⟩; margin-top:2px;">⟦부가 설명⟧</span></div>
+      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦핵심 모듈⟧<span style="display:block; font:400 10.5px/1.4 ⟨f:body⟩; color:⟨body⟩; margin-top:2px;">⟦부가 설명⟧</span></div>
+      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦모듈 D⟧<span style="display:block; font:400 10.5px/1.4 ⟨f:body⟩; color:⟨muted-text⟩; margin-top:2px;">⟦부가 설명⟧</span></div>
+      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦모듈 E⟧<span style="display:block; font:400 10.5px/1.4 ⟨f:body⟩; color:⟨muted-text⟩; margin-top:2px;">⟦부가 설명⟧</span></div>
     </div>
   </div>
   <div style="text-align:center; font:500 11px/1.4 ⟨f:body⟩; color:⟨muted-text⟩; padding:7px 0;"><span style="color:⟨accent⟩; font:400 14px/1 ⟨f:body⟩;">↕</span> ⟦연결 방식 2⟧</div>
-  <div style="display:grid; grid-template-columns:160px 1fr; border:1px solid ⟨border-node⟩; border-radius:⟨r:node-lg⟩; background:⟨white⟩; overflow:hidden;">
+  <div style="display:grid; grid-template-columns:minmax(96px,min(160px,35%)) minmax(0,1fr); border:1px solid ⟨border-node⟩; border-radius:⟨r:node-lg⟩; background:⟨white⟩; overflow:hidden;">
     <div style="padding:12px 14px; background:⟨fill-50⟩; border-right:1px solid ⟨border-node⟩; display:flex; flex-direction:column; justify-content:center;">
       <div style="font:700 10px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨muted-text⟩; margin-bottom:6px;">⟦LAYER C⟧</div>
       <div style="font:600 13px/1.35 ⟨f:body⟩; color:⟨ink-900⟩;">⟦기반 층 이름⟧</div>
@@ -70,33 +70,33 @@ HOW TO FILL
       <span style="align-self:flex-start; margin-top:6px; font:700 11px/1 ⟨f:body⟩; color:⟨ink-700⟩; background:⟨fill-100⟩; border:1px solid ⟨border-chip⟩; border-radius:⟨r:pill-sm⟩; padding:3px 6px; white-space:nowrap;">⟦가짜 데이터⟧</span>
     </div>
     <div style="padding:12px; display:flex; flex-wrap:wrap; gap:8px; align-content:center;">
-      <div style="flex:1 1 130px; font:600 12px/1.35 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦모듈 F⟧</div>
-      <div style="flex:1 1 130px; font:600 12px/1.35 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦모듈 G⟧</div>
-      <div style="flex:1 1 130px; font:600 12px/1.35 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px dashed ⟨dashed-store⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦저장소 모듈⟧<span style="display:block; font:400 10.5px/1.4 ⟨f:body⟩; color:⟨muted-text⟩; margin-top:2px;">⟦저장소⟧</span></div>
+      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦모듈 F⟧</div>
+      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦모듈 G⟧</div>
+      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px dashed ⟨dashed-store⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦저장소 모듈⟧<span style="display:block; font:400 10.5px/1.4 ⟨f:body⟩; color:⟨muted-text⟩; margin-top:2px;">⟦저장소⟧</span></div>
     </div>
   </div>
   <div style="text-align:center; font:500 11px/1.4 ⟨f:body⟩; color:⟨muted-text⟩; padding:7px 0;"><span style="color:⟨muted-300⟩; font:400 14px/1 ⟨f:body⟩;">↕</span> ⟦연결 방식 3⟧</div>
   <!-- VARIANT external layer (not ours): NEUTRAL dashed — not a problem / legacy colour -->
-  <div style="display:grid; grid-template-columns:160px 1fr; border:1px dashed ⟨hairline⟩; border-radius:⟨r:node-lg⟩; background:⟨fill-50⟩; overflow:hidden;">
+  <div style="display:grid; grid-template-columns:minmax(96px,min(160px,35%)) minmax(0,1fr); border:1px dashed ⟨hairline⟩; border-radius:⟨r:node-lg⟩; background:⟨fill-50⟩; overflow:hidden;">
     <div style="padding:12px 14px; display:flex; flex-direction:column; justify-content:center;">
       <div style="font:700 10px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨muted-text⟩; margin-bottom:6px;">⟦EXTERNAL⟧</div>
       <div style="font:600 13px/1.35 ⟨f:body⟩; color:⟨muted-text⟩;">⟦외부 시스템 이름⟧</div>
     </div>
     <div style="padding:12px; display:flex; flex-wrap:wrap; gap:8px; align-content:center;">
-      <div style="flex:1 1 130px; font:500 12px/1.35 ⟨f:body⟩; color:⟨muted-text⟩; background:⟨white⟩; border:1px dashed ⟨hairline⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦외부 모듈 A⟧</div>
-      <div style="flex:1 1 130px; font:500 12px/1.35 ⟨f:body⟩; color:⟨muted-text⟩; background:⟨white⟩; border:1px dashed ⟨hairline⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦외부 모듈 B⟧</div>
+      <div style="flex:1 1 min(130px,100%); min-width:0; font:500 12px/1.35 ⟨f:body⟩; color:⟨muted-text⟩; background:⟨white⟩; border:1px dashed ⟨hairline⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦외부 모듈 A⟧</div>
+      <div style="flex:1 1 min(130px,100%); min-width:0; font:500 12px/1.35 ⟨f:body⟩; color:⟨muted-text⟩; background:⟨white⟩; border:1px dashed ⟨hairline⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦외부 모듈 B⟧</div>
     </div>
   </div>
   <div style="text-align:center; font:500 11px/1.4 ⟨f:body⟩; color:⟨muted-text⟩; padding:7px 0;"><span style="color:⟨muted-300⟩; font:400 14px/1 ⟨f:body⟩;">↕</span> ⟦연결·이관 방식⟧</div>
   <!-- VARIANT legacy layer (AS-IS, to be replaced): slate family, never the target accent -->
-  <div style="display:grid; grid-template-columns:160px 1fr; border:1.5px dashed ⟨mono-dashed⟩; border-radius:⟨r:node-lg⟩; background:⟨mono-tint⟩; overflow:hidden;">
+  <div style="display:grid; grid-template-columns:minmax(96px,min(160px,35%)) minmax(0,1fr); border:1.5px dashed ⟨mono-dashed⟩; border-radius:⟨r:node-lg⟩; background:⟨mono-tint⟩; overflow:hidden;">
     <div style="padding:12px 14px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;">
       <span style="font:700 11px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨white⟩; background:⟨slate⟩; border-radius:⟨r:pill-sm⟩; padding:4px 6px;">⟦AS-IS⟧</span>
       <div style="font:600 13px/1.35 ⟨f:body⟩; color:⟨muted-text⟩; margin-top:6px;">⟦기존 시스템 이름⟧</div>
     </div>
     <div style="padding:12px; display:flex; flex-wrap:wrap; gap:8px; align-content:center;">
-      <div style="flex:1 1 130px; font:500 12px/1.35 ⟨f:body⟩; color:⟨body⟩; background:⟨white⟩; border:1px solid ⟨border-chip⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦기존 모듈 A⟧</div>
-      <div style="flex:1 1 130px; font:500 12px/1.35 ⟨f:body⟩; color:⟨body⟩; background:⟨white⟩; border:1px solid ⟨border-chip⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦기존 모듈 B⟧</div>
+      <div style="flex:1 1 min(130px,100%); min-width:0; font:500 12px/1.35 ⟨f:body⟩; color:⟨body⟩; background:⟨white⟩; border:1px solid ⟨border-chip⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦기존 모듈 A⟧</div>
+      <div style="flex:1 1 min(130px,100%); min-width:0; font:500 12px/1.35 ⟨f:body⟩; color:⟨body⟩; background:⟨white⟩; border:1px solid ⟨border-chip⟩; border-radius:⟨r:node⟩; padding:9px 10px; text-align:center;">⟦기존 모듈 B⟧</div>
     </div>
   </div>
 </div>

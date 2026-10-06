@@ -6,6 +6,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { hasHeadlessChrome, sidecarByteIdentical, styleInputs, gateOptions, collectCompositionWarnings, localAssetFor, resolveLocalAssets } from '../verify-doc.mjs';
+import { listStyles } from '../components.mjs';
 
 const REPO = resolve(fileURLToPath(new URL('../../..', import.meta.url)));
 const CLI = fileURLToPath(new URL('../verify-doc.mjs', import.meta.url));
@@ -373,6 +374,48 @@ test('visual tier 390px probe: a figure or element wider than the phone raises c
   for (const res of [bad, good]) assert.equal(res.warnings.some(w => /section-height|stacked-grids/.test(w.name) && /390x844/.test(w.detail)), false);
 });
 
+// The page-level probe above cannot see these two: nothing makes the page scroll sideways.
+test('visual tier 390px probe: a figure wider than its own frame (ending inside the sheet padding) raises composition:figure-overflow; one inside a scroller or scrolling itself does not', async (t) => {
+  if (!hasHeadlessChrome()) return t.skip('no headless browser');
+  const frame = `<div style="padding:0 40px;">`; // a 310px content box at 390px
+  const wide = analyze(wrap(`<section id="s1"><h2>x</h2>${frame}
+    <div data-component="fixed-fig" style="width:340px; height:40px; background:#eee;">wider than the frame, still inside the viewport</div>
+    <div data-component="spill-fig" style="height:40px; background:#eee;"><div style="width:340px; height:20px; background:#ccc;">children spill out of a figure that itself fits</div></div>
+    <div data-component="fits-fig" style="height:40px; background:#eee;"><div style="width:300px; height:20px; background:#ccc;">fits</div></div></div></section>`));
+  const ok = analyze(wrap(`<section id="s1"><h2>x</h2>${frame}
+    <div style="overflow-x:auto;"><div data-component="wrapped-fig" style="width:340px; height:40px; background:#eee;">scrolls in its wrapper</div></div>
+    <div data-component="scroll-fig" style="overflow-x:auto;"><div style="width:340px; height:40px; background:#eee;">scrolls itself</div></div></div></section>`));
+  const [bad, good] = [await wide, await ok];
+  if (browserDead(bad) || bad.unverified) return t.skip(`browser cannot analyze here: ${bad?.unverified}`);
+  assert.equal(bad.warnings.some(w => w.name === 'composition:mobile-overflow'), false); // 390px page, the figure ends at x=380
+  const rows = bad.warnings.filter(w => w.name === 'composition:figure-overflow');
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].level, undefined); // a WARN
+  assert.match(rows[0].detail, /^wider than their frame: .*fixed-fig×1 \(\+30px\)/);
+  assert.match(rows[0].detail, /spill-fig×1 \(\+30px\)/);
+  assert.doesNotMatch(rows[0].detail, /fits-fig/);
+  assert.equal(good.warnings.some(w => w.name === 'composition:figure-overflow'), false);
+  assert.match(good.warnings.find(w => w.name === 'composition:mobile-scroll-figure')?.detail || '', /^scroll-fig×1 /);
+});
+
+test('visual tier 390px probe: content silently cut off by overflow:hidden raises composition:figure-overflow; an ellipsis truncation and a scroller do not', async (t) => {
+  if (!hasHeadlessChrome()) return t.skip('no headless browser');
+  const clipped = analyze(wrap(`<section id="s1"><h2>x</h2>
+    <div data-component="root-clip" style="overflow:hidden;"><div style="width:600px; height:40px; background:#eee;">cut off at the root</div></div>
+    <div data-component="inner-clip"><div style="overflow:hidden;"><div style="width:600px; height:40px; background:#eee;">cut off inside</div></div></div>
+    <div data-component="ellipsis"><div style="overflow:hidden; white-space:nowrap; text-overflow:ellipsis;">${'a very long label '.repeat(12)}</div></div>
+    <div data-component="scrolls" style="overflow-x:auto;"><div style="width:600px; height:40px; background:#eee;">scrolls</div></div></section>`));
+  const res = await clipped;
+  if (browserDead(res) || res.unverified) return t.skip(`browser cannot analyze here: ${res?.unverified}`);
+  const rows = res.warnings.filter(w => w.name === 'composition:figure-overflow');
+  assert.equal(rows.length, 1);
+  assert.match(rows[0].detail, /content clipped by overflow:hidden: .*root-clip×1 \(\+\d+px\)/);
+  assert.match(rows[0].detail, /inner-clip×1/);
+  assert.doesNotMatch(rows[0].detail, /ellipsis|scrolls|wider than/);
+  assert.equal(res.warnings.some(w => w.name === 'composition:mobile-overflow'), false); // a clip is not page overflow
+  assert.match(res.warnings.find(w => w.name === 'composition:mobile-scroll-figure')?.detail || '', /^scrolls×1 /);
+});
+
 test('visual tier: the real feedbackops-light gallery renders offline through DC_LOCAL_ASSETS at all three viewports', async (t) => {
   const localAssets = process.env.DC_LOCAL_ASSETS;
   if (!localAssets || !existsSync(localAssets)) return t.skip('DC_LOCAL_ASSETS not set (a directory whose node_modules holds react, react-dom and pretendard)');
@@ -385,6 +428,23 @@ test('visual tier: the real feedbackops-light gallery renders offline through DC
   assert.ok(res.warnings.some(w => w.name === 'composition:narrow-metrics' && /at 390x844/.test(w.detail)));
   assert.equal(res.warnings.some(w => w.name === 'composition:unverified'), false);
   assert.deepEqual(res.assetNotes.filter(n => n.name.startsWith('local-assets:')), []); // react, react-dom, pretendard all found at the requested versions
+});
+
+// The narrow-width contract (core/components.md §4 "Narrow widths"): every pasted component fits a 390px page. The galleries hold every
+// component rendered with its own example content, so they are the oracle — no mobile-overflow (page) and no figure-overflow (a figure wider
+// than its frame, or content cut off by overflow:hidden); a figure that scrolls inside itself is the allowed fallback (INFO).
+test('narrow width: every style\'s component gallery has no mobile-overflow and no figure-overflow at 390px', async (t) => {
+  const localAssets = process.env.DC_LOCAL_ASSETS;
+  if (!localAssets || !existsSync(localAssets)) return t.skip('DC_LOCAL_ASSETS not set (a directory whose node_modules holds react, react-dom and pretendard)');
+  if (!hasHeadlessChrome()) return t.skip('no headless browser');
+  for (const style of listStyles()) {
+    const res = await collectCompositionWarnings(join(REPO, 'styles', style, 'components.gallery.dc.html'), styleInputs(style).panel, { localAssets: resolve(localAssets) });
+    if (browserDead(res)) return t.skip(`browser cannot run here: ${res?.unverified}`);
+    assert.equal(res.unverified, null, `${style}: ${JSON.stringify(res.assetNotes)}`);
+    assert.ok(res.warnings.some(w => w.name === 'composition:narrow-metrics' && /at 390x844/.test(w.detail)), `${style}: the 390px viewport rendered`);
+    const bad = res.warnings.filter(w => /^composition:(mobile|figure)-overflow$/.test(w.name));
+    assert.deepEqual(bad.map(w => `${w.name} ${w.detail}`), [], `${style} overflows at 390px`);
+  }
 });
 
 // Needs a working headless browser (CHROME_PATH or PATH); skipped otherwise. The page is plain HTML so no network is needed.

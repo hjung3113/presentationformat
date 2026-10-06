@@ -80,7 +80,7 @@ function componentSpans(body) {
   });
 }
 
-// For each component root: every repeat(M,1fr) must equal N when the root uses calc(100% / N).
+// For each component root: every repeat(M,1fr | minmax(…,1fr)) must equal N when the root uses calc(100% / N).
 export function gridInconsistencies(html) {
   const body = stripComments(html);
   const spans = componentSpans(body);
@@ -92,7 +92,8 @@ export function gridInconsistencies(html) {
       text = text.slice(0, c.start - s.start) + text.slice(c.end - s.start);
     const ns = [...new Set([...text.matchAll(/calc\(\s*100%\s*\/\s*(\d+(?:\.\d+)?)\s*\)/g)].map(m => m[1]))];
     if (!ns.length) continue;
-    const ms = [...new Set([...text.matchAll(/repeat\(\s*(\d+)\s*,\s*(?:1fr|minmax\(\s*0\s*,\s*1fr\s*\))\s*\)/g)].map(m => m[1]))];
+    // a track is `1fr`, `minmax(0,1fr)` or a floored `minmax(<length>,1fr)` (the narrow-width scroll fallback: sequence, swimlane, gantt …)
+    const ms = [...new Set([...text.matchAll(/repeat\(\s*(\d+)\s*,\s*(?:1fr|minmax\(\s*[\d.]+(?:px|%|em|rem)?\s*,\s*1fr\s*\))\s*\)/g)].map(m => m[1]))];
     const off = ms.filter(m => !ns.includes(m));
     if (off.length) bad.push(`${s.name}: calc(100%/N) N=${ns.join(',')} but repeat(M,1fr) M=${ms.join(',')}`);
   }

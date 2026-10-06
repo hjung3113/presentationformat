@@ -55,7 +55,8 @@ is style-scoped SSOT — none of it is shared.
 6. **Paste values into `template.dc.html`**; keep the `support.js` sidecar beside it. Keep its `⟦…⟧`
    text slots (hero, nav, section stubs, closing line) and its `@media print` block with the
    `data-page` / `data-nav` / `data-progress` hooks (`core/runtime-spec.md §5`) — they are shared structure,
-   only the values change.
+   only the values change. Keep its fluid shell paddings (sheet `min(64px,6vw)`, nav and hero `min(40px,5vw)`;
+   the style's `design.md §8.1` owns the values) — they are what leaves figures room at the 390px floor.
 6a. **Generate the component library** — `node .claude/lib/components.mjs build --style <new-id>`,
    then open `components.gallery.dc.html` over http and check every component reads correctly in the
    new palette (semantic colors in particular: target vs problem vs success must stay distinct).
@@ -78,7 +79,7 @@ From `CLAUDE.md §"Core rules"`. A new style is not done until every line is tru
 6. **Inline styles only** — no CSS classes/shared stylesheet; values pasted inline. Only global CSS = what cannot be inlined (font loading, `word-break`, selection, scrollbar) plus the one `@media print` block (attribute selectors only).
 7. **`word-break: keep-all` global** (mandatory for Korean line-breaking).
 8. **`support.js` beside every `.dc.html`** — byte-identical copy in the folder.
-9. **Components generated and current** — `node .claude/lib/components.mjs check` passes and the gallery was reviewed; the test suite (`node --test .claude/lib/test/*.test.mjs`) is green.
+9. **Components generated and current** — `node .claude/lib/components.mjs check` passes and the gallery was reviewed; the test suite (`node --test .claude/lib/test/*.test.mjs`) is green, and the gallery prints no `composition:mobile-overflow` / `composition:figure-overflow` row at 390px (`.claude/README.md`, **Local assets**).
 10. **A document built from the template passes the exit gate** — `node .claude/lib/verify-doc.mjs <doc> --canonical-support styles/<new-id>/support.js --style <new-id> --plan <content-plan.md>` prints `GATE PASSED` (the `palette` check requires every color literal in the document to be in this style's `design.md`).
 
 ---

@@ -15,14 +15,14 @@ HOW TO FILL
   2. 허용 쪽 노드는 ▼REPEAT 로 늘린다. 금지 쪽에는 금지 이유를 반드시 한 줄로 적는다.
   3. 금지 쪽에 강조색을 쓰지 않는다. 두 쪽 출발 노드는 같은 이름이어야 비교가 성립한다.
 -->
-<div data-component="forbidden-path" style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:24px;">
-  <div style="display:grid; grid-template-columns:1fr 44px 1fr; gap:14px; align-items:center;">
+<div data-component="forbidden-path" style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:24px; overflow-wrap:anywhere;">
+  <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:14px; align-items:center;">
     <!-- allowed -->
-    <div style="background:#FFFFFF; border:1px solid #99F6E4; border-radius:12px; padding:18px;">
+    <div style="background:#FFFFFF; border:1px solid #99F6E4; border-radius:12px; padding:18px; flex:1 1 230px; min-width:0;">
       <div style="margin-bottom:12px;"><span style="font:700 10.5px/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15803D; background:#E8F6EC; border-radius:5px; padding:4px 8px;">✓ 허용</span></div>
       <div style="font:600 12.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:10px; text-align:center;">⟦출발 노드⟧</div>
       <div style="text-align:center; color:#B6BBCB; font:400 14px/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; padding:6px 0;">↓</div>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+      <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:8px;">
         <!-- ▼ REPEAT per allowed destination -->
         <div style="font:600 12px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#0F766E; background:#ECFDF8; border:1.5px solid #0F766E; border-radius:8px; padding:9px 8px; text-align:center;">⟦허용 경로 A⟧</div>
         <!-- ▲ /REPEAT -->
@@ -32,9 +32,9 @@ HOW TO FILL
       </div>
     </div>
     <!-- separator -->
-    <div style="width:36px; height:36px; border-radius:50%; background:#FFFFFF; border:1.5px solid #F7C8C1; color:#B42318; display:flex; align-items:center; justify-content:center; font:700 17px/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; justify-self:center;">≠</div>
+    <div style="width:36px; height:36px; border-radius:50%; background:#FFFFFF; border:1.5px solid #F7C8C1; color:#B42318; display:flex; align-items:center; justify-content:center; font:700 17px/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; flex:none; margin:0 3px;">≠</div>
     <!-- forbidden -->
-    <div style="background:#FEF2F2; border:1px solid #F7C8C1; border-radius:12px; padding:18px;">
+    <div style="background:#FEF2F2; border:1px solid #F7C8C1; border-radius:12px; padding:18px; flex:1 1 230px; min-width:0;">
       <div style="margin-bottom:12px;"><span style="font:700 10.5px/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#B42318; background:#FFFFFF; border:1px solid #F7C8C1; border-radius:5px; padding:4px 8px;">✕ 금지</span></div>
       <div style="font:600 12.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:10px; text-align:center;">⟦출발 노드⟧</div>
       <div style="text-align:center; color:#B42318; font:600 12px/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; padding:7px 0;">✕ ↓</div>

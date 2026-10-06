@@ -198,19 +198,19 @@ function galleryFile(styleId, templates, tokens, renderedById) {
 <div style="font-family:${f.body}; color:${c['ink-800']}; background:${c['page-bg']}; min-height:100vh;">
   <div style="position:fixed; top:0; left:0; right:0; height:3px; background:transparent; z-index:60;"><div id="rprog" style="height:100%; width:0%; background:${c.accent};"></div></div>
   <div style="position:sticky; top:0; z-index:50; background:rgba(255,255,255,.86); backdrop-filter:blur(10px); border-bottom:1px solid ${c['border-node']};">
-    <div style="max-width:1100px; margin:0 auto; padding:0 40px; display:flex; align-items:center; gap:20px; height:54px;">
+    <div style="max-width:1100px; margin:0 auto; padding:0 min(40px,5vw); display:flex; align-items:center; gap:20px; height:54px;">
       <a href="#top" style="text-decoration:none; font:700 14px/1 ${f.body}; color:${c['ink-900']}; white-space:nowrap;">Components <span style="color:${c.accent};">${styleId}</span></a>
       <div class="nav-scroll" style="display:flex; gap:18px; overflow-x:auto; margin-left:auto;">
         ${nav}
       </div>
     </div>
   </div>
-  <div id="top" style="max-width:1100px; margin:0 auto; padding:56px 64px 8px;">
+  <div id="top" style="max-width:1100px; margin:0 auto; padding:56px min(64px,6vw) 8px;">
     <div style="font:700 13px/1 ${f.body}; letter-spacing:.08em; color:${c.accent}; margin-bottom:14px;">COMPONENT LIBRARY · ${styleId}</div>
     <h1 style="font:700 40px/1.25 ${f.display}; color:${c['ink-900']}; margin:0 0 14px;">컴포넌트 라이브러리</h1>
     <p style="font:400 16px/1.85 ${f.body}; color:${c['body-lead']}; margin:0; max-width:760px;">도식은 내용의 모양(shape)으로 고른다. 각 항목의 HTML은 <span style="font:500 14px/1 ${f.mono}; color:${c.accent};">styles/${styleId}/components/&lt;id&gt;.html</span>에 있고, 붙여 넣은 뒤 모든 &#x27E6;…&#x27E7; 자리를 채운다. 선택 규칙은 core/components.md에 있다.</p>
   </div>
-  <div style="max-width:1100px; margin:24px auto 0; background:${c.white}; border-radius:${r.panel} ${r.panel} 0 0; padding:8px 64px 100px;">
+  <div style="max-width:1100px; margin:24px auto 0; background:${c.white}; border-radius:${r.panel} ${r.panel} 0 0; padding:8px min(64px,6vw) 100px;">
 ${sections}
   </div>
 </div>
