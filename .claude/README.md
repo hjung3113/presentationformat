@@ -21,6 +21,9 @@ The gate itself is zero-dependency Node under `.claude/lib/`:
 
 - `.claude/lib/gate.mjs` — the checks, pure functions over the document's HTML (no I/O). See
   **Gate checks** below.
+- `.claude/lib/prose.mjs` — the text-level half of the gate, also pure: the reader's visible text split into
+  paragraph-like blocks, the `## T — 용어` term-sheet parser, `terms-consistent` / `terms:first-use`, and the
+  Korean `prose:*` heuristics. `gate.mjs` imports it, so the two files travel together.
 - `.claude/lib/verify-doc.mjs` — CLI entry that runs the gate against a `.dc.html`
   (`<doc> --canonical-support <support.js> [--style <id>] [--accent <hex>] [--plan <content-plan.md>] [--no-visual]`),
   checks the `support.js` sidecar is byte-identical to the canonical copy, runs the visual tier (see
@@ -41,9 +44,13 @@ The gate itself is zero-dependency Node under `.claude/lib/`:
 - `.claude/lib/test/*.test.mjs` — the test suite for the above (`node --test .claude/lib/test/*.test.mjs`),
   including: generated outputs up to date, every template renders in every style with no unresolved
   token, `core/` carries zero HEX, `core/components.md` §1 matches the templates' `@shape` metadata,
-  each template's first `@data` key matches the figure-data contract, the three CLIs run from a
-  path with spaces/Korean and through a symlink (they once exited 0 without running), and the worked
-  example (`test/fixtures/example-brief/`) passes every plan-aware check.
+  each template's first `@data` key matches the figure-data contract, no template hard-codes an English label
+  outside a `⟦slot⟧` (label language), informative text uses `⟨muted-text⟩` and every style's `muted-text` is ≥4.5:1 on
+  white with a mono stack that ends in its Korean body font, the optional `labels: en|ko` plan key, the three CLIs run from a
+  path with spaces/Korean and through a symlink (they once exited 0 without running), the worked
+  example (`test/fixtures/example-brief/`) passes every plan-aware check, and the text half of the gate
+  (`prose.test.mjs`: visible-text blocks, the term-sheet parser, `terms-consistent` / sref exemption, each `prose:*`
+  heuristic positive and negative).
 
 ### The GATE line
 
@@ -61,7 +68,7 @@ tier. Usage errors (missing flag, unknown `--style`) exit `2` with the usage tex
 Flags: `--style <id>` resolves `styles/<id>/` from the lib's own location, supplies the accent
 (`design.tokens.md` `colors.accent`) when `--accent` is absent, and enables the `palette` check.
 `--accent <hex>` wins over the style's. `--plan <file>` enables `plan-alignment`, `plan-shapes`
-and `numbers-traced`. `--no-visual` skips the browser tier. At least one of `--accent` / `--style`
+and `numbers-traced` — and `terms-consistent` when the plan's facts file has a `## T — 용어` table. `--no-visual` skips the browser tier. At least one of `--accent` / `--style`
 is required.
 
 ### Gate checks
@@ -73,7 +80,7 @@ Every check is hard-fail unless marked non-blocking.
 | `keep-all` | `word-break: keep-all` is present |
 | `accent-present` | the accent hex appears (case-insensitive) |
 | `sidecar-present` | `support.js` beside the doc is byte-identical to the canonical copy |
-| `unique-ids` · `navlink-integrity` | no duplicate `id`; every `data-navlink` resolves |
+| `unique-ids` · `navlink-integrity` | no duplicate `id`; every `data-navlink` resolves (HTML comments are ignored — a leftover commented template variant is harmless) |
 | `inline-only` | no class selector in any `<style>` — including `.a, .b {` lists, `div.x {` and rules inside `@media`. Attribute/element/pseudo selectors, `@font-face`, `::selection` and `::-webkit-scrollbar` stay allowed |
 | `slots-filled` · `no-role-placeholders` | no `⟦…⟧` slot and no `⟨role⟩` token left outside HTML comments |
 | `palette` (`--style`) | every `#RGB` / `#RRGGBB` in a `style` attribute (or `fill`/`stroke`/… attribute) or `<style>` text is in the style's `design.md` (case-insensitive, `#abc` = `#AABBCC`). Comments, `<script>`, `&#…;` entities, `href`/`id` fragments and `url(#…)` are ignored |
@@ -82,9 +89,11 @@ Every check is hard-fail unless marked non-blocking.
 | `plan-alignment` (`--plan`) | plan sections map to ids — a numbered title `N.` → `sN`, an unnumbered title → `sref` — and every one exists in the document; the document has no numbered `sN` the plan lacks. Act dividers must be `<div>`, never `<section>` |
 | `plan-shapes` (`--plan`) | each section (looked up by id) carries the component its shape requires |
 | `numbers-traced` (`--plan`) | every numeral a reader sees is traceable — next section |
+| `terms-consistent` (`--plan` + a facts file with a `## T — 용어` table) | no `쓰지 않을 말` variant of the term sheet appears in the visible text outside the `sref` appendix — see **Term sheet** below. Without a T table the gate prints `NOTE  terms-consistent  not checked …` |
 
 Non-blocking `figures:*` rows report per-section coverage, low variety, bare sections, and more
-than 2 main figures in one section.
+than 2 main figures in one section. Non-blocking `prose:*` and `terms:first-use` rows report Korean-writing
+problems — see **Prose warnings** below.
 
 **`numbers-traced`** exists so nothing in the document can be a number nobody supplied (template
 examples, plausible-looking invention). *Document side:* only visible text — comments, `<script>`,
@@ -99,6 +108,39 @@ full, so a made-up hero token fails. Failure lists up to 8 untraced numbers with
 context each; fix it by putting the real number in the plan (with its citation) or removing it
 from the document — never by editing the check.
 
+**Term sheet (`terms-consistent`, `terms:first-use`).** `/plan` Step 1 fixes one word per concept in the
+optional `## T — 용어` table of `facts.md` (`| 용어 | 뜻 | 처음 나올 때 | 쓰지 않을 말 |`; template
+`.claude/skills/plan/facts.template.md`). The gate reads that table through the plan's `facts:` header. *Check:* the
+reader's visible text (the same stripping as `numbers-traced`, but inline tags join the surrounding text) outside the
+`<section id="sref">` appendix — hero, nav, act dividers, closing line and numbered sections — must contain no `쓰지 않을 말` variant (comma-separated;
+Latin case-sensitive, Hangul exact; a variant made only of Latin letters/digits matches as a whole token — banned `AD` hits `AD 계정` but not `LOAD` or `ADR-0008`, and `Task` does not hit `Tasks`, so list a plural as its own variant — while a Hangul or mixed variant is an exact substring and also hits inside a longer word, `업무` in `업무량`). A chosen term or first-use form that contains a variant
+(`작업(Task)` holds `Task`) is masked first, so the prescribed form never trips its own ban. Failure lists up to 8 hits
+(`s3 "태스크" (use 작업) …context…`). *Warnings:* `terms:first-use` — (a) a term's `처음 나올 때` form (whitespace-insensitive)
+appears nowhere in the document, or (b) the bare term is read **before** its first-use form (order check, `firstUseOrder()`
+in `prose.mjs`). Order rules (`core/components.md §4` "Terms and first use"): blocks are read in document order — the pre-`<section>` hero first,
+then each section, with an act divider between sections and the closing line after the last at their real positions (a bare
+term there is fine once the form has been read, and out of order before it). The hero thesis counts as the first occurrence —
+when the form is in the hero, the hero and everything after it may use the bare term; when it is not, a bare term in the hero is
+out of order; a form that appears only in a divider or the closing line excuses nothing before it; nav labels and the fixed document title (hero blocks that are a link or an `<h1>`) are exempt; section titles (`h2`) are exempt too — the lead right below defines the term; a longer term that contains the bare one (`작업 요청` holds `작업`) and the `sref` glossary are not bare uses; a term whose form
+appears nowhere is left to (a). Placeholder rows (`<…>`) are ignored, so an unfilled template table means "no term
+sheet". Without `--plan`, without a facts file, or without a T table the check does not run (a `NOTE` says why).
+
+**Prose warnings (`prose:*`, never fail the gate).** Computed on the paragraph-like blocks of the hero, the numbered
+sections and the dividers/closing line between and after them (the appendix and headings are excluded; only blocks of 25+ characters that end like a sentence — `.`/`!`/`?`,
+or `다`/`요`/`까` — are prose, so figure labels and chips are ignored). Sentences end at `. ! ?` before a space or the end
+(3.5, v0.2.0 and file.md stay whole). Thresholds are constants in `prose.mjs`.
+
+| row | fires when |
+|---|---|
+| `prose:long-sentence` | a sentence is over 110 characters (spaces included); reports the count and the two longest |
+| `prose:dot-chain` | a sentence has 4 or more `·` (a noun pile) |
+| `prose:dash` | more than one `—` in a sentence, or more than 3 in a section lead (the first `<p>` of a numbered section) |
+| `prose:translationese` | any `~는/한/된/인 것이다`, `~것으로 보인다`, `되어지/되어진/보여지…`, `~에 있어서/~함에 있어`; or `~에 대한` / `~(을/를) 통해` 3+ times in one section |
+| `prose:register` | a polite ending (`~합니다`, `~습니다`, `~해요` and kin) in body text — all styles write `~한다` |
+
+`~에 있어서` also matches a literal "is located in" (`서버에 있어서`); read the context before rewriting. A kept warning
+must be justified in `/build`'s final report (its Step 9).
+
 ### Plan checks
 
 `plan-schema.mjs` returns `{ok, errors, warnings}`; the CLI prints warnings (non-blocking) after OK /
@@ -109,22 +151,31 @@ INVALID.
   (`executive|user|developer`), `reader-action`, `has-as-is`, `metrics-mode`, `act-structure`,
   `narrative-lens`, `source-ref`, `title`, `thesis`, `cover-tokens`. `facts: <path>` is required for
   `pitch` (the file must exist relative to the plan) and read by `numbers-traced` whenever present;
-  `as-of: YYYY-MM-DD` is optional. Enums are validated; any value that is still a template
+  `as-of: YYYY-MM-DD` is optional, and so is `eyebrow` (the hero eyebrow, printed verbatim; without it `/build`
+  writes `<DOC-TYPE> · <audience>`) and `labels: en|ko` (the language of section eyebrows, the appendix label and
+  component badges; without it `/build` uses `en` for `audience: developer` and `ko` for `executive|user` —
+  `labelLanguage()` in `plan-schema.mjs`, table in `core/components.md §4`). Enums are validated; any value that is still a template
   placeholder (`<…>`) is rejected; `cover-tokens` is 2–4 items `값=라벨 [cite]` separated by `;`.
   Keys and enums are defined in the figure-data contract — `core/components.md` and the
   `content-plan.template.md` the skills carry.
 - **Sections** (`## N. 제목` → `sN`; `## 제목` without a number → `sref`; ids must be unique). Each
   field is one `- key: value` line (indented continuation lines are appended; an empty field stays
   empty and never captures the next line): `intent`, `shape`, `payload`, `source-span` always;
-  `figure-data` for figure/chart/report shapes. `source-span` must look like a citation
+  `figure-data` for figure/chart/report shapes **and `text-table`** (a `columns: … | rows: …` table; `none` is an
+  error). `source-span` must look like a citation
   (path, `L12-40`, `[F03]`, `repo@sha`) — "source" alone is rejected.
 - **figure-data** must contain the component's first `@data` key (`(^|[|\s])KEY\s*(\([^)]*\))?\s*:` —
   an annotation such as `layers (위→아래):` is fine), and for a component whose `@data` shows flow
   (`→ ⇢ -> ↻`) at least one of `→ ⇢ -> --> ↻ (self)`; ASCII `->` request, `-->` response, `(self)`
   internal are accepted equivalents.
-- **Warnings:** more than 2 sections with shape `decision`; `audience: executive` with more than 7
-  numbered sections, any of `code-structure|interaction|entity-relations|rule-table`, a first
-  numbered section that is not `headline-metric|decision`, or a last one that is not `decision`.
+- **Warnings:** more than 2 sections with shape `decision`; `audience: executive` with more than 12
+  numbered sections (the text suggests grouping into acts — the section count follows the content, and a document that
+  covers several products/systems gives each its own section set; `core/components.md` §5), any of `code-structure|interaction|entity-relations|rule-table`, a first
+  numbered section that is not `headline-metric|decision`, or a last one that is not `decision`. Three **countable
+  limits** also warn (never error; `COUNT_LIMITS` in `plan-schema.mjs`, the same numbers as each component's `@limits`): more than 5
+  goals for one actor in an `actor-goals` figure-data (`actors: A: 목표, 목표 ‖ B: …`), more than 5 modules in one layer of a
+  `layered-structure` figure-data (bracket tags such as `[planned]` and a bare `key` marker do not count), and more rows in a
+  `text-table` (`rows:` split on `;`) than `table.html` allows: more than 7 in a body table, more than 10 in the `sref` appendix.
 
 ## Prerequisites
 

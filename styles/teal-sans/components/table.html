@@ -8,12 +8,25 @@
 @title 표 — 행과 열 모두 의미가 있는 문장 비교
 @use 행(항목)과 열(관점) 모두 의미가 있고 칸마다 짧은 문장이 들어간다. 문제↔해결↔효과 대응, 미정 질문(항목 / 현재 방향 / 결정 필요), 용어 대응.
 @avoid 칸이 ✓/✕ → matrix. 조건 조합 → decision-table. 열이 하나뿐 → card-grid.
-@limits 열 2–4, 행 3–7
-@data columns: 열1, 열2, 열3 | rows: 값 · 값 · 값 …
+@limits 열 2–4, 행 3–7 (부록 용어·근거표는 10행까지, 더 길면 두 표 또는 정의 목록)
+@data columns: 열1, 열2, 열3 | rows: 값 · 값 · 값 ; 값 · 값 · 값 …
 HOW TO FILL
   1. 열 수와 비율을 모든 행의 grid-template-columns 에 같게 쓴다(첫 열은 핵심어라 좁게, 예: 1fr 1.6fr 1.6fr).
   2. 첫 열은 핵심어(굵게). 나머지 칸은 한 문장 이하.
-  3. 행 하나 = ▼REPEAT 하나. 7행을 넘기면 두 표로 나누거나 부록으로 옮긴다.
+  3. 행 하나 = ▼REPEAT 하나. 본문 표는 7행까지다. 7행을 넘기면 두 표로 나누거나 부록으로 옮긴다.
+     예외 — 부록(sref)의 용어·근거 표는 7행을 넘을 수 있다. 한 표는 10행까지이고, 더 길면 10행 이하의 두 표로 나누거나
+     아래 VARIANT 의 정의 목록(두 열 "용어 — 정의")으로 쓴다.
+  4. 헤더는 두 가지다 — 표 하나에 하나만 쓴다:
+       진한 헤더(기본) = 본문 흐름의 주 표.
+       소프트 헤더 = 참조·부록 표(sref 부록의 표는 항상 소프트 헤더), 그림 뒤에 붙는 보조 표.
+     소프트 헤더는 아래 VARIANT 주석의 헤더 줄로 진한 헤더 줄을 통째로 바꾼다(열 수·비율·본문 행은 그대로).
+     진한 헤더의 배경색만 바꾸면 흰 글자가 안 보이므로 줄 전체를 바꾼다.
+  5. 칸 변형 두 가지(아래 본문에 한 줄씩 실제 마크업으로 들어 있다 — 쓰지 않는 변형은 지운다):
+       첫 칸 보조줄    핵심어 아래에 흐린 한 줄 설명(예: 단위·범위·출처). figure-data 에서는 "핵심어 {보조 설명}" 으로 적는다.
+       칸 안 여러 줄   한 칸에 짧은 값 줄을 쌓고 줄 사이에 흐린 구분선을 둔다(예: 조건 두세 개, 근거 문서 여러 개). figure-data 에서는 " ¶ " 로 줄을 나눈다.
+     한 칸은 세 줄까지다. 그 이상이면 행을 나누거나 부록으로 옮긴다.
+  6. 정의 목록(부록 용어표): 아래 VARIANT 주석의 목록으로 표 전체를 바꾼다. 루트의 data-component="table" 은 그대로 두고, 용어 하나 = 항목 div 하나(복사해 늘린다),
+     2열 격자로 흐른다. 용어는 굵게, 정의는 흐린 글자로 "— 정의" 형태(명사형 종결). 본문 흐름의 표에는 쓰지 않는다.
 -->
 <div data-component="table" style="border:1px solid #E7E9F3; border-radius:10px; overflow:hidden; background:#FFFFFF;">
   <div style="display:grid; grid-template-columns:1fr 1.6fr 1.6fr; background:#15172B;">
@@ -21,6 +34,13 @@ HOW TO FILL
     <div style="font:600 12.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#FFFFFF; padding:13px 18px;">⟦열 2 제목⟧</div>
     <div style="font:600 12.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#FFFFFF; padding:13px 18px;">⟦열 3 제목⟧</div>
   </div>
+  <!-- VARIANT soft header (appendix / reference / secondary tables): use INSTEAD of the strong header row above — same columns, delete the other
+  <div style="display:grid; grid-template-columns:1fr 1.6fr 1.6fr; background:#EFF5F4;">
+    <div style="font:600 12.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#3A4255; padding:12px 18px;">⟦열 1 제목⟧</div>
+    <div style="font:600 12.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#3A4255; padding:12px 18px;">⟦열 2 제목⟧</div>
+    <div style="font:600 12.5px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#3A4255; padding:12px 18px;">⟦열 3 제목⟧</div>
+  </div>
+  -->
   <!-- ▼ REPEAT per row -->
   <div style="display:grid; grid-template-columns:1fr 1.6fr 1.6fr; border-top:1px solid #EDEEF4;">
     <div style="font:600 13px/1.55 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#1E2233; padding:12px 18px; background:#FAFBFE;">⟦핵심어 A⟧</div>
@@ -28,14 +48,22 @@ HOW TO FILL
     <div style="font:400 13px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175; padding:12px 18px;">⟦한 문장 설명⟧</div>
   </div>
   <!-- ▲ /REPEAT -->
+  <!-- VARIANT first-column detail line: a muted one-line gloss under the key word (figure-data: 핵심어 {보조 설명}) -->
   <div style="display:grid; grid-template-columns:1fr 1.6fr 1.6fr; border-top:1px solid #EDEEF4;">
-    <div style="font:600 13px/1.55 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#1E2233; padding:12px 18px; background:#FAFBFE;">⟦핵심어 B⟧</div>
+    <div style="font:600 13px/1.55 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#1E2233; padding:12px 18px; background:#FAFBFE;">⟦핵심어 B⟧<span style="display:block; font:400 12px/1.5 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#6A7187; margin-top:2px;">⟦보조 설명 한 줄⟧</span></div>
     <div style="font:400 13px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175; padding:12px 18px;">⟦한 문장 설명⟧</div>
     <div style="font:400 13px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175; padding:12px 18px;">⟦한 문장 설명⟧</div>
   </div>
+  <!-- VARIANT stacked cell: short value lines stacked in one cell, a muted hairline between lines (figure-data: 줄 1 ¶ 줄 2) -->
   <div style="display:grid; grid-template-columns:1fr 1.6fr 1.6fr; border-top:1px solid #EDEEF4;">
     <div style="font:600 13px/1.55 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#1E2233; padding:12px 18px; background:#FAFBFE;">⟦핵심어 C⟧</div>
-    <div style="font:400 13px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175; padding:12px 18px;">⟦한 문장 설명⟧</div>
+    <div style="font:400 13px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175; padding:12px 18px;">⟦값 줄 1⟧<div style="border-top:1px solid #EDEEF4; margin-top:7px; padding-top:7px;">⟦값 줄 2⟧</div></div>
     <div style="font:400 13px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175; padding:12px 18px;">⟦한 문장 설명⟧</div>
   </div>
+  <!-- VARIANT definition list (appendix glossary, more than 10 terms): use INSTEAD of the whole table above (header and rows) — keep the data-component="table" root marker; two columns of "term — definition", nominal endings
+<div data-component="table" style="display:grid; grid-template-columns:1fr 1fr; gap:0 40px;">
+  <div style="padding:9px 0; border-bottom:1px solid #EDEEF4;"><span style="font:600 12.5px/1.5 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">⟦용어⟧</span> <span style="font:400 12px/1.55 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#6A7187;">— ⟦정의 (명사형 종결)⟧</span></div>
+  <div style="padding:9px 0; border-bottom:1px solid #EDEEF4;"><span style="font:600 12.5px/1.5 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">⟦용어⟧</span> <span style="font:400 12px/1.55 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#6A7187;">— ⟦정의 (명사형 종결)⟧</span></div>
+</div>
+  -->
 </div>

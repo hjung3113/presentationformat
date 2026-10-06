@@ -84,6 +84,10 @@ covers becomes a `Q` row (`질문`, `필요 섹션`, `누구`, `open`). Never fi
 When it is answered, add the `F` row (`owner`, or the document that answers it) and set the Q row's
 status to `→F12`. A pitch also keeps `C` rows (the claim you want to make, its F-ids, its limits).
 
+**The term sheet lives in the same file.** An optional `## T — 용어` table
+(`| 용어 | 뜻 | 처음 나올 때 | 쓰지 않을 말 |`, template: `facts.template.md`) records the one word the document uses
+for each concept. You fill it in Step 1, before any payload; the exit gate (`terms-consistent`) holds the document to it.
+
 **Rules that travel with the ledger** (they bind Step 4 and `/build`):
 
 - A claim with no F-id is dropped.
@@ -98,7 +102,29 @@ With the ledger in hand, note for later use:
 - whether there is a current/old state described anywhere that a target/new state is meant to
   improve on (this becomes the `has-as-is` header value),
 - whether the ledger contains measurable numbers (this becomes `metrics-mode`),
-- roughly how many distinct topics of substance the facts support (feeds the TOC count below).
+- roughly how many distinct topics of substance the facts support (feeds the TOC count below) and
+  **how many products or systems the document has to introduce** (each one needs its own section set — Step 3),
+- **the term sheet** — fix it now, in `facts.md` under `## T — 용어`, before a single payload is written.
+  The sources call one thing by several names (an ADR says *Task Request*, a manual says *작업 요청*, a ticket says
+  *일감*); a document that repeats all of them reads as several different things, and the reader cannot tell. For every
+  concept the document names:
+  1. **One term per concept.** Pick the word (`용어`), write what it means in one plain sentence (`뜻`), and list the
+     other names the sources use as `쓰지 않을 말`. The document never uses a banned variant.
+  2. **Audience-appropriate words.** An executive or user document uses everyday words (할 일 목록, 시험용 데이터,
+     사내 통합 로그인) and keeps an internal token only where the reader will meet it on screen; a developer document
+     keeps the engineering token. The audience comes from Step 2.6 — if that step changes it, redo the words.
+  3. **Product and system names are defined once.** The `처음 나올 때` form carries the definition
+     (`FeedbackOps(VOC·작업 운영 도구)`, `작업(Task)`); after that the bare name. A term the reader already knows needs no
+     gloss: its `처음 나올 때` is the term itself. **The hero thesis counts as the first occurrence**, so write the plan's
+     `thesis` with the first-use form of every sheet term it names (the nav labels and the document title are exempt and stay
+     bare); a term the thesis does not name gets its form where `/build` first uses it (`terms:first-use` warns on a bare term
+     read before its form).
+  4. **No near-synonyms by accident.** Two rows that a reader could confuse (작업 / 작업 요청 / 과제) either get a
+     difference in their `뜻` or collapse into one.
+
+  **Payloads and figure-data then use only the chosen terms** — never a banned variant, even in notes — because `/build`
+  copies words from the plan. The sheet is optional for a short single-product note, expected whenever the document names
+  two or more products/systems or the sources disagree on names, and shown to the user with the TOC at Gate 1.
 
 ### Step 2 — Detect greenfield / metric-less topics up front
 
@@ -145,8 +171,9 @@ one-line `reader-action` (what the reader decides or does after reading). A diff
 different plan file written from the **same** `facts.md` (use the ledger's `독자` column to pick the
 rows); do not stretch one plan to serve everyone.
 
-- `executive` — at most 7 numbered sections; open with `headline-metric` or `decision`; end with
-  `decision`; avoid `code-structure`, `interaction`, `entity-relations`, `rule-table`. The plan
+- `executive` — open with `headline-metric` or `decision`; end with `decision`; avoid `code-structure`,
+  `interaction`, `entity-relations`, `rule-table`. The audience does not cap the section count (Step 3: the count
+  follows the content; the validator warns only above 12 numbered sections and suggests act grouping). The plan
   validator warns on each of these.
 - `user` — what they can do and where (`actor-goals`, `ui-surface`, `role-handoff`), usually
   `use-case-first`.
@@ -164,20 +191,26 @@ This arc is a content-sequencing aid only, not a page-type taxonomy — which pa
 section renders as is decided later at `/build` time from the chosen style's own skeleton (see
 its authoring-guide).
 
-- **Validate the count**: target roughly 6–9 numbered sections plus a reference appendix (an
-  executive plan: at most 7).
-  - Below that range, merge thin rows — don't pad with a section the source can't support.
-  - Above roughly 9, plan for act-grouped structure (dividers grouping sections into acts) and
-    set `act-structure: act-grouped`; otherwise `act-structure: flat`.
+- **Validate the count — the section count follows the content, not a quota.**
+  - A document on one subject usually lands at roughly 6–9 numbered sections plus a reference appendix.
+    Below that, merge thin rows — don't pad with a section the source can't support.
+  - **When the document covers several products or systems, give each its own section(s):** what it is, who uses it,
+    what works today, what is planned (the "system introduction" block of recipe F in `core/components.md` §5 applies
+    to any recipe), and give the relationship or migration between them a section of its own. One thin paragraph for
+    all of them is the failure this prevents — do not squeeze products together to stay under a number.
+  - Above roughly 9, plan for act-grouped structure (dividers grouping sections into acts) and set
+    `act-structure: act-grouped`; otherwise `act-structure: flat`. The audience does not change the count (an executive
+    plan is warned only above 12 numbered sections, with the suggestion to group into acts); it changes which
+    sections and shapes the plan uses.
 - Check the sequence against the narrative lens from Step 2.5. A `use-case-first` lens must put
   actors/scenarios/journey before architecture detail; a `decision-first` lens must surface the
   decision context early, not bury it in the final section.
 - **Decision budget.** Plan at most 1–2 sections with shape `decision`: the one section that *is* the
   request (the plan validator warns above 2). For a `pitch` the request is required and is the last
   numbered section. Sections that only lead up to the ask are classified by what they say.
-- Present the TOC to the user and **stop — this is Gate 1**. Do not draft section content until
-  the user has reviewed and agreed on the TOC (adding, dropping, renaming, or reordering rows as
-  they like). Re-propose and re-gate if they request changes.
+- Present the TOC **and the term sheet** to the user and **stop — this is Gate 1**. Do not draft section content until
+  the user has reviewed and agreed on the TOC and the words (adding, dropping, renaming, or reordering rows,
+  choosing a different term, as they like). Re-propose and re-gate if they request changes.
 
 ### Step 4 — Draft each section from source
 
@@ -195,12 +228,19 @@ working strictly from the source:
   prose**. Voice and register are decided at `/build` time (the style's authoring-guide §3.1); this
   skill only carries content. When a ledger exists, **every number and every claim cites its fact id**
   (`수작업 18시간/월 [F07]`); an estimate or owner value is written with its marker (`(추정)`,
-  `(소유자 진술)`), and a `designed`/`planned` fact is phrased as designed/planned.
+  `(소유자 진술)`), and a `designed`/`planned` fact is phrased as designed/planned. **Write it in the term
+  sheet's words only** (`용어`, never a `쓰지 않을 말`); `payload` and `figure-data` are where `/build` copies names from.
 - `figure-data` — the raw values behind the figure, written in **the figure-data format of the
   shape's component** (the last column of `core/components/README.md`), so `/build` can fill the
   component's slots without re-reading source. Required for every shape whose component is a
-  figure, chart, or report block; write `none` for `none`/`peer-list`/`text-table`. The format's
-  first key is mandatory (`states:`, `lanes:`, `tiles:`, …) and keys ending in `?` are optional.
+  figure, chart, or report block **and for `text-table`**; write `none` only for `none`/`peer-list`.
+  A `text-table` section is a pasted `table` filled from its figure-data, so it MUST carry
+  `columns: 열1, 열2, 열3 | rows: 값 · 값 · 값 ; 값 · 값 · 값 …` (cells split by `·`, rows by `;` — every row, every cell; the
+  document's table is exactly this; the plan validator rejects `none`, and warns above 7 rows in a body table and above 10 in the appendix). The format's first key is mandatory (`states:`, `lanes:`,
+  `tiles:`, `columns:`, …) and keys ending in `?` are optional.
+  An item whose ledger status is `designed` or `planned` (not built yet) gets the marker `[planned]` right
+  after it — a layer module, pipeline node, tree child or leaf, timeline item, sequence ALT/OPT group — so
+  `/build` draws it in the shared planned look instead of the built look (`core/components.md` §4).
   Numbers carry their `[Fnn]` here too. ASCII arrows are accepted: `->` for a request or transition,
   two hyphens followed by `>` for a response, `(self)` for internal processing.
   **Carry the connections, not just the boxes.** For flow and structure shapes the figure-data
@@ -246,13 +286,19 @@ determined in the earlier steps:
 - `narrative-lens` — `architecture-first`, `use-case-first`, or `decision-first`, matching Step 2.5.
 - `source-ref` — every source consumed, with a fingerprint (`repo@sha` or `path@mtime`), so `/build`
   can detect if the source has since changed without re-reading it.
-- `title` — the hero title. `thesis` — the one-sentence hero thesis (may end with a citation such
-  as `[F03]`). `cover-tokens` — 2–4 hero tokens, `값=라벨 [cite]` separated by `;`, **each with a
+- `title` — the hero title. `eyebrow` — optional: the hero eyebrow pill, printed verbatim (e.g.
+  `PROPOSAL · 관리자용`); leave the key out and `/build` writes `<DOC-TYPE in English caps> · <audience in
+  Korean>` (`labels: ko` documents: `<문서 종류> · <대상>`) — nothing else. `thesis` — the one-sentence hero thesis (may end with a citation such
+  as `[F03]`); it may be written in **any register** (notes, `~합니다`, bare nouns) — `/build` always
+  renders the page in the style's register (`~한다`), so don't spend effort on polish here.
+  `cover-tokens` — 2–4 hero tokens, `값=라벨 [cite]` separated by `;`, **each with a
   citation** (`[F07]`, or a source span such as `[PRODUCT.md L12]` when no ledger exists). `/build`
   fills the hero **only** from these, so a framing token with no source is not planned. A token need
   not be a number (`MVP=출시 단계 [F02]`).
-- `facts` — path to `facts.md`, relative to the plan (required for `pitch`). `as-of` — `YYYY-MM-DD`,
-  the date printed in the hero meta line.
+- `facts` — path to `facts.md`, relative to the plan (required for `pitch`; its `## T — 용어` table, when present, is enforced by the gate). `as-of` — `YYYY-MM-DD`,
+  the date printed in the hero meta line. `labels` — optional `en` | `ko`: the language of the document's eyebrows, appendix
+  label and component badges. Leave it out: `/build` takes `en` for `audience: developer` and `ko` for `executive` / `user`
+  (an executive or user document reads `01 · 요약` and `지금 / 목표`, not `01 · SUMMARY` and `AS-IS / TO-BE`). Write it only to override.
 
 Before presenting it, mechanically self-check the emitted plan so no placeholder or missing field
 reaches the user (this is the same shape gate `/build` runs at ingest, run here first):
@@ -274,7 +320,7 @@ running outside its repo.)
 ### Step 7 — Confirm before handoff (Gate 2)
 
 Present the completed `content-plan.md` — every section's `intent`, `shape`, `payload`, and
-`figure-data` — to the user for review, together with the open `Q` rows still in `facts.md` and the
+`figure-data` — to the user for review, together with the term sheet, the open `Q` rows still in `facts.md` and the
 validator's warnings. Show the shapes as a one-line-per-section list first, with the component each
 implies (e.g. `05 상태 규칙 — lifecycle → state-machine`), so the user can see which diagrams the
 document will carry before any HTML exists. This is **Gate 2**: do not consider the plan final, and do

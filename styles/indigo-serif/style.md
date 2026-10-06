@@ -10,7 +10,7 @@
 | **when to use** | Explanatory / before→after / architecture briefs where a calm, editorial "same-author" feel is wanted. |
 | **display font** | Noto Serif KR |
 | **body font** | Pretendard |
-| **mono font** | JetBrains Mono |
+| **mono font** | JetBrains Mono — stack `'JetBrains Mono',Pretendard,monospace` (Hangul falls back to the body font) |
 | **accent** | `#4338CA` |
 | **page bg** | `#EEF0F7` |
 

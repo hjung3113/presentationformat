@@ -5,7 +5,7 @@ import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { validatePlan, parsePlan, parseCoverTokens } from '../plan-schema.mjs';
+import { validatePlan, parsePlan, parseCoverTokens, labelLanguage, COUNT_LIMITS, useCaseGoals, layerModules, tableRowCount } from '../plan-schema.mjs';
 import { listTemplates } from '../components.mjs';
 
 const read = (f) => readFileSync(new URL(`./fixtures/${f}`, import.meta.url), 'utf8');
@@ -55,6 +55,7 @@ function synthTemplates() {
     'flow.html': tpl('flow', 'figure', 'data-flow', 'stages: 수집[A] → 처리[B] | arrow-labels: 근거'),
     'layers.html': tpl('layers', 'figure', 'layered-structure', 'layers (위→아래): 레이어명: 모듈 | links: 연결 | external: 이름'),
     'cards.html': tpl('cards', 'content', 'peer-list', 'items: 번호 · 제목'),
+    'tbl.html': tpl('tbl', 'content', 'text-table', 'columns: 열1, 열2, 열3 | rows: 값 · 값 · 값 …'),
   };
   for (const [f, src] of Object.entries(files)) writeFileSync(join(dir, f), src);
   const templates = listTemplates(dir);
@@ -78,6 +79,45 @@ test('valid plan passes and parses all fields', () => {
   assert.equal(p.sections.length, 2);
   assert.deepEqual(p.sections.map(s => s.id), ['s1', 's2']);
   assert.ok(p.sections[0].sourceSpan.length > 0);
+});
+
+test('text-table fixtures: columns/rows plan is valid (eyebrow and a ~합니다 thesis are accepted), `none` fails through the CLI', () => {
+  const ok = runCli(fixture('plan-text-table.md'));
+  assert.equal(ok.status, 0, ok.stderr);
+  assert.equal(parsePlan(read('plan-text-table.md')).header.eyebrow, 'PROPOSAL · 관리자용');
+  const bad = runCli(fixture('plan-text-table-none.md'));
+  assert.equal(bad.status, 1);
+  assert.match(bad.stderr, /shape "text-table" needs figure-data/);
+});
+
+test('header: `eyebrow` is optional, kept verbatim, and rejected only as a template placeholder', () => {
+  const run = (v) => validatePlan(plan([sec(1, 'none')], { eyebrow: v }), { templates });
+  assert.equal(run(null).ok, true); // key absent
+  assert.equal(parsePlan(plan([sec(1, 'none')], { eyebrow: null })).header.eyebrow, '');
+  assert.equal(run('PROPOSAL · 관리자용').ok, true);
+  assert.equal(parsePlan(plan([sec(1, 'none')], { eyebrow: 'PROPOSAL · 관리자용' })).header.eyebrow, 'PROPOSAL · 관리자용');
+  assert.equal(run('').ok, true); // empty = absent (the fallback applies), not an error
+  assert.match(run('<DOC-TYPE> · <audience>').errors.join('\n'), /header eyebrow is still a template placeholder/);
+});
+
+test('header: `labels` is an optional en | ko enum; labelLanguage() defaults from audience and honours the override', () => {
+  const run = (v) => validatePlan(plan([sec(1, 'none')], { labels: v }), { templates });
+  assert.equal(run(null).ok, true); // key absent
+  assert.equal(run('').ok, true); // empty = absent (the audience default applies), not an error
+  for (const ok of ['en', 'ko']) assert.equal(run(ok).ok, true, ok);
+  assert.match(run('fr').errors.join('\n'), /header labels "fr" is not one of: en, ko/);
+  assert.match(run('<en | ko>').errors.join('\n'), /header labels is still a template placeholder/);
+  assert.equal(parsePlan(plan([sec(1, 'none')], { labels: 'ko' })).header.labels, 'ko');
+  assert.equal(parsePlan(plan([sec(1, 'none')], { labels: null })).header.labels, '');
+  const lang = (over) => labelLanguage(parsePlan(plan([sec(1, 'none')], over)).header);
+  assert.equal(lang({ audience: 'developer' }), 'en'); // engineering docs keep English category labels
+  assert.equal(lang({ audience: 'executive' }), 'ko');
+  assert.equal(lang({ audience: 'user' }), 'ko');
+  assert.equal(lang({ audience: 'executive', labels: 'en' }), 'en'); // the key overrides the audience default
+  assert.equal(lang({ audience: 'developer', labels: 'ko' }), 'ko');
+  // the plan template carries the optional key, as a placeholder (so an unfilled template stays invalid)
+  const tpath = fileURLToPath(new URL('../../skills/build/content-plan.template.md', import.meta.url));
+  assert.match(readFileSync(tpath, 'utf8'), /^labels: <optional — en \| ko/m);
 });
 
 test('section ids: numbered titles → sN, an unnumbered title → sref; duplicates are an error', () => {
@@ -232,6 +272,22 @@ test('figure-data must contain the component\'s first @data key; annotated keys 
   assert.equal(run('peer-list', 'none'), '');
 });
 
+test('text-table is the one content shape that needs figure-data: columns first, like a figure', () => {
+  const run = (fd) => errs(plan([sec(1, 'text-table', fd)]), { templates });
+  for (const none of ['none', '', 'n/a'])
+    assert.match(run(none), /section 1 .* shape "text-table" needs figure-data/, none);
+  assert.match(run('rows: A · B · C'), /must contain the key "columns:" \(tbl format/);
+  assert.equal(run('columns: 문제, 해결, 효과 | rows: 수작업 · 자동화 · 시간 절감'), '');
+  assert.equal(run('columns: 항목, 값'), ''); // only the first key is mandatory, as for every component
+  // the real library: a text-table section without columns/rows is rejected, with them it passes
+  const real = (fd) => validatePlan(plan([sec(1, 'text-table', fd)])).errors.join('\n');
+  assert.match(real('none'), /shape "text-table" needs figure-data in its component's format/);
+  assert.match(real('rows: a · b'), /key "columns:" \(table format/);
+  assert.equal(real('columns: 문제, 해결 | rows: 가 · 나'), '');
+  // peer-list stays figure-data-free
+  assert.equal(errs(plan([sec(1, 'peer-list')]), { templates }), '');
+});
+
 test('arrow rule: a flow component\'s figure-data must show at least one arrow (→ ⇢ -> --> ↻ (self))', () => {
   const run = (fd) => errs(plan([sec(1, 'data-flow', fd)]), { templates });
   assert.match(run('stages: 수집 | 처리'), /shows no flow/);
@@ -259,10 +315,13 @@ test('executive plans warn on developer shapes, a non-opening metric/decision an
   assert.deepEqual(validatePlan(read('plan-valid.md')).warnings, []);
 });
 
-test('executive plans with more than 7 numbered sections warn; non-executive plans do not', () => {
-  const many = (over) => plan(Array.from({ length: 8 }, (_, i) => sec(i + 1, i === 0 || i === 7 ? 'decision' : 'peer-list', i === 0 || i === 7 ? 'question: 승인?' : 'none')), over);
-  assert.match(validatePlan(many({ audience: 'executive' }), { templates: [...templates, ...synthDecision()] }).warnings.join('\n'), /8 numbered sections \(>7\)/);
-  assert.doesNotMatch(validatePlan(many({}), { templates: [...templates, ...synthDecision()] }).warnings.join('\n'), />7/);
+test('executive plans with more than 12 numbered sections warn (and suggest acts); up to 12, and non-executive plans, do not', () => {
+  const many = (n, over) => plan(Array.from({ length: n }, (_, i) => sec(i + 1, i === 0 || i === n - 1 ? 'decision' : 'peer-list', i === 0 || i === n - 1 ? 'question: 승인?' : 'none')), over);
+  const warns = (md) => validatePlan(md, { templates: [...templates, ...synthDecision()] }).warnings.join('\n');
+  assert.match(warns(many(13, { audience: 'executive' })), /13 numbered sections \(>12\) — group them into acts \(act-structure: act-grouped/);
+  assert.doesNotMatch(warns(many(12, { audience: 'executive' })), /numbered sections/); // 8–12 sections used to warn
+  assert.doesNotMatch(warns(many(8, { audience: 'executive' })), /numbered sections/);
+  assert.doesNotMatch(warns(many(13, {})), /numbered sections/);
 });
 
 function synthDecision() {
@@ -278,6 +337,63 @@ test('more than two `decision` sections warn (non-blocking)', () => {
   const res = validatePlan(md, { templates: [...templates, ...synthDecision()] });
   assert.equal(res.ok, true, res.errors.join('; '));
   assert.match(res.warnings.join('\n'), /3 sections have shape "decision" \(s1,s2,s3\)/);
+});
+
+// ---- countable limits: goals per actor, modules per layer, table rows (non-blocking, real component library) ----
+
+const countWarns = (shape, fd, n = 1) => {
+  const res = validatePlan(plan([sec(n, shape, fd)]));
+  assert.equal(res.ok, true, res.errors.join('; ')); // always a warning, never an error
+  return res.warnings.join('\n');
+};
+const goals = (n) => Array.from({ length: n }, (_, i) => `목표${i + 1}`).join(', ');
+
+test('use-case: more than 5 goals for one actor warns, naming the actor; 5 does not; parenthesised commas stay in one goal', () => {
+  const fd = (n) => `system: 도구 | actors: 문의자: ${goals(3)} ‖ 담당 개발자: ${goals(n)} ‖ 팀장(검토, 승인): 요청 검토`;
+  assert.match(countWarns('actor-goals', fd(6)), /^s1 \(actor-goals\): "담당 개발자" has 6 goals \(>5\) — use-case shows 1–5 per actor/);
+  assert.doesNotMatch(countWarns('actor-goals', fd(5)), /goals/);
+  assert.deepEqual(useCaseGoals('system: X | actors: A: 가(나, 다), 라 ‖ B: 마'), [{ name: 'A', n: 2 }, { name: 'B', n: 1 }]);
+  assert.equal(countWarns('actor-goals', fd(7)).split('\n').length, 1); // one warning per offending actor
+});
+
+test('layer-map: more than 5 modules in one layer warns; tags, a bare `key` marker and parenthesised commas do not count as modules', () => {
+  const layer = (n) => `업무 화면 [state: 시험용 데이터]: ${Array.from({ length: n }, (_, i) => `모듈${i + 1}(설명, 둘)`).join(', ')}`;
+  const w = countWarns('layered-structure', `layers: ${layer(6)} ‖ 공통 기반 [key]: 가, 나 | links: 업무 화면 ↕ 공통 기반 = 호출`);
+  assert.match(w, /^s1 \(layered-structure\): layer "업무 화면" has 6 modules \(>5\) — layer-map shows 1–5 per layer/);
+  assert.doesNotMatch(countWarns('layered-structure', `layers: ${layer(5)}, key ‖ 공통 기반: 가, 나 [planned] | links: a ↕ b = c`), /modules/); // 5 + a `key` marker = 5 modules
+  // the older format separates layers with " | " until links/external
+  assert.deepEqual(layerModules('layers (위→아래): 독립: A, B | Integration [optional, key]: C, D(e, f) | Core: G | links: x ↕ y = z | external: AD'),
+    [{ name: '독립', n: 2 }, { name: 'Integration', n: 2 }, { name: 'Core', n: 1 }]);
+});
+
+test('text-table: a body table warns above 7 rows, the sref appendix above 10; rows are `;`-separated', () => {
+  const rows = (n) => Array.from({ length: n }, (_, i) => `항목${i + 1} · 설명(가; 나)`).join(' ; ');
+  const fd = (n) => `columns: 항목, 설명 | rows: ${rows(n)}`;
+  assert.match(countWarns('text-table', fd(8)), /^s1 \(text-table\): table has 8 rows \(>7\)/);
+  assert.match(countWarns('text-table', fd(11)), /^s1 \(text-table\): table has 11 rows \(>7\)/); // the body limit, not the appendix one
+  assert.doesNotMatch(countWarns('text-table', fd(7)), /rows/);
+  assert.equal(tableRowCount(fd(12)), 12);
+  const appendix = (n) => validatePlan(plan([sec(1, 'none'), `## 부록 — 용어\n- intent: i\n- shape: text-table\n- payload: p\n- figure-data: ${fd(n)}\n- source-span: docs/a.md L1\n`]));
+  for (const n of [8, 10]) {
+    const res = appendix(n); // an appendix table may run to 10 rows
+    assert.equal(res.ok, true, res.errors.join('; '));
+    assert.deepEqual(res.warnings, [], `${n} appendix rows`);
+  }
+  const over = appendix(11);
+  assert.equal(over.ok, true, over.errors.join('; ')); // still only a warning
+  assert.match(over.warnings.join('\n'), /^sref \(text-table\): appendix table has 11 rows \(>10\)/);
+});
+
+test('the countable limits match the components\' @limits lines (the warning and the template cannot drift apart)', () => {
+  const by = Object.fromEntries(listTemplates().map(t => [t.meta.component, t.meta.limits]));
+  assert.equal(COUNT_LIMITS.goalsPerActor, 5);
+  assert.match(by['use-case'], /행위자당 유스케이스 1–5/);
+  assert.match(by['layer-map'], /레이어당 모듈 1–5/);
+  // table.html: "행 3–7 (부록 용어·근거표는 10행까지 …)" — body limit first, appendix limit in the parenthesis
+  const [, body, appendix] = by.table.match(/행 \d+[–-](\d+)\s*\([^)]*?(\d+)행까지/);
+  assert.equal(COUNT_LIMITS.tableRows, Number(body));
+  assert.equal(COUNT_LIMITS.appendixTableRows, Number(appendix));
+  assert.deepEqual([COUNT_LIMITS.tableRows, COUNT_LIMITS.appendixTableRows], [7, 10]);
 });
 
 test('CLI prints warnings after OK, non-blocking', () => {

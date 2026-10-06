@@ -20,6 +20,7 @@
 | Body / UI font | **Inter + Pretendard** (`font-family:Inter,Pretendard,sans-serif`). Latin renders in Inter; Hangul falls through per glyph to Pretendard — the same order as FeedbackOps' `--font-sans`. |
 | Display / heading font | **Inter + Pretendard** — the same stack as body; display quality comes from **weight + size** (hero/h2 at 600–700) and tight tracking (`-.02em` hero, `-.01em` h2), never a second face. |
 | Mono font | **JetBrains Mono** — badges, section-number eyebrows, log/code lines, IDs, and any inline identifier (FeedbackOps' `--font-mono`). |
+| Mono stack | `font-family:'JetBrains Mono',Pretendard,monospace` — the style's Korean body font sits before the generic family, so Hangul inside a mono badge (`층 A`, `지금`, `결정 주체`) renders in the body font and never falls back to a system face. |
 | Numerals | Body/data numerals set `font-variant-numeric: tabular-nums` wherever they align in a column (tables, KPI rows, charts). |
 | Line breaking | `word-break: keep-all` **(global, mandatory)** — breaks at word/space boundaries. Pair with `overflow-wrap:break-word`, `text-wrap:pretty`. |
 | Page background | `#F3F7FE` (FeedbackOps canvas, "Pitch Black" Pack 17 light) |
@@ -77,9 +78,10 @@ p, h1, h2, h3, div, span, li, a { word-break: keep-all; }
 | `ink-800` | `#1D2939` | Default body, diagram-node text. |
 | `ink-700` | `#374151` | `<b>` emphasis (non-accent). |
 | `body` | `#374151` (lead) · `#475467` (most) | Paragraph / card body. |
-| `muted-500` | `#667083` | Inactive nav, secondary labels. |
-| `muted-400` | `#98A2B3` | Captions, footnotes, node sub-text. |
-| `muted-300` | `#B8C4D6` · `#B8C4D6` | Arrows (↓), low-priority labels. |
+| `muted-text` | `#5D6679` | **Text-safe muted ink** (derived from `muted-500` by the FeedbackOps `-label` rule, docs/frontend/tokens.md #750: same hue and saturation, lightness lowered until small text clears 4.5:1) — captions, footnotes (`*`), node sub-lines, legend / axis labels, footer and field labels, state chips, the `(추정)` · `(추후 확정)` suffixes. **5.8:1 on white**; ≥4.9:1 on every fill in the palette (`fill-50` / `fill-100` / `fig-tint` / `accent-050` / `mono-tint`). The rule — informative small text uses `muted-text`, never a faint role — is stated once in `../../core/components.md §4`. |
+| `muted-500` | `#667083` | Inactive nav link. Passes on white (5.0:1) but only 4.3–4.6:1 on the tinted fills — informative text uses `muted-text`. |
+| `muted-400` | `#98A2B3` | Disabled / placeholder marks and `—` not-applicable cells only (2.6:1). |
+| `muted-300` | `#B8C4D6` · `#B8C4D6` | Arrows (↓), dashed outlines, the `REFERENCE` eyebrow, text on dark fills. |
 | `hairline` | `#CBD6E6` · `#D5E0F4` | Dashed dividers, weak bars. |
 
 ### 1.3 Surface — fills / borders
@@ -129,16 +131,16 @@ Use the `font: {weight} {size}/{line-height} {family}` shorthand verbatim.
 | `t-h3-serif` | `600 20px/1.35 Inter,Pretendard,sans-serif`, `#101828` | Sub-heading in a section (name kept for cross-style parity; no serif in this style) |
 | `t-h3` | `600 18px/1.4 Inter,Pretendard,sans-serif`, `#101828` | Subsection title, diagram-group title |
 | `t-sub` | `600 16–17px/1.4 Inter,Pretendard,sans-serif`, `#101828` | Card heading, figure caption title |
-| `t-eyebrow` | `700 13px/1 Inter,Pretendard,sans-serif`, `letter-spacing:.08em`, `#1428A0` | Section number label `NN · ENGLISH` |
-| `t-eyebrow-ref` | `700 12px/1 Inter,Pretendard,sans-serif`, `letter-spacing:.08em`, `#B8C4D6` | Low-priority (reference) label |
+| `t-eyebrow` | `700 13px/1 Inter,Pretendard,sans-serif`, `letter-spacing:.08em`, `#1428A0` | Section number label `NN · ENGLISH` (`labels: en`) or `NN · 한글` (`labels: ko`, §4.4) |
+| `t-eyebrow-ref` | `700 12px/1 Inter,Pretendard,sans-serif`, `letter-spacing:.08em`, `#B8C4D6` | Low-priority (reference) label — `REFERENCE` (`labels: en`); `부록` in `muted-text` (`labels: ko`) |
 | `t-lead` | `400 15.5px/1.8 Inter,Pretendard,sans-serif`, `#374151` / `#475467`, `max-width:760px` | Section lead paragraph |
 | `t-body` | `400 14–14.5px/1.72–1.75 Inter,Pretendard,sans-serif`, `#475467` | Card body |
 | `t-body-sm` | `400 13–13.5px/1.65–1.7 Inter,Pretendard,sans-serif`, `#475467` | Small card / diagram text |
-| `t-caption` | `400 11–12.5px/1.5–1.6 Inter,Pretendard,sans-serif`, `#98A2B3` | Captions, footnotes (prefix `*`) |
+| `t-caption` | `400 11–12.5px/1.5–1.6 Inter,Pretendard,sans-serif`, `#5D6679` | Captions, footnotes (prefix `*`) |
 | `t-node` | `600 12–13px/1.3 Inter,Pretendard,sans-serif` | Diagram node text |
-| `t-node-sub` | `400 10–11px/1.4 Inter,Pretendard,sans-serif`, `#98A2B3` / `#5D6B98` | Node sub-text |
+| `t-node-sub` | `400 10–11px/1.4 Inter,Pretendard,sans-serif`, `#5D6679` / `#5D6B98` | Node sub-text |
 | `t-mono-badge` | `700 11px/1 'JetBrains Mono'`, `letter-spacing:.06em`, `#fff` | AS-IS / TO-BE badges |
-| `t-mono-num` | `700 12px/1 'JetBrains Mono'`, `#1428A0` | Item number chip (e.g. 2.1) |
+| `t-mono-num` | `700 12px/1 'JetBrains Mono'`, `#1428A0` | Item number chip — a bare integer (1, 2, 3), never `2.1` |
 | `t-mono-log` | `500 11.5px/1.5 'JetBrains Mono'` | Log/code line sample |
 | `t-stat` | `700 30px/1 Inter,Pretendard,sans-serif`, `#fff` | Hero stat number |
 | `t-stat-lg` | `700 44px/1 Inter,Pretendard,sans-serif`, `#1428A0` / `#101828` | Stat-card grid number (§5.9) — the biggest numeral |
@@ -154,7 +156,7 @@ Use the `font: {weight} {size}/{line-height} {family}` shorthand verbatim.
 - **Accent emphasis** (means "improvement/key"): `<b style="color:#1428A0">…</b>`.
 - **Highlight on dark backgrounds:** `border-bottom:2px solid rgba(255,255,255,.45)` or `box-shadow:inset 0 -8px 0 rgba(20,40,160,.12)`. Do **not** use `text-decoration:underline` or italics.
 - Max **1–2** bold emphases per paragraph. Acronyms: expand once, then abbreviate.
-- **Heading inline qualifier:** a trailing parenthetical/label inside a heading (e.g. `(현재)`, `UML Activity`, `무엇을`) drops to `font-weight:400; font-size:12–14px; color:#98A2B3` — never the heading's weight. Pattern: `<h3>제목 <span style="font-weight:400;color:#98A2B3;font-size:14px;">(보조)</span></h3>`.
+- **Heading inline qualifier:** a trailing parenthetical/label inside a heading (e.g. `(현재)`, `UML Activity`, `무엇을`) drops to `font-weight:400; font-size:12–14px; color:#5D6679` — never the heading's weight. Pattern: `<h3>제목 <span style="font-weight:400;color:#5D6679;font-size:14px;">(보조)</span></h3>`.
 
 ---
 
@@ -190,7 +192,7 @@ Use the `font: {weight} {size}/{line-height} {family}` shorthand verbatim.
 | Section rule | `border-top:1px solid #E3EAF4` | Top of each section (except first) |
 | `block-gap` | `18px` adjacent · `30–38px` distinct | Between stacked cards (18) vs distinct sub-blocks/diagrams within one section (30–38) |
 | Sheet top inset | `padding-top:8px` | Paper-sheet top padding |
-| First section | `padding:60px 0 56px`, **no** border-top | Slightly larger top pad; later sections `56px 0` + border-top |
+| First section | `padding:60px 0 56px`, **no** border-top | Slightly larger top pad; later sections `56px 0` + border-top. With the compact hero (§4.1): `36px 0 48px`, lead `margin-bottom:22px` |
 
 > The hero-to-first-title gap is fixed by three values together: sheet `−44px` overlap + sheet `padding-top:8px` + first section `~60px` top. Don't flatten the first section to 56px.
 
@@ -213,6 +215,20 @@ stat tiles (×4): flex, each bg rgba(255,255,255,.10) + border rgba(255,255,255,
                 radius 8px, pad 20–22px. number t-stat + label 13px #B9C9F7
 ```
 
+**Compact variant** — for `doc-type: pitch` / `audience: executive` (`authoring-guide.md §4.1`; `template.dc.html` carries it as a commented `VARIANT compact hero` block). Same structure, colors, eyebrow pill and token tiles; a **lower, smaller hero** so the sheet starts higher and the first section's lead plus its first figure row are on screen at 1366×900. Each line shows the compact value, then the default in parentheses.
+```
+padding:        36px 40px 60px                       (64px 40px 84px)
+eyebrow pill:   margin-bottom 18px                       (30px)
+title:          700 32px/1.24, margin 0 0 14px, max-width 900px      (44px/1.22, 0 0 24px, 820px)
+lead (thesis):  400 15.5px/1.75, margin 0 0 8px, max-width 820px       (17px/1.8, 0 0 14px, 680px)
+purpose line:   dropped
+meta line:      margin 0 0 18px, max-width 820px         (margin-bottom 40px, 680px)
+stat tiles:     2–4, gap 12px, pad 14px 18px, number 700 26px, label 400 12.5px/1.45 margin-top 6px
+                                                         (gap 14px, pad 20–22px, 30px, 13px/1.5, 8px)
+first section:  padding 36px 0 48px, lead margin-bottom 22px   (60px 0 56px, 28px)
+```
+The paper sheet's `−44px` overlap and `8px` top padding do not change. Use it for pitches and executive documents only; explainers and developer documents keep the default hero.
+
 ### 4.2 Paper sheet
 ```
 max-width:1100px; margin:-44px auto 0;  /* overlaps the hero */
@@ -227,7 +243,8 @@ sticky bar: position:sticky; top:0; z-index:50; background:rgba(255,255,255,.86)
             border-bottom:1px solid #CBD6E6; height:54px; inner max-width:1100px; pad 0 40px
 link row:   class="nav-scroll"; overflow-x:auto (scrollbar hidden via global .nav-scroll CSS, WebKit only)
 links: 500 13px; #667083 (inactive) → #1428A0 + 700 (active, set imperatively by the observer)
-ref link:  the appendix/glossary link is de-emphasized: color #B8C4D6 + a 10px vertical-align:super "ref" superscript; never highlighted active
+ref link (labels: en): the appendix/glossary link is de-emphasized: color #B8C4D6 + a 10px vertical-align:super "ref" superscript; never highlighted active
+ref link (labels: ko): a plain nav link — the same 500 13px #667083 as the other links, label `부록` (or a short Korean title), NO superscript and no faint color; it behaves like every other link
 brand:     <a href="#top"> to the hero (id="top"); smooth scroll via html{scroll-behavior:smooth}, no JS
 progress: position:fixed top:0 height:3px; z-index:60 (above nav); inner div id="rprog" width 0→100% bg #1428A0 (scroll ratio)
 ```
@@ -240,6 +257,8 @@ progress: position:fixed top:0 height:3px; z-index:60 (above nav); inner div id=
 <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#475467; margin:0 0 28px; max-width:760px;">Lead paragraph</p>
 ```
 
+**Label language (`labels: en | ko`).** `NN · ENGLISH` is the `labels: en` form — an English, upper-case **category** (not a translation of the title): the default for engineering documents. A `labels: ko` document (plan `audience: executive | user`, or the plan's `labels: ko`) writes the same eyebrow with a Korean category — `01 · 요약`, `02 · 문제`, `03 · 대안`, `07 · 결정`, the appendix `부록`. Same position, size, weight, color and letter-spacing; one language per document, including the badge text inside components (`../../core/components.md §4`).
+
 ### 4.5 Card variants
 | Variant | Style |
 |---------|-------|
@@ -247,20 +266,20 @@ progress: position:fixed top:0 height:3px; z-index:60 (above nav); inner div id=
 | Filled (soft) | `background:#F3F7FE; border-radius:12–8px; padding:16–22px;` |
 | Highlight | `border:1.5px solid #1428A0; border-radius:8px; background:linear-gradient(160deg,#EEF3FE,#fff);` |
 | Dark summary | `background:#101828; border-radius:8px;` (text #D5DCEA, emphasis #fff, label #9AABFF) |
-| Left-accent (risk) | `border:1px solid #DCE5F2; border-left:3px solid #1428A0; border-radius:0 8px 8px 0; padding:18px 20px;` — desc muted `#667083`, then `→` mitigation `#475467`. Also the base for note/callout boxes. |
+| Left-accent (risk) | `border:1px solid #DCE5F2; border-left:3px solid #1428A0; border-radius:0 8px 8px 0; padding:18px 20px;` — desc muted `#5D6679`, then `→` mitigation `#475467`. Also the base for note/callout boxes. |
 | Subsection card (deep-dive) | `border:1px solid #DCE5F2; border-radius:8px; padding:26px 28px;` — wraps a whole `N.M` subsection; heading is `N.M Title` in `t-h3` (600 18px, **plain text, no chip**); the figure panel nests inside. |
 
-**Status-row card** (e.g. MVP "Now"): rows `display:flex; justify-content:space-between`; left label `600 13px`; right status `600 12px #1428A0` (core) or `400 12px #667083` (minimal); core rows border `#D8E7FB`, minimal rows border `#DCE5F2`.
+**Status-row card** (e.g. MVP "Now"): rows `display:flex; justify-content:space-between`; left label `600 13px`; right status `600 12px #1428A0` (core) or `400 12px #5D6679` (minimal); core rows border `#D8E7FB`, minimal rows border `#DCE5F2`.
 
 **Takeaway chip** (closes a card grid): `background:#E7EFFC; border:1px solid #D8E7FB; border-radius:8px;` vertically centered, `500 12px #1428A0`, `→`-led one-line synthesis. No heading.
 
 ### 4.6 Badges / chips / tags
 | Element | Style |
 |---------|-------|
-| Number chip | `700 12px 'JetBrains Mono'; #1428A0; bg #E7EFFC; radius 6px; pad 6px 9px;` — for **peer enumerated items** in a grid (problems, findings). |
+| Number chip | `700 12px 'JetBrains Mono'; #1428A0; bg #E7EFFC; radius 6px; pad 6px 9px;` — for **peer enumerated items** in a grid (problems, findings); the text is a **bare integer** — 1, 2, 3 in card order, never `2.1` / `5.3` (the gate reads a decimal as an untraced number). |
 | Circled numeral | `①②③…` as a `600 14px #1428A0` heading prefix — for **role/component lists**. Distinct texture from number chips; don't mix the two for one role. |
 | AS-IS badge | `700 11px 'JetBrains Mono'; letter-spacing .06em; #fff; bg #94A3B8; radius 6px; pad 6px 10px;` |
-| TO-BE badge | same but `bg #1428A0` |
+| TO-BE badge | same but `bg #1428A0`. Under `labels: ko` the two badges read **지금** / **목표** — same colors, same shape. |
 | Positive tag (pill) | `500 11px; radius 100px; pad 6px 11px; #1428A0; bg #E7EFFC;` |
 | Negative tag (pill) | same but `#8E5500; bg #FDF1F1;` |
 | "yes" branch tag | `700 10.5px; #10734A; bg #E7F5EE; radius 5px; pad 4px 8px;` |
@@ -282,7 +301,7 @@ Four semantic callouts, all `border-left:3px solid; border-radius:0 8px 8px 0; p
 | KEY (핵심) | `#E7EFFC` | `#1428A0` |
 | OK (권장) | `#E7F5EE` | `#10734A` |
 | WARN (주의) | `#FDF1F1` | `#B2202B` |
-| NOTE (참고) | `#F3F7FE` | `#B8C4D6` (label `#667083`, body `#475467`) |
+| NOTE (참고) | `#F3F7FE` | `#B8C4D6` (label `#5D6679`, body `#475467`) |
 
 > **Red scope (updated).** The WARN callout **legitimately uses red** (`#B2202B` on `#FDF1F1`). Red now marks *either* an AS-IS pain point *or* a semantic WARN/negative signal — see the revised rule in §1.4-note and §8.2. It is still never decorative, and never placed inside a TO-BE **structural** zone (before/after AFTER column, target-flow nodes).
 
@@ -290,13 +309,19 @@ Four semantic callouts, all `border-left:3px solid; border-radius:0 8px 8px 0; p
 Horizontal numbered steps for a 3–5 stage procedure. `display:flex;` each step `flex:1; text-align:center;`. Number circle `width:38px; height:38px; border-radius:50%; background:#1428A0; color:#fff; font:700 15px/1 'JetBrains Mono';` → title `600 13.5px/1.4 #101828` → body `400 12px/1.6 #475467`. Connectors between steps: `→` `flex:0 0 24px; color:#A9BDF5; font-size:18px;`. **Final (완료) step circle is green** `background:#10734A` with `✓` (`700 14px`). 6+ steps → switch to a vertical flow.
 
 ### 4.10 Pull quote
-`background:linear-gradient(160deg,#EEF3FE,#fff); border:1px solid #D8E7FB; border-radius:8px; padding:24px 26px;` opening quote glyph `“` `700 40px/1 Inter,Pretendard,sans-serif; color:#B9C9F7;` quote text `600 18px/1.55 Inter,Pretendard,sans-serif; #101828;` attribution `500 12px/1.4 #667083`. For one message/principle set large, in Inter at display weight.
+`background:linear-gradient(160deg,#EEF3FE,#fff); border:1px solid #D8E7FB; border-radius:8px; padding:24px 26px;` opening quote glyph `“` `700 40px/1 Inter,Pretendard,sans-serif; color:#B9C9F7;` quote text `600 18px/1.55 Inter,Pretendard,sans-serif; #101828;` attribution `500 12px/1.4 #5D6679`. For one message/principle set large, in Inter at display weight.
 
 ### 4.11 Dark stat band
 A compact dark cousin of the hero stat tiles, dropped between sections. `background:#101828; border-radius:8px; padding:26px 30px; display:grid; grid-template-columns:repeat(4,1fr); gap:20px;` number `t-stat-band` (700 32px Inter `#fff`), label `400 12px/1.5 #9AABFF`. 3–4 headline numbers.
 
 ### 4.12 Section divider
 Same solid Samsung-blue as the hero, boxed. `background:#1428A0; border-radius:8px; padding:40px 44px;` overlay `none`. Big index `700 56px/1 'JetBrains Mono'; color:rgba(255,255,255,.28);` (e.g. `03`) + part label `700 13px/1 Inter,Pretendard,sans-serif; letter-spacing:.1em; #D8E7FB;` (`PART 03`) + title `600 30px/1.3 Inter,Pretendard,sans-serif; #fff`. Breaks a long document into acts (page-type §6.2).
+
+**Act-divider spacing.** The divider is a `<div>` that sits between two sections, so it carries its own top margin: `margin:36px 0 0` when it is the first block in the sheet (the sheet's `8px` top padding + 36px leaves 44px under the sheet's rim), `margin:8px 0 0` when it follows a section (that section's `56px` bottom padding supplies the rest of the gap). The **first section after a divider drops its `border-top`** — the divider is the separator, a hairline under it would double the line — and uses `padding:48px 0 56px`; the later sections of the same act keep the usual `56px 0` + `border-top`. (§3.2 gives the first-section rule when there is no divider.)
+
+**Compact variant (slim band).** For the *first* divider of a document that uses the compact hero (§4.1). The boxed divider is ≈210px tall; straight after the compact hero it pushes the first section's lead and first figure row below the 1366×900 fold. The band keeps the divider's fill and radius (the flat hero blue) and drops the big index and the overlay: `display:flex; align-items:center; flex-wrap:wrap; gap:4px 14px; background:#1428A0; border-radius:8px; padding:14px 24px;` — about 54px tall (**≤ 64px**), one line. Part label `700 13px/1 Inter,Pretendard,sans-serif; letter-spacing:.1em; #D8E7FB;` + title `600 19px/1.3 Inter,Pretendard,sans-serif; #fff;`. The act number lives in the label and the label ends with a middle dot: `제1부 ·` under `labels: ko`, `PART 01 ·` under `labels: en` (one label language per document — `authoring-guide.md §2`).
+
+**Which divider.** With the compact hero (pitch / executive documents) the **first** act divider uses the compact variant — or is omitted when act 1 is a single summary section (the hero then stands in for the act; later dividers keep their own numbers, `제2부` …). Later dividers may use either variant. Compact-band spacing: `margin:24px 0 0` as the first block in the sheet (the sheet's `8px` padding + 24px leaves 32px under the rim), `margin:8px 0 0` after a section; the first section after it drops its `border-top` and uses `padding:32px 0 56px` (`32px 0 48px` for the first section under the compact hero). The rest of the divider rules above (a `<div>`, never a `<section>`; no id, no nav link) are the same.
 
 ### 4.13 Do / Don't rows
 Paired guidance rows. Do: `background:#E7F5EE; border-radius:8px; padding:12px 14px;` mark `✓` `700 13px #10734A`. Don't: `background:#FCEDEE;` mark `✕` `#B2202B`. Text `400 12.5px/1.6 #374151`. Don't-rows use red per the updated red scope (§4.8-note).
@@ -315,15 +340,15 @@ Standalone comparison panels use `border:1px solid #DCE5F2; border-radius:16–1
 > **Building a figure? Paste it, don't draw it.** Every figure shape in `../../core/components.md` has a paste-ready component in `components/` (generated from `../../core/components/` with this style's `design.tokens.md`; rendered in `components.gallery.dc.html`). The specs in this section are the visual reference those components implement — for *construction* (grid placement, lookup tables, slot markers) the component file wins; for *values* this file wins.
 
 ### 5.1 Universal node rules
-- **Node:** white bg + `1px solid #CBD6E6` + radius 6px + pad 11px 8px, centered, `600 12px #1D2939`; sub-line `400 10–11px #98A2B3`.
+- **Node:** white bg + `1px solid #CBD6E6` + radius 6px + pad 11px 8px, centered, `600 12px #1D2939`; sub-line `400 10–11px #5D6679`.
 - **Key node:** `background:#E7EFFC; border:1.5px solid #1428A0; color:#1428A0;`.
 - **Data / store node:** `border:1px dashed #AEBBD3`.
-- **Vertical arrow:** centered `↓`, `#B8C4D6; font-size:13px; padding:5px 0;`; sub-label `11px #98A2B3`.
+- **Vertical arrow:** centered `↓`, `#B8C4D6; font-size:13px; padding:5px 0;`; sub-label `11px #5D6679`.
 - **Bidirectional:** `↕` (#1428A0). **Horizontal flow:** `→` (blue) or a 36px circular badge.
 - **Circular arrow badge (primary):** `width:36px;height:36px;border-radius:50%;background:#1428A0;color:#fff;font-size:17px;` flex-centered — for primary before/after pivots only.
 - **Inline light arrow circle:** `width:28px;height:28px;border-radius:50%;background:#E7EFFC;color:#1428A0;font-size:14px;` — between row-flow boxes (lighter, secondary).
 - **Root/orchestrator node:** the primary blue node may carry `box-shadow:0 6px 16px rgba(20,40,160,.2)` to read as elevated; **all other nodes are flat.**
-- **Merge/branch label:** `500 10.5px #98A2B3`, e.g. `↓ merge ↓`.
+- **Merge/branch label:** `500 10.5px #5D6679`, e.g. `↓ merge ↓`.
 
 ### 5.2 Before / After comparison (signature pattern)
 ```
@@ -335,7 +360,7 @@ BEFORE column: header [slate badge][slate label]; slate/grey body; pain points i
 AFTER column:  header [blue badge][ink label]; blue body; 3 positive pills below.
 ```
 **AS-IS "monolith" wrapper (signature):** the BEFORE sub-grid is enclosed in one box = `background:#EEF2F7; border:1.5px dashed #B8C4D6; border-radius:8px; padding:16px 14px;` with a centered caption (`600 12px #5D6679`, e.g. "현재 — 한 덩어리"); inner cells are white `1px solid #CBD6E6` radius 8. This "one tangled blob" enclosure is what makes AS-IS read as monolithic — don't render BEFORE cells as loose white boxes.
-**Legacy/external annotation bar:** a thing that is not-ours/legacy and sits apart = `background:#F4F2EF; border:1px dashed #CBD1D6; border-radius:6px; padding:9px 12px;` label `600 11px #667083` + qualifier `400 11px #A7B0C0`.
+**Legacy/external annotation bar:** a thing that is not-ours/legacy and sits apart = `background:#F4F2EF; border:1px dashed #CBD1D6; border-radius:6px; padding:9px 12px;` label `600 11px #5D6679` + qualifier `400 11px #A7B0C0`.
 
 ### 5.3 Conditional / optional path
 - Conditional step = **dashed blue box on lilac** (`bg #F0F4FE; border:1.5px dashed #1428A0;`) + a small qualifier badge ("only X").
@@ -377,7 +402,7 @@ bar kinds (position:absolute; top:4px; bottom:4px; radius:6px; 600 10px; centere
   - minimal (Phase A part):left:1.5%;  width:21%;   bg #A9BDF5; #0F1E78
   - future (Phase B):      left:51%;   width:45.5%; bg #E7EFFC; border:1px solid #B9C9F7; #1428A0
 legend: three 12px dots (radius 3px) + 500 11px labels
-footnote: 400 11.5px #98A2B3 — explain that bar length/position encodes *when × how-much*
+footnote: 400 11.5px #5D6679 — explain that bar length/position encodes *when × how-much*
 ```
 > Bars of the same kind must share identical left/width. Length encodes meaning, never random.
 
@@ -393,7 +418,7 @@ footnote: 400 11.5px #98A2B3 — explain that bar length/position encodes *when 
 > **All charts and diagrams below are pure CSS `div`s — no SVG, no chart library.** Bars are heights, rings/donuts are `conic-gradient`, trend areas are `clip-path`, heatmaps are `rgba` opacity. Every one sits in a figure panel (`#F7FAFE`) unless noted. Each is introduced by a **"언제 쓰나" usage chip**: `display:flex; gap:10px; background:#E7EFFC; border-radius:8px; padding:12px 15px;` label `700 11px/1.5 Inter,Pretendard,sans-serif; letter-spacing:.03em; #1428A0;` text `400 12.5px/1.6 #475467`. The color law holds across all of them: improved/target = blue, current/low = slate, peak = red.
 
 ### 5.8 Horizontal bar chart
-Rows `display:grid; grid-template-columns:130px 1fr 44px; gap:14px; align-items:center;`. Label `500 12.5px/1.4 #374151`; track `height:20px; background:#F3F7FE; border-radius:4px; overflow:hidden;`; fill `border-radius:4px;`; value `700 12px/1 'JetBrains Mono'; text-align:right;`. Fill/value colors: high `#1428A0`; mid `#3157D5`; **low / below-target `#CBD6E6`, value `#667083`** (slate = 미달). Use for progress/achievement/share when items are many or labels long.
+Rows `display:grid; grid-template-columns:130px 1fr 44px; gap:14px; align-items:center;`. Label `500 12.5px/1.4 #374151`; track `height:20px; background:#F3F7FE; border-radius:4px; overflow:hidden;`; fill `border-radius:4px;`; value `700 12px/1 'JetBrains Mono'; text-align:right;`. Fill/value colors: high `#1428A0`; mid `#3157D5`; **low / below-target `#CBD6E6`, value `#5D6679`** (slate = 미달). Use for progress/achievement/share when items are many or labels long.
 
 ### 5.9 Stat card grid
 `display:grid; grid-template-columns:repeat(3,1fr); gap:14px;`. Tile `background:#F3F7FE; border-radius:8px; padding:22px 24px;` number `t-stat-lg` (700 44px Inter, `#1428A0` or `#101828`), sub `400 13px/1.6 #475467`. **Highlight tile** (the improvement metric): `background:linear-gradient(160deg,#E7EFFC,#EEF3FE); border:1px solid #D8E7FB;` with unit suffix `%` at `700 20px`. Use when one or two numbers *are* the message.
@@ -402,19 +427,19 @@ Rows `display:grid; grid-template-columns:130px 1fr 44px; gap:14px; align-items:
 `display:flex; height:30px; border-radius:6px; overflow:hidden;` segments largest-first, darkest-first: `#1428A0` → `#3157D5` → `#A9BDF5` (3–4 segments max). Legend swatches `11px; border-radius:3px;`, values bold `#101828`. Use for share-of-whole / 점유율.
 
 ### 5.11 Area / trend chart
-Plot `position:relative; height:150px;`. Area fill `position:absolute; inset:0; clip-path:polygon(…points…, 100% 100%, 0% 100%); background:linear-gradient(180deg,rgba(20,40,160,.26),rgba(20,40,160,.03));`. Vertex markers `width:9px; height:9px; border-radius:50%; background:#1428A0; border:2px solid #fff;` placed at each `(left%,top%)`. Baseline `border-bottom:1.5px solid #CBD6E6;` x-labels `500 11.5px/1.4 #98A2B3`. Single series = one blue area; multiple series → use bars instead. Use when direction/累적 추세 is the message.
+Plot `position:relative; height:150px;`. Area fill `position:absolute; inset:0; clip-path:polygon(…points…, 100% 100%, 0% 100%); background:linear-gradient(180deg,rgba(20,40,160,.26),rgba(20,40,160,.03));`. Vertex markers `width:9px; height:9px; border-radius:50%; background:#1428A0; border:2px solid #fff;` placed at each `(left%,top%)`. Baseline `border-bottom:1.5px solid #CBD6E6;` x-labels `500 11.5px/1.4 #5D6679`. Single series = one blue area; multiple series → use bars instead. Use when direction/累적 추세 is the message.
 
 ### 5.12 Donut / ratio
-Ring `width:124px; height:124px; border-radius:50%; background:conic-gradient(#1428A0 0 {n}%, #DCE5F2 0);` center hole `width:86px; height:86px; background:#F7FAFE;` center number `t-metric-mid` (700 24px Inter `#1428A0`) + label `#98A2B3`. **Max 2 segments** (핵심 vs 나머지). Legend: filled `#1428A0`, remainder `#DCE5F2`.
+Ring `width:124px; height:124px; border-radius:50%; background:conic-gradient(#1428A0 0 {n}%, #DCE5F2 0);` center hole `width:86px; height:86px; background:#F7FAFE;` center number `t-metric-mid` (700 24px Inter `#1428A0`) + label `#5D6679`. **Max 2 segments** (핵심 vs 나머지). Legend: filled `#1428A0`, remainder `#DCE5F2`.
 
 ### 5.13 KPI + delta
-Card `background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:16px 18px; display:flex; justify-content:space-between; align-items:center;`. Value `t-kpi` (700 26px Inter `#101828`), label `#98A2B3`. **Delta pill** `700 12px/1; border-radius:4px; padding:6px 9px;` — improvement `#10734A` on `#E7F5EE` (`▲`), regression `#B2202B` on `#FCEDEE` (`▼`). Delta color follows *good vs bad*, not up vs down.
+Card `background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:16px 18px; display:flex; justify-content:space-between; align-items:center;`. Value `t-kpi` (700 26px Inter `#101828`), label `#5D6679`. **Delta pill** `700 12px/1; border-radius:4px; padding:6px 9px;` — improvement `#10734A` on `#E7F5EE` (`▲`), regression `#B2202B` on `#FCEDEE` (`▼`). Delta color follows *good vs bad*, not up vs down.
 
 ### 5.14 Progress rings
-Each ring `width:92px; height:92px; border-radius:50%; background:conic-gradient({color} 0 {pct}%, #DCE5F2 0);` hole `width:66px; height:66px; background:#F7FAFE;` center `t-ring-num` (700 15px JetBrains Mono). Fill color encodes priority: high `#1428A0` → mid `#3157D5` → **low `#A9BDF5` (center text `#667083`)** — lower value = paler blue. 3–5 items compared.
+Each ring `width:92px; height:92px; border-radius:50%; background:conic-gradient({color} 0 {pct}%, #DCE5F2 0);` hole `width:66px; height:66px; background:#F7FAFE;` center `t-ring-num` (700 15px JetBrains Mono). Fill color encodes priority: high `#1428A0` → mid `#3157D5` → **low `#A9BDF5` (center text `#5D6679`)** — lower value = paler blue. 3–5 items compared.
 
 ### 5.15 Heatmap / intensity grid
-`display:grid; grid-template-columns:70px repeat(7,1fr); gap:6px;`. Day headers `500 10px #98A2B3`; row labels `500 11px #475467`; cells `height:26px; border-radius:4px; background:rgba(20,40,160,α);` — **intensity is blue opacity only** (α ≈ .10→.95, single hue). **Mandatory legend** (low→high): swatches `rgba(20,40,160,.15/.45/.75/.95)` at `16×12px; border-radius:3px;`. Use for a 2-D intensity distribution (when × where).
+`display:grid; grid-template-columns:70px repeat(7,1fr); gap:6px;`. Day headers `500 10px #5D6679`; row labels `500 11px #475467`; cells `height:26px; border-radius:4px; background:rgba(20,40,160,α);` — **intensity is blue opacity only** (α ≈ .10→.95, single hue). **Mandatory legend** (low→high): swatches `rgba(20,40,160,.15/.45/.75/.95)` at `16×12px; border-radius:3px;`. Use for a 2-D intensity distribution (when × where).
 
 ### 5.16 Flowchart shape library
 Supplements §5.1's node rules with the full node vocabulary:
@@ -426,16 +451,16 @@ Supplements §5.1's node rules with the full node vocabulary:
 Plot `position:relative; height:~214px; max-width:600px; margin:0 auto;`. Participant boxes across the top; lead actor `#fff` on `#1428A0`, key participant `#1428A0` on `#E7EFFC`/`1.5px #1428A0`, data/DB `#1D2939` on white `1px dashed #AEBBD3`. Lifelines dashed (`#B9C9F7` lead, `#D5E0F4` others). Activation bar `width:8px; background:#E7EFFC; border:1px solid #1428A0; border-radius:2px;`. **Call message**: label `500 10.5px #475467`, line `height:2px; background:#1428A0`, solid triangle arrowhead `border-left:7px solid #1428A0`. **Return message** (always dashed): label `#94A3B8`, line `border-top:2px dashed #94A3B8`, arrowhead `#94A3B8`. ≤4 participants, ≤6 messages.
 
 ### 5.18 UML — state machine
-`display:flex; align-items:center; flex-wrap:wrap; gap:12px;`. **Start** `16px; border-radius:50%; background:#101828;`. States `600 12.5px/1.3 #1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:8px; padding:12px 18px;`. Transitions `→` `#B8C4D6 17px` with trigger label above `500 10px #98A2B3`. **End** `24px circle; border:2px solid #10734A;` with inner `12px #10734A` dot. Retry/error = an arrow looping back to a prior state.
+`display:flex; align-items:center; flex-wrap:wrap; gap:12px;`. **Start** `16px; border-radius:50%; background:#101828;`. States `600 12.5px/1.3 #1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:8px; padding:12px 18px;`. Transitions `→` `#B8C4D6 17px` with trigger label above `500 10px #5D6679`. **End** `24px circle; border:2px solid #10734A;` with inner `12px #10734A` dot. Retry/error = an arrow looping back to a prior state.
 
 ### 5.19 UML — class
 Class box `border:1px solid #1428A0; border-radius:6px; overflow:hidden; min-width:150px;`. Name band `600 12px/1.3 #1428A0; background:#E7EFFC; padding:9px 12px; border-bottom:1px solid #B9C9F7;`. Attribute/method rows `500 10.5px/1.7 'JetBrains Mono'; #475467;` divided by `1px solid #DCE5F2`. Inheritance: `◁` `#1428A0 15px` + connector `26px×2px #B9C9F7`.
 
 ### 5.20 UML — component
-Component box `background:#fff; border:1px solid #1428A0; border-radius:6px; padding:16px 22px; min-width:130px;` with a top-right component glyph (`15×11px` rect `1.5px #1428A0` + two `8×2px` bars), stereotype `500 9.5px #667083; letter-spacing:.04em;` («component»), name `600 13px #1428A0`. **Provided interface (lollipop):** `15px circle, 2px #1428A0 border, border-right-color:transparent` + `20×2px #1428A0` stem. **Required interface (socket):** `14px; border-radius:50%; border:2px solid #1428A0; background:#fff;` + stem.
+Component box `background:#fff; border:1px solid #1428A0; border-radius:6px; padding:16px 22px; min-width:130px;` with a top-right component glyph (`15×11px` rect `1.5px #1428A0` + two `8×2px` bars), stereotype `500 9.5px #5D6679; letter-spacing:.04em;` («component»), name `600 13px #1428A0`. **Provided interface (lollipop):** `15px circle, 2px #1428A0 border, border-right-color:transparent` + `20×2px #1428A0` stem. **Required interface (socket):** `14px; border-radius:50%; border:2px solid #1428A0; background:#fff;` + stem.
 
 ### 5.21 UML — use case
-**Actor (stick figure)** from absolutely-positioned `#1428A0` divs (13px head circle `2px #1428A0`, 2px bars for body/arms/legs, legs rotated ±22°), label `600 11.5px #475467`. Association line `36×2px #B9C9F7`. **System boundary** `border:1px solid #B9C9F7; border-radius:8px; padding:18px 22px; background:#fff;` title `600 10px #98A2B3`. **Use-case ovals** `600 12px/1.3 #1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:50%; padding:12px 26px;`.
+**Actor (stick figure)** from absolutely-positioned `#1428A0` divs (13px head circle `2px #1428A0`, 2px bars for body/arms/legs, legs rotated ±22°), label `600 11.5px #475467`. Association line `36×2px #B9C9F7`. **System boundary** `border:1px solid #B9C9F7; border-radius:8px; padding:18px 22px; background:#fff;` title `600 10px #5D6679`. **Use-case ovals** `600 12px/1.3 #1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:50%; padding:12px 26px;`.
 
 ### 5.22 UML — swimlane / partition
 Container `border:1px solid #DCE5F2; border-radius:8px; overflow:hidden; display:grid; grid-template-columns:repeat(n,1fr);` lane dividers `border-right:1px solid #DCE5F2`. Lead lane header `600 11.5px/1.3 #1428A0; background:#EEF4FB;` other headers `#475467 on #F3F7FE`, all `padding:10px 8px; border-bottom:1px solid #DCE5F2`. Lane body `min-height:150px`; activity nodes white `1px solid #CBD6E6` r8; accent node `#1428A0 on #E7EFFC/1px #B9C9F7`; cross-lane flow `↓` `#B8C4D6`. One subject per lane.
@@ -474,7 +499,8 @@ Density, type emphasis, color, and component mix shift with a page's role. Match
 - Emphasis = white + translucent bottom-border highlight. No body-grey, no figure panels, no cards-with-borders.
 
 ### 6.2 Section divider (optional)
-- The **boxed solid-blue divider (§4.12)**: big mono index + Inter title on the flat hero blue. Almost no body. Used to break long documents into acts. (A lighter variant — large index + `t-h2` on `#F3F7FE` — is fine for a quieter break.)
+- The **boxed solid-blue divider (§4.12)**: big mono index + Inter title on the flat hero blue. Almost no body. Used to break long documents into acts (spacing before and after it: §4.12). (A lighter variant — large index + `t-h2` on `#F3F7FE` — is fine for a quieter break.)
+- With the compact hero (pitch / executive) the **first** divider is the **compact variant** (§4.12) — a one-line band, ≤ 64px — or is left out when act 1 is a single summary section; later dividers may be boxed or compact.
 
 ### 6.3 Overview / Summary
 - **Goal:** orient, give the big picture. **Density:** low–medium, airy.
@@ -505,7 +531,7 @@ Density, type emphasis, color, and component mix shift with a page's role. Match
 
 ### 6.9 Reference / Appendix
 - **Goal:** definitions, low priority. **Density:** compact, **de-emphasized**.
-- `t-eyebrow-ref` (grey eyebrow), muted heading `#5D6679`, smaller body, two-column term lists with row hairlines. Place at the end; never compete with the narrative.
+- `t-eyebrow-ref` (grey eyebrow), muted heading `#5D6679`, smaller body, two-column term lists with row hairlines. Place at the end; never compete with the narrative. Eyebrow `REFERENCE` (`labels: en`) or `부록` in `muted-text` (`labels: ko`); the matching nav link is faint + superscript `ref` (en) or a plain link (ko) — §4.3.
 
 ---
 
@@ -526,8 +552,18 @@ Images live **inside a figure panel** (`#F7FAFE`, `border:1px solid #DFE7F3`), `
 Use the **4-variant callout set (§4.8)** — KEY (blue) · OK (green) · WARN (red) · NOTE (grey). Pick by meaning: an emphasis/key point is KEY, a recommendation is OK, a genuine caution/risk is WARN (red is legitimate here, per the updated red scope in §1.4-note), a low-priority aside is NOTE. The plain blue Left-accent card (§4.5) remains the base for inline note/risk boxes inside prose. **Still never red for a merely-missing value** — an unknown is not a warning (§7.5).
 
 ### 7.5 Placeholders & unknown values
-- A figure not yet quantified: use a placeholder glyph in **normal ink bold** (`O`, `OO`) immediately followed by a muted parenthetical `<span style="color:#98A2B3;">(… 추후 확정)</span>`. **Never** flag missing data with red/warn color — unknown ≠ problem.
+- A figure not yet quantified: use a placeholder glyph in **normal ink bold** (`O`, `OO`) immediately followed by a muted parenthetical `<span style="color:#5D6679;">(… 추후 확정)</span>`. **Never** flag missing data with red/warn color — unknown ≠ problem.
 - A framing "stat" with no number: substitute a 1–2-char word (`MVP`, `단계`) still set in `t-stat`.
+
+### 7.6 Inline code / identifier chip
+An identifier that appears **inside prose** — a file name or path, a class / function / API name, a config key, an enum value, a command — is set as a small inline chip so it reads as a literal, not as a word. Ordinary English engineering words (Job, thread, diff — `authoring-guide.md §3.1`) stay plain text.
+```html
+<span style="font:500 .86em/1.4 'JetBrains Mono',Pretendard,monospace; color:#1D2939; background:#EDF3FB; border-radius:4px; padding:2px 6px; white-space:nowrap;">pageType</span>
+```
+- Existing tokens only: the mono font stack, `ink-800` text, `fill-100` fill. The radius is a literal **4px** (smaller than `r-pill-sm`, sized to inline text) and there is no border. `.86em` makes it follow the surrounding size — lead, body, card text and table cells alike.
+- `white-space:nowrap`: a chip never breaks across lines. An identifier longer than ~28 characters (a full path, a long signature) goes in a mono log box (§5.7) or is shortened.
+- A chip is neutral: never accent- or warn-coloured (colour carries meaning), never bold, never underlined, and never a link. Emphasis stays bold (§2).
+- Prose, list items and table cells only — not headings, the hero, nav labels, or inside a badge/chip that is already mono. About 4 chips per paragraph at most; a denser run of identifiers is a table or a list.
 
 ---
 
@@ -555,10 +591,11 @@ Desktop-first reading document (~1100px). **No media queries by default** — mo
 1. Load Pretendard (CSS) + Inter + JetBrains Mono (via `<helmet>`); set global `word-break:keep-all`.
 2. Page bg `#F3F7FE`; hero (solid Samsung-blue) → paper sheet (white, max 1100, −44 overlap).
 3. Sticky nav + 3px progress bar + IntersectionObserver active link.
-4. Every section: eyebrow (`NN · ENGLISH`, blue) → h2 (Inter 28) → lead (15.5/1.8, max 760).
+4. Every section: eyebrow (`NN · ENGLISH`, or `NN · 한글` under `labels: ko`, blue) → h2 (Inter 28) → lead (15.5/1.8, max 760).
 5. Body `#475467`, headings `#101828`, emphasis `#1428A0` or ink bold.
 6. BEFORE = slate + red / AFTER = blue — never mixed.
 7. Diagrams, charts (§5.8–5.15) and UML (§5.17–5.23) live in figure panels (`#F7FAFE`), each led by its "언제 쓰나" chip. Node radius 6, card/figure panel 8, comparison panel 12. Charts are pure CSS (bars/conic/clip-path/rgba) — no SVG or chart lib.
 8. **Text (top) → related diagram (below)** *when the content is diagrammable* (flow/contrast/hierarchy/schedule/quantity). Enumerated peer lists (problems, risks, open questions, glossary) stay as card grids/tables with **no** diagram. Tall-narrow diagrams may sit **text-left / diagram-right** in a `1fr 1fr` grid.
 9. Match the **page type** (§6) to its density, emphasis, and component mix.
 10. No blue inside AS-IS; no slate/red inside a TO-BE structural zone. Red = AS-IS pain **or** a semantic WARN/Don't/regression signal (§4.8, §1.4-note) — never decorative, never for an unknown value (ink placeholder + muted caveat, §7.5).
+11. One label language per document (`labels: en | ko`, §4.4): eyebrows, appendix label, component badges all in the same language. Informative small text is `muted-text` (≥4.5:1), never `muted-500/400/300`; the mono stack ends in the Korean body font.

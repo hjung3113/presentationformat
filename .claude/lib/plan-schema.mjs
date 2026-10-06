@@ -6,6 +6,11 @@ import { listTemplates, shapeMap } from './components.mjs';
 // Header contract: see the content-plan template (.claude/skills/build/content-plan.template.md).
 export const DOC_TYPES = ['explainer', 'status-report', 'proposal', 'feature-guide', 'analysis', 'pitch'];
 export const AUDIENCES = ['executive', 'user', 'developer'];
+// Label language of eyebrows, the appendix label and component badges (core/components.md §4 "Label language").
+export const LABELS = ['en', 'ko'];
+// Default when the optional `labels:` header key is absent: engineering audience → English categories, the others → Korean.
+export const labelLanguage = (header) =>
+  LABELS.includes(header.labels) ? header.labels : (header.audience === 'developer' ? 'en' : 'ko');
 const ENUMS = {
   'doc-type': DOC_TYPES,
   audience: AUDIENCES,
@@ -13,20 +18,28 @@ const ENUMS = {
   'metrics-mode': ['present', 'absent', 'partial'],
   'act-structure': ['flat', 'act-grouped'],
   'narrative-lens': ['architecture-first', 'use-case-first', 'decision-first'],
+  labels: LABELS,
 };
+// Optional header keys (not in REQUIRED): `facts` (required for doc-type pitch), `as-of`, `eyebrow` (the hero
+// eyebrow, verbatim; any non-placeholder text — /build writes `DOC-TYPE · 대상` when it is absent), `labels` (en | ko,
+// overrides the audience-derived label language — see labelLanguage()).
 const REQUIRED = ['doc-type', 'audience', 'reader-action', 'has-as-is', 'metrics-mode', 'act-structure',
   'narrative-lens', 'source-ref', 'title', 'thesis', 'cover-tokens'];
 const EXEC_BANNED_SHAPES = ['code-structure', 'interaction', 'entity-relations', 'rule-table'];
+// A `content` component normally needs no figure-data (peer-list → card-grid, `callout`). The exception: a
+// text-table section is a pasted `table` filled from its figure-data columns/rows, so it carries them like a figure.
+const FIGURE_DATA_CONTENT_SHAPES = new Set(['text-table']);
 
 // Closed shape vocabulary = every @shape declared by a core component template, plus `none`.
-// `figureShapes` are the shapes whose component is a figure/chart/report (they need figure-data).
+// `figureShapes` are the shapes whose component is a figure/chart/report (they need figure-data), plus the
+// content shapes in FIGURE_DATA_CONTENT_SHAPES (`text-table`).
 export function shapeVocabulary(templates = listTemplates()) {
   const all = new Set(['none']);
   const figureShapes = new Set();
   for (const t of templates)
     for (const s of t.meta.shapes) {
       all.add(s);
-      if (t.meta.kind !== 'content') figureShapes.add(s);
+      if (t.meta.kind !== 'content' || FIGURE_DATA_CONTENT_SHAPES.has(s)) figureShapes.add(s);
     }
   return { all, figureShapes };
 }
@@ -93,6 +106,8 @@ export function parsePlan(md) {
       audience: raw.audience || '',
       readerAction: raw['reader-action'] || '',
       title: raw.title || '',
+      eyebrow: raw.eyebrow || '', // optional: the hero eyebrow verbatim; /build falls back to `DOC-TYPE · 대상` when empty
+      labels: raw.labels || '', // optional enum en | ko; empty → labelLanguage() derives it from audience
       thesis: raw.thesis || '',
       coverTokens: parseCoverTokens(raw['cover-tokens']),
       facts: raw.facts || '',
@@ -195,18 +210,106 @@ function checkFigureData(where, s, specs, shapes, errors) {
     errors.push(`${where} figure-data for shape "${s.shape}" shows no flow: use → (or ASCII ->, -->, (self), ⇢, ↻) between its steps`);
 }
 
+// ---------- countable limits (non-blocking) ----------
+// A figure-data that plainly exceeds a component's simple, countable limit (its `@limits` line) is a plan-time warning:
+// the figure would have to be split anyway, and the plan is the cheapest place to say so. Kept to three counts that
+// need no real parsing — use-case goals per actor, layer-map modules per layer, table rows — and tested in plan-schema.test.mjs.
+// Table rows follow core/components/table.html: a body table runs to 7 rows, an appendix (sref) term/source table to 10.
+export const COUNT_LIMITS = { goalsPerActor: 5, modulesPerLayer: 5, tableRows: 7, appendixTableRows: 10 };
+
+// Split on top-level separators only: a separator inside ( ) [ ] { } belongs to the item ("메뉴 패키지(a, b)" is one module).
+function splitTop(text, seps) {
+  const out = [];
+  let depth = 0;
+  let cur = '';
+  for (const ch of text) {
+    if ('([{（'.includes(ch)) depth++;
+    else if (')]}）'.includes(ch)) depth = Math.max(0, depth - 1);
+    if (depth === 0 && seps.includes(ch)) { out.push(cur); cur = ''; } else cur += ch;
+  }
+  out.push(cur);
+  return out.map(x => x.trim()).filter(Boolean);
+}
+
+// The ` | `-separated `key: value` segment of a figure-data (a `(annotation)` before the colon is tolerated). `until` is a
+// list of keys that END a multi-segment value: the older layer-map format separates layers by ` | ` too, so after `layers`
+// every following segment up to `links` / `external` is another layer (joined with ‖). Without `until` it is the one segment.
+function fieldValue(figureData, key, until = null) {
+  const segs = figureData.split(/\s\|\s/).map(sg => sg.trim());
+  const head = new RegExp(`^${key}\\s*(?:\\([^)]*\\))?\\s*\\??:\\s*`);
+  const i = segs.findIndex(sg => head.test(sg));
+  if (i < 0) return null;
+  const mine = [segs[i].replace(head, '')];
+  if (until) {
+    const end = new RegExp(`^(?:${until.join('|')})\\s*(?:\\([^)]*\\))?\\s*\\??:`);
+    for (const sg of segs.slice(i + 1)) { if (end.test(sg)) break; mine.push(sg); }
+  }
+  return mine.join(' ‖ ');
+}
+
+// use-case: `actors: 행위자 A: 목표, 목표 ‖ 행위자 B: 목표` → [{ name, n }]
+export function useCaseGoals(figureData) {
+  const v = fieldValue(figureData, 'actors');
+  return v === null ? [] : splitTop(v, '‖').map(a => {
+    const k = a.indexOf(':');
+    return { name: k < 0 ? a : a.slice(0, k).trim(), n: k < 0 ? 0 : splitTop(a.slice(k + 1), ',，、').length };
+  });
+}
+
+// layer-map: `layers: 레이어 [태그]: 모듈(설명), 모듈 [planned], key ‖ 레이어: …` → [{ name, n }]. Bracket tags and a bare `key`
+// marker are not modules.
+export function layerModules(figureData) {
+  const v = fieldValue(figureData, 'layers', ['links', 'external']);
+  return v === null ? [] : splitTop(v, '‖').map(l => {
+    const plain = l.replace(/\[[^\]]*\]/g, ' ');
+    const k = plain.indexOf(':');
+    return { name: (k < 0 ? plain : plain.slice(0, k)).replace(/\s+/g, ' ').trim(), n: k < 0 ? 0 : splitTop(plain.slice(k + 1), ',，、').filter(m => !/^key$/i.test(m)).length };
+  });
+}
+
+// table: `columns: … | rows: 값 · 값 ; 값 · 값` → number of `;`-separated rows
+export function tableRowCount(figureData) {
+  const v = fieldValue(figureData, 'rows');
+  return v === null ? 0 : splitTop(v, ';；').length;
+}
+
+function countWarnings(plan) {
+  const out = [];
+  const L = COUNT_LIMITS;
+  for (const s of plan.sections) {
+    if (!s.figureData || isEmpty(s.figureData) || isPlaceholder(s.figureData)) continue;
+    if (s.shape === 'actor-goals')
+      for (const a of useCaseGoals(s.figureData).filter(a => a.n > L.goalsPerActor))
+        out.push(`${s.id} (actor-goals): "${a.name}" has ${a.n} goals (>${L.goalsPerActor}) — use-case shows 1–${L.goalsPerActor} per actor; merge goals or split the actor`);
+    if (s.shape === 'layered-structure')
+      for (const l of layerModules(s.figureData).filter(l => l.n > L.modulesPerLayer))
+        out.push(`${s.id} (layered-structure): layer "${l.name}" has ${l.n} modules (>${L.modulesPerLayer}) — layer-map shows 1–${L.modulesPerLayer} per layer; group modules or split the layer`);
+    if (s.shape === 'text-table') {
+      const n = tableRowCount(s.figureData);
+      if (s.id === 'sref') {
+        if (n > L.appendixTableRows) out.push(`${s.id} (text-table): appendix table has ${n} rows (>${L.appendixTableRows}) — split it into two tables of at most ${L.appendixTableRows} rows, or use the definition-list variant`);
+      } else if (n > L.tableRows)
+        out.push(`${s.id} (text-table): table has ${n} rows (>${L.tableRows}) — split it into two tables, or move reference rows to the appendix (only the sref appendix may run past ${L.tableRows}, up to ${L.appendixTableRows})`);
+    }
+  }
+  return out;
+}
+
 function planWarnings(plan) {
   const out = [];
   const nums = plan.sections.filter(s => /^s\d+$/.test(s.id));
   const decisions = plan.sections.filter(s => s.shape === 'decision');
   if (decisions.length > 2) out.push(`${decisions.length} sections have shape "decision" (${decisions.map(s => s.id).join(',')}) — the request itself is one decision; the rest are probably peer-list or text-table`);
   if (plan.header.audience === 'executive') {
-    if (nums.length > 7) out.push(`executive plan has ${nums.length} numbered sections (>7) — cut to what the reader needs to decide`);
+    // the section count follows the content (a plan covering several products needs a section set per product);
+    // past ~9 sections the document is act-grouped, and past 12 even an executive reader needs acts to find the way
+    if (nums.length > 12) out.push(`executive plan has ${nums.length} numbered sections (>12) — group them into acts (act-structure: act-grouped, dividers between acts) or merge sections the reader does not need to decide`);
     const heavy = nums.filter(s => EXEC_BANNED_SHAPES.includes(s.shape));
     if (heavy.length) out.push(`executive plan uses developer-grade shapes: ${heavy.map(s => `${s.id}=${s.shape}`).join(', ')}`);
     if (nums.length && !['headline-metric', 'decision'].includes(nums[0].shape)) out.push(`executive plan should open with headline-metric or decision (first numbered section is "${nums[0].shape}")`);
     if (nums.length && nums[nums.length - 1].shape !== 'decision') out.push(`executive plan should end with a decision section (last numbered section is "${nums[nums.length - 1].shape}")`);
   }
+  out.push(...countWarnings(plan));
   return out;
 }
 

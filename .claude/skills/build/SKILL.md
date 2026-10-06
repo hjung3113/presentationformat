@@ -17,7 +17,7 @@ document that has not passed the gate is not "built," regardless of how the HTML
 
 - `content-plan.md` — the seam contract from `/plan`. Style-agnostic: header (`doc-type`, `audience`,
   `reader-action`, `has-as-is`, `metrics-mode`, `act-structure`, `narrative-lens`, `source-ref`, and
-  the hero keys `title`, `thesis`, `cover-tokens`, optional `facts`, `as-of`) plus, per section
+  the hero keys `title`, `thesis`, `cover-tokens`, optional `eyebrow`, `labels`, `facts`, `as-of`) plus, per section
   (`## N. 제목` → `sN`, an unnumbered `##` → `sref`), `intent`, `shape`, `payload` (structured notes,
   not prose), `figure-data`, `source-span`.
 - `--style <id>` — which style to render into: a folder under `styles/` (today `indigo-serif`,
@@ -26,7 +26,8 @@ document that has not passed the gate is not "built," regardless of how the HTML
 
 **The plan is the only content input.** Do not re-read the original source docs and do not add a
 claim, a number, or a hero token the plan does not carry (the exit gate traces every number back to
-the plan and its `facts.md`).
+the plan and its `facts.md`). The `facts.md` the plan names also carries the document's **term sheet**
+(`## T — 용어`, when present): the words below are chosen there, not by you.
 
 ## Step 1 — Read the plan and the style's specs
 
@@ -60,9 +61,11 @@ Use the answer key to see how a component actually looks when in doubt.
 
 Before rendering anything, check that the plan's section count and shape fit the style's skeleton
 (the style's authoring-guide describes its target section-count range and when it expects
-act-grouped structure). If the plan has far too few or too many sections for the skeleton, or its
-`act-structure` header disagrees with what its section count implies, surface that mismatch to the
-user before building rather than silently forcing a bad fit.
+act-grouped structure). The count follows the plan's content — never cut or merge sections to fit a range, and a
+document that covers several products/systems legitimately has a section set per product. What must
+agree is the `act-structure` header and the count (flat up to ~9, act-grouped above); if they disagree, or the
+plan has far too few sections for the skeleton, surface that mismatch to the user before building rather than
+silently forcing a bad fit.
 
 ## Step 3 — Clone the style's template
 
@@ -72,21 +75,58 @@ template already carries the shell + runtime contract; only its text and section
 to be replaced. Every piece of template text is a `⟦…⟧` slot (hero, nav, section stubs, closing
 line), so a leftover fails the gate.
 
+**Make two choices from the plan header before filling anything — never from taste:**
+
+1. **Label language (`labels: en | ko`).** Use the plan's optional `labels:` key when it is present; otherwise
+   `audience: developer` → `en`, `audience: executive | user` → `ko` (the same rule is `labelLanguage()` in
+   `.claude/lib/plan-schema.mjs`). It fixes every category label in the document, and the whole document uses one language:
+   - `en` (engineering docs) — section eyebrows `NN · ENGLISH` with an English category (`01 · SUMMARY`); appendix eyebrow
+     `REFERENCE` and the faint nav link with the superscript `ref`; component badges as the slots show (AS-IS / TO-BE,
+     DECISION · DUE · OWNER · IF UNDECIDED, LAYER A · EXTERNAL, IF · THEN, HUB …).
+   - `ko` (executive / user) — section eyebrows `NN · 한글 범주` (`01 · 요약`); appendix eyebrow `부록` in the text-safe muted ink
+     and a **plain** nav link (no `ref` mark, no faint color); every component badge from the table in `core/components.md §4`
+     "Label language" (지금 · 목표, 결정 · 기한 · 결정 주체 · 미결정 시, 층 A · 외부 · 지금, 조건 · 결과, 허브 …).
+   Never `01 · SUMMARY` next to a `지금` badge. Colors and geometry do not depend on the language. When you paste a component,
+   its fixed labels are `⟦slot⟧`s whose example text is the `en` form — replace them with the `ko` row under `labels: ko`.
+2. **Hero size.** Use the template's commented `VARIANT compact hero` block — and the first section's `padding:36px 0 48px` with
+   the lead's `margin-bottom:22px` — when the plan's `doc-type` is `pitch` or its `audience` is `executive`, so the sheet starts
+   higher and the first section's lead plus its first figure row are visible at 1366×900. Every other document keeps the default
+   hero. Replace the default hero block with the variant (or delete the variant); never leave both.
+   **Act dividers follow the hero.** With the compact hero and `act-structure: act-grouped`, the **first** act divider is the
+   template's `VARIANT compact act divider` (the style's `design.md §4.12`) — a one-line band, about 54px and never over 64px —
+   so section 1's lead and first figure row stay above the 1366×900 fold; a boxed divider (≈210px) there pushes them below it.
+   When act 1 is a single summary section, omit the first divider (the hero stands in for the act; later dividers keep their
+   own numbers). Later dividers may be boxed or compact. With the default hero the dividers are boxed.
+
 **Fill the hero only from the plan header — never invent it:**
 
-- the hero title ← `title`; the thesis paragraph ← `thesis` (compose it in the style's voice, but keep
-  its meaning and keep its citation out of the visible text);
+- the hero eyebrow pill ← the plan's optional `eyebrow:` header key, verbatim. If the plan has none, write
+  `<doc type> · <audience in Korean>` and nothing else: no invented subtitle, no tagline. Under `labels: en` the doc type is the
+  English caps of the `doc-type` (a hyphen becomes a space) — `PROPOSAL · 관리자용`, `FEATURE GUIDE · 사용자용`; under `labels: ko`
+  it is the Korean doc type — explainer 설명서, status-report 상태 보고, proposal 제안서, feature-guide 기능 소개, analysis 분석,
+  pitch 제안서 — `제안서 · 관리자용`, `기능 소개 · 사용자용`. The audience word is `audience` executive → 관리자용, user → 사용자용,
+  developer → 개발자용;
+- the hero title ← `title`; the thesis paragraph ← `thesis` (compose it in the style's voice and register
+  — the plan's thesis may be in any register, the page never is — but keep its meaning and keep its
+  citation out of the visible text);
 - each hero token (value + label) ← one entry of `cover-tokens`, in order; delete the unused token
   boxes — never pad to four and never add a token the plan lacks;
 - the hero meta line ← `as-of` (e.g. 기준 YYYY-MM-DD) and nothing else; delete the line if the plan
-  has no `as-of`. Delete the optional purpose line unless `reader-action` is worth a sentence there;
+  has no `as-of`. Delete the optional purpose line unless `reader-action` is worth a sentence there (the compact hero has none);
 - the sticky-nav brand ← the title (short form).
 
 **Nav labels come from the section titles** — one link per numbered section, each label the
-section's title cut to a Korean 2–4-character keyword (the appendix gets the muted `ref` link). Section
+section's title cut to a Korean 2–4-character keyword (the appendix: under `labels: en` the muted `ref` link, under `labels: ko` a plain
+link with no mark — `부록` or a short Korean title such as `근거`). Section eyebrows follow the label language chosen above
+(`01 · SUMMARY` / `01 · 요약`) and `data-screen-label` keeps the Korean title. Section
 ids are `s1…sN` in plan order and `sref` for the appendix; keep every `data-screen-label`, nav
 `data-navlink` and `href` in agreement. **Act dividers** (documents above ~9 sections) are a `<div>`,
 never a `<section>` — a `<section>` breaks the section count the gate checks against the plan.
+**Act-divider spacing** (the style's `design.md §4.12`): the boxed divider takes `margin:36px 0 0` when it is the
+first block in the sheet and `margin:8px 0 0` after a section; the **first section after a divider drops its
+`border-top`** and uses `padding:48px 0 56px` (later sections of the act keep `56px 0` + `border-top`). The compact
+band takes `margin:24px 0 0` as the first block and `margin:8px 0 0` after a section, and the section after it uses
+`padding:32px 0 56px` (`32px 0 48px` for `s1` under the compact hero).
 
 ## Step 4 — Map each plan section into the style
 
@@ -102,6 +142,14 @@ never a `<section>` — a `<section>` breaks the section count the gate checks a
    pick `VARIANT`s by meaning, delete unused `OPTIONAL` blocks, and set only the values the header
    names (column count — the same N in **every** `repeat(N,1fr)` and `calc(100% / N)` — a
    `grid-column`, a percentage slot together with its label, or a margin from its lookup table).
+   **A thing the plan marks `[planned]` (or whose fact is `designed`/`planned`) is drawn with the component's
+   planned variant** — muted dashed outline + state chip (11px bold) — never the built look (`core/components.md` §4). A `[state: 텍스트]`
+   marker (layer-map: built, but on sample data — e.g. `[state: 가짜 데이터]`) keeps the built look and adds the state chip with the plan's own words.
+   A `card-grid` number chip is a bare integer 1, 2, 3 — never `2.1` (the gate's `numbers-traced` reads a decimal as an untraced number).
+   **A `text-table` section pastes the `table` component and fills it from the section's figure-data**
+   (`columns: … | rows: …` — those columns and those rows, nothing added or dropped). A table in the
+   reference appendix (`sref`), or a secondary table that follows another figure, uses the table's **soft
+   header** variant (swap the header row for the soft-header VARIANT in its HOW TO FILL).
 5. Never hand-draw a figure the library has, never use absolute pixel coordinates to place nodes,
    and never change a pasted component's colors, radii, or fonts. If the content truly fits no
    component, use the closest one and say so in your build notes.
@@ -142,6 +190,31 @@ wherever a number appears: "(추정)" after an estimate, "(소유자 진술)" af
 designed/planned facts stay in the tense the plan gave them. A `pitch` ends with its explicit request
 and does not use the "승인 요청서가 아니라" opener (the style's authoring-guide §1).
 
+**Terms.** Name every concept with the term the plan's term sheet chose — the same word everywhere, never a
+`쓰지 않을 말` variant (the gate fails it outside the appendix). The first time a term appears, write
+its `처음 나올 때` form (`작업(Task)`, `FeedbackOps(VOC·작업 운영 도구)`), then the bare term. **Order of first use:** the
+hero thesis counts as the first occurrence, so a term the thesis uses carries its first-use form in the thesis; a term the
+thesis does not use gets the form at its first appearance in the numbered sections. **Nav labels, the fixed document
+title** (the hero title and the nav brand) **and section titles are exempt**: they stay bare and neither count as a first
+use nor break the order — a section title may name the term its own lead defines right below it. A concept the sheet does
+not name gets no new name from you: use the plan's own wording or send the gap back to `/plan`.
+
+**Natural Korean.** Compose each sentence by the style's authoring-guide §3.2 checklist (no `·` noun piles, one em
+dash at most, active verbs, no `~에 대한/~를 통해/~하는 것이다` chains, one idea per sentence, subject next to its
+predicate, everyday words for executive/user readers). Do not translate the plan's notes word for word — they are
+notes; the page is a Korean paragraph.
+
+**Register conversion.** The plan's `thesis` and `payload` may be written in any register — notes, `~합니다`,
+bare nouns. The document is **always** rendered in the style's register (these styles: `~한다/~된다/~이다`
+문어체 for prose, 개조식 for chips and labels — authoring-guide §3.1). Convert the sentence, keep the meaning
+and the markers; never carry a plan's `~합니다` sentence onto the page. A **KEY callout is one sentence**: if
+the point needs more, the rest goes into the section's lead, not into the callout.
+
+**Identifier chips.** An identifier inside prose — file name, path, class / function / API name, config key,
+enum value, command — is set as the inline identifier chip of the style's `design.md §7.6` (mono font, light
+fill, 4px radius, `white-space:nowrap`; copy the exact `style` string from there). Ordinary English
+engineering words (Job, thread, diff) stay plain text; emphasis stays bold, never a chip.
+
 ## Step 6 — Assemble the document
 
 Replace the template's stub sections with the rendered sections in plan order, keeping every
@@ -173,7 +246,7 @@ node .claude/lib/verify-doc.mjs <doc.dc.html> --canonical-support <styles/<style
 ```
 
 `--style` supplies the accent color and turns on the palette check; `--plan` turns on the section,
-shape and number checks — always pass both. (`--no-visual` skips the headless-browser tier; the
+shape, number and term-sheet checks — always pass both. (`--no-visual` skips the headless-browser tier; the
 environment variable `CHROME_PATH` picks the browser.)
 
 **Success means the literal last gate line `GATE PASSED (k/k checks)`** — nothing else. An exit code of
@@ -214,6 +287,10 @@ The gate runs two tiers:
     must come from the plan or be removed from the document.** Never add a number to the plan or facts
     just to pass: if the number is real it needs a source, so go back to `/plan`, add the fact with its
     citation, and re-confirm.
+  - `terms-consistent` — runs only when the plan's `facts.md` has a `## T — 용어` table. A banned variant
+    (`쓰지 않을 말`) appears in the document outside the appendix: replace it with the chosen term. **Never edit the term
+    sheet to make the gate pass** — a different word is a decision for `/plan`; without a table the gate prints a `NOTE`
+    and skips it.
   It also prints non-blocking `figures:*` rows (coverage per section, low variety, bare sections,
   crowded sections) — read them. **This gate does not verify semantic-color-split correctness** — it
   cannot tell whether the AS-IS color family stayed in AS-IS/problem zones and the accent stayed in
@@ -228,8 +305,32 @@ The gate runs two tiers:
   If a headless browser is not available, the gate reports the visual check as unverified rather
   than silently skipping it — treat that as an honest "not checked," not a pass.
 
+- **Non-blocking Korean-writing rows**, printed as `WARN` whatever the plan: `prose:long-sentence` (>110 characters),
+  `prose:dot-chain` (4+ `·` in one sentence), `prose:dash` (more than one `—` in a sentence, or more than 3 in a lead),
+  `prose:translationese` (`~하는 것이다`, `~것으로 보인다`, `되어지`, `~에 있어서`, and `~에 대한` / `~를 통해` three or more
+  times in a section) and `prose:register` (`~합니다/~습니다/~해요` in body text), plus `terms:first-use` (a term's
+  first-use form never appears, or the bare term appears before it — order as defined in Step 5). They never change the exit
+  code — Step 9 is where they get fixed.
+
 **Treat anything other than the `GATE PASSED` line as "not built."** Read every check the gate prints;
 if any mechanical check fails, fix the document and rerun the gate — do not hand the document to the
 user as finished while a check is failing. Do not report success on the strength of the visual line
 alone, and do not claim the visual/composition tier passed when it reports unverified. Do read and
 summarize any `WARN` rows for the user; warnings are not failures, but they are review evidence.
+
+## Step 9 — Prose pass (after `GATE PASSED`)
+
+The gate cannot judge Korean, but it counts the patterns that read awkwardly — the same patterns a reviewer
+flagged in the first pitch built with this system (over-long sentences, noun piles, translated-sounding phrases,
+one thing under several names). When the last gate line is `GATE PASSED`:
+
+1. **Fix every `WARN  prose:*` and `WARN  terms:*` row in the document** — split the sentence, write the clause, use
+   the active verb, use the term-sheet word, add the first-use form — and rerun the gate. A warning you keep must be
+   **justified in the final report**: quote the sentence and say why it stays (an exact on-screen string, a literal
+   identifier list, a source term that cannot be reworded). "Non-blocking" is not a reason.
+2. **Read-aloud pass, section by section.** For each section read the lead, then every card, callout and table
+   sentence, as a colleague would say it. Where you stumble, or have to re-read to find the subject, rewrite it by the
+   authoring-guide §3.2 checklist. Check that each term is defined before it is used and appears in one form only.
+3. Rerun the gate (the last line must still be `GATE PASSED`). The final report lists: the gate line, the remaining
+   `prose:*` / `terms:*` rows with one line of justification each (the goal is none), and the wording-only fixes made.
+   This pass changes wording only — never add a claim or a number (that is `/plan`'s job and `numbers-traced`'s check).

@@ -135,6 +135,38 @@ test('CLI: --plan adds plan-alignment, plan-shapes and numbers-traced (a documen
   rmSync(dir, { recursive: true, force: true });
 });
 
+test('CLI: a facts file with a T table turns on terms-consistent (pass / banned variant fails); prose rows are WARN and never fail', () => {
+  const ok = docDir(readFileSync(fx('doc-terms-ok.dc.html'), 'utf8'));
+  const pass = run([ok.doc, '--canonical-support', ok.support, '--style', STYLE, '--plan', fx('plan-terms.md'), '--no-visual']);
+  assert.equal(pass.status, 0, pass.stdout + pass.stderr);
+  assert.match(pass.stdout, /^PASS {2}terms-consistent/m);
+  assert.match(lines(pass.stdout).at(-1), /^GATE PASSED \((\d+)\/\1 checks\)$/);
+  const bad = docDir(readFileSync(fx('doc-terms-banned.dc.html'), 'utf8').replace('<p>태스크가', `<p>${'가'.repeat(120)}. 시범을 제안합니다. 태스크가`));
+  const fail = run([bad.doc, '--canonical-support', bad.support, '--style', STYLE, '--plan', fx('plan-terms.md'), '--no-visual']);
+  assert.equal(fail.status, 1);
+  assert.match(fail.stdout, /^FAIL {2}terms-consistent {2}2 banned variant\(s\) in the body: s2 "태스크" \(use 작업\)/m);
+  assert.match(fail.stdout, /^WARN {2}prose:long-sentence {2}1 of \d+ sentence\(s\) over 110 characters/m);
+  assert.match(fail.stdout, /^WARN {2}prose:register {2}1 polite ending\(s\)/m);
+  assert.match(lines(fail.stdout).at(-1), /^GATE FAILED/);
+  rmSync(ok.dir, { recursive: true, force: true });
+  rmSync(bad.dir, { recursive: true, force: true });
+});
+
+test('CLI: without a T table the gate prints a NOTE (not a failure); without --plan the NOTE names terms-consistent too', () => {
+  const dir = tmp();
+  writeFileSync(join(dir, 'facts-terms.md'), readFileSync(fx('facts-terms.md'), 'utf8').replace(/## T — 용어[\s\S]*?(?=## Q)/, ''));
+  writeFileSync(join(dir, 'plan.md'), readFileSync(fx('plan-terms.md'), 'utf8'));
+  const d = docDir(readFileSync(fx('doc-terms-banned.dc.html'), 'utf8'));
+  const r = run([d.doc, '--canonical-support', d.support, '--style', STYLE, '--plan', join(dir, 'plan.md'), '--no-visual']);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.match(r.stdout, /^NOTE {2}terms-consistent {2}not checked — the facts file has no "## T — 용어" table/m);
+  assert.doesNotMatch(r.stdout, /terms-consistent {2}\d+ banned/);
+  const noPlan = run([d.doc, '--canonical-support', d.support, '--style', STYLE, '--no-visual']);
+  assert.match(noPlan.stdout, /^NOTE {2}plan-shapes, numbers-traced, terms-consistent {2}not checked/m);
+  rmSync(dir, { recursive: true, force: true });
+  rmSync(d.dir, { recursive: true, force: true });
+});
+
 // ---- visual tier ----
 
 // A stub "browser": records its argv, then dies — enough to see flags and the UNVERIFIED path.

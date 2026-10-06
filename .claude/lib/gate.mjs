@@ -1,4 +1,5 @@
 // Pure gate checks over a document's HTML. No I/O here — verify-doc.mjs reads files and wires options.
+import { visibleBlocks, parseTerms, bannedTermHits, missingFirstUse, firstUseOrder, proseWarnings } from './prose.mjs';
 const stripComments = (html) => html.replace(/<!--[\s\S]*?-->/g, '');
 const stripScripts = (html) => html.replace(/<script\b[\s\S]*?<\/script>/gi, '');
 
@@ -152,23 +153,31 @@ export function untracedNumbers(html, tracedText) {
 //         knownComponents?: string[], figureComponents?: string[],
 //         plan?: { sections: [{ id, title, shape }] }, shapeMap?: { [shape]: string[] },
 //         paletteHexes?: string[],                          // active style's design.md palette → `palette`
-//         planText?: string, factsText?: string,            // with plan → `numbers-traced`
+//         planText?: string, factsText?: string,            // with plan → `numbers-traced`; a `## T — 용어` table in the
+//                                                           //   facts → `terms-consistent` + `terms:first-use`
 //         factsError?: string }                             // facts file named by the plan could not be read
+// → { ok, checks, warnings, notes }: `warnings` never fail the gate (figures:*, prose:*, terms:first-use); `notes` say
+//   which optional check did not run and why.
 export function runGate(html, opts) {
   const checks = [];
   const warnings = [];
+  const notes = [];
   const add = (name, ok, detail = '') => checks.push({ name, ok, detail });
   const live = stripComments(html);
+  let cached;
+  const blocks = () => (cached ??= visibleBlocks(html)); // the reader's text, parsed once for terms and prose
 
   add('keep-all', /word-break\s*:\s*keep-all/.test(html));
   add('accent-present', html.toLowerCase().includes(String(opts.accentHex).toLowerCase()), opts.accentHex);
   add('sidecar-present', opts.sidecarPresent === true);
 
-  const ids = [...html.matchAll(/\bid=["']([^"']+)["']/g)].map(m => m[1]);
+  // ids and nav links are read from the live markup: a commented-out block (the template's `VARIANT compact hero`)
+  // is not in the DOM, so an `id="top"` inside it must not collide with the real one.
+  const ids = [...live.matchAll(/\bid=["']([^"']+)["']/g)].map(m => m[1]);
   const dup = ids.filter((id, i) => ids.indexOf(id) !== i);
   add('unique-ids', dup.length === 0, dup.join(','));
 
-  const navTargets = [...html.matchAll(/data-navlink=["']([^"']+)["']/g)].map(m => m[1]);
+  const navTargets = [...live.matchAll(/data-navlink=["']([^"']+)["']/g)].map(m => m[1]);
   const dangling = navTargets.filter(t => !ids.includes(t));
   add('navlink-integrity', dangling.length === 0, dangling.join(','));
 
@@ -226,6 +235,22 @@ export function runGate(html, opts) {
         const untraced = untracedNumbers(html, `${opts.planText}\n${opts.factsText || ''}`);
         add('numbers-traced', untraced.length === 0, untraced.length
           ? `${untraced.length} number(s) not in the plan or facts: ${untraced.slice(0, 8).map(u => `${u.num} ${u.ctx}`).join(' ; ')}` : '');
+        const terms = parseTerms(opts.factsText);
+        if (terms.length) {
+          const hits = bannedTermHits(blocks(), terms);
+          add('terms-consistent', hits.length === 0, hits.length
+            ? `${hits.length} banned variant(s) in the body: ${hits.slice(0, 8).map(h => `${h.id} "${h.variant}" (use ${h.term}) ${h.ctx}`).join(' ; ')}` : '');
+          const missing = missingFirstUse(blocks(), terms);
+          if (missing.length)
+            warnings.push({ name: 'terms:first-use', detail: `${missing.length} term(s) never appear in their first-use form: ${missing.slice(0, 8).map(t => t.first).join(' ; ')}` });
+          const early = firstUseOrder(blocks(), terms);
+          if (early.length)
+            warnings.push({ name: 'terms:first-use', detail: `${early.length} term(s) appear bare before their first-use form (the hero thesis counts as the first occurrence; nav labels and the document title are exempt): ${early.slice(0, 8).map(e => `${e.term} → ${e.first}, bare in ${e.id} ${e.ctx}`).join(' ; ')}` });
+        } else {
+          notes.push({ name: 'terms-consistent', detail: opts.factsText === undefined
+            ? 'not checked — the plan names no facts file with a "## T — 용어" table (see .claude/skills/plan/facts.template.md)'
+            : 'not checked — the facts file has no "## T — 용어" table (optional; see .claude/skills/plan/facts.template.md)' });
+        }
       }
     }
   }
@@ -246,5 +271,8 @@ export function runGate(html, opts) {
     warnings.push({ level: 'INFO', name: 'figures:coverage', detail: numbered.map((s, i) => `${s.id}=${figs[i].join('+') || '—'}`).join(' ') });
   }
 
-  return { ok: checks.every(c => c.ok), checks, warnings };
+  // non-blocking Korean prose heuristics (never fail the gate)
+  warnings.push(...proseWarnings(blocks()));
+
+  return { ok: checks.every(c => c.ok), checks, warnings, notes };
 }

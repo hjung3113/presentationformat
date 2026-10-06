@@ -19,7 +19,7 @@
 | `er-relations` | figure | `entity-relations` | 객체(엔티티·테이블·도메인 개념) 사이에 어떤 관계가 있고 몇 대 몇인지가 주장이다. 도메인 모델, 데이터 모델, "A는 B를 여러 개 가진다", 선택적 링크 vs 필수 소유. | 엔티티 카드 0–6, 관계 행 2–7 | [er-relations.html](er-relations.html) |
 | `class-diagram` | figure | `code-structure` | 코드 구조가 주장이다: 상위 타입(인터페이스·추상 클래스)과 그것을 구현·상속하는 하위 타입, 각 타입의 핵심 속성·메서드. | 상위 1, 하위 2–4, 클래스당 속성·메서드 1–4줄 | [class-diagram.html](class-diagram.html) |
 | `hub-spoke` | figure | `hub` | 하나의 중심(링크 테이블·통합 계층·게이트웨이·공통 서비스)이 여러 대상과 연결된다는 "중앙화"가 주장이다. | 스포크 2–8 (좌우 각 1–4) | [hub-spoke.html](hub-spoke.html) |
-| `use-case` | figure | `actor-goals` | 누가(사용자 유형·역할) 이 시스템으로 무엇을 할 수 있는지가 주장이다. 기능 범위, 역할별 사용 시나리오 개요, MVP 범위. | 행위자 2–4, 행위자당 유스케이스 1–4 | [use-case.html](use-case.html) |
+| `use-case` | figure | `actor-goals` | 누가(사용자 유형·역할) 이 시스템으로 무엇을 할 수 있는지가 주장이다. 기능 범위, 역할별 사용 시나리오 개요, MVP 범위. | 행위자 2–4, 행위자당 유스케이스 1–5 | [use-case.html](use-case.html) |
 | `screen-map` | figure | `ui-surface` | 화면이 어떤 영역으로 나뉘고, 사용자가 어느 영역에서 무엇을 하는지가 주장이다. UI 원칙, 화면 구성, 역할별 작업 위치, 목록+상세 구조. | 영역 3–6, 번호 마커 3–6 | [screen-map.html](screen-map.html) |
 | `forbidden-path` | figure | `forbidden-path` | "A를 B로 바로 바꾸면 안 된다, 대신 C로 간다"가 주장이다. 금지된 자동 변환·지름길과 그것을 대신하는 정식 경로를 함께 보여 준다. | 허용 경로 1–4, 금지 경로 1–2 | [forbidden-path.html](forbidden-path.html) |
 | `bar-chart` | chart | `quantity` `trend` | 몇 개 항목(또는 기간)의 크기를 비교하는 것이 주장이다. 유형별 건수, 월별 처리량, 전후 비교(두 차트 나란히). | 막대 3–8 | [bar-chart.html](bar-chart.html) |
@@ -35,4 +35,4 @@
 | `matrix` | report | `capability-matrix` `option-compare` | 행(역할·옵션·객체)과 열(권한·기준·기능)이 교차하는 곳의 예/아니오/부분이 주장이다. 역할별 권한, 대안 비교, 소유 범위. | 행 3–7, 열 2–5 | [matrix.html](matrix.html) |
 | `card-grid` | content | `peer-list` | 서로 동등한 항목 3–6개를 나열한다: 문제점, 발견 사항, 원칙, 리스크(등급 없음), 요구사항. 항목 사이에 순서·흐름·관계가 없다. | 카드 3–6 (2열), 짧은 글로스면 3열 | [card-grid.html](card-grid.html) |
 | `callout` | content | — | 본문 흐름 밖의 한 문장(aside): 꼭 기억할 핵심(KEY), 권장 방식(OK), 주의·금지(WARN), 낮은 우선순위 참고(NOTE). | 섹션당 0–2 | [callout.html](callout.html) |
-| `table` | content | `text-table` | 행(항목)과 열(관점) 모두 의미가 있고 칸마다 짧은 문장이 들어간다. 문제↔해결↔효과 대응, 미정 질문(항목 / 현재 방향 / 결정 필요), 용어 대응. | 열 2–4, 행 3–7 | [table.html](table.html) |
+| `table` | content | `text-table` | 행(항목)과 열(관점) 모두 의미가 있고 칸마다 짧은 문장이 들어간다. 문제↔해결↔효과 대응, 미정 질문(항목 / 현재 방향 / 결정 필요), 용어 대응. | 열 2–4, 행 3–7 (부록 용어·근거표는 10행까지, 더 길면 두 표 또는 정의 목록) | [table.html](table.html) |

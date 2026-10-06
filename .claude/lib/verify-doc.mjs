@@ -401,7 +401,7 @@ export function gateOptions({ accent, sidecarPresent, planPath, style, paletteHe
 const USAGE = `usage: node verify-doc.mjs <doc.dc.html> --canonical-support <support.js> (--style <id> | --accent <hex>) [--plan <content-plan.md>] [--no-visual]
   --style <id>     enables the palette check (every hex must be in styles/<id>/design.md) and supplies --accent
   --accent <hex>   accent color the document must use (optional when --style is given)
-  --plan <file>    enables plan-alignment, plan-shapes and numbers-traced
+  --plan <file>    enables plan-alignment, plan-shapes and numbers-traced — and terms-consistent when the plan's facts file has a "## T — 용어" table
   --no-visual      skip the headless-browser tier (env CHROME_PATH picks the browser)`;
 
 async function main() {
@@ -425,7 +425,8 @@ async function main() {
   const r = runGate(readFileSync(doc, 'utf8'), opts);
   for (const c of r.checks) console.log(`${c.ok ? 'PASS' : 'FAIL'}  ${c.name}  ${c.detail}`);
   for (const w of r.warnings) console.log(`${w.level || 'WARN'}  ${w.name}  ${w.detail}`);
-  if (!planPath) console.log('NOTE  plan-shapes, numbers-traced  not checked (pass --plan <content-plan.md> to verify every section carries its shape\'s component and every number is traced)');
+  for (const n of r.notes) console.log(`NOTE  ${n.name}  ${n.detail}`);
+  if (!planPath) console.log('NOTE  plan-shapes, numbers-traced, terms-consistent  not checked (pass --plan <content-plan.md> to verify every section carries its shape\'s component, every number is traced and the facts file\'s term sheet is kept)');
   if (!style) console.log('NOTE  palette  not checked (pass --style <id> to verify every color is in the style\'s design.md)');
   if (r.ok && !args.includes('--no-visual')) await visualTier(doc, opts.panel);
   else if (r.ok) console.log('VISUAL: skipped (--no-visual)');

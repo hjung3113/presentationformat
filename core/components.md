@@ -141,9 +141,10 @@ each section whose shape is not `none` contains a `data-component` the shape all
 Warnings (non-blocking): fewer than 3 distinct figure components in a document with ≥5 numbered
 sections; more than one third of numbered sections with shape `none`; a section with **more than 2**
 main figures (the gate warns above 2 — one idea per figure). Plan-time warnings from
-`plan-schema`: more than 2 `decision` sections, and for `audience: executive` more than 7 numbered
-sections, a developer-grade shape (`code-structure`, `interaction`, `entity-relations`, `rule-table`),
-a first section that is not `headline-metric` or `decision`, or a last section that is not `decision`.
+`plan-schema`: more than 2 `decision` sections, and for `audience: executive` more than 12 numbered
+sections (group into acts — the section count follows the content, §5), a developer-grade shape
+(`code-structure`, `interaction`, `entity-relations`, `rule-table`), a first section that is not
+`headline-metric` or `decision`, or a last section that is not `decision`.
 
 ---
 
@@ -168,21 +169,76 @@ a first section that is not `headline-metric` or `decision`, or a last section t
   whose color follows its shape (copy a cell of that shape).
 - **Numbers come from the plan.** Every number visible in the document appears in the plan's
   `payload`/`figure-data`/cover tokens (or its facts ledger). A template example is not a value; if the
-  plan has no number for a slot, use the `O … (추후 확정)` placeholder.
+  plan has no number for a slot, use the `O … (추후 확정)` placeholder. A **number chip** (the `card-grid`
+  item badge) is a bare integer — 1, 2, 3 in card order — never a `2.1` / `5.3` section.item decimal; the gate's
+  `numbers-traced` reads a decimal as a number the plan never supplied.
+- **Terms and first use.** A concept the plan's term sheet (`## T — 용어` in `facts.md`) names is written in one form
+  only: its `처음 나올 때` form the first time the reader meets it, the bare term afterwards. **The hero thesis counts as
+  the first occurrence** — a term the thesis uses carries its first-use form there; a term the thesis does not use gets
+  the form where it first appears in the numbered sections. **Nav labels, the fixed document title (the hero title and
+  the nav brand) and section titles are exempt**: they stay bare, and neither count as a first use nor break the order —
+  a section title may name the term its own lead defines right below it. The gate's `terms:first-use` warns (non-blocking) when a first-use form never appears or when
+  the bare term appears before it; a banned variant (`terms-consistent`) is the hard check.
 - **What the gate reads in pasted figures** (`verify-doc`): `no-role-placeholders`, `palette` (with
   `--style`: every color literal must be in the style's `design.md` — no invented colors),
   `grid-consistency`, and `numbers-traced` (with `--plan`).
+- **Text-safe muted ink.** Small informative text — a sub-line under a number or node, a footnote (`*`), legend and
+  axis labels, a footer or field label, a state chip, the `(추정)` / `(추후 확정)` suffixes — is set in the style's
+  text-safe muted role `⟨muted-text⟩` (≥4.5:1 on white). The faint roles `⟨muted-500⟩` / `⟨muted-400⟩` / `⟨muted-300⟩` are for
+  decoration and disabled marks only: arrow glyphs, `—` not-applicable cells, hairlines, dashed outlines, text on a dark fill.
+  Informative text in a faint role is a defect even when it looks tidy. The role's value and its measured contrast live in
+  the active style's `design.md` (§1.2) — this rule is stated here once and the templates apply it.
+- **Label language (`labels: en | ko`).** One document uses one label language for every fixed label — the section
+  eyebrow, the appendix label, the badge and kicker text inside components. Default by plan `audience`: `developer` → `en`
+  (English category labels, the engineering-doc convention); `executive` / `user` → `ko`. The plan's optional
+  `labels:` header key overrides the default. Body prose, titles and nav labels are Korean in both modes.
+  Every fixed component label is a `⟦slot⟧` whose example is the `en` text; under `ko` replace it with the row below.
+
+  | Where | `labels: en` (default) | `labels: ko` |
+  |---|---|---|
+  | Section eyebrow (`NN · …`) | `01 · SUMMARY` — English category, upper case | `01 · 요약` — Korean category, 1–3 words |
+  | Cover eyebrow when the plan has no `eyebrow:` | `PROPOSAL · 관리자용` | `제안서 · 관리자용` |
+  | Appendix eyebrow · nav link | `REFERENCE` · faint link with a superscript `ref` | `부록` · a plain nav link, no mark |
+  | `before-after` badges | AS-IS · TO-BE | 지금 · 목표 |
+  | `decision-block` | DECISION · DUE · OWNER · IF UNDECIDED · 권고 | 결정 · 기한 · 결정 주체 · 미결정 시 · 권고 |
+  | `layer-map` | LAYER A · EXTERNAL · AS-IS | 층 A · 외부 · 지금 |
+  | `decision-table` | IF · THEN | 조건 · 결과 |
+  | `hub-spoke` | HUB | 허브 |
+  | `use-case` system box | SYSTEM · system name | 시스템 · system name |
+  | `screen-map` | TOP BAR · SIDEBAR · LIST · DETAIL … | 상단 바 · 사이드바 · 목록 · 상세 … |
+  | `sequence` frames | ALT · OPT · LOOP | 분기 · 선택 · 반복 |
+
+  The labels change; the colors, geometry and the semantic split do not (a `지금` badge is still the AS-IS color).
+  Never mix: an executive document with `01 · SUMMARY` eyebrows and a `지금` badge is half-converted.
 - **Lookup, don't compute geometry.** Every spanning connector uses the same table: span S columns →
   `margin:0 X%` with S=2 → 25%, 3 → 16.667%, 4 → 12.5%, 5 → 10%. Gantt bars: period k starts at grid
   line k+1. Bar heights: value ÷ max × 100.
 - **Placement.** Lead paragraph first, then the figure (full width). Never put the figure before the
   lead. One primary figure per section; a support block (callout or small table) may follow it.
+- **A `text-table` section is a pasted `table`, filled from its figure-data.** The plan carries
+  `columns: … | rows: …` (never `none`) and the table's columns and rows are exactly those. A reference or
+  appendix table (`sref`, or a secondary table that follows a figure) uses the table's soft header. A body table
+  holds up to 7 rows; an **appendix glossary or source table may be longer** — up to 10 rows per table, and past that
+  two tables of ≤10 rows each or the table's definition-list variant (a two-column "term — definition" list that keeps
+  the `data-component="table"` root). Cell variants (a muted detail line under the first-column label, several value
+  lines stacked in one cell) are listed in the table template's `HOW TO FILL`.
 - **Counts must match.** If the lead says "세 가지 상태", the figure shows three.
+- **A not-built thing never gets the built look (cross-component rule).** Anything the source calls
+  planned, designed-only, not yet built or not decided — a module, a pipeline node, a tree child or leaf, a
+  timeline item, an ALT/OPT frame of messages — is drawn in the **shared planned look**: muted dashed
+  outline (on the soft fill where it is a box), muted text, plus a state chip carrying the source's own word (예정·계획·
+  미설계·미구현·대기). The chip is **11px bold in the text-safe muted ink** — a 9px faint badge cannot be read. Its figure-data carries the marker `[planned]` right after it. Components with the
+  variant: `layer-map`, `pipeline`, `tree`, `timeline`, `sequence`, and `before-after` (a planned cell inside the
+  **TO-BE** zone only — the muted dashed look is neutral, so it does not break the zone's color rule; the AS-IS zone
+  has no planned things); any other figure draws a planned thing the same way. A planned thing is never given the key-node, accent or success look — passing a design off as
+  an existing system is the most common overstatement a diagram makes.
 - **figure-data arrows.** Flow-shaped figure-data (`sequence`, `swimlane`, `state-machine`, `activity`,
   `pipeline`, `process-row`, …) may use the glyphs `→ ⇢ ↻` or ASCII: `->` for a request or transition,
   two hyphens followed by `>` for a response, `(self)` for internal processing. The plan validator
-  accepts both. Per-component markers (state `●`/`◉` and `[ok]`/`[retry]`/`[negative]`, layer
-  `[key]`/`[optional]`/`[external]`/`[legacy]`, swimlane `◇`/`→[라벨]`/`↓`, gantt `(legacy) + (core)`)
+  accepts both. Per-component markers (state `●`/`◉` and `[ok]`/`[retry]`/`[negative]`/`[neutral]`, layer
+  `[key]`/`[optional]`/`[external]`/`[legacy]`, layer-or-module `[state: 텍스트]` (built, but on sample data or with a caveat — chip text is the source's own words, e.g. 가짜 데이터), swimlane `◇`/`→[라벨]`/`↓`, gantt `(legacy) + (core)`, screen-map
+  `[above]`/`[below]` for the 5th–6th region, `[planned]` on layer, pipeline, tree, timeline, sequence and before-after (TO-BE) items,
+  before-after `[full]` for a full-width key cell, table `{보조 설명}` / ` ¶ ` for a first-column detail line / stacked cell lines)
   are documented in each template's `@data` line and HOW TO FILL header (`components/README.md`).
 
 ---
@@ -192,6 +248,13 @@ a first section that is not `headline-metric` or `decision`, or a last section t
 Pick the recipe from the user's request words, then adapt; record its id as the plan's `doc-type`. Each
 row is one numbered section; the shape column is the **default** — reclassify with §2 when the source
 says otherwise. A recipe row the source cannot support is dropped, never padded.
+
+**Section count follows the content.** The rows are a checklist, not a quota. A document on one subject usually lands
+at ~6–9 numbered sections plus the appendix; when it covers **several products or systems**, each one gets its own
+section(s) — what it is, who uses it, what works today, what is planned (recipe F's *system introduction* block applies
+to any recipe) — and the relationship or migration between them gets a section of its own. Above ~9 numbered sections
+group them into acts (`act-structure: act-grouped`; the dividers are `<div>`s, never `<section>`s). The audience does not
+cap the count: `plan-schema` warns for an `executive` plan only above 12 numbered sections, and suggests acts.
 
 **A. 설계·아키텍처 설명서** (`explainer`) — "설계", "구조", "아키텍처", "어떻게 동작", "소개"
 
@@ -267,12 +330,33 @@ says otherwise. A recipe row the source cannot support is dropped, never padded.
 | 9 요청 | `decision`, always the last numbered section |
 | 근거 부록 | `text-table` with a source column (the `sref` appendix) |
 
+**System introduction block (optional).** When a pitch has to introduce more than one product or system, the reader
+must understand each one before judging the proposal — a single thin paragraph for all of them is the failure this block
+prevents. Give **each product its own section(s)**, placed between 3 원인 and 4 제안 구조 (or as the body of 4 when
+the proposal *is* the products), each answering three questions in this order — one section per row when the facts are
+rich, the three folded into one section when they are few:
+
+| Part | Question | Shape → component |
+|---|---|---|
+| 무엇인가 | what is it, who uses it | `peer-list` → `card-grid` (what it contains), or `actor-goals` → `use-case` (actors and their goals) |
+| 어떻게 쓰나 | how is it used, step by step | `linear-steps` → `process-row`; `role-handoff` → `swimlane` when roles take turns; `branching-flow` → `activity` when it branches |
+| 지금 상태 | what works today, what is planned | `layered-structure` → `layer-map` (planned parts carry `[planned]` — the not-built rule, §4) or `status` → `status-board` (built = 완료·정상, planned = 대기) |
+
+The **relationship or migration between the products gets its own section** after the product sections — `schedule`
+→ `gantt` (legacy bar + cutover milestone) or `milestones` → `timeline` — never folded into one product's section. Each
+product keeps one name (the plan's term sheet, `## T — 용어` in `facts.md`); more products means more sections, and past ~9
+the document is act-grouped (one act per product is a natural split).
+
 Pitch rules: an explicit ask is required (the one `decision`, last); every number comes from the facts
 ledger (`[Fnn]`) — an estimate or an owner statement renders with "(추정)" / "(소유자 진술)", and a
 `designed` or `planned` fact is never written as if it already exists. Write **one plan per audience**
-(`executive`, `user`, `developer`) from the same `facts.md`; an executive plan keeps ≤7 numbered sections
-(merge 1+2, fold 3 into 2, drop 4 or 8 when the source has nothing) and still opens with the metrics
-and ends with the request.
+(`executive`, `user`, `developer`) from the same `facts.md`. The section count follows the content (see the note
+above recipe A): an executive plan may merge 1+2, fold 3 into 2 or drop 4 or 8 when the source has nothing, but never
+by squeezing several products into one section; it still opens with the metrics and ends with the request. An executive or user pitch uses `labels: ko` (Korean eyebrows and component labels, see §4) and the
+style template's compact hero, so the first section's lead and its first figure row are visible without scrolling.
+In an act-grouped pitch the **first act divider is the style's compact variant** — a one-line band — or is omitted when
+act 1 is a single summary section; a boxed divider there would push the first lead and figure below the fold. Later
+dividers may be either.
 
 Recipes set the default shape per section; the narrative lens and the source decide the final
 outline.
