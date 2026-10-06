@@ -37,4 +37,5 @@ skills to this project, so this asymmetry is Codex-only.
 
 - **Node** (recent LTS; verified on v22) — the `/build` exit gate under `.claude/lib/` needs it.
 - **Headless Chrome (optional)** — the gate's visual tier uses it if present; otherwise it
-  degrades to `VISUAL: UNVERIFIED` without blocking.
+  degrades to `VISUAL: UNVERIFIED` without blocking. It also needs outbound network for the document's
+  CDNs, or `--local-assets <dir>` / `DC_LOCAL_ASSETS` (`.claude/README.md` Prerequisites).

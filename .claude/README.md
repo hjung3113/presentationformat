@@ -25,7 +25,7 @@ The gate itself is zero-dependency Node under `.claude/lib/`:
   paragraph-like blocks, the `## T — 용어` term-sheet parser, `terms-consistent` / `terms:first-use`, and the
   Korean `prose:*` heuristics. `gate.mjs` imports it, so the two files travel together.
 - `.claude/lib/verify-doc.mjs` — CLI entry that runs the gate against a `.dc.html`
-  (`<doc> --canonical-support <support.js> [--style <id>] [--accent <hex>] [--plan <content-plan.md>] [--no-visual]`),
+  (`<doc> --canonical-support <support.js> [--style <id>] [--accent <hex>] [--plan <content-plan.md>] [--no-visual] [--local-assets <dir>]`),
   checks the `support.js` sidecar is byte-identical to the canonical copy, runs the visual tier (see
   below) and ends with the **GATE line**.
 - `.claude/lib/plan-schema.mjs` — schema/shape checks for `content-plan.md`. CLI entry
@@ -45,7 +45,7 @@ The gate itself is zero-dependency Node under `.claude/lib/`:
   including: generated outputs up to date, every template renders in every style with no unresolved
   token, `core/` carries zero HEX, `core/components.md` §1 matches the templates' `@shape` metadata,
   each template's first `@data` key matches the figure-data contract, no template hard-codes an English label
-  outside a `⟦slot⟧` (label language), informative text uses `⟨muted-text⟩` and every style's `muted-text` is ≥4.5:1 on
+  outside a `⟦slot⟧` (label language), the visual tier's local-asset routing (`localAssetFor`: hosts, scoped packages, misses, path traversal) and its 390px probe, informative text uses `⟨muted-text⟩` and every style's `muted-text` is ≥4.5:1 on
   white with a mono stack that ends in its Korean body font, the optional `labels: en|ko` plan key, the three CLIs run from a
   path with spaces/Korean and through a symlink (they once exited 0 without running), the worked
   example (`test/fixtures/example-brief/`) passes every plan-aware check, and the text half of the gate
@@ -69,7 +69,8 @@ Flags: `--style <id>` resolves `styles/<id>/` from the lib's own location, suppl
 (`design.tokens.md` `colors.accent`) when `--accent` is absent, and enables the `palette` check.
 `--accent <hex>` wins over the style's. `--plan <file>` enables `plan-alignment`, `plan-shapes`
 and `numbers-traced` — and `terms-consistent` when the plan's facts file has a `## T — 용어` table. `--no-visual` skips the browser tier. At least one of `--accent` / `--style`
-is required.
+is required. `--local-assets <dir>` (env `DC_LOCAL_ASSETS`; the flag wins; a directory that does not exist exits `2`)
+lets the visual tier render without outbound network — see **Prerequisites**.
 
 ### Gate checks
 
@@ -184,12 +185,17 @@ INVALID.
   ```bash
   node --test .claude/lib/test/*.test.mjs
   ```
+  The browser-gated tests skip when there is no headless browser; the one that renders a real gallery
+  also needs `DC_LOCAL_ASSETS` (see **Local assets** below).
 - **Headless browser (optional)** — the visual tier wants Chrome/Chromium. It is found via
   `$CHROME_PATH` (checked first), then `google-chrome`, `chromium`, `chromium-browser`,
   `chrome-headless-shell` on `PATH`, then the macOS app bundle. As root (containers) it passes
-  `--no-sandbox`. The documents load React/Babel and fonts from CDNs, so the browser also needs
-  **outbound network** to render them. The tier never blocks the gate; it ends in one of:
-  - `VISUAL: composition warnings 0 at 1366x768 and 1440x900` — measured, clean;
+  `--no-sandbox`. The documents load React/Babel (unpkg) and Pretendard (jsdelivr) from CDNs, and Google
+  Fonts, so the browser needs **outbound network** to render them — or `--local-assets` (below). It
+  renders three viewports in turn: `1366x768` and `1440x900` for the desktop composition rows, and
+  `390x844` (a phone, scrollbars hidden) for the narrow-width probe. The tier never blocks the gate;
+  it ends in one of:
+  - `VISUAL: composition warnings 0 at 1366x768, 1440x900 and 390x844` — measured, clean;
   - warning rows, then `VISUAL: composition warnings are non-blocking until calibrated against accepted artifacts`;
   - `VISUAL: UNVERIFIED (reason)` — no browser, the browser died or timed out at every viewport,
     or no `<section>` rendered at all (so "0 warnings" would be meaningless). Treat it as "not
@@ -197,6 +203,27 @@ INVALID.
 
   The figure-panel colors the analyzer looks for come from the active style's `fig-tint` /
   `border-fig` tokens (indigo-serif values when `--style` is absent).
+- **Local assets (optional, for offline rendering)** — `--local-assets <dir>` or env `DC_LOCAL_ASSETS=<dir>`
+  answers the page's CDN requests from `<dir>/node_modules` (the flag wins; a directory that does not
+  exist exits `2`; no flag and no env changes nothing). `unpkg.com/<pkg>@<ver>/<path>` and
+  `cdn.jsdelivr.net/{npm/<pkg>@<ver>,gh/<user>/<repo>@<ver>}/<path>` map to `<dir>/node_modules/<pkg>/<path>`
+  (scoped names too; `x.min.css` falls back to `x.css`); Google Fonts requests fail at once, so the page
+  falls back to system fonts and text metrics differ slightly from the real render. Install what the
+  document loads, at the versions `support.js` asks for (it checks React with SRI, so they must match
+  exactly): `npm install --prefix <dir> react@<v> react-dom@<v> pretendard@<v>`, plus `@babel/standalone@<v>`
+  if a document uses JSX. A request the directory cannot answer, or a package at another version, is
+  printed as a `local-assets:*` row below, and a page that then renders nothing is `UNVERIFIED`.
+
+  Rows that come from the 390px viewport and from `--local-assets`. The 390px viewport skips the desktop
+  height and stacking rows, so these are the only rows it prints:
+
+  | row | level | printed when |
+  |---|---|---|
+  | `composition:mobile-overflow` | WARN | at 390px the page scrolls sideways (`scrollWidth` > viewport + 2). Lists the offending `data-component` ids as `id×n (+Npx)` (n figures with an overflowing node, N the largest overshoot), then non-figure offenders as `<section> <tag>×n "text"`. A node inside an ancestor with `overflow-x` auto, scroll, hidden or clip is clipped or scrolls, so it is not an offender. Page level only: a figure wider than its own frame that still ends inside the side padding is not reported |
+  | `composition:mobile-scroll-figure` | INFO | a figure root, or a node inside it, has `overflow-x` auto or scroll and really scrolls at 390px — the intended narrow fallback, listed so it is visible rather than counted as overflow |
+  | `composition:narrow-metrics` | INFO | the 390px viewport rendered; carries the section count and the document `scrollWidth` |
+  | `local-assets` | INFO | `--local-assets` is active; names the directory and any host that was blocked |
+  | `local-assets:version` · `local-assets:miss` | WARN | a package is installed at another version than the URL asks for · a requested file is not under `<dir>/node_modules` |
 
 ## Host-neutral install
 

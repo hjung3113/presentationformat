@@ -5,7 +5,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, copyFileSync, chmo
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { hasHeadlessChrome, sidecarByteIdentical, styleInputs, gateOptions, collectCompositionWarnings } from '../verify-doc.mjs';
+import { hasHeadlessChrome, sidecarByteIdentical, styleInputs, gateOptions, collectCompositionWarnings, localAssetFor, resolveLocalAssets } from '../verify-doc.mjs';
 
 const REPO = resolve(fileURLToPath(new URL('../../..', import.meta.url)));
 const CLI = fileURLToPath(new URL('../verify-doc.mjs', import.meta.url));
@@ -14,9 +14,10 @@ const ACCENT = '#1428A0';
 const fx = (f) => fileURLToPath(new URL(`./fixtures/${f}`, import.meta.url));
 
 const tmp = (prefix = 'vd-') => mkdtempSync(join(tmpdir(), prefix));
+// DC_LOCAL_ASSETS is blanked so a shell that exports it cannot change what a test sees; tests set it explicitly.
 const run = (args, env = {}) => {
   try {
-    const stdout = execFileSync(process.execPath, [CLI, ...args], { encoding: 'utf8', env: { ...process.env, ...env }, stdio: ['ignore', 'pipe', 'pipe'] });
+    const stdout = execFileSync(process.execPath, [CLI, ...args], { encoding: 'utf8', env: { ...process.env, DC_LOCAL_ASSETS: '', ...env }, stdio: ['ignore', 'pipe', 'pipe'] });
     return { status: 0, stdout, stderr: '' };
   } catch (e) { return { status: e.status, stdout: e.stdout || '', stderr: e.stderr || '' }; }
 };
@@ -169,11 +170,11 @@ test('CLI: without a T table the gate prints a NOTE (not a failure); without --p
 
 // ---- visual tier ----
 
-// A stub "browser": records its argv, then dies — enough to see flags and the UNVERIFIED path.
+// A stub "browser": appends its argv (one line per launch), then dies — enough to see flags and the UNVERIFIED path.
 function stubBrowser(dir) {
   const out = join(dir, 'argv.txt');
   const bin = join(dir, 'fake-chrome');
-  writeFileSync(bin, `#!/bin/sh\necho "$@" > "${out}"\nexit 1\n`);
+  writeFileSync(bin, `#!/bin/sh\necho "$@" >> "${out}"\nexit 1\n`);
   chmodSync(bin, 0o755);
   return { bin, out };
 }
@@ -183,7 +184,7 @@ test('visual tier: when every viewport fails the line is VISUAL: UNVERIFIED (rea
   const { bin } = stubBrowser(dir);
   const r = run([doc, '--canonical-support', support, '--style', STYLE], { CHROME_PATH: bin });
   assert.equal(r.status, 0, r.stdout + r.stderr);
-  assert.match(r.stdout, /^VISUAL: UNVERIFIED \(1366x768: browser exited at startup \(code 1\) ; 1440x900: browser exited at startup/m);
+  assert.match(r.stdout, /^VISUAL: UNVERIFIED \(1366x768: browser exited at startup \(code 1\) ; 1440x900: browser exited at startup \(code 1\) ; 390x844: browser exited at startup/m);
   assert.doesNotMatch(r.stdout, /non-blocking/);
   assert.match(lines(r.stdout).at(-1), /^GATE PASSED/);
   rmSync(dir, { recursive: true, force: true });
@@ -206,6 +207,184 @@ test('visual tier: --no-sandbox is passed exactly when running as root', async (
   assert.equal(argv.includes('--no-sandbox'), process.getuid?.() === 0);
   assert.match(argv, /--headless=new/);
   rmSync(dir, { recursive: true, force: true });
+});
+
+test('visual tier: three viewports — 1366x768, 1440x900 and the 390x844 narrow probe, in that order', async () => {
+  const { dir, doc } = docDir(GOOD);
+  const { bin, out } = stubBrowser(dir);
+  const old = process.env.CHROME_PATH;
+  process.env.CHROME_PATH = bin;
+  try { await collectCompositionWarnings(doc); } finally { old === undefined ? delete process.env.CHROME_PATH : (process.env.CHROME_PATH = old); }
+  const sizes = [...readFileSync(out, 'utf8').matchAll(/--window-size=(\d+,\d+)/g)].map(m => m[1]);
+  assert.deepEqual(sizes, ['1366,768', '1440,900', '390,844']);
+  rmSync(dir, { recursive: true, force: true });
+});
+
+// ---- local assets ----
+
+// <dir>/node_modules with the files a document asks the CDNs for (plus a secret one level above node_modules).
+function assetsDir() {
+  const dir = tmp('vd-assets-');
+  const put = (rel, body = 'x') => { mkdirSync(join(dir, 'node_modules', rel, '..'), { recursive: true }); writeFileSync(join(dir, 'node_modules', rel), body); };
+  put('react/umd/react.production.min.js');
+  put('react/package.json', '{"version":"18.3.1"}');
+  put('@babel/standalone/babel.min.js');
+  put('pretendard/dist/web/static/pretendard.css');
+  put('pretendard/dist/web/static/woff2/Pretendard-Regular.woff2');
+  writeFileSync(join(dir, 'secret.txt'), 'outside node_modules');
+  return dir;
+}
+
+test('localAssetFor: unpkg and jsdelivr URLs map onto <dir>/node_modules (scoped names, gh/ repos, .min.css fallback)', () => {
+  const dir = assetsDir();
+  const nm = (rel) => join(dir, 'node_modules', rel);
+  const react = { file: nm('react/umd/react.production.min.js'), pkg: 'react', ver: '18.3.1' };
+  assert.deepEqual(localAssetFor('https://unpkg.com/react@18.3.1/umd/react.production.min.js', dir), react);
+  assert.deepEqual(localAssetFor('https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js', dir), react);
+  assert.deepEqual(localAssetFor('https://unpkg.com/@babel/standalone@7.26.4/babel.min.js', dir), { file: nm('@babel/standalone/babel.min.js'), pkg: '@babel/standalone', ver: '7.26.4' });
+  const font = 'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static';
+  assert.deepEqual(localAssetFor(`${font}/pretendard.min.css`, dir), { file: nm('pretendard/dist/web/static/pretendard.css'), pkg: 'pretendard', ver: 'v1.3.9' });
+  assert.equal(localAssetFor(`${font}/woff2/Pretendard-Regular.woff2?v=1`, dir).file, nm('pretendard/dist/web/static/woff2/Pretendard-Regular.woff2'));
+  assert.equal(localAssetFor('https://unpkg.com/react/umd/react.production.min.js', dir).ver, ''); // unversioned URL
+  rmSync(dir, { recursive: true, force: true });
+});
+
+test('localAssetFor: null for hosts that are not CDNs, 404 for misses and for any path that leaves the package', () => {
+  const dir = assetsDir();
+  for (const url of ['https://example.com/react@18.3.1/umd/react.production.min.js', 'https://fonts.googleapis.com/css2?family=Inter', 'http://127.0.0.1:1/x.js', 'not a url'])
+    assert.equal(localAssetFor(url, dir), null, url);
+  for (const url of [
+    'https://unpkg.com/react@18.3.1/umd/missing.js', 'https://unpkg.com/left-pad@1.0.0/index.js', 'https://unpkg.com/react@18.3.1/', 'https://unpkg.com/react@18.3.1',
+    'https://cdn.jsdelivr.net/gh/orioncactus', 'https://cdn.jsdelivr.net/combine/npm/react', 'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/nope.css',
+  ]) assert.deepEqual(localAssetFor(url, dir), { status: 404 }, url);
+  // traversal: encoded separators, encoded dots, a package named `..`, and a literal ../ (the URL parser folds it to another package)
+  for (const url of [
+    'https://unpkg.com/react@18.3.1/umd/..%2F..%2F..%2Fsecret.txt', 'https://unpkg.com/react@18.3.1/%2e%2e/%2e%2e/secret.txt',
+    'https://unpkg.com/react@18.3.1/umd/..%5C..%5C..%5Csecret.txt', 'https://unpkg.com/..@1/secret.txt', 'https://unpkg.com/%2e%2e@1/secret.txt',
+    'https://unpkg.com/@../standalone@1/secret.txt', 'https://unpkg.com/react@18.3.1/../../secret.txt',
+    'https://cdn.jsdelivr.net/gh/o/..@1/secret.txt', 'https://cdn.jsdelivr.net/npm/react@18.3.1/umd/..%2F..%2F..%2Fsecret.txt',
+  ]) assert.deepEqual(localAssetFor(url, dir), { status: 404 }, url);
+  rmSync(dir, { recursive: true, force: true });
+});
+
+test('--local-assets / DC_LOCAL_ASSETS: the flag wins over the env var; empty env = unset; a missing directory (either source) throws', () => {
+  const a = tmp('vd-a-'), b = tmp('vd-b-');
+  const gone = join(a, 'no-such-dir');
+  assert.equal(resolveLocalAssets(['--local-assets', a], { DC_LOCAL_ASSETS: b }), resolve(a));
+  assert.equal(resolveLocalAssets([], { DC_LOCAL_ASSETS: b }), resolve(b));
+  assert.equal(resolveLocalAssets([], {}), undefined);
+  assert.equal(resolveLocalAssets([], { DC_LOCAL_ASSETS: '' }), undefined);
+  assert.equal(resolveLocalAssets(['--local-assets', a], { DC_LOCAL_ASSETS: gone }), resolve(a)); // a bad env value is not looked at when the flag is given
+  assert.throws(() => resolveLocalAssets(['--local-assets', gone], { DC_LOCAL_ASSETS: b }), /--local-assets directory does not exist: .*no-such-dir/);
+  assert.throws(() => resolveLocalAssets([], { DC_LOCAL_ASSETS: gone }), /DC_LOCAL_ASSETS directory does not exist/);
+  writeFileSync(join(a, 'file.txt'), 'x');
+  assert.throws(() => resolveLocalAssets(['--local-assets', join(a, 'file.txt')], {}), /directory does not exist/); // a file is not a directory
+  assert.throws(() => resolveLocalAssets(['--local-assets'], {}), /--local-assets needs a directory/);
+  assert.throws(() => resolveLocalAssets(['--local-assets', '--no-visual'], {}), /--local-assets needs a directory/);
+  rmSync(a, { recursive: true, force: true });
+  rmSync(b, { recursive: true, force: true });
+});
+
+test('CLI: a --local-assets / DC_LOCAL_ASSETS directory that does not exist exits 2 with the usage text, before the gate runs; the flag beats the env var', () => {
+  const { dir, doc, support } = docDir(GOOD);
+  const good = tmp('vd-good-');
+  const gone = join(good, 'no-such-dir');
+  const base = [doc, '--canonical-support', support, '--style', STYLE, '--no-visual'];
+  const byFlag = run([...base, '--local-assets', gone]);
+  assert.equal(byFlag.status, 2);
+  assert.match(byFlag.stderr, /--local-assets directory does not exist: .*no-such-dir/);
+  assert.match(byFlag.stderr, /usage: node verify-doc\.mjs .*\[--local-assets <dir>\]/);
+  assert.equal(byFlag.stdout, ''); // no gate output
+  const byEnv = run(base, { DC_LOCAL_ASSETS: gone });
+  assert.equal(byEnv.status, 2);
+  assert.match(byEnv.stderr, /DC_LOCAL_ASSETS directory does not exist/);
+  assert.equal(run([...base, '--local-assets']).status, 2); // flag without a value
+  const flagWins = run([...base, '--local-assets', good], { DC_LOCAL_ASSETS: gone });
+  assert.equal(flagWins.status, 0, flagWins.stdout + flagWins.stderr);
+  assert.match(lines(flagWins.stdout).at(-1), /^GATE PASSED/);
+  rmSync(dir, { recursive: true, force: true });
+  rmSync(good, { recursive: true, force: true });
+});
+
+// A browser that cannot start at all (as opposed to one that rendered nothing) must skip, not fail, the browser-gated tests.
+const browserDead = (res) => !res || /cannot start browser|browser exited at startup|CDP timeout|timed out/.test(res.unverified || '');
+const wrap = (body) => `<!DOCTYPE html><html><body style="margin:0">${body}</body></html>`;
+async function analyze(html, options) {
+  const dir = tmp();
+  const doc = join(dir, 'doc.dc.html');
+  writeFileSync(doc, html);
+  try { return await collectCompositionWarnings(doc, undefined, options); } finally { rmSync(dir, { recursive: true, force: true }); }
+}
+
+// Needs a working headless browser; the document and the "CDN" are local files, so no network is needed.
+test('visual tier: --local-assets answers CDN requests from <dir>/node_modules and fails Google Fonts fast (event subscription + Fetch interception)', async (t) => {
+  if (!hasHeadlessChrome()) return t.skip('no headless browser');
+  const assets = tmp('vd-assets-');
+  mkdirSync(join(assets, 'node_modules', 'probe'), { recursive: true });
+  writeFileSync(join(assets, 'node_modules', 'probe', 'p.js'), `document.body.insertAdjacentHTML('beforeend', '<section id="probed"><h2>workflow</h2></section>');`);
+  // `probe` is no real package: only the interception can make this section appear
+  const res = await analyze(wrap(`<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter"><script src="https://unpkg.com/probe@1.0.0/p.js"></script>`), { localAssets: assets });
+  rmSync(assets, { recursive: true, force: true });
+  if (browserDead(res)) return t.skip(`browser cannot run here: ${res?.unverified}`);
+  assert.equal(res.unverified, null);
+  assert.ok(res.warnings.some(w => w.name === 'composition:section-metrics' && /^probed /.test(w.detail)), 'the script served from <dir>/node_modules ran');
+  assert.ok(res.assetNotes.some(n => n.name === 'local-assets' && /fonts\.googleapis\.com blocked/.test(n.detail)));
+  assert.deepEqual(res.assetNotes.filter(n => n.name.startsWith('local-assets:')), []); // nothing missed, no version mismatch
+});
+
+test('visual tier: a CDN file missing under --local-assets, and a package installed at another version, are reported (and a page that renders nothing is UNVERIFIED)', async (t) => {
+  if (!hasHeadlessChrome()) return t.skip('no headless browser');
+  const assets = tmp('vd-assets-');
+  mkdirSync(join(assets, 'node_modules', 'probe'), { recursive: true });
+  writeFileSync(join(assets, 'node_modules', 'probe', 'p.js'), '/* served */');
+  writeFileSync(join(assets, 'node_modules', 'probe', 'package.json'), '{"version":"2.0.0"}');
+  const res = await analyze(wrap(`<script src="https://unpkg.com/probe@1.0.0/p.js"></script><script src="https://unpkg.com/probe@1.0.0/gone.js"></script>`), { localAssets: assets });
+  rmSync(assets, { recursive: true, force: true });
+  if (browserDead(res)) return t.skip(`browser cannot run here: ${res?.unverified}`);
+  assert.match(res.unverified, /0 sections.*--local-assets/);
+  assert.match(res.unverified, /not found under --local-assets: https:\/\/unpkg\.com\/probe@1\.0\.0\/gone\.js/);
+  const notes = Object.fromEntries(res.assetNotes.map(n => [n.name, n.detail]));
+  assert.match(notes['local-assets:miss'], /^https:\/\/unpkg\.com\/probe@1\.0\.0\/gone\.js not found under .*node_modules$/);
+  assert.match(notes['local-assets:version'], /^probe@1\.0\.0 is requested but .*node_modules.probe is 2\.0\.0$/);
+});
+
+test('visual tier 390px probe: a figure or element wider than the phone raises composition:mobile-overflow; clipped or self-scrolling ones do not', async (t) => {
+  if (!hasHeadlessChrome()) return t.skip('no headless browser');
+  const wide = analyze(wrap(`<section id="s1"><h2>x</h2>
+    <div data-component="probe-fig" style="width:600px; height:40px; background:#eee;">wide figure</div>
+    <p><code style="white-space:nowrap;">${'verylongidentifier'.repeat(5)}</code></p></section>`));
+  const ok = analyze(wrap(`<section id="s1"><h2>x</h2>
+    <div style="overflow-x:auto;"><div data-component="clipped-fig" style="width:600px; height:40px; background:#eee;">wide figure inside a scroller</div></div>
+    <div data-component="scroll-fig" style="overflow-x:auto;"><div style="width:600px; height:40px; background:#eee;">wide content</div></div></section>`));
+  const [bad, good] = [await wide, await ok];
+  if (browserDead(bad) || bad.unverified) return t.skip(`browser cannot analyze here: ${bad?.unverified}`);
+  const overflow = bad.warnings.filter(w => w.name === 'composition:mobile-overflow');
+  assert.equal(overflow.length, 1);
+  assert.match(overflow[0].detail, /exceeds viewport 390/);
+  assert.match(overflow[0].detail, /figures: probe-fig×1 \(\+\d+px\)/);
+  assert.match(overflow[0].detail, /other: s1 <code>×1 "verylongidentifier/);
+  assert.equal(bad.warnings.some(w => w.name === 'composition:desktop-overflow'), false); // the 600px figure and the 90-character token fit the desktop viewports
+  assert.equal(good.warnings.some(w => w.name === 'composition:mobile-overflow'), false);
+  const scrolls = good.warnings.filter(w => w.name === 'composition:mobile-scroll-figure');
+  assert.equal(scrolls.length, 1);
+  assert.equal(scrolls[0].level, 'INFO');
+  assert.match(scrolls[0].detail, /^scroll-fig×1 scroll sideways/); // the root that scrolls itself, not the one a wrapper clips
+  // the narrow viewport skips the desktop-only rows
+  for (const res of [bad, good]) assert.equal(res.warnings.some(w => /section-height|stacked-grids/.test(w.name) && /390x844/.test(w.detail)), false);
+});
+
+test('visual tier: the real feedbackops-light gallery renders offline through DC_LOCAL_ASSETS at all three viewports', async (t) => {
+  const localAssets = process.env.DC_LOCAL_ASSETS;
+  if (!localAssets || !existsSync(localAssets)) return t.skip('DC_LOCAL_ASSETS not set (a directory whose node_modules holds react, react-dom and pretendard)');
+  if (!hasHeadlessChrome()) return t.skip('no headless browser');
+  const res = await collectCompositionWarnings(join(REPO, 'styles', STYLE, 'components.gallery.dc.html'), styleInputs(STYLE).panel, { localAssets: resolve(localAssets) });
+  if (browserDead(res)) return t.skip(`browser cannot run here: ${res?.unverified}`);
+  assert.equal(res.unverified, null, JSON.stringify(res.assetNotes));
+  const metrics = res.warnings.filter(w => w.name === 'composition:section-metrics');
+  for (const height of [768, 900]) assert.ok(metrics.some(w => new RegExp(`viewport=\\d+x${height}$`).test(w.detail)), `desktop viewport of height ${height}`); // the width is a few px under the nominal one (scrollbar)
+  assert.ok(res.warnings.some(w => w.name === 'composition:narrow-metrics' && /at 390x844/.test(w.detail)));
+  assert.equal(res.warnings.some(w => w.name === 'composition:unverified'), false);
+  assert.deepEqual(res.assetNotes.filter(n => n.name.startsWith('local-assets:')), []); // react, react-dom, pretendard all found at the requested versions
 });
 
 // Needs a working headless browser (CHROME_PATH or PATH); skipped otherwise. The page is plain HTML so no network is needed.

@@ -104,4 +104,4 @@ styles/<id>/support.js --style <id> --plan <content-plan.md>` — prints the `GA
 
 ## Requirements
 
-Serve over http(s) (not `file://`), keep a copy of `support.js` **beside** each `.dc.html` file (there is no build step — copies are the byte-identical generated runtime), and allow outbound network for fonts + React UMD. Details in `core/runtime-spec.md §4`.
+Serve over http(s) (not `file://`), keep a copy of `support.js` **beside** each `.dc.html` file (there is no build step — copies are the byte-identical generated runtime), and allow outbound network for fonts + React UMD. Details in `core/runtime-spec.md §4`. To run the authoring gate's visual tier without network, see `.claude/README.md` Prerequisites (`--local-assets`).

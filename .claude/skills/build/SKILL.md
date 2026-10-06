@@ -247,7 +247,8 @@ node .claude/lib/verify-doc.mjs <doc.dc.html> --canonical-support <styles/<style
 
 `--style` supplies the accent color and turns on the palette check; `--plan` turns on the section,
 shape, number and term-sheet checks — always pass both. (`--no-visual` skips the headless-browser tier; the
-environment variable `CHROME_PATH` picks the browser.)
+environment variable `CHROME_PATH` picks the browser; on a machine without outbound network add
+`--local-assets <dir>` or set `DC_LOCAL_ASSETS` so the tier can render at all — `.claude/README.md` Prerequisites.)
 
 **Success means the literal last gate line `GATE PASSED (k/k checks)`** — nothing else. An exit code of
 0 without that line (for example because the command did not run) is not a pass; `GATE FAILED` is not
@@ -297,13 +298,16 @@ The gate runs two tiers:
   TO-BE/target zones per the style's color law. That correctness depends on following Step 4's
   state→color mapping and is checked, if at all, by the visual render tier below or by eyeballing
   against the style's answer key — never claim the mechanical gate guarantees color-zone correctness.
-- A **warning-only desktop composition tier** that only runs if a headless browser is available.
+- A **warning-only composition tier** that only runs if a headless browser is available.
   It serves the document over localhost and evaluates desktop viewports `1366x768` and `1440x900`
   for section height, stacked grids, 4-column text grids, missing primary figures, low-emphasis
-  decision asks, meaning-block count, and desktop overflow. These rows print as `WARN` and do
-  **not** change the exit code until the warnings have been calibrated against accepted artifacts.
-  If a headless browser is not available, the gate reports the visual check as unverified rather
-  than silently skipping it — treat that as an honest "not checked," not a pass.
+  decision asks, meaning-block count, and desktop overflow, then a `390x844` phone-width probe that
+  warns `composition:mobile-overflow` when the page scrolls sideways (the row names the figures that
+  cause it — read it, and fix the figure or its container rather than hiding the overflow). These
+  rows print as `WARN` and do **not** change the exit code until the warnings have been calibrated
+  against accepted artifacts. If a headless browser is not available, or the document cannot load
+  its runtime (no network and no `--local-assets`), the gate reports the visual check as unverified
+  rather than silently skipping it — treat that as an honest "not checked," not a pass.
 
 - **Non-blocking Korean-writing rows**, printed as `WARN` whatever the plan: `prose:long-sentence` (>110 characters),
   `prose:dot-chain` (4+ `·` in one sentence), `prose:dash` (more than one `—` in a sentence, or more than 3 in a lead),
