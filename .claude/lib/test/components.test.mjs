@@ -1,10 +1,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { listTemplates, listStyles, buildStyle, staleFiles, shapeMap, parseMeta, parseDataKeys, loadTokens, stripSlots, CORE_DIR } from '../components.mjs';
-import { figureChecks, zoneRoles } from '../figures.mjs';
+import { figureChecks, zoneRoles, markup, elementsWith, htmlOf, attrOf } from '../figures.mjs';
+import { findHeadlessChrome } from '../verify-doc.mjs';
 
 const CORE = join(CORE_DIR, '..');
 
@@ -275,5 +277,82 @@ test('figure markers: every style renders each template with exactly the markers
       ['zone-colors', true, '7 zone(s) checked'],
     ], style);
     assert.deepEqual(gallery.notes, [], style);
+  }
+});
+
+// ---- the 390px matrix and the before-after pivot (core/components.md §4 "Narrow widths") ----
+
+test('matrix: a column floor leaves room for text (padding included) and 4+ columns scroll inside the matrix at the 343px a phone leaves the sheet', () => {
+  const body = live(tpl('matrix'));
+  const floors = [...body.matchAll(/repeat\((\d+),minmax\((\d+)px,1fr\)\)/g)];
+  assert.ok(floors.length, 'the matrix has repeat(C,minmax(Npx,1fr)) tracks');
+  const label = Number(body.match(/grid-template-columns:minmax\((\d+)px,1\.4fr\)/)[1]);
+  for (const [, , floor] of floors) {
+    assert.ok(Number(floor) >= 72, `a ${floor}px column leaves under 52px of text next to its 10px side padding`);
+    for (const columns of [4, 5]) assert.ok(label + columns * Number(floor) > 343, `${columns} columns of ${floor}px must overflow the 343px sheet so the matrix scrolls instead of squeezing`);
+  }
+  assert.match(tpl('matrix').src, /HOW TO FILL[\s\S]*repeat\(C,minmax\(72px,1fr\)\)/); // the instruction names the same floor
+});
+
+test('before-after: the pivot is pasted twice — → while both columns fit one row, ↓ on its own row when they stack — and the switch point is 2 × column basis + pivot', () => {
+  const body = live(tpl('before-after'));
+  const basis = [...body.matchAll(/flex:1 1 (\d+)px; min-width:0;" data-zone/g)].map(m => Number(m[1]));
+  assert.deepEqual(basis, [260, 260]);
+  assert.match(body, /align-items:stretch; container-type:inline-size;">/); // the row is the container 100cqw measures
+  const side = body.match(/flex:0 0 clamp\(0px,calc\(\(100cqw - (\d+)px\) \* 999\),(\d+)px\);[^"]*"><div style="width:36px; max-width:100%;[^"]*font:400 clamp\(0px,calc\(\(100cqw - (\d+)px\) \* 999\),17px\)[^"]*">→<\/div>/);
+  const stacked = body.match(/flex:0 0 clamp\(0px,calc\(\((\d+)px - 100cqw\) \* 999\),100cqw\);[^"]*"><div style="width:36px; max-width:100%;[^"]*font:400 clamp\(0px,calc\(\((\d+)px - 100cqw\) \* 999\),17px\)[^"]*">↓<\/div>/);
+  assert.ok(side && stacked, 'both pivots collapse their box and their glyph (font-size) to 0px outside their layout — nothing is clipped, so the figure-overflow probe stays quiet');
+  const switchAt = 2 * basis[0] + Number(side[2]);
+  assert.deepEqual([Number(side[1]) + 1, Number(side[3]) + 1], [switchAt, switchAt]); // → is 0 up to 569px, 50px from 570px
+  assert.deepEqual([Number(stacked[1]), Number(stacked[2])], [switchAt, switchAt]); // ↓ is 100cqw wide up to 569px, 0 from 570px
+  assert.doesNotMatch(body, /flex:0 0 50px|overflow:hidden/); // no fixed always-→ pivot, no clipping trick
+  assert.match(tpl('before-after').src, /HOW TO FILL[\s\S]*container-type:inline-size/); // the contract is written down
+});
+
+test('before-after pivot in a browser: ↓ sits on its own row between the stacked columns and → is 0px wide; side by side it is the other way round', (t) => {
+  const chrome = findHeadlessChrome();
+  if (!chrome) return t.skip('no headless browser');
+  const fig = stripSlots(buildStyle('feedbackops-light')['components/before-after.html'].replace(/<!--[\s\S]*?-->/g, ''));
+  const rows = [285, 400, 560, 570, 1000]; // the row inside the figure's 28px padding and 1px border
+  const page = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0">${rows.map(w => `<div class="f" style="width:${w + 58}px">${fig}</div>`).join('')}<pre id="out"></pre><script>
+    document.getElementById('out').textContent = JSON.stringify([...document.querySelectorAll('.f')].map(f => {
+      const row = f.querySelector('[data-component] > div'), r = (e) => e.getBoundingClientRect();
+      const [asIs, ...rest] = [...row.children], toBe = rest.pop();
+      const pivot = (glyph) => rest.find(e => e.textContent.trim() === glyph);
+      return { row: Math.round(r(row).width), arrow: Math.round(r(pivot('→')).width), down: Math.round(r(pivot('↓')).width),
+        order: [r(asIs).top, r(pivot('↓')).top, r(toBe).top].map(Math.round) };
+    }));
+  </script></body></html>`;
+  const dir = mkdtempSync(join(tmpdir(), 'ba-'));
+  try {
+    writeFileSync(join(dir, 'p.html'), page);
+    let out;
+    try { out = execFileSync(chrome, ['--headless=new', ...(process.getuid?.() === 0 ? ['--no-sandbox'] : []), '--disable-gpu', '--dump-dom', `file://${join(dir, 'p.html')}`], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 30000 }); }
+    catch (e) { return t.skip(`browser cannot run here: ${e.message.split('\n')[0]}`); }
+    const got = JSON.parse(out.match(/<pre id="out">([\s\S]*?)<\/pre>/)[1].replace(/&quot;/g, '"'));
+    for (const g of got) {
+      if (g.row < 570) {
+        assert.equal(g.arrow, 0, `row ${g.row}: → is hidden`);
+        assert.equal(g.down, g.row, `row ${g.row}: ↓ takes the row`);
+        assert.ok(g.order[0] < g.order[1] && g.order[1] < g.order[2], `row ${g.row}: ↓ sits between the stacked columns (${g.order})`);
+      } else {
+        assert.deepEqual([g.arrow, g.down], [50, 0], `row ${g.row}`);
+        assert.equal(g.order[0], g.order[2], `row ${g.row}: the columns share a row`);
+      }
+    }
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+// ---- documents built from the components keep the planned marker (core/components.md §4 "Figure markers") ----
+
+test('documents: every element drawn in the planned look (muted dashed box on the fill tint; a timeline row with the dashed empty marker) carries data-state="planned"', () => {
+  const { colors } = loadTokens('feedbackops-light');
+  const box = `background:${colors['fill-50']}; border:1px dashed ${colors['muted-300']};`;
+  const ring = `border:2px dashed ${colors['muted-300']}`;
+  for (const file of ['presentations/platform-pitch/platform-pitch.dc.html', 'presentations/platform-guide/platform-guide.dc.html']) {
+    const mk = markup(readFileSync(join(CORE, '..', file), 'utf8'));
+    const looks = elementsWith(mk, 'style').filter(el => el.value.includes(box) || (el.value.includes('96px 28px') && htmlOf(mk, el).includes(ring)));
+    assert.ok(looks.length, `${file} draws planned things`);
+    for (const el of looks) assert.equal(attrOf(el.attrs, 'data-state'), 'planned', `${file}: <${el.name}> "${htmlOf(mk, el).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 30)}" has the planned look but no data-state="planned"`);
   }
 });

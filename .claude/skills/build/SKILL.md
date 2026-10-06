@@ -291,10 +291,10 @@ The gate runs two tiers:
   - `grid-consistency` — a component's `repeat(M,…)` differs from its `calc(100% / N)`: make the
     count the same everywhere in that component (every row, header and background).
   - `chart-proportions` — a `data-value`-marked bar, row or segment is drawn at a size its number does not say, or its label shows
-    another number than its `data-value` (the width/height slot, the label and `data-value` are three copies of one number; a bar's
-    height is value ÷ the chart's largest value × 100 and a stacked bar's segments add up to 100): correct the wrong copy. Runs only
+    another number than its `data-value` (the width/height slot, the label and `data-value` are three copies of one number; bar
+    heights share one scale — value ÷ the chart's largest value × 100, or the value itself on a 0–100 axis — and a stacked bar's segments add up to 100): correct the wrong copy. Runs only
     where the markers are — never delete a marker to pass.
-  - `zone-colors` — the style's accent sits inside a `data-zone="as-is"` zone (an AS-IS column, a legacy gantt bar, the legacy
+  - `zone-colors` — the style's accent (or a tint of it, `accent-050` …) sits inside a `data-zone="as-is"` zone (an AS-IS column, a legacy gantt bar, the legacy
     layer), or a `data-zone="to-be"` zone is mostly warn/slate fills: re-paste that zone from the variant of the right meaning
     (current state = the slate/warn family, target = the accent family). Never move or delete the `data-zone` attribute to pass.
   - `known-components`, `plan-alignment`, `plan-shapes` — every `data-component` is a real component, the

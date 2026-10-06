@@ -115,7 +115,7 @@
       <h2 style="font:600 28px/1.32 Inter,Pretendard,sans-serif; color:#101828; margin:0 0 12px; letter-spacing:-.01em;">지금의 문제 — VOC는 남지만 그 뒤가 이어지지 않는다</h2>
       <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 28px; max-width:760px;">Jira에 VOC는 남는다. 하지만 어떤 VOC가 어떤 작업으로 이어졌는지, 문의자에게 무엇을 알렸는지는 따라가기 어렵다(소유자 진술). 준비 단계에서 Jira 기록을 뽑아 숫자로 확인한다. 발표자는 원인을 담당자의 노력이 아니라 흩어진 도구에서 찾는다. 그래서 여러 화면이 함께 쓰는 공통 기반 하나 위에 업무 화면(메뉴)을 얹고, 화면끼리 이어지게 하려 한다. Jira 전체를 바꾸지는 않고 VOC 흐름만 옮겨 시험한다. Jira 보강 같은 대안은 두 시스템을 소개한 뒤 8절에서 비교한다.</p>
       <div data-component="before-after" style="border:1px solid #DCE5F2; border-radius:12px; padding:28px; background:#FBFDFF; overflow-wrap:anywhere;">
-  <div style="display:flex; flex-wrap:wrap; justify-content:center; align-items:stretch;">
+  <div style="display:flex; flex-wrap:wrap; justify-content:center; align-items:stretch; container-type:inline-size;">
     <div style="display:flex; flex-direction:column; justify-content:center; flex:1 1 260px; min-width:0;" data-zone="as-is">
       <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="font:700 11px/1 'JetBrains Mono',Pretendard,monospace; letter-spacing:.06em; color:#FFFFFF; background:#94A3B8; border-radius:4px; padding:6px 10px; white-space:nowrap; flex:none;">지금</span><span style="font:600 15px/1.3 Inter,Pretendard,sans-serif; color:#475467;">도구가 따로 있다</span></div>
       <div style="background:#EEF2F7; border:1.5px dashed #B8C4D6; border-radius:8px; padding:16px 14px;">
@@ -135,7 +135,8 @@
       </div>
       <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:13px;"><span style="font:500 11px/1 Inter,Pretendard,sans-serif; border-radius:100px; padding:6px 11px; color:#8E5500; background:#FCEDEE;">소유자 진술 — Jira 기록으로 확인 예정</span><span style="font:500 11px/1 Inter,Pretendard,sans-serif; border-radius:100px; padding:6px 11px; color:#8E5500; background:#FCEDEE;">VOC와 작업·안내의 연결이 끊김</span></div>
     </div>
-    <div style="display:flex; align-items:center; justify-content:center; flex:0 0 50px; padding:8px 0;"><div style="width:36px; height:36px; border-radius:50%; background:#1428A0; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font:400 17px/1 Inter,Pretendard,sans-serif;">→</div></div>
+    <div style="display:flex; align-items:center; justify-content:center; flex:0 0 clamp(0px,calc((100cqw - 569px) * 999),50px); min-width:0; padding:8px 0;"><div style="width:36px; max-width:100%; height:36px; border-radius:50%; background:#1428A0; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font:400 clamp(0px,calc((100cqw - 569px) * 999),17px)/1 Inter,Pretendard,sans-serif;">→</div></div>
+    <div style="display:flex; align-items:center; justify-content:center; flex:0 0 clamp(0px,calc((570px - 100cqw) * 999),100cqw); min-width:0; padding:8px 0;"><div style="width:36px; max-width:100%; height:36px; border-radius:50%; background:#1428A0; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font:400 clamp(0px,calc((570px - 100cqw) * 999),17px)/1 Inter,Pretendard,sans-serif;">↓</div></div>
     <div style="display:flex; flex-direction:column; justify-content:center; flex:1 1 260px; min-width:0;" data-zone="to-be">
       <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="font:700 11px/1 'JetBrains Mono',Pretendard,monospace; letter-spacing:.06em; color:#FFFFFF; background:#1428A0; border-radius:4px; padding:6px 10px; white-space:nowrap; flex:none;">목표</span><span style="font:600 15px/1.3 Inter,Pretendard,sans-serif; color:#101828;">공통 기반 하나 위에 업무를 얹는다</span></div>
       <div style="font:700 13px/1.3 Inter,Pretendard,sans-serif; color:#FFFFFF; background:#1428A0; border-radius:8px; padding:12px; text-align:center;">공통 기반 하나</div>
@@ -146,7 +147,7 @@
         <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px 8px; text-align:center;">생산성 분석</div>
         <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px 8px; text-align:center;">기준정보</div>
         <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px 8px; text-align:center;">모니터링</div>
-        <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#5D6679; background:#F3F7FE; border:1px dashed #B8C4D6; border-radius:6px; padding:10px 8px; text-align:center;">표준로그 개발 관리 <span style="font:700 11px/1 Inter,Pretendard,sans-serif; color:#5D6679; background:#FFFFFF; border:1px solid #B8C4D6; border-radius:4px; padding:2px 6px; white-space:nowrap; vertical-align:1px;">미설계</span></div>
+        <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#5D6679; background:#F3F7FE; border:1px dashed #B8C4D6; border-radius:6px; padding:10px 8px; text-align:center;" data-state="planned">표준로그 개발 관리 <span style="font:700 11px/1 Inter,Pretendard,sans-serif; color:#5D6679; background:#FFFFFF; border:1px solid #B8C4D6; border-radius:4px; padding:2px 6px; white-space:nowrap; vertical-align:1px;">미설계</span></div>
         <div style="grid-column:1 / -1; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:6px; padding:10px 8px; text-align:center;">화면 사이 연결</div>
       </div>
       <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:13px;"><span style="font:500 11px/1 Inter,Pretendard,sans-serif; border-radius:100px; padding:6px 11px; color:#1428A0; background:#E7EFFC;">VOC→작업 연결률로 성과 집계</span><span style="font:500 11px/1 Inter,Pretendard,sans-serif; border-radius:100px; padding:6px 11px; color:#1428A0; background:#E7EFFC;">문의자가 진행을 직접 확인</span></div>
@@ -340,10 +341,10 @@
       <div style="font:600 13px/1.35 Inter,Pretendard,sans-serif; color:#101828;">업무 화면 — 아직 없음</div>
     </div>
     <div style="padding:12px; display:flex; flex-wrap:wrap; gap:8px; align-content:center;">
-      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#5D6679; background:#F3F7FE; border:1px dashed #B8C4D6; border-radius:6px; padding:9px 10px; text-align:center;">시스템 모니터링 <span style="font:700 11px/1 Inter,Pretendard,sans-serif; color:#5D6679; background:#FFFFFF; border:1px solid #B8C4D6; border-radius:4px; padding:2px 6px; white-space:nowrap; vertical-align:1px;">대기</span></div>
-      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#5D6679; background:#F3F7FE; border:1px dashed #B8C4D6; border-radius:6px; padding:9px 10px; text-align:center;">공지 <span style="font:700 11px/1 Inter,Pretendard,sans-serif; color:#5D6679; background:#FFFFFF; border:1px solid #B8C4D6; border-radius:4px; padding:2px 6px; white-space:nowrap; vertical-align:1px;">예정</span></div>
-      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#5D6679; background:#F3F7FE; border:1px dashed #B8C4D6; border-radius:6px; padding:9px 10px; text-align:center;">공정·레시피 기준정보 <span style="font:700 11px/1 Inter,Pretendard,sans-serif; color:#5D6679; background:#FFFFFF; border:1px solid #B8C4D6; border-radius:4px; padding:2px 6px; white-space:nowrap; vertical-align:1px;">예정</span></div>
-      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#5D6679; background:#F3F7FE; border:1px dashed #B8C4D6; border-radius:6px; padding:9px 10px; text-align:center;">표준로그 개발 관리 <span style="font:700 11px/1 Inter,Pretendard,sans-serif; color:#5D6679; background:#FFFFFF; border:1px solid #B8C4D6; border-radius:4px; padding:2px 6px; white-space:nowrap; vertical-align:1px;">미설계</span></div>
+      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#5D6679; background:#F3F7FE; border:1px dashed #B8C4D6; border-radius:6px; padding:9px 10px; text-align:center;" data-state="planned">시스템 모니터링 <span style="font:700 11px/1 Inter,Pretendard,sans-serif; color:#5D6679; background:#FFFFFF; border:1px solid #B8C4D6; border-radius:4px; padding:2px 6px; white-space:nowrap; vertical-align:1px;">대기</span></div>
+      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#5D6679; background:#F3F7FE; border:1px dashed #B8C4D6; border-radius:6px; padding:9px 10px; text-align:center;" data-state="planned">공지 <span style="font:700 11px/1 Inter,Pretendard,sans-serif; color:#5D6679; background:#FFFFFF; border:1px solid #B8C4D6; border-radius:4px; padding:2px 6px; white-space:nowrap; vertical-align:1px;">예정</span></div>
+      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#5D6679; background:#F3F7FE; border:1px dashed #B8C4D6; border-radius:6px; padding:9px 10px; text-align:center;" data-state="planned">공정·레시피 기준정보 <span style="font:700 11px/1 Inter,Pretendard,sans-serif; color:#5D6679; background:#FFFFFF; border:1px solid #B8C4D6; border-radius:4px; padding:2px 6px; white-space:nowrap; vertical-align:1px;">예정</span></div>
+      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#5D6679; background:#F3F7FE; border:1px dashed #B8C4D6; border-radius:6px; padding:9px 10px; text-align:center;" data-state="planned">표준로그 개발 관리 <span style="font:700 11px/1 Inter,Pretendard,sans-serif; color:#5D6679; background:#FFFFFF; border:1px solid #B8C4D6; border-radius:4px; padding:2px 6px; white-space:nowrap; vertical-align:1px;">미설계</span></div>
     </div>
   </div>
   <div style="text-align:center; font:500 11px/1.4 Inter,Pretendard,sans-serif; color:#5D6679; padding:7px 0;"><span style="color:#1428A0; font:400 14px/1 Inter,Pretendard,sans-serif;">↕</span> 화면을 등록하고 공통 부품을 쓴다(원칙: 플랫폼 코드는 고치지 않는다)</div>
@@ -367,8 +368,8 @@
       <div style="font:600 13px/1.35 Inter,Pretendard,sans-serif; color:#101828;">데이터·로그인 — 사내 회신 대기</div>
     </div>
     <div style="padding:12px; display:flex; flex-wrap:wrap; gap:8px; align-content:center;">
-      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#5D6679; background:#F3F7FE; border:1px dashed #B8C4D6; border-radius:6px; padding:9px 10px; text-align:center;">사내 통합 로그인 <span style="font:700 11px/1 Inter,Pretendard,sans-serif; color:#5D6679; background:#FFFFFF; border:1px solid #B8C4D6; border-radius:4px; padding:2px 6px; white-space:nowrap; vertical-align:1px;">대기</span></div>
-      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#5D6679; background:#F3F7FE; border:1px dashed #B8C4D6; border-radius:6px; padding:9px 10px; text-align:center;">플랫폼용 사내 서버 <span style="font:700 11px/1 Inter,Pretendard,sans-serif; color:#5D6679; background:#FFFFFF; border:1px solid #B8C4D6; border-radius:4px; padding:2px 6px; white-space:nowrap; vertical-align:1px;">대기</span></div>
+      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#5D6679; background:#F3F7FE; border:1px dashed #B8C4D6; border-radius:6px; padding:9px 10px; text-align:center;" data-state="planned">사내 통합 로그인 <span style="font:700 11px/1 Inter,Pretendard,sans-serif; color:#5D6679; background:#FFFFFF; border:1px solid #B8C4D6; border-radius:4px; padding:2px 6px; white-space:nowrap; vertical-align:1px;">대기</span></div>
+      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#5D6679; background:#F3F7FE; border:1px dashed #B8C4D6; border-radius:6px; padding:9px 10px; text-align:center;" data-state="planned">플랫폼용 사내 서버 <span style="font:700 11px/1 Inter,Pretendard,sans-serif; color:#5D6679; background:#FFFFFF; border:1px solid #B8C4D6; border-radius:4px; padding:2px 6px; white-space:nowrap; vertical-align:1px;">대기</span></div>
       <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:9px 10px; text-align:center;">FeedbackOps 서버<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#5D6679; margin-top:2px;">그대로 쓴다</span></div>
     </div>
   </div>
@@ -380,7 +381,7 @@
       <h2 style="font:600 28px/1.32 Inter,Pretendard,sans-serif; color:#101828; margin:0 0 12px; letter-spacing:-.01em;">플랫폼이 개발을 쉽게 하는 방법 — 화면마다 다시 만들지 않는다</h2>
       <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 28px; max-width:760px;">업무 화면을 따로 만들면 같은 기능을 화면마다 다시 만들게 된다. 플랫폼 저장소에서도 실제로 그랬다. 견본 화면 세 곳이 표 내보내기를 각자 만들었고, 그중 한 곳은 엑셀에서 한글이 깨질 수 있었다. 필터 입력도 다섯 곳이 각자 만들었다. 지금은 공통 기반이 이 일을 맡는다. 성공 기준은 하나다. 새 업무 화면을 얹을 때 플랫폼 코드를 고치지 않아야 한다. 화면 사이의 이동도 공통 기반이 맡는다. 예를 들어 사이클타임 상세 화면에서 느린 실행 건을 누르면 실행 상세 화면으로 넘어간다. 이 이동은 견본에 이미 있다. 분석 화면의 문맥을 담아 VOC를 올리는 기능은 아직 계획이다.</p>
       <div data-component="before-after" style="border:1px solid #DCE5F2; border-radius:12px; padding:28px; background:#FBFDFF; overflow-wrap:anywhere;">
-  <div style="display:flex; flex-wrap:wrap; justify-content:center; align-items:stretch;">
+  <div style="display:flex; flex-wrap:wrap; justify-content:center; align-items:stretch; container-type:inline-size;">
     <div style="display:flex; flex-direction:column; justify-content:center; flex:1 1 260px; min-width:0;" data-zone="as-is">
       <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="font:700 11px/1 'JetBrains Mono',Pretendard,monospace; letter-spacing:.06em; color:#FFFFFF; background:#94A3B8; border-radius:4px; padding:6px 10px; white-space:nowrap; flex:none;">지금</span><span style="font:600 15px/1.3 Inter,Pretendard,sans-serif; color:#475467;">화면마다 따로 만든다</span></div>
       <div style="background:#EEF2F7; border:1.5px dashed #B8C4D6; border-radius:8px; padding:16px 14px;">
@@ -398,7 +399,8 @@
       </div>
       <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:13px;"><span style="font:500 11px/1 Inter,Pretendard,sans-serif; border-radius:100px; padding:6px 11px; color:#8E5500; background:#FCEDEE;">견본 화면에서 실제로 겪음</span></div>
     </div>
-    <div style="display:flex; align-items:center; justify-content:center; flex:0 0 50px; padding:8px 0;"><div style="width:36px; height:36px; border-radius:50%; background:#1428A0; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font:400 17px/1 Inter,Pretendard,sans-serif;">→</div></div>
+    <div style="display:flex; align-items:center; justify-content:center; flex:0 0 clamp(0px,calc((100cqw - 569px) * 999),50px); min-width:0; padding:8px 0;"><div style="width:36px; max-width:100%; height:36px; border-radius:50%; background:#1428A0; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font:400 clamp(0px,calc((100cqw - 569px) * 999),17px)/1 Inter,Pretendard,sans-serif;">→</div></div>
+    <div style="display:flex; align-items:center; justify-content:center; flex:0 0 clamp(0px,calc((570px - 100cqw) * 999),100cqw); min-width:0; padding:8px 0;"><div style="width:36px; max-width:100%; height:36px; border-radius:50%; background:#1428A0; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font:400 clamp(0px,calc((570px - 100cqw) * 999),17px)/1 Inter,Pretendard,sans-serif;">↓</div></div>
     <div style="display:flex; flex-direction:column; justify-content:center; flex:1 1 260px; min-width:0;" data-zone="to-be">
       <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="font:700 11px/1 'JetBrains Mono',Pretendard,monospace; letter-spacing:.06em; color:#FFFFFF; background:#1428A0; border-radius:4px; padding:6px 10px; white-space:nowrap; flex:none;">목표</span><span style="font:600 15px/1.3 Inter,Pretendard,sans-serif; color:#101828;">공통 기반이 한 번만 만든다</span></div>
       <div style="font:700 13px/1.3 Inter,Pretendard,sans-serif; color:#FFFFFF; background:#1428A0; border-radius:8px; padding:12px; text-align:center;">공통 기반</div>
@@ -448,12 +450,12 @@
     <div style="display:flex; justify-content:center; background:linear-gradient(#DCE5F2,#DCE5F2) center/2px 100% no-repeat;"><div style="width:18px; height:18px; border-radius:50%; background:#1428A0; box-shadow:0 0 0 4px #E7EFFC;"></div></div>
     <div style="padding:0 0 18px;"><div style="font:600 13.5px/1.4 Inter,Pretendard,sans-serif; color:#1428A0;">지금</div><div style="font:400 12.5px/1.6 Inter,Pretendard,sans-serif; color:#475467; margin-top:2px;">플랫폼 v0.2.0, 연결 대부분 완료</div></div>
   </div>
-  <div style="display:grid; grid-template-columns:96px 28px minmax(0,1fr); column-gap:10px;">
+  <div style="display:grid; grid-template-columns:96px 28px minmax(0,1fr); column-gap:10px;" data-state="planned">
     <div style="font:600 11.5px/1.4 'JetBrains Mono',Pretendard,monospace; color:#5D6679; text-align:right; padding-top:2px;">다음</div>
     <div style="display:flex; justify-content:center; background:linear-gradient(#DCE5F2,#DCE5F2) center/2px 100% no-repeat;"><div style="width:18px; height:18px; border-radius:50%; background:#FFFFFF; border:2px dashed #B8C4D6; box-sizing:border-box;"></div></div>
     <div style="padding:0 0 18px;"><div style="font:600 13.5px/1.4 Inter,Pretendard,sans-serif; color:#5D6679;">한 팀 시범(이 제안) <span style="font:700 11px/1 Inter,Pretendard,sans-serif; color:#5D6679; background:#FFFFFF; border:1px solid #B8C4D6; border-radius:4px; padding:2px 6px; white-space:nowrap; vertical-align:2px;">제안</span></div><div style="font:400 12.5px/1.6 Inter,Pretendard,sans-serif; color:#5D6679; margin-top:2px;">준비 2주 → 운영 8주 → 판정</div></div>
   </div>
-  <div style="display:grid; grid-template-columns:96px 28px minmax(0,1fr); column-gap:10px;">
+  <div style="display:grid; grid-template-columns:96px 28px minmax(0,1fr); column-gap:10px;" data-state="planned">
     <div style="font:600 11.5px/1.4 'JetBrains Mono',Pretendard,monospace; color:#5D6679; text-align:right; padding-top:2px;">판정 뒤</div>
     <div style="display:flex; justify-content:center; background:linear-gradient(#DCE5F2,#DCE5F2) center top/2px 9px no-repeat;"><div style="width:18px; height:18px; border-radius:50%; background:#FFFFFF; border:2px dashed #B8C4D6; box-sizing:border-box;"></div></div>
     <div style="padding:0 0 18px;"><div style="font:600 13.5px/1.4 Inter,Pretendard,sans-serif; color:#5D6679;">화면 이전(별도 승인) <span style="font:700 11px/1 Inter,Pretendard,sans-serif; color:#5D6679; background:#FFFFFF; border:1px solid #B8C4D6; border-radius:4px; padding:2px 6px; white-space:nowrap; vertical-align:2px;">예정</span></div><div style="font:400 12.5px/1.6 Inter,Pretendard,sans-serif; color:#5D6679; margin-top:2px;">거친 추정 4~8주</div></div>
@@ -476,56 +478,56 @@
       <h2 style="font:600 28px/1.32 Inter,Pretendard,sans-serif; color:#101828; margin:0 0 12px; letter-spacing:-.01em;">대안 비교 — 왜 Jira 보강만으로는 안 되나</h2>
       <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 28px; max-width:760px;">네 가지 안을 일곱 가지 기준으로 비교했다. 이 제안의 ✓는 이미 구현된 기능을 근거로 한다. 한계도 같은 표에 적었다. 분석 화면에서 VOC로 문맥을 넘기는 기능은 아직 계획이다. 실제 사용은 사내 통합 로그인을 연결한 뒤에 시작한다. 시범 동안에는 Jira와 함께 쓴다. Jira 보강이 실제로 가능한지는 준비 단계에서 확인한다. 문의자가 Jira를 쓰는지, 흐름을 바꿀 권한이 누구에게 있는지를 본다.</p>
       <div data-component="matrix" style="border:1px solid #DCE5F2; border-radius:8px; overflow-x:auto; background:#FFFFFF; overflow-wrap:anywhere;"><div style="min-width:min-content;">
-  <div style="display:grid; grid-template-columns:minmax(96px,1.4fr) repeat(4,minmax(60px,1fr)); background:#101828;">
+  <div style="display:grid; grid-template-columns:minmax(96px,1.4fr) repeat(4,minmax(72px,1fr)); background:#101828;">
     <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#B8C4D6; padding:12px 16px;">비교 기준</div>
     <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#FFFFFF; padding:12px 10px; text-align:center;">현상 유지(Jira+CLAS)</div>
     <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#FFFFFF; padding:12px 10px; text-align:center;">Jira 설정 보강</div>
     <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#FFFFFF; padding:12px 10px; text-align:center;">CLAS에 화면 추가</div>
     <div style="font:700 12px/1.35 Inter,Pretendard,sans-serif; color:#FFFFFF; padding:12px 10px; text-align:center; background:#1428A0;">이 제안(플랫폼+FeedbackOps)</div>
   </div>
-  <div style="display:grid; grid-template-columns:minmax(96px,1.4fr) repeat(4,minmax(60px,1fr)); border-top:1px solid #E6EDF7; align-items:center;">
+  <div style="display:grid; grid-template-columns:minmax(96px,1.4fr) repeat(4,minmax(72px,1fr)); border-top:1px solid #E6EDF7; align-items:center;">
     <div style="font:600 12.5px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; padding:11px 16px; background:#F7FAFE;">VOC를 묶어 작업으로</div>
     <div style="text-align:center; font:600 15px/1 Inter,Pretendard,sans-serif; color:#CBD6E6;">✕</div>
     <div style="text-align:center; font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#8E5500; padding:0 6px;">부분(링크·Epic을 손으로)</div>
     <div style="text-align:center; font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#8E5500; padding:0 6px;">부분(새로 개발)</div>
     <div style="text-align:center; font:600 15px/1 Inter,Pretendard,sans-serif; color:#10734A;">✓ <span style="font:600 11.5px/1.3 Inter,Pretendard,sans-serif;">묶음→작업 요청</span></div>
   </div>
-  <div style="display:grid; grid-template-columns:minmax(96px,1.4fr) repeat(4,minmax(60px,1fr)); border-top:1px solid #E6EDF7; align-items:center;">
+  <div style="display:grid; grid-template-columns:minmax(96px,1.4fr) repeat(4,minmax(72px,1fr)); border-top:1px solid #E6EDF7; align-items:center;">
     <div style="font:600 12.5px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; padding:11px 16px; background:#F7FAFE;">문의자가 진행 확인</div>
     <div style="text-align:center; font:600 15px/1 Inter,Pretendard,sans-serif; color:#CBD6E6;">✕</div>
     <div style="text-align:center; font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#8E5500; padding:0 6px;">부분(댓글·알림)</div>
     <div style="text-align:center; font:600 15px/1 Inter,Pretendard,sans-serif; color:#CBD6E6;">✕</div>
     <div style="text-align:center; font:600 15px/1 Inter,Pretendard,sans-serif; color:#10734A;">✓ <span style="font:600 11.5px/1.3 Inter,Pretendard,sans-serif;">내 VOC 진행 단계</span></div>
   </div>
-  <div style="display:grid; grid-template-columns:minmax(96px,1.4fr) repeat(4,minmax(60px,1fr)); border-top:1px solid #E6EDF7; align-items:center;">
+  <div style="display:grid; grid-template-columns:minmax(96px,1.4fr) repeat(4,minmax(72px,1fr)); border-top:1px solid #E6EDF7; align-items:center;">
     <div style="font:600 12.5px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; padding:11px 16px; background:#F7FAFE;">처리를 성과로 집계</div>
     <div style="text-align:center; font:600 15px/1 Inter,Pretendard,sans-serif; color:#CBD6E6;">✕</div>
     <div style="text-align:center; font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#8E5500; padding:0 6px;">부분(손으로 집계)</div>
     <div style="text-align:center; font:600 15px/1 Inter,Pretendard,sans-serif; color:#CBD6E6;">✕</div>
     <div style="text-align:center; font:600 15px/1 Inter,Pretendard,sans-serif; color:#10734A;">✓ <span style="font:600 11.5px/1.3 Inter,Pretendard,sans-serif;">연결률 지표</span></div>
   </div>
-  <div style="display:grid; grid-template-columns:minmax(96px,1.4fr) repeat(4,minmax(60px,1fr)); border-top:1px solid #E6EDF7; align-items:center;">
+  <div style="display:grid; grid-template-columns:minmax(96px,1.4fr) repeat(4,minmax(72px,1fr)); border-top:1px solid #E6EDF7; align-items:center;">
     <div style="font:600 12.5px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; padding:11px 16px; background:#F7FAFE;">분석→VOC 문맥 연결</div>
     <div style="text-align:center; font:600 15px/1 Inter,Pretendard,sans-serif; color:#CBD6E6;">✕</div>
     <div style="text-align:center; font:600 15px/1 Inter,Pretendard,sans-serif; color:#CBD6E6;">✕</div>
     <div style="text-align:center; font:600 15px/1 Inter,Pretendard,sans-serif; color:#CBD6E6;">✕</div>
     <div style="text-align:center; font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#8E5500; padding:0 6px;">부분(설계 완료, 구현은 계획)</div>
   </div>
-  <div style="display:grid; grid-template-columns:minmax(96px,1.4fr) repeat(4,minmax(60px,1fr)); border-top:1px solid #E6EDF7; align-items:center;">
+  <div style="display:grid; grid-template-columns:minmax(96px,1.4fr) repeat(4,minmax(72px,1fr)); border-top:1px solid #E6EDF7; align-items:center;">
     <div style="font:600 12.5px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; padding:11px 16px; background:#F7FAFE;">새 업무 화면의 공통 부품</div>
     <div style="text-align:center; font:600 15px/1 Inter,Pretendard,sans-serif; color:#CBD6E6;">✕</div>
     <div style="text-align:center; font:400 15px/1 Inter,Pretendard,sans-serif; color:#B8C4D6;">—</div>
     <div style="text-align:center; font:600 15px/1 Inter,Pretendard,sans-serif; color:#CBD6E6;">✕</div>
     <div style="text-align:center; font:600 15px/1 Inter,Pretendard,sans-serif; color:#10734A;">✓ <span style="font:600 11.5px/1.3 Inter,Pretendard,sans-serif;">공통 기반·생성기</span></div>
   </div>
-  <div style="display:grid; grid-template-columns:minmax(96px,1.4fr) repeat(4,minmax(60px,1fr)); border-top:1px solid #E6EDF7; align-items:center;">
+  <div style="display:grid; grid-template-columns:minmax(96px,1.4fr) repeat(4,minmax(72px,1fr)); border-top:1px solid #E6EDF7; align-items:center;">
     <div style="font:600 12.5px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; padding:11px 16px; background:#F7FAFE;">새로 만들 것</div>
     <div style="text-align:center; font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#5D6679; padding:0 6px;">없음</div>
     <div style="text-align:center; font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#5D6679; padding:0 6px;">적음</div>
     <div style="text-align:center; font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#5D6679; padding:0 6px;">많음</div>
     <div style="text-align:center; font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#5D6679; padding:0 6px;">기능은 있음, 사내 연결 필요</div>
   </div>
-  <div style="display:grid; grid-template-columns:minmax(96px,1.4fr) repeat(4,minmax(60px,1fr)); border-top:1px solid #E6EDF7; align-items:center;">
+  <div style="display:grid; grid-template-columns:minmax(96px,1.4fr) repeat(4,minmax(72px,1fr)); border-top:1px solid #E6EDF7; align-items:center;">
     <div style="font:600 12.5px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; padding:11px 16px; background:#F7FAFE;">되돌리기</div>
     <div style="text-align:center; font:400 15px/1 Inter,Pretendard,sans-serif; color:#B8C4D6;">—</div>
     <div style="text-align:center; font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#5D6679; padding:0 6px;">쉬움</div>

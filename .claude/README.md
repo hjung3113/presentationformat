@@ -82,8 +82,9 @@ Flags: `--style <id>` resolves `styles/<id>/` from the lib's own location, suppl
 slate roles the TO-BE half of `zone-colors` reads.
 `--accent <hex>` wins over the style's. `--plan <file>` enables `plan-alignment`, `plan-shapes`
 and `numbers-traced` — and `terms-consistent` when the plan's facts file has a `## T — 용어` table. `--no-visual` skips the browser tier. At least one of `--accent` / `--style`
-is required. `--local-assets <dir>` (env `DC_LOCAL_ASSETS`; the flag wins; a directory that does not exist exits `2`)
-lets the visual tier render without outbound network — see **Prerequisites**.
+is required. `--local-assets <dir>` (env `DC_LOCAL_ASSETS`; the flag wins; a directory that does not exist exits `2`, but the env var
+is only looked at when the visual tier runs — a stale one does not stop a `--no-visual` gate) lets the visual tier render without
+outbound network — see **Prerequisites**.
 
 ### Gate checks
 
@@ -136,7 +137,9 @@ normalized, `F`/`Q`/`C` ids and `L12` refs dropped) that is in none of the cited
 sentence counts because the ledger states 16,796 and 15,768 in the sentence of F04, whose `값` is the ratio 1.07. Both are folded into the
 `numbers-traced` row. The element's text is then removed from the set-membership fallback, which still reads every number
 without `data-f` exactly as before, so a document without `data-f` passes unchanged. Put `data-f` on the narrowest element that shows
-the number (the value span of a tile, the sub-line that states the count): everything the element shows is checked.
+the number (the value span of a tile, the sub-line that states the count): everything the element shows is checked — except what a
+`data-f` element nested inside it shows, which that element's own binding checks (`<b data-f="F01">18일<i data-f="F04">1.07</i></b>`).
+A decimal's trailing zeros do not matter (`1.070` is `1.07`, `2.0` is `2`).
 `planned:unmarked` (warning) covers the other half of the ledger's `상태`: an element citing a row whose 상태 is `designed` or
 `planned` must not read as built, so it needs `계획` / `예정` / `미구현` / `미설계` / `제안` / `요청` / `대기` in its own text or in an ancestor's text within 3
 levels, or `data-state="planned"` / `"caveat"` on itself or on an ancestor within 3 levels (the planned and state-chip variants of
@@ -151,19 +154,26 @@ could carry them but does not prints `NOTE  <check>  not checked — N figure(s)
 existed passes unchanged.
 
 - `chart-proportions` (hard) — over the `data-value` elements of each chart component (a non-numeric value such as `—` is skipped).
-  `bar-chart`: the bar's own `height:N%` is within ±2 of value ÷ the chart's largest value × 100 (the maximum is per chart).
-  `hbar-chart` and `status-board`: the first `width:N%` inside the row is within ±2 of the value when the row's text shows `value%`,
-  else of value ÷ the largest count of the chart (the `status-board` 대기 row has no bar and no marker). `stacked-bar`: each
+  One scale per chart, read off its largest-value mark (k = size ÷ value): `bar-chart` — the bar's own `height:N%` is within ±2 of
+  value × k, and the largest bar's size is at most 102 (it must fit the plot), so a chart drawn to its maximum (k = 100 ÷ max) and a
+  percent chart on an absolute 0–100 axis (k = 1) both pass while a bar off the proportion fails. `hbar-chart` and `status-board` —
+  the first `width:N%` inside the row is within ±2 of the value when the row's text shows `value%` (or `value％`), else within ±2 of
+  value × k over the rows that show no `%` (`70/100건` drawn at 70% passes; the `status-board` 대기 row has no bar and no marker). `stacked-bar`: each
   segment's `width:N%` is within ±2 of its value and the marked segments add up to 100 ±2. In all four, `data-value` must equal a
   numeral the element shows (±0.5; an element with no digits, like a textless segment, is skipped). A marked element with no
-  `height`/`width` percentage to compare fails — the marker sits on the wrong element.
+  `height`/`width` percentage to compare fails — the marker sits on the wrong element. A chart that marks some of its bars and not
+  others prints `NOTE  chart-proportions  partly checked …` naming how many `height:N%` / `width:N%` bars carry no marker (the
+  fills inside a marked row and the columns that wrap a marked bar are not bars). Entities in a label (`&#55;`, `&#x37;`) read as the
+  character they name.
 - `zone-colors` (hard) — over the `data-zone` elements. `as-is` fails when any hex inside it (a `style`, `fill`, `stroke`, `color` or
-  `bgcolor` attribute) is the style's accent (`--accent` wins when given). `to-be` fails when the zone's background fills
+  `bgcolor` attribute) is the style's accent or any other color of the accent family — `accent` and every `accent-*` token, e.g.
+  `accent-050` (`--accent` wins for the accent itself; without `--style` only the accent is known). `to-be` fails when the zone's background fills
   (`background`, `background-color`, `fill`, `bgcolor` — never borders or text) in the problem family outnumber those in the accent family, so
   one slate chip among accent fills passes. The families come from `design.tokens.md`: accent family = every `accent*` token; problem
   family = `warn`, `warn-2`, `warn-bg`, `warn-line`, `slate`, `slate-bar`, `mono-tint`, `mono-dashed`, minus any literal the accent family
   shares. Only fills count because a style may reuse one literal for a border and a problem fill (feedbackops-light paints `slate-bar`
-  and `border-node` the same). Without `--style` only the AS-IS half runs and a `NOTE` names the skipped TO-BE zones. A `before-after`
+  and `border-node` the same), and an element drawn at 2px or less in width or height is a rule, not a fill (every style paints its
+  `hairline` in the `slate-bar` literal). Without `--style` only the AS-IS half runs and a `NOTE` names the skipped TO-BE zones. A `before-after`
   with no `data-zone` is always listed in the NOTE; a `gantt` or `layer-map` only when it paints a problem-family fill (a legacy bar or
   layer) and has no marker.
 - `figures:lead-count` (non-blocking) — the lead of each `sN` section (its first `<p>` of 25+ characters) against the number of
@@ -242,7 +252,7 @@ INVALID.
   line and as machine-readable `@limits-x` tokens (`key=min..max`, e.g. `layers=2..5 modules-per-layer=1..5`; `parseLimitsX` in
   `components.mjs`). For a section whose shape maps to such a component, `figure-counts.mjs` counts each key in the component's
   figure-data format (`COUNTERS`: component → key → counter) and warns on a count **above `max`** only, naming the section, the
-  thing counted and the limit — `s2 (hierarchy): "분석 공간" has 6 leaves (>5) — tree shows 0–5 per child; …`. Counters read
+  thing counted and the limit — `s2 (hierarchy): "분석 공간" has 7 leaves (>6) — tree shows 0–6 per child; …`. Counters read
   top-level separators only (a comma inside `( )`, `[ ]` or a number such as `1,200` is not a separator) and under-count what
   they cannot tell apart, so an ambiguous format yields a missed warning rather than a false one. `COUNT_LIMITS` in `plan-schema.mjs`
   (goals per actor, modules per layer, table rows 7, `sref` appendix rows 10) is derived from `@limits-x`. A new countable
@@ -276,7 +286,7 @@ INVALID.
   `border-fig` tokens (indigo-serif values when `--style` is absent).
 - **Local assets (optional, for offline rendering)** — `--local-assets <dir>` or env `DC_LOCAL_ASSETS=<dir>`
   answers the page's CDN requests from `<dir>/node_modules` (the flag wins; a directory that does not
-  exist exits `2`; no flag and no env changes nothing). `unpkg.com/<pkg>@<ver>/<path>` and
+  exist exits `2` — for the env var only when the visual tier runs, never under `--no-visual`; no flag and no env changes nothing). `unpkg.com/<pkg>@<ver>/<path>` and
   `cdn.jsdelivr.net/{npm/<pkg>@<ver>,gh/<user>/<repo>@<ver>}/<path>` map to `<dir>/node_modules/<pkg>/<path>`
   (scoped names too; `x.min.css` falls back to `x.css`); Google Fonts requests fail at once, so the page
   falls back to system fonts and text metrics differ slightly from the real render. Install what the

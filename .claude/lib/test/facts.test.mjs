@@ -158,3 +158,22 @@ test('planned:unmarked is a warning row, never a failure; an INFO row says when 
   const marked = gate('<div data-state="planned"><b data-f="F12">4건</b></div>');
   assert.deepEqual(marked.warnings.filter(x => x.name === 'planned:unmarked'), [{ level: 'INFO', name: 'planned:unmarked', detail: '1 element(s) citing a designed/planned fact, all marked' }]);
 });
+
+// ---- nesting and numeral normalization ----
+
+test('data-f nesting: an outer element is read without its nested data-f elements — their numerals belong to the inner binding, which is checked on its own', () => {
+  const nested = '<b data-f="F01">18일<i data-f="F04">1.07</i></b>';
+  assert.deepEqual(bind(nested).violations, []); // 1.07 is F04's, not F01's: both bindings are right
+  assert.equal(bind(nested).count, 2);
+  assert.match(bind('<b data-f="F01">19일<i data-f="F04">1.07</i></b>').violations.join(), /data-f="F01" on "19일 1\.07": shows 19, which F01 does not state/); // the outer's own number is still checked…
+  assert.equal(bind('<b data-f="F01">19일<i data-f="F04">1.07</i></b>').violations.length, 1); // …and 1.07 is not counted against F01
+  assert.match(bind('<b data-f="F01">18일<i data-f="F04">1.1</i></b>').violations.join(), /data-f="F04" on "1\.1": shows 1\.1, which F04 does not state/); // …and the inner one against its own row
+  assert.equal(row(gate(`<p>${nested}</p>`), 'numbers-traced').ok, true); // through the gate
+});
+
+test('normNum: trailing decimal zeros do not make another number (1.070 = 1.07, 2.0 = 2); a whole number\'s own zeros stay (10, 100)', () => {
+  assert.deepEqual([...numeralsOf('1.070배 · 2.0 · 10일 · 100건 · 0.50 · 1,200.00')].sort(), ['1.07', '2', '10', '100', '0.5', '1200'].sort());
+  assert.deepEqual(bind('<b data-f="F04">1.070배</b> <b data-f="F01">18.0일</b>').violations, []);
+  assert.equal(row(gate('<p>테스트는 제품 코드의 1.070배다.</p>'), 'numbers-traced').ok, true); // the unbound fallback reads it the same way
+  assert.equal(bind('<b data-f="F04">1.7배</b>').violations.length, 1);
+});

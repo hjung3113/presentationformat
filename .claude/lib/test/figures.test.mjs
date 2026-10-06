@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { chartProportions, zoneColors, zoneRoles, leadCounts, countWords, figureChecks } from '../figures.mjs';
+import { chartProportions, zoneColors, zoneRoles, leadCounts, countWords, figureChecks, textOf } from '../figures.mjs';
 import { runGate } from '../gate.mjs';
 import { loadTokens } from '../components.mjs';
 
@@ -25,7 +25,7 @@ test('chart-proportions: bars drawn at value ÷ max × 100 pass; a bar off by mo
   assert.deepEqual(viol(chart('bar-chart', bar(100, 120), bar(75, 90))), []); // max 120 → 90 is 75%
   const bad = viol(chart('bar-chart', bar(100, 100), bar(50, 70)));
   assert.equal(bad.length, 1);
-  assert.match(bad[0], /^bar-chart#1 bar 2 "70": height 50% but 70 of max 100 is 70%/);
+  assert.match(bad[0], /^bar-chart#1 bar 2 "70": height 50% but 70 of max 100 \(drawn at 100%\) is 70%/);
   assert.deepEqual(viol(chart('bar-chart', bar(100, 100), bar(71.5, 70))), []); // ±2 absorbs rounding
 });
 
@@ -34,6 +34,51 @@ test('chart-proportions probe: the max is per chart (two charts side by side wit
   assert.deepEqual(viol(two), []);
   const bad = viol(chart('bar-chart', bar(100, 100)) + chart('bar-chart', bar(100, 8), bar(80, 4)));
   assert.match(bad[0], /^bar-chart#2 bar 2 /);
+});
+
+test('chart-proportions: one scale per chart, read off the largest bar — percent bars on an absolute 0–100 axis pass, a bar off the proportion fails', () => {
+  assert.deepEqual(viol(chart('bar-chart', bar(80, 80, '80%'), bar(60, 60, '60%'), bar(45, 45, '45%'))), []); // the largest is 80, drawn at 80 (k = 1)
+  assert.deepEqual(viol(chart('bar-chart', bar(40, 80), bar(30, 60), bar(22.5, 45))), []); // any one scale, k = 0.5
+  const off = viol(chart('bar-chart', bar(80, 80), bar(60, 60), bar(30, 45)));
+  assert.equal(off.length, 1);
+  assert.match(off[0], /^bar-chart#1 bar 3 "45": height 30% but 45 of max 80 \(drawn at 80%\) is 45%/);
+  const over = viol(chart('bar-chart', bar(150, 100), bar(75, 50))); // proportional, but the largest bar runs out of the plot
+  assert.equal(over.length, 1);
+  assert.match(over[0], /^bar-chart#1 bar 1 "100": height 150% runs out of the plot/);
+  assert.deepEqual(viol(chart('bar-chart', bar(102, 100), bar(51, 50))), []); // 102 is rounding, not overflow
+});
+
+test('chart-proportions: hbar rows that are not percentages share one proportional scale — progress to a target (70/100건 drawn at 70%) passes, one off the proportion fails', () => {
+  assert.deepEqual(viol(chart('hbar-chart', hrow(70, 70, '70/100건'))), []);
+  assert.deepEqual(viol(chart('hbar-chart', hrow(70, 70, '70/100건'), hrow(45, 45, '45/100건'), hrow(20, 20, '20/100건'))), []);
+  assert.deepEqual(viol(chart('hbar-chart', hrow(100, 142, '142건'), hrow(50, 71, '71건'))), []); // scaled to the largest still passes
+  const off = viol(chart('hbar-chart', hrow(70, 70, '70/100건'), hrow(60, 45, '45/100건')));
+  assert.equal(off.length, 1);
+  assert.match(off[0], /^hbar-chart#1 row 2 "항목 45\/100건": width 60% but 45 of max 70 \(drawn at 70%\) is 45%/);
+  assert.match(viol(chart('status-board', srow(150, 100, '100건'), srow(75, 50, '50건')))[0], /row 1 .*width 150% runs out of the track/);
+});
+
+test('chart-proportions: a chart that marks some bars and not others is reported as partly checked, naming how many; a fully marked chart and the template\'s own column wrappers are not', () => {
+  const column = (inner) => `<div style="flex:1 0 32px; height:100%; display:flex;">${inner}</div>`; // the template wraps every bar in a full-height column
+  const loose = '<div style="flex:1 0 32px;"><div style="position:relative; width:100%; height:40%; background:#4338CA;"><span>40</span></div></div>';
+  const partly = chartProportions(chart('bar-chart', column(bar(100, 100)), column(bar(70, 70)), loose));
+  assert.deepEqual(partly.partial, ['bar-chart#1 has 1 height:N% bar(s) with no data-value next to 2 marked']);
+  assert.deepEqual(partly.violations, []);
+  assert.deepEqual(chartProportions(chart('bar-chart', column(bar(100, 100)), column(bar(70, 70)))).partial, []);
+  assert.deepEqual(chartProportions(chart('hbar-chart', hrow(90, 90, '90%'), '<div><div style="height:18px;"><div style="width:60%; height:100%;"></div></div></div>')).partial,
+    ['hbar-chart#1 has 1 width:N% bar(s) with no data-value next to 1 marked']); // the fill of an unmarked row; the fill inside a marked row is not counted
+  assert.deepEqual(chartProportions(chart('stacked-bar', seg(60, 60, '60%'), seg(40, 40, '40%'))).partial, []);
+  const noted = figureChecks(chart('bar-chart', bar(100, 100), loose)).notes;
+  assert.equal(noted.length, 1);
+  assert.match(noted[0].detail, /^partly checked — 1 chart\(s\) draw a bar the gate cannot read \(bar-chart#1 has 1 height:N% bar\(s\) with no data-value next to 1 marked\)/);
+  assert.equal(figureChecks(chart('bar-chart', bar(100, 100), bar(70, 70))).notes.length, 0);
+});
+
+test('chart-proportions: a full-width ％ is a percent sign, and numeric character entities (&#55; &#x37;) read as the character they name', () => {
+  assert.match(viol(chart('hbar-chart', hrow(70, 90, '90％')))[0], /width 70% but the label shows 90%/); // 90％ is a percentage row, drawn at 90
+  assert.deepEqual(viol(chart('hbar-chart', hrow(90, 90, '90％'), hrow(70, '70％', '70％'))), []);
+  assert.deepEqual(viol(chart('bar-chart', bar(100, 100), bar(70, 70, '&#55;0'), bar(50, 50, '&#x35;0'))), []); // "70" and "50", not " 0"
+  assert.equal(textOf('a&#55;b &#x37; &#0; &#xD800; &#1114112; &foo; &amp; &nbsp;c'), 'a7b 7 & c');
 });
 
 test('chart-proportions: a bar whose label shows another number than its data-value fails even when the height matches the data-value', () => {
@@ -47,7 +92,7 @@ test('chart-proportions probe: hbar rows read as percentages when the label carr
   assert.deepEqual(viol(chart('hbar-chart', hrow(90, 90, '90%'), hrow(70, 70, '70%'))), []);
   assert.deepEqual(viol(chart('hbar-chart', hrow(100, 142, '142건'), hrow(50, 71, '71건'))), []);
   assert.deepEqual(viol(chart('hbar-chart', hrow(100, 142, '142건'), hrow(50, 71, '71건 (50%)'))), []); // a % in the label that is not the value
-  assert.match(viol(chart('hbar-chart', hrow(100, 142, '142건'), hrow(100, 71, '71건')))[0], /row 2 "항목 71건": width 100% but 71 of max 142 is 50%/);
+  assert.match(viol(chart('hbar-chart', hrow(100, 142, '142건'), hrow(100, 71, '71건')))[0], /row 2 "항목 71건": width 100% but 71 of max 142 \(drawn at 100%\) is 50%/);
   assert.match(viol(chart('hbar-chart', hrow(70, 90, '90%')))[0], /width 70% but the label shows 90%/);
 });
 
@@ -80,7 +125,7 @@ test('chart-proportions: a marked element with no height/width to compare fails 
 });
 
 test('chart-proportions: data-value outside a chart component is nobody\'s business', () => {
-  assert.deepEqual(chartProportions('<div data-component="kpi-row"><div data-value="5" style="height:1%;">9</div></div><p data-value="3">x</p>'), { charts: 0, values: 0, unmarked: [], violations: [] });
+  assert.deepEqual(chartProportions('<div data-component="kpi-row"><div data-value="5" style="height:1%;">9</div></div><p data-value="3">x</p>'), { charts: 0, values: 0, unmarked: [], partial: [], violations: [] });
 });
 
 // ---------- zone-colors ----------
@@ -97,10 +142,22 @@ test('zone-colors: the accent inside an AS-IS zone fails, wherever it is set (te
   for (const inside of [`<b style="color:${ACCENT};">z</b>`, `<i style="border:1px solid ${ACCENT.toLowerCase()};"></i>`, cell(ACCENT), `<svg><rect fill="${ACCENT}"/></svg>`]) {
     const v = zc(asIs(`<p>근거 수집</p>${inside}`)).violations;
     assert.equal(v.length, 1, inside);
-    assert.match(v[0], /^before-after#1 as-is zone uses the accent #4338CA ×1 .*the accent means target/);
+    assert.match(v[0], /^before-after#1 as-is zone uses the accent #4338CA ×1 .*the accent and its tints mean target/);
   }
   const shorthand = zoneColors(asIs('<b style="color:#ABC;">z</b>'), { accent: '#aabbcc', roles: indigoRoles });
   assert.equal(shorthand.violations.length, 1); // #abc = #AABBCC
+});
+
+test('zone-colors: an AS-IS zone fails on any accent-family token (accent-050, accent-soft …), not only the accent itself — in every style, with the token named', () => {
+  for (const [colors, roles] of [[INDIGO, indigoRoles], [LIGHT, lightRoles]])
+    for (const token of Object.keys(colors).filter(k => k === 'accent' || k.startsWith('accent-'))) {
+      const v = zoneColors(asIs(cell(colors[token])), { accent: colors.accent, roles }).violations;
+      assert.equal(v.length, 1, `${colors.accent} ${token}`);
+      assert.match(v[0], token === 'accent' ? /uses the accent #[0-9A-F]{6} ×1/ : new RegExp(`uses the accent-family color #[0-9A-F]{6} \\(${token}\\) ×1`));
+    }
+  assert.match(zc(asIs(cell('#EEF0FF'))).violations[0], /^before-after#1 as-is zone uses the accent-family color #EEF0FF \(accent-050\) ×1/);
+  assert.deepEqual(zc(asIs(cell(INDIGO.white) + cell(INDIGO['warn-bg']) + cell(INDIGO['mono-tint']) + cell(INDIGO['slate-bar']))).violations, []); // the problem family is what an AS-IS zone is made of
+  assert.deepEqual(zoneColors(asIs(cell(INDIGO['accent-050'])), { accent: ACCENT }).violations, []); // without the style's roles only the accent itself is known
 });
 
 test('zone-colors probe: a near-miss color, the accent in a comment or a script, and the accent outside the zone do not fail the AS-IS zone', () => {
@@ -124,6 +181,17 @@ test('zone-colors: only fills count in a TO-BE zone — borders and text in a pr
   assert.deepEqual(zoneColors(toBe(cell(LIGHT.accent) + bordered), { accent: LIGHT.accent, roles: lightRoles }).violations, []);
   const filled = zoneColors(toBe(cell(LIGHT.accent) + cell(LIGHT['slate-bar']) + cell(LIGHT['slate-bar'])), { accent: LIGHT.accent, roles: lightRoles }).violations;
   assert.equal(filled.length, 1);
+});
+
+test('zone-colors: an element drawn at 2px or less is a rule, not a fill — hairline dividers in a TO-BE zone are not problem fills, a 3px one is', () => {
+  for (const colors of [INDIGO, LIGHT]) {
+    const roles = zoneRoles(colors), hair = colors.hairline;
+    assert.ok(roles.problem.has(hair.toUpperCase()), 'the hairline literal is a problem-family literal in this style (slate-bar)');
+    const rules = [`height:1px; background:${hair};`, `width:1px; background:${hair};`, `height:2px; background:${hair};`, `width:1.5px; height:40px; background:${hair};`].map(css => `<div style="${css}"></div>`).join('');
+    assert.deepEqual(zoneColors(toBe(cell(colors.accent) + rules), { accent: colors.accent, roles }).violations, [], colors.accent);
+    assert.equal(zoneColors(toBe(cell(colors.accent) + `<div style="height:3px; background:${hair};"></div>`.repeat(2)), { accent: colors.accent, roles }).violations.length, 1, colors.accent); // 3px is a bar
+    assert.equal(zoneColors(toBe(cell(colors.accent) + `<div style="height:8px; background:${hair};"></div>`.repeat(2)), { accent: colors.accent, roles }).violations.length, 1, colors.accent);
+  }
 });
 
 test('zoneRoles: accent family = every accent* token; problem family = warn and slate tokens minus anything the accent family shares', () => {
@@ -229,7 +297,7 @@ test('gate: chart-proportions and zone-colors are hard checks — a wrong bar or
   assert.equal(bad.ok, false);
   assert.equal(row(bad, 'chart-proportions').ok, false);
   assert.equal(row(bad, 'zone-colors').ok, false);
-  assert.match(row(bad, 'chart-proportions').detail, /height 40% but 70 of max 100 is 70%/);
+  assert.match(row(bad, 'chart-proportions').detail, /height 40% but 70 of max 100 \(drawn at 100%\) is 70%/);
 });
 
 test('gate: with only --accent (no style roles) the AS-IS half still runs and a NOTE says the TO-BE half did not; lead-count is a warning row, never a failure', () => {

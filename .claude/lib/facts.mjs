@@ -14,7 +14,8 @@ import { markup, elementsWith, parentIndex, endOf, htmlOf, textOf, attrOf, clip 
 // ---------- numerals ----------
 
 export const NUM = /\d+(?:,\d{3})*(?:\.\d+)?/g;
-export const normNum = (t) => t.replace(/,/g, '').replace(/^0+(?=\d)/, '');
+// thousands commas, leading zeros and trailing decimal zeros do not make a different number: 1,200 = 1200, 007 = 7, 1.070 = 1.07, 2.0 = 2
+export const normNum = (t) => t.replace(/,/g, '').replace(/^0+(?=\d)/, '').replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '');
 // Source line refs (`L12-40`, `L7`) and ledger ids (`F07`, `Q01`, `C03`) name a place, not a value — they
 // must not "trace" a number the document shows, and a ledger id the document cites is not a value either.
 export const scrubRefs = (text) => text
@@ -65,6 +66,14 @@ const LEVELS = 3; // the element itself and this many ancestors may carry the ma
 
 const idsOf = (value) => value.split(/[\s,;]+/).filter(Boolean);
 
+// What an element shows by itself: its content with every nested data-f element taken out (`<b data-f="F01">18일<i data-f="F04">1.07</i></b>`
+// shows 18 for F01; 1.07 is the nested element's number, checked against the row it cites). `withoutBound` reads the fragment, so
+// the element's own tags are cut away first — it would otherwise remove the whole element.
+function ownText(mk, el) {
+  const close = mk.body.lastIndexOf('</', el.endAt - 1);
+  return textOf(withoutBound(el.endAt > el.end && close >= el.end ? mk.body.slice(el.end, close) : ''));
+}
+
 // The document with every data-f element removed (comments, <script> and <style> too): what the set-membership fallback
 // of `numbers-traced` should still read, because a bound number has been checked against its row.
 export function withoutBound(html) {
@@ -91,14 +100,13 @@ export function factBindings(html, facts) {
   const absent = facts.size === 0 ? ' (the plan names no facts file with an F table)' : '';
   for (const el of els) {
     const ids = idsOf(el.value);
-    const text = textOf(htmlOf(mk, el));
-    const shown = clip(text, 28);
+    const shown = clip(textOf(htmlOf(mk, el)), 28);
     if (!ids.length) { res.violations.push(`data-f is empty on "${shown}"`); continue; }
     const unknown = ids.filter(id => !facts.has(id));
     if (unknown.length) { res.violations.push(`data-f="${el.value}" on "${shown}": ${unknown.join(', ')} is not a row of the facts ledger${absent}`); continue; }
     const rows = ids.map(id => facts.get(id));
     const allowed = new Set(rows.flatMap(r => [...rowNumerals(r)]));
-    const stray = [...numeralsOf(text)].filter(n => !allowed.has(n));
+    const stray = [...numeralsOf(ownText(mk, el))].filter(n => !allowed.has(n));
     if (stray.length)
       res.violations.push(`data-f="${el.value}" on "${shown}": shows ${stray.join(', ')}, which ${rows.length > 1 ? 'none of those rows state' : `${rows[0].id} does not state`} (값 ${rows.map(r => `${r.id}=${r.value || '—'}`).join(', ')})`);
     const plannedRows = rows.filter(r => PLANNED_STATUS.has(r.status));

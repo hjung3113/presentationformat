@@ -138,11 +138,12 @@ each section whose shape is not `none` contains a `data-component` the shape all
   instead of the active style's `components/`);
 - a `data-component` value that is not a known component **fails**;
 - a bar, row or segment marked `data-value` that is drawn at a size its number does not say, or whose label shows another number than its
-  `data-value`, **fails** (`chart-proportions`, ±2 points: `bar-chart` height ≈ value ÷ the chart's own largest value × 100; `hbar-chart`
-  and `status-board` width ≈ the value when the label carries `%`, else value ÷ the largest count × 100; `stacked-bar` width ≈ value and
-  the marked segments add up to 100);
+  `data-value`, **fails** (`chart-proportions`, ±2 points: a chart has one scale, read off its largest-value bar — every `bar-chart` height and every
+  `hbar-chart` / `status-board` width (rows whose label carries `%` are drawn at the value itself) must be value × that scale, and the
+  largest must not run past 102%, so a chart drawn to its maximum and one on an absolute 0–100 axis both pass; `stacked-bar` width ≈ value
+  and the marked segments add up to 100);
 - an AS-IS zone (`data-zone="as-is"`: the `before-after` AS-IS column, a `gantt` legacy bar, the `layer-map` legacy layer) that uses the
-  style's accent **fails**, and so does a TO-BE zone (`data-zone="to-be"`) whose background fills are mostly warn or slate family
+  style's accent or any tint of it (`accent-*` tokens) **fails**, and so does a TO-BE zone (`data-zone="to-be"`) whose background fills are mostly warn or slate family
   (`zone-colors`; the roles come from the active style's tokens, only fills count, one slate chip inside a TO-BE zone is allowed);
 - an element marked `data-f` (§4 "Numbers come from the plan") whose id is not a row of the plan's `facts.md`, or that shows a numeral
   none of the cited rows states in its 값 or 사실, **fails** (`numbers-traced`). A number without `data-f` is still held to set
@@ -161,7 +162,7 @@ marker within 3 ancestor levels — 계획·예정·미구현·미설계·제안
 sections (group into acts — the section count follows the content, §5), a developer-grade shape
 (`code-structure`, `interaction`, `entity-relations`, `rule-table`), a first section that is not
 `headline-metric` or `decision`, a last section that is not `decision`, or a figure-data that holds more of something than its
-component's `@limits-x` allows (a tree child with six leaves, a use-case actor with six goals).
+component's `@limits-x` allows (a tree child with seven leaves, a use-case actor with six goals).
 
 ---
 
@@ -201,7 +202,9 @@ component's `@limits-x` allows (a tree child with six leaves, a use-case actor w
   wrapper) over tracks with a `minmax(Npx,…)` floor and a `min-width:min-content` box — and the page never moves. Every root carries
   `overflow-wrap:anywhere`. Hand-written content follows the same rule: an unbreakable run (mono identifier, path, URL, signature)
   takes `overflow-wrap:anywhere`, a grid cell takes `min-width:0` or a `minmax(0,Nfr)` track. Never pass the check by hiding the
-  overflow; the probe reports a clipped figure.
+  overflow; the probe reports a clipped figure. A glyph that must follow the layout (the `before-after` pivot: → side by side, ↓
+  stacked) is pasted twice and switched without a media query: each copy's `flex-basis` and glyph `font-size` are `clamp(0px,calc(… 100cqw …
+  * 999),…)` — 0 outside its layout — over a row that is a `container-type:inline-size`. Keep both, and the container.
 - **Percentages are slots tied to their label.** A bar's `width`/`height` slot and the value shown on
   it (`35` and `35%`) are filled with the same value, and the bar's `data-value` carries that value a third time (the gate's
   `chart-proportions` compares the drawn size, the label and `data-value`); a matrix cell glyph (`✓`/`✕`/short text) is a slot
@@ -214,7 +217,7 @@ component's `@limits-x` allows (a tree child with six leaves, a use-case actor w
   **Bind a number to its fact with `data-f`.** The element that shows a number the plan cites to a ledger row (`[F07]`) carries
   `data-f="F07"` (`data-f="F06 F07"` for two rows), appended after its `style` like the other markers — the narrowest element that
   shows it (a tile's value, a hero token, the sub-line that states a count, a table cell), because every numeral inside the element
-  is checked. The gate then asks whether the numeral is one the cited row states (its 값 or a number in its 사실 sentence) instead of
+  is checked (a `data-f` element nested inside it is read by its own binding, not by the outer one's). The gate then asks whether the numeral is one the cited row states (its 값 or a number in its 사실 sentence) instead of
   whether it appears anywhere in the plan, so a wrong-but-existing number fails and an unknown id fails. Bound text leaves the
   set-membership pool; numbers without `data-f` stay in it.
 - **Terms and first use.** A concept the plan's term sheet (`## T — 용어` in `facts.md`) names is written in one form
@@ -259,7 +262,7 @@ component's `@limits-x` allows (a tree child with six leaves, a use-case actor w
   Never mix: an executive document with `01 · SUMMARY` eyebrows and a `지금` badge is half-converted.
 - **Lookup, don't compute geometry.** Every spanning connector uses the same table: span S columns →
   `margin:0 X%` with S=2 → 25%, 3 → 16.667%, 4 → 12.5%, 5 → 10%. Gantt bars: period k starts at grid
-  line k+1. Bar heights: value ÷ max × 100.
+  line k+1. Bar heights: one scale per chart (usually value ÷ max × 100).
 - **Placement.** Lead paragraph first, then the figure (full width). Never put the figure before the
   lead. One primary figure per section; a support block (callout or small table) may follow it.
 - **A `text-table` section is a pasted `table`, filled from its figure-data.** The plan carries

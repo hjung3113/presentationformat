@@ -16,7 +16,7 @@ export function hasHeadlessChrome() {
 }
 
 // $CHROME_PATH wins; then PATH names; then the macOS app bundle.
-function findHeadlessChrome() {
+export function findHeadlessChrome() {
   const env = process.env.CHROME_PATH;
   if (env && existsSync(env)) return env;
   for (const c of ['google-chrome', 'chromium', 'chromium-browser', 'chrome-headless-shell']) {
@@ -100,13 +100,15 @@ export function localAssetFor(url, dir) {
 }
 
 // `--local-assets <dir>` wins over env DC_LOCAL_ASSETS; empty = unset. → absolute dir | undefined; throws on a bad value.
-export function resolveLocalAssets(args, env = process.env) {
+// The env var is read only when the visual tier will run (`visual`, false under --no-visual): a stale variable in the shell must
+// not stop a gate that never renders. An explicit flag is always checked.
+export function resolveLocalAssets(args, env = process.env, { visual = true } = {}) {
   const i = args.indexOf('--local-assets');
   let dir;
   if (i >= 0) {
     dir = args[i + 1];
     if (!dir || dir.startsWith('--')) throw new Error('--local-assets needs a directory');
-  } else dir = env.DC_LOCAL_ASSETS || undefined;
+  } else dir = visual ? env.DC_LOCAL_ASSETS || undefined : undefined;
   if (dir === undefined) return undefined;
   const abs = resolve(dir);
   let isDir = false;
@@ -649,7 +651,7 @@ const USAGE = `usage: node verify-doc.mjs <doc.dc.html> --canonical-support <sup
   --accent <hex>   accent color the document must use (optional when --style is given)
   --plan <file>    enables plan-alignment, plan-shapes and numbers-traced — and terms-consistent when the plan's facts file has a "## T — 용어" table
   --no-visual      skip the headless-browser tier (env CHROME_PATH picks the browser)
-  --local-assets <dir>  render offline: answer the document's unpkg/jsdelivr requests from <dir>/node_modules and fail Google Fonts fast (env DC_LOCAL_ASSETS; the flag wins)`;
+  --local-assets <dir>  render offline: answer the document's unpkg/jsdelivr requests from <dir>/node_modules and fail Google Fonts fast (env DC_LOCAL_ASSETS, read only when the visual tier runs; the flag wins)`;
 
 async function main() {
   const args = process.argv.slice(2);
@@ -665,7 +667,7 @@ async function main() {
   let opts;
   let localAssets;
   try {
-    localAssets = resolveLocalAssets(args);
+    localAssets = resolveLocalAssets(args, process.env, { visual: !args.includes('--no-visual') });
     opts = gateOptions({ accent, sidecarPresent: sidecarByteIdentical(dirname(doc), canonical), planPath, style });
   } catch (e) {
     console.error(`${e.message}\n${USAGE}`);

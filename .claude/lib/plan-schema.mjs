@@ -219,16 +219,20 @@ function checkFigureData(where, s, specs, shapes, errors) {
 export { splitTop, fieldValue, useCaseGoals, layerModules, tableRowCount };
 
 const limitOf = (templates, component, key) => templates.find(t => t.meta.component === component)?.meta.limitsX?.[key]?.max;
-// The three counts that predate @limits-x, derived from it (a body table runs to 7 rows, an appendix (sref) table to 10).
-export const COUNT_LIMITS = (() => {
-  const t = listTemplates();
-  return {
-    goalsPerActor: limitOf(t, 'use-case', 'goals-per-actor'),
-    modulesPerLayer: limitOf(t, 'layer-map', 'modules-per-layer'),
-    tableRows: limitOf(t, 'table', 'rows'),
-    appendixTableRows: limitOf(t, 'table', 'appendix-rows'),
-  };
-})();
+// The counts that predate @limits-x, derived from it (a body table runs to 7 rows, an appendix (sref) table to 10). Read on first
+// use, not at import: importing this file (verify-doc.mjs does, for parsePlan) must not read the templates, so a malformed
+// `@limits-x` surfaces where the CLIs report it (exit 2, one clean message) instead of as a stack trace out of an import.
+const COUNT_SOURCES = {
+  goalsPerActor: ['use-case', 'goals-per-actor'],
+  modulesPerLayer: ['layer-map', 'modules-per-layer'],
+  tableRows: ['table', 'rows'],
+  appendixTableRows: ['table', 'appendix-rows'],
+};
+let countLimits;
+export const COUNT_LIMITS = Object.defineProperties({}, Object.fromEntries(Object.entries(COUNT_SOURCES).map(([name, [component, key]]) => [name, {
+  enumerable: true,
+  get: () => limitOf(countLimits ??= listTemplates(), component, key),
+}])));
 
 function countWarnings(plan, templates, shapes) {
   const out = [];
@@ -286,7 +290,14 @@ async function main() {
     console.error(`cannot read plan: ${path} (${e.code || e.message})`);
     process.exit(2);
   }
-  const { ok, errors, warnings } = validatePlan(md, { planDir: dirname(resolve(path)) });
+  let result;
+  try {
+    result = validatePlan(md, { planDir: dirname(resolve(path)) });
+  } catch (e) { // a component template that cannot be read (a malformed @limits-x, a missing marker) — not a plan error
+    console.error(`cannot read the component templates: ${e.message}`);
+    process.exit(2);
+  }
+  const { ok, errors, warnings } = result;
   const warn = ok ? console.log : console.error;
   if (ok) {
     const { sections } = parsePlan(md);

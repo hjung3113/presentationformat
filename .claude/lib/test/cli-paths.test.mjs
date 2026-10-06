@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, mkdirSync, copyFileSync, readdirSync, symlinkSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, copyFileSync, readdirSync, readFileSync, symlinkSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -72,6 +72,26 @@ test('through a symlinked directory the CLIs still run (realpath-based entry gua
     const r = run(join(link, 'plan-schema.mjs'), [fixture('plan-bad-shape.md')]);
     assert.equal(r.status, 1);
     assert.match(r.stderr, /INVALID/);
+  } finally {
+    rmSync(base, { recursive: true, force: true });
+  }
+});
+
+test('a malformed @limits-x in a component template exits 2 with one clean message from plan-schema and verify-doc — never a stack trace out of an import', () => {
+  const { base, root, lib } = repoCopy();
+  try {
+    const tpl = join(root, 'core/components/bar-chart.html');
+    writeFileSync(tpl, readFileSync(tpl, 'utf8').replace('@limits-x bars=3..8', '@limits-x bars=3..'));
+    const p = run(join(lib, 'plan-schema.mjs'), [fixture('plan-valid.md')]);
+    assert.equal(p.status, 2, p.stdout + p.stderr);
+    assert.match(p.stderr, /^cannot read the component templates: @limits-x: "bars=3\.\." is not key=min\.\.max\n$/);
+
+    const doc = join(root, 'doc.dc.html');
+    writeFileSync(doc, '<!DOCTYPE html><html><body></body></html>');
+    const v = run(join(lib, 'verify-doc.mjs'), [doc, '--style', STYLE, '--no-visual', '--canonical-support', join(root, 'styles', STYLE, 'support.js')]);
+    assert.equal(v.status, 2, v.stdout + v.stderr);
+    assert.match(v.stderr, /^@limits-x: "bars=3\.\." is not key=min\.\.max\nusage: node verify-doc\.mjs /);
+    for (const out of [p.stderr, v.stderr]) assert.doesNotMatch(out, /\n\s+at /); // no stack
   } finally {
     rmSync(base, { recursive: true, force: true });
   }

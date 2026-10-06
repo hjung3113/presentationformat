@@ -2,7 +2,8 @@
 // the active style's colors). They read three opt-in markers that the component templates carry, each appended after the
 // element's `style="…"` and kept by the author when the component is pasted:
 //
-//   data-value="N"            on a bar / row / segment: the number its label shows   → `chart-proportions` (hard)
+//   data-value="N"            on a bar / row / segment: the number its label shows   → `chart-proportions` (hard; a chart with a
+//                             marked and an unmarked bar is also noted)
 //   data-item                 on one counted item of a figure (card, step, stage, tile) → `figures:lead-count` (warning)
 //   data-zone="as-is|to-be"   on an AS-IS or TO-BE zone                              → `zone-colors` (hard)
 //
@@ -84,13 +85,19 @@ export function parentIndex(mk) {
 export const within = (outer, inner) => inner.start >= outer.start && inner.endAt <= outer.endAt;
 export const htmlOf = (mk, el) => mk.body.slice(el.start, el.endAt);
 const NAMED = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' };
-export const textOf = (fragment) => fragment.replace(/<[^>]*>/g, ' ').replace(/&(#x[0-9a-f]+|#\d+|[a-z][a-z0-9]*);/gi, (m, e) => NAMED[e.toLowerCase()] ?? ' ').replace(/\s+/g, ' ').trim();
+// `&#55;` and `&#x37;` are the character they name (`7`); a code point that is not a character, or an entity name we do not know, reads as a space
+function entity(_, e) {
+  if (e[0] !== '#') return NAMED[e.toLowerCase()] ?? ' ';
+  const code = e[1].toLowerCase() === 'x' ? parseInt(e.slice(2), 16) : parseInt(e.slice(1), 10);
+  return code > 0 && code <= 0x10FFFF && !(code >= 0xD800 && code <= 0xDFFF) ? String.fromCodePoint(code) : ' ';
+}
+export const textOf = (fragment) => fragment.replace(/<[^>]*>/g, ' ').replace(/&(#x[0-9a-f]+|#\d+|[a-z][a-z0-9]*);/gi, entity).replace(/\s+/g, ' ').trim();
 export const clip = (s, n = 18) => (s.length > n ? `${s.slice(0, n)}…` : s);
 const r1 = (x) => Math.round(x * 10) / 10;
 
 // `70` · `70%` · `1,200` → number; anything else (`—`, `N/A`, a leftover slot) → null (not checked).
 function valueOf(raw) {
-  const t = raw.trim().replace(/%$/, '').replace(/,/g, '');
+  const t = raw.trim().replace(/[%％]$/, '').replace(/,/g, '');
   return /^\d+(?:\.\d+)?$/.test(t) ? Number(t) : null;
 }
 const numerals = (text) => [...text.matchAll(/\d+(?:,\d{3})*(?:\.\d+)?/g)].map(m => Number(m[0].replace(/,/g, '')));
@@ -110,25 +117,62 @@ const ordinal = (comps, c) => `${c.value}#${comps.filter(x => x.value === c.valu
 
 // ---------- chart-proportions ----------
 
-// Every marked bar, row and segment must be drawn at the size its number says, and must show that number.
-//   bar-chart     height% ≈ value ÷ the chart's largest value × 100
-//   hbar-chart · status-board   width% ≈ value when the row's label carries `value%`, else value ÷ the largest count × 100
+// Every marked bar, row and segment must be drawn at the size its number says, and must show that number. A chart has one
+// scale, k = size ÷ value, read off its largest-value mark; every other mark must sit at value × k (±2), and the largest must fit
+// its track (value_max × k ≤ 102). A chart drawn to its largest value (k = 100 ÷ max) and a chart on an absolute axis (percent
+// bars on 0–100, k = 1) both pass; a mark that breaks the proportion fails.
+//   bar-chart     height%: proportional to the value
+//   hbar-chart · status-board   width%: equal to the value when the row's label carries `value%`, else proportional to it
 //   stacked-bar   width% ≈ value, and the marked segments add up to 100
 // The label test is the same everywhere: data-value must equal a numeral the element shows (a textless segment is skipped).
-// → { charts, values, unmarked: [component id…], violations: [string…] }
+// A chart that marks some of its bars and not others is reported in `partial` (the unmarked ones are not read).
+// → { charts, values, unmarked: [component id…], partial: [string…], violations: [string…] }
+export const OVERFLOW = 102; // percent a bar may reach: 100 + the rounding of the largest one
+const SIZE_PROP = { 'bar-chart': 'height', 'hbar-chart': 'width', 'status-board': 'width', 'stacked-bar': 'width' };
+
+// items: [{ e, size }] (size = the drawn percentage) → { k, top } with top = the largest-value item, or null when there is nothing to scale by
+const scaleOf = (items) => {
+  const top = items.reduce((a, x) => (!a || x.e.v > a.e.v ? x : a), null);
+  return top ? { top, k: top.e.v > 0 ? top.size / top.e.v : 0 } : null;
+};
+
+// Proportionality of one chart's marks: the largest-value mark sets k, each other mark must sit within TOLERANCE of value × k, and the
+// largest must not overflow its track. `say(e, size, want, top)` words the disagreement.
+function proportional(items, say, overflow) {
+  const scale = scaleOf(items);
+  if (!scale) return;
+  const { top, k } = scale;
+  for (const x of items) {
+    const want = x.e.v * k;
+    if (x !== top && Math.abs(x.size - want) > TOLERANCE) say(x.e, x.size, want, top);
+  }
+  if (top.e.v > 0 && top.e.v * k > OVERFLOW) overflow(top.e, top.size);
+}
+
+// Elements of a chart that are drawn by a percentage size (`height:N%` / `width:N%`) yet carry no data-value and neither sit inside a
+// marked element (the fill of a marked row) nor wrap one (the column of a marked bar): the bars the gate cannot read. Leaves only.
+function unmarkedBars(mk, chart, marked, prop) {
+  const styled = elementsWith(mk, 'style').filter(el => el.start !== chart.start && within(chart, el) && pctOf(el.value, prop) !== null);
+  const free = styled.filter(el => !marked.some(m => within(m, el) || within(el, m)));
+  return free.filter(el => !free.some(o => o !== el && within(el, o)));
+}
+
 export function chartProportions(html) {
   const mk = markup(html);
   const comps = elementsWith(mk, 'data-component').filter(c => CHART_COMPONENTS.includes(c.value));
   const marks = elementsWith(mk, 'data-value');
-  const res = { charts: 0, values: 0, unmarked: [], violations: [] };
+  const res = { charts: 0, values: 0, unmarked: [], partial: [], violations: [] };
   for (const c of comps) {
-    const mine = marks.filter(m => within(c, m)).map(m => {
+    const marked = marks.filter(m => within(c, m));
+    const mine = marked.map(m => {
       const fragment = htmlOf(mk, m);
       return { v: valueOf(m.value), raw: m.value, own: attrOf(m.attrs, 'style'), fragment, text: textOf(fragment) };
     });
     if (!mine.length) { res.unmarked.push(c.value); continue; }
     res.charts++;
     const id = ordinal(comps, c);
+    const loose = unmarkedBars(mk, c, marked, SIZE_PROP[c.value]).length;
+    if (loose) res.partial.push(`${id} has ${loose} ${SIZE_PROP[c.value]}:N% bar(s) with no data-value next to ${mine.length} marked`);
     const bad = (k, e, why) => res.violations.push(`${id} ${c.value === 'bar-chart' ? 'bar' : c.value === 'stacked-bar' ? 'segment' : 'row'} ${k + 1} "${clip(e.text)}": ${why}`);
     const numeric = mine.map((e, k) => ({ ...e, k })).filter(e => e.v !== null);
     res.values += numeric.length;
@@ -137,13 +181,15 @@ export function chartProportions(html) {
       if (shown.length && !shown.some(n => Math.abs(n - e.v) <= 0.5)) bad(e.k, e, `data-value ${e.raw} is not a number it shows (${shown.join(', ')})`);
     }
     if (c.value === 'bar-chart') {
-      const max = Math.max(...numeric.map(e => e.v));
+      const sized = [];
       for (const e of numeric) {
-        const h = pctOf(e.own, 'height');
-        const want = max > 0 ? (e.v / max) * 100 : 0;
-        if (h === null) bad(e.k, e, `data-value ${e.raw} but no height:N% on the bar`);
-        else if (Math.abs(h - want) > TOLERANCE) bad(e.k, e, `height ${h}% but ${e.v} of max ${max} is ${r1(want)}%`);
+        const size = pctOf(e.own, 'height');
+        if (size === null) bad(e.k, e, `data-value ${e.raw} but no height:N% on the bar`);
+        else sized.push({ e, size });
       }
+      proportional(sized,
+        (e, h, want, top) => bad(e.k, e, `height ${h}% but ${e.v} of max ${top.e.v} (drawn at ${top.size}%) is ${r1(want)}%`),
+        (e, h) => bad(e.k, e, `height ${h}% runs out of the plot (a bar is at most 100%)`));
     } else if (c.value === 'stacked-bar') {
       let sum = 0;
       for (const e of numeric) {
@@ -154,15 +200,18 @@ export function chartProportions(html) {
       }
       if (numeric.length > 1 && Math.abs(sum - 100) > TOLERANCE) res.violations.push(`${id}: the marked segments add up to ${r1(sum)}%, not 100% (mark every segment)`);
     } else {
-      // a row whose label shows `N%` is a percentage and is drawn at N; otherwise the rows are counts scaled to the largest
-      const rows = numeric.map(e => ({ ...e, pct: [...e.text.matchAll(/(\d+(?:,\d{3})*(?:\.\d+)?)\s*%/g)].some(m => Math.abs(Number(m[1].replace(/,/g, '')) - e.v) <= 0.5) }));
-      const max = Math.max(0, ...rows.filter(e => !e.pct).map(e => e.v));
-      for (const e of rows) {
-        const w = firstWidthPct(e.fragment);
-        const want = e.pct ? e.v : max > 0 ? (e.v / max) * 100 : 0;
-        if (w === null) bad(e.k, e, `data-value ${e.raw} but no width:N% inside the row`);
-        else if (Math.abs(w - want) > TOLERANCE) bad(e.k, e, `width ${w}% but ${e.pct ? `the label shows ${e.v}%` : `${e.v} of max ${max} is ${r1(want)}%`}`);
+      // a row whose label shows `N%` is a percentage and is drawn at N; the other rows (counts, `70/100건`) share one proportional scale
+      const sized = [];
+      for (const e of numeric) {
+        const size = firstWidthPct(e.fragment);
+        const pct = [...e.text.matchAll(/(\d+(?:,\d{3})*(?:\.\d+)?)\s*[%％]/g)].some(m => Math.abs(Number(m[1].replace(/,/g, '')) - e.v) <= 0.5);
+        if (size === null) bad(e.k, e, `data-value ${e.raw} but no width:N% inside the row`);
+        else if (pct) { if (Math.abs(size - e.v) > TOLERANCE) bad(e.k, e, `width ${size}% but the label shows ${e.v}%`); }
+        else sized.push({ e, size });
       }
+      proportional(sized,
+        (e, w, want, top) => bad(e.k, e, `width ${w}% but ${e.v} of max ${top.e.v} (drawn at ${top.size}%) is ${r1(want)}%`),
+        (e, w) => bad(e.k, e, `width ${w}% runs out of the track (a bar is at most 100%)`));
     }
   }
   return res;
@@ -170,32 +219,41 @@ export function chartProportions(html) {
 
 // ---------- zone-colors ----------
 
-// The style's colors by role, from its design.tokens.md `colors` map: the accent family (target / improvement) and the
-// problem family (current / legacy / problem — warn and slate tones). A literal both families share says nothing and is dropped.
+// The style's colors by role, from its design.tokens.md `colors` map: the accent family (target / improvement: `accent` and every
+// `accent-*` token) and the problem family (current / legacy / problem — warn and slate tones). A literal both families share says
+// nothing and is dropped from the problem family. `accentNames` says which token a family hex is (for a message).
 export function zoneRoles(colors) {
   const set = (names) => new Set(names.map(n => colors[n]).filter(Boolean).map(normHex).filter(Boolean));
-  const accentFamily = set(Object.keys(colors).filter(k => k === 'accent' || k.startsWith('accent-')));
+  const accentTokens = Object.keys(colors).filter(k => k === 'accent' || k.startsWith('accent-'));
+  const accentFamily = set(accentTokens);
+  const accentNames = new Map();
+  for (const t of accentTokens) { const h = normHex(colors[t] || ''); if (h && !accentNames.has(h)) accentNames.set(h, t); }
   const problem = set(['warn', 'warn-2', 'warn-bg', 'warn-line', 'slate', 'slate-bar', 'mono-tint', 'mono-dashed']);
   for (const h of accentFamily) problem.delete(h);
-  return { accent: normHex(colors.accent), accentFamily, problem };
+  return { accent: normHex(colors.accent), accentFamily, accentNames, problem };
 }
 
 // Hex literals set as a background (style `background` / `background-color`, `fill`, `bgcolor`) anywhere inside a fragment.
-// Borders and text are left out on purpose: a style may reuse one literal for a border and a problem fill.
+// Borders and text are left out on purpose: a style may reuse one literal for a border and a problem fill. An element drawn at 2px
+// or less in either direction is a rule or a divider, not a zone fill: the style paints its hairlines in the same literal as its
+// slate bars, so a rule would otherwise read as a problem fill.
+export const RULE_PX = 2;
+const isRule = (style) => ['height', 'width'].some(p => { const px = cssProp(style, p)?.match(/^(\d+(?:\.\d+)?)px$/); return px && Number(px[1]) <= RULE_PX; });
 function backgroundFills(fragment) {
   const out = [];
   const hexes = (v) => [...v.replace(/url\([^)]*\)/gi, '').matchAll(/#[0-9a-fA-F]{3,8}\b/g)].map(m => normHex(m[0])).filter(Boolean);
   for (const t of markup(fragment).tags) {
-    if (t.close) continue;
+    if (t.close || isRule(attrOf(t.attrs, 'style'))) continue;
     for (const m of (attrOf(t.attrs, 'style') || '').matchAll(/(?<![\w-])background(?:-color)?\s*:\s*([^;]+)/g)) out.push(...hexes(m[1]));
     for (const a of ['fill', 'bgcolor']) out.push(...hexes(attrOf(t.attrs, a) || ''));
   }
   return out;
 }
 
-// An AS-IS zone must not use the accent; a TO-BE zone must not be mostly warn/slate fills (one slate chip is fine).
+// An AS-IS zone must not use the accent or any color of its family (`accent-050` and the other accent tints are the target
+// state's too: design.md §8.2); a TO-BE zone must not be mostly warn/slate fills (one slate chip is fine).
 // → { zones, unmarked: [component id…], toBeSkipped, violations }; `accent` = the accent hex, `roles` = zoneRoles() (optional: without it
-// the to-be half is skipped and counted in toBeSkipped).
+// the to-be half is skipped and counted in toBeSkipped, and the AS-IS half knows only the accent itself).
 export function zoneColors(html, { accent, roles } = {}) {
   const mk = markup(html);
   const comps = elementsWith(mk, 'data-component');
@@ -207,17 +265,19 @@ export function zoneColors(html, { accent, roles } = {}) {
     if (!zones.some(z => within(c, z)) && (c.value === 'before-after' || !roles || backgroundFills(htmlOf(mk, c)).some(h => roles.problem.has(h))))
       res.unmarked.push(c.value);
   const acc = accent ? normHex(accent) : null;
+  const family = new Set([...(roles?.accentFamily ?? []), ...(acc ? [acc] : [])]);
   for (const z of zones) {
     const owner = comps.filter(c => within(c, z)).at(-1);
     const where = owner ? ordinal(comps, owner) : 'a figure outside any component';
     const fragment = htmlOf(mk, z);
     const kind = z.value.trim().toLowerCase();
     if (kind === 'as-is') {
-      const hit = usedHexes(fragment).filter(h => h.norm === acc);
+      const hit = usedHexes(fragment).filter(h => family.has(h.norm));
       if (hit.length) {
         const at = fragment.toLowerCase().indexOf(hit[0].lit.toLowerCase());
         const near = clip(textOf(fragment.slice(fragment.indexOf('>', at) + 1)), 24); // the text of the element that sets it
-        res.violations.push(`${where} as-is zone uses the accent ${acc} ×${hit.length} (near "${near}") — the accent means target, never current state`);
+        const what = hit[0].norm === acc ? `the accent ${acc}` : `the accent-family color ${hit[0].norm}${roles?.accentNames?.has(hit[0].norm) ? ` (${roles.accentNames.get(hit[0].norm)})` : ''}`;
+        res.violations.push(`${where} as-is zone uses ${what} ×${hit.length} (near "${near}") — the accent and its tints mean target, never current state`);
       }
     } else if (kind === 'to-be') {
       if (!roles) { res.toBeSkipped++; continue; }
@@ -295,6 +355,8 @@ export function figureChecks(html, opts = {}) {
       ? `${cp.violations.length} disagreement(s): ${cp.violations.slice(0, 8).join(' ; ')}`
       : `${cp.charts} chart(s), ${cp.values} value(s) drawn at the size they show` });
   }
+  if (cp.partial.length)
+    notes.push({ name: 'chart-proportions', detail: `partly checked — ${cp.partial.length} chart(s) draw a bar the gate cannot read (${cp.partial.join(' ; ')}); keep the template's data-value on every bar and row` });
   if (cp.unmarked.length)
     notes.push({ name: 'chart-proportions', detail: `not checked — ${cp.unmarked.length} chart(s) carry no data-value (${list(cp.unmarked)}); keep the template's data-value attributes and fill each with the number its label shows` });
 

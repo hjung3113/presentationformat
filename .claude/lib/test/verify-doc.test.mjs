@@ -150,7 +150,7 @@ test('CLI: chart-proportions and zone-colors fail the gate (exit 1) on a wrong b
   assert.match(ok.stdout, /^PASS {2}zone-colors {2}2 zone\(s\) checked$/m);
   const bad = gate(bars(40) + zone(ACCENT));
   assert.equal(bad.status, 1);
-  assert.match(bad.stdout, /^FAIL {2}chart-proportions {2}1 disagreement\(s\): bar-chart#1 bar 2 "70": height 40% but 70 of max 100 is 70%/m);
+  assert.match(bad.stdout, /^FAIL {2}chart-proportions {2}1 disagreement\(s\): bar-chart#1 bar 2 "70": height 40% but 70 of max 100 \(drawn at 100%\) is 70%/m);
   assert.match(bad.stdout, /^FAIL {2}zone-colors {2}1 zone\(s\) break the AS-IS \/ TO-BE color split: before-after#1 as-is zone uses the accent #1428A0/m);
   assert.match(lines(bad.stdout).at(-1), /^GATE FAILED/);
 });
@@ -306,6 +306,9 @@ test('--local-assets / DC_LOCAL_ASSETS: the flag wins over the env var; empty en
   assert.equal(resolveLocalAssets(['--local-assets', a], { DC_LOCAL_ASSETS: gone }), resolve(a)); // a bad env value is not looked at when the flag is given
   assert.throws(() => resolveLocalAssets(['--local-assets', gone], { DC_LOCAL_ASSETS: b }), /--local-assets directory does not exist: .*no-such-dir/);
   assert.throws(() => resolveLocalAssets([], { DC_LOCAL_ASSETS: gone }), /DC_LOCAL_ASSETS directory does not exist/);
+  assert.equal(resolveLocalAssets([], { DC_LOCAL_ASSETS: gone }, { visual: false }), undefined); // a stale env var is not looked at when no visual tier runs
+  assert.equal(resolveLocalAssets([], { DC_LOCAL_ASSETS: b }, { visual: false }), undefined);
+  assert.throws(() => resolveLocalAssets(['--local-assets', gone], {}, { visual: false }), /--local-assets directory does not exist/); // …but an explicit flag always is
   writeFileSync(join(a, 'file.txt'), 'x');
   assert.throws(() => resolveLocalAssets(['--local-assets', join(a, 'file.txt')], {}), /directory does not exist/); // a file is not a directory
   assert.throws(() => resolveLocalAssets(['--local-assets'], {}), /--local-assets needs a directory/);
@@ -314,7 +317,7 @@ test('--local-assets / DC_LOCAL_ASSETS: the flag wins over the env var; empty en
   rmSync(b, { recursive: true, force: true });
 });
 
-test('CLI: a --local-assets / DC_LOCAL_ASSETS directory that does not exist exits 2 with the usage text, before the gate runs; the flag beats the env var', () => {
+test('CLI: a --local-assets directory that does not exist exits 2 with the usage text, before the gate runs — a DC_LOCAL_ASSETS one only when the visual tier would run, and the flag beats the env var', () => {
   const { dir, doc, support } = docDir(GOOD);
   const good = tmp('vd-good-');
   const gone = join(good, 'no-such-dir');
@@ -324,9 +327,14 @@ test('CLI: a --local-assets / DC_LOCAL_ASSETS directory that does not exist exit
   assert.match(byFlag.stderr, /--local-assets directory does not exist: .*no-such-dir/);
   assert.match(byFlag.stderr, /usage: node verify-doc\.mjs .*\[--local-assets <dir>\]/);
   assert.equal(byFlag.stdout, ''); // no gate output
-  const byEnv = run(base, { DC_LOCAL_ASSETS: gone });
+  const byEnv = run(base.filter(a => a !== '--no-visual'), { DC_LOCAL_ASSETS: gone }); // the visual tier would run
   assert.equal(byEnv.status, 2);
   assert.match(byEnv.stderr, /DC_LOCAL_ASSETS directory does not exist/);
+  assert.equal(byEnv.stdout, '');
+  const staleNoVisual = run(base, { DC_LOCAL_ASSETS: gone }); // --no-visual: nothing renders, so a stale variable in the shell is harmless
+  assert.equal(staleNoVisual.status, 0, staleNoVisual.stdout + staleNoVisual.stderr);
+  assert.match(lines(staleNoVisual.stdout).at(-1), /^GATE PASSED/);
+  assert.equal(staleNoVisual.stderr, '');
   assert.equal(run([...base, '--local-assets']).status, 2); // flag without a value
   const flagWins = run([...base, '--local-assets', good], { DC_LOCAL_ASSETS: gone });
   assert.equal(flagWins.status, 0, flagWins.stdout + flagWins.stderr);

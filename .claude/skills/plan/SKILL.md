@@ -245,7 +245,7 @@ working strictly from the source:
   `tiles:`, `columns:`, …) and keys ending in `?` are optional.
   **Stay inside the component's `@limits-x`** (the Limits column of `core/components/README.md`: layers, modules per layer, leaves
   per child, rows, options, …). The validator counts what the figure-data holds and warns above the maximum
-  (`s2 (hierarchy): "분석 공간" has 6 leaves (>5)`). When a figure's counts exceed it, split the section in the TOC, group the items,
+  (`s2 (hierarchy): "분석 공간" has 7 leaves (>6)`). When a figure's counts exceed it, split the section in the TOC, group the items,
   or move the surplus to the appendix or a table — never write more than the figure can show, and never ask `/build` to raise a limit.
   An item whose ledger status is `designed` or `planned` (not built yet) gets the marker `[planned]` right
   after it — a layer module, pipeline node, tree child or leaf, timeline item, sequence ALT/OPT group — so
