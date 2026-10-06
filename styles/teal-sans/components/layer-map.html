@@ -29,6 +29,7 @@ HOW TO FILL
   5. figure-data 의 여러 레이어는 ‖ 로 구분한다(위에서 아래 순서). 연결 방식은 links 에 "레이어1↕레이어2 방식" 으로 모두 적는다.
   6. 라벨 언어: 층 이름표 ⟦LAYER A⟧ · 외부 층 ⟦EXTERNAL⟧ · 기존 층 ⟦AS-IS⟧ 는 슬롯이다. 슬롯 예시는 영문 기본(labels: en)이다.
      labels: ko 문서(경영진·사용자용)는 "층 A" · "외부" · "지금" 으로 바꾼다 (core/components.md §4 "라벨 언어").
+  7. 기존 체제(legacy) 층 div 의 data-zone="as-is" 속성은 지우지 않는다. 게이트의 zone-colors 가 이 층에 강조색이 없는지 본다. legacy 층을 쓰지 않으면 이 속성을 쓸 곳이 없다.
 -->
 <div data-component="layer-map" style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:24px; overflow-wrap:anywhere;">
   <!-- ▼ REPEAT per layer -->
@@ -91,7 +92,7 @@ HOW TO FILL
   </div>
   <div style="text-align:center; font:500 11px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#6A7187; padding:7px 0;"><span style="color:#B6BBCB; font:400 14px/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif;">↕</span> ⟦연결·이관 방식⟧</div>
   <!-- VARIANT legacy layer (AS-IS, to be replaced): slate family, never the target accent -->
-  <div style="display:grid; grid-template-columns:minmax(96px,min(160px,35%)) minmax(0,1fr); border:1.5px dashed #B7BECC; border-radius:9px; background:#F1F3F7; overflow:hidden;">
+  <div style="display:grid; grid-template-columns:minmax(96px,min(160px,35%)) minmax(0,1fr); border:1.5px dashed #B7BECC; border-radius:9px; background:#F1F3F7; overflow:hidden;" data-zone="as-is">
     <div style="padding:12px 14px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;">
       <span style="font:700 11px/1 'IBM Plex Mono','IBM Plex Sans KR',monospace; letter-spacing:.06em; color:#FFFFFF; background:#94A0B4; border-radius:5px; padding:4px 6px;">⟦AS-IS⟧</span>
       <div style="font:600 13px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#6A7187; margin-top:6px;">⟦기존 시스템 이름⟧</div>

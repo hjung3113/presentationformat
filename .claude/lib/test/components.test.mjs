@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { listTemplates, listStyles, buildStyle, staleFiles, shapeMap, parseMeta, parseDataKeys, loadTokens, CORE_DIR } from '../components.mjs';
+import { listTemplates, listStyles, buildStyle, staleFiles, shapeMap, parseMeta, parseDataKeys, loadTokens, stripSlots, CORE_DIR } from '../components.mjs';
+import { figureChecks, zoneRoles } from '../figures.mjs';
 
 const CORE = join(CORE_DIR, '..');
 
@@ -222,5 +223,38 @@ test('narrow width: every template root carries overflow-wrap:anywhere, and a ro
     assert.ok(root && root[1] && /overflow-wrap:anywhere;/.test(root[1]), `${t.file}: root lacks overflow-wrap:anywhere`);
     const body = live(t);
     if (/overflow-x:auto/.test(root[1])) assert.match(body, /min-width:min-content;/, `${t.file}: scrolls but has no min-width:min-content box to scroll`);
+  }
+});
+
+// ---- figure markers (core/components.md §3, §4): data-value / data-item / data-zone, read by figures.mjs ----
+const MARKERS = {
+  'data-value': { 'bar-chart': 5, 'hbar-chart': 4, 'stacked-bar': 4, 'status-board': 4 }, // a bar, row or segment — not the 대기 row
+  'data-item': { 'card-grid': 4, 'process-row': 4, pipeline: 3, 'kpi-row': 6 },            // a card, step, stage column or tile — not an arrow cell
+  'data-zone': { 'before-after': 2, gantt: 4, 'layer-map': 1 },                              // both sides · legacy + new bars (two rows) · the legacy layer
+};
+
+test('figure markers: every style renders each template with exactly the markers its HOW TO FILL promises, and the figure checks find nothing in any template or gallery', () => {
+  for (const t of listTemplates())
+    for (const [attr, counts] of Object.entries(MARKERS))
+      if (counts[t.meta.component]) assert.ok(t.src.slice(0, t.src.indexOf('-->')).includes(attr), `${t.file}: HOW TO FILL does not tell the author to keep ${attr}`);
+  for (const style of listStyles()) {
+    const { colors } = loadTokens(style);
+    const opts = { accentHex: colors.accent, zoneRoles: zoneRoles(colors) };
+    const files = buildStyle(style);
+    for (const t of listTemplates()) {
+      const html = stripSlots(files[join('components', `${t.meta.component}.html`)].replace(/<!--[\s\S]*?-->/g, ''));
+      for (const [attr, counts] of Object.entries(MARKERS))
+        assert.equal((html.match(new RegExp(` ${attr}(?=[\\s>=])`, 'g')) || []).length, counts[t.meta.component] || 0, `${style}/${t.file}: ${attr} count`);
+      const r = figureChecks(html, opts);
+      assert.deepEqual(r.checks.filter(c => !c.ok), [], `${style}/${t.file}`);
+      assert.deepEqual(r.warnings.filter(w => !w.level), [], `${style}/${t.file}`);
+      assert.deepEqual(r.notes, [], `${style}/${t.file}: a template must carry every marker its figure kind reads`);
+    }
+    const gallery = figureChecks(stripSlots(files['components.gallery.dc.html']), opts);
+    assert.deepEqual(gallery.checks.map(c => [c.name, c.ok, c.detail]), [
+      ['chart-proportions', true, '4 chart(s), 17 value(s) drawn at the size they show'],
+      ['zone-colors', true, '7 zone(s) checked'],
+    ], style);
+    assert.deepEqual(gallery.notes, [], style);
   }
 });

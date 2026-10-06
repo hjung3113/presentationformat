@@ -14,6 +14,7 @@ HOW TO FILL
        정상 = 강조색 · 완료 = 성공색 · 주의 = 경고 보조색 · 차단 = 경고색 · 대기 = 회색
   3. 진척 막대 width 슬롯(%)과 오른쪽 값 글자 슬롯은 같은 값으로 함께 채운다(예: 35 와 35%). 모르면 막대 칸에 "—".
   4. 메모는 다음 행동이나 막힌 이유 한 줄(개조식).
+  5. 진척 막대가 있는 행(대기 행 제외)의 행 div 에 data-value 속성이 있다. 지우지 않고 진척 값 글자가 보여 주는 숫자로 채운다(35% 면 35). 게이트의 chart-proportions 가 진척 막대 width 와 견준다(±2). 대기 행은 막대가 없으므로 속성도 없다.
 -->
 <div data-component="status-board" style="border:1px solid ⟨border⟩; border-radius:⟨r:card-sm⟩; overflow-x:auto; background:⟨white⟩; overflow-wrap:anywhere;">
   <div style="min-width:min-content;">
@@ -21,21 +22,21 @@ HOW TO FILL
       <span>⟦작업 흐름⟧</span><span>⟦상태⟧</span><span>⟦진척⟧</span><span>⟦메모⟧</span>
     </div>
     <!-- VARIANT 차단 (blocked) -->
-    <div style="display:grid; grid-template-columns:minmax(96px,1.5fr) 88px minmax(120px,1fr) minmax(120px,1.8fr); gap:14px; padding:12px 18px; border-top:1px solid ⟨border-row⟩; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(96px,1.5fr) 88px minmax(120px,1fr) minmax(120px,1.8fr); gap:14px; padding:12px 18px; border-top:1px solid ⟨border-row⟩; align-items:center;" data-value="⟦35⟧">
       <div><div style="font:600 13px/1.35 ⟨f:body⟩; color:⟨ink-900⟩;">⟦작업 흐름 A⟧</div><div style="font:400 11.5px/1.4 ⟨f:body⟩; color:⟨muted-text⟩;">⟦담당 · 인원⟧</div></div>
       <span style="justify-self:start; font:700 11px/1 ⟨f:body⟩; color:⟨warn⟩; background:⟨warn-bg⟩; border:1px solid ⟨warn-line⟩; border-radius:⟨r:pill-sm⟩; padding:5px 8px;">⟦차단⟧</span>
       <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; height:8px; background:⟨fill-100⟩; border-radius:4px;"><div style="width:⟦35⟧%; height:100%; background:⟨warn⟩; border-radius:4px;"></div></div><span style="font:600 11px/1 ⟨f:mono⟩; color:⟨muted-text⟩;">⟦35⟧%</span></div>
       <span style="font:400 12.5px/1.5 ⟨f:body⟩; color:⟨body⟩;">⟦막힌 이유 한 줄⟧</span>
     </div>
     <!-- VARIANT 주의 (at risk) -->
-    <div style="display:grid; grid-template-columns:minmax(96px,1.5fr) 88px minmax(120px,1fr) minmax(120px,1.8fr); gap:14px; padding:12px 18px; border-top:1px solid ⟨border-row⟩; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(96px,1.5fr) 88px minmax(120px,1fr) minmax(120px,1.8fr); gap:14px; padding:12px 18px; border-top:1px solid ⟨border-row⟩; align-items:center;" data-value="⟦55⟧">
       <div><div style="font:600 13px/1.35 ⟨f:body⟩; color:⟨ink-900⟩;">⟦작업 흐름 B⟧</div><div style="font:400 11.5px/1.4 ⟨f:body⟩; color:⟨muted-text⟩;">⟦담당 · 인원⟧</div></div>
       <span style="justify-self:start; font:700 11px/1 ⟨f:body⟩; color:⟨warn-2⟩; background:⟨fill-100⟩; border:1px solid ⟨border-chip⟩; border-radius:⟨r:pill-sm⟩; padding:5px 8px;">⟦주의⟧</span>
       <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; height:8px; background:⟨fill-100⟩; border-radius:4px;"><div style="width:⟦55⟧%; height:100%; background:⟨accent-soft⟩; border-radius:4px;"></div></div><span style="font:600 11px/1 ⟨f:mono⟩; color:⟨muted-text⟩;">⟦55⟧%</span></div>
       <span style="font:400 12.5px/1.5 ⟨f:body⟩; color:⟨body⟩;">⟦주의 사유 한 줄⟧</span>
     </div>
     <!-- ▼ REPEAT per workstream — 정상 (on track) -->
-    <div style="display:grid; grid-template-columns:minmax(96px,1.5fr) 88px minmax(120px,1fr) minmax(120px,1.8fr); gap:14px; padding:12px 18px; border-top:1px solid ⟨border-row⟩; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(96px,1.5fr) 88px minmax(120px,1fr) minmax(120px,1.8fr); gap:14px; padding:12px 18px; border-top:1px solid ⟨border-row⟩; align-items:center;" data-value="⟦70⟧">
       <div><div style="font:600 13px/1.35 ⟨f:body⟩; color:⟨ink-900⟩;">⟦작업 흐름 C⟧</div><div style="font:400 11.5px/1.4 ⟨f:body⟩; color:⟨muted-text⟩;">⟦담당 · 인원⟧</div></div>
       <span style="justify-self:start; font:700 11px/1 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1px solid ⟨accent-line⟩; border-radius:⟨r:pill-sm⟩; padding:5px 8px;">⟦정상⟧</span>
       <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; height:8px; background:⟨fill-100⟩; border-radius:4px;"><div style="width:⟦70⟧%; height:100%; background:⟨accent⟩; border-radius:4px;"></div></div><span style="font:600 11px/1 ⟨f:mono⟩; color:⟨muted-text⟩;">⟦70⟧%</span></div>
@@ -43,7 +44,7 @@ HOW TO FILL
     </div>
     <!-- ▲ /REPEAT -->
     <!-- VARIANT 완료 (done) -->
-    <div style="display:grid; grid-template-columns:minmax(96px,1.5fr) 88px minmax(120px,1fr) minmax(120px,1.8fr); gap:14px; padding:12px 18px; border-top:1px solid ⟨border-row⟩; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(96px,1.5fr) 88px minmax(120px,1fr) minmax(120px,1.8fr); gap:14px; padding:12px 18px; border-top:1px solid ⟨border-row⟩; align-items:center;" data-value="⟦100⟧">
       <div><div style="font:600 13px/1.35 ⟨f:body⟩; color:⟨ink-900⟩;">⟦작업 흐름 D⟧</div><div style="font:400 11.5px/1.4 ⟨f:body⟩; color:⟨muted-text⟩;">⟦담당 · 인원⟧</div></div>
       <span style="justify-self:start; font:700 11px/1 ⟨f:body⟩; color:⟨ok⟩; background:⟨ok-bg⟩; border:1px solid ⟨ok-bg⟩; border-radius:⟨r:pill-sm⟩; padding:5px 8px;">⟦완료⟧</span>
       <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; height:8px; background:⟨fill-100⟩; border-radius:4px;"><div style="width:⟦100⟧%; height:100%; background:⟨ok⟩; border-radius:4px;"></div></div><span style="font:600 11px/1 ⟨f:mono⟩; color:⟨muted-text⟩;">⟦100⟧%</span></div>

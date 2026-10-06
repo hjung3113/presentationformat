@@ -136,11 +136,23 @@ each section whose shape is not `none` contains a `data-component` the shape all
 - any `⟦` left in the document (outside comments) **fails**, and so does any `⟨role⟩` left
   (`no-role-placeholders` — it means the figure was pasted from the style-agnostic `core/components/`
   instead of the active style's `components/`);
-- a `data-component` value that is not a known component **fails**.
+- a `data-component` value that is not a known component **fails**;
+- a bar, row or segment marked `data-value` that is drawn at a size its number does not say, or whose label shows another number than its
+  `data-value`, **fails** (`chart-proportions`, ±2 points: `bar-chart` height ≈ value ÷ the chart's own largest value × 100; `hbar-chart`
+  and `status-board` width ≈ the value when the label carries `%`, else value ÷ the largest count × 100; `stacked-bar` width ≈ value and
+  the marked segments add up to 100);
+- an AS-IS zone (`data-zone="as-is"`: the `before-after` AS-IS column, a `gantt` legacy bar, the `layer-map` legacy layer) that uses the
+  style's accent **fails**, and so does a TO-BE zone (`data-zone="to-be"`) whose background fills are mostly warn or slate family
+  (`zone-colors`; the roles come from the active style's tokens, only fills count, one slate chip inside a TO-BE zone is allowed).
+
+Both checks run only where the markers are (§4 "Figure markers"); a figure without them passes as before and the gate prints a `NOTE`
+saying how many it could not check.
 
 Warnings (non-blocking): fewer than 3 distinct figure components in a document with ≥5 numbered
 sections; more than one third of numbered sections with shape `none`; a section with **more than 2**
-main figures (the gate warns above 2 — one idea per figure). Plan-time warnings from
+main figures (the gate warns above 2 — one idea per figure); a section lead whose count word ("세 가지", "다섯 단계", "7개" — a number
+plus 가지·단계·곳·개·층·갈래·구간·축·종; 1 and 10+ never count) matches none of the `data-item` markers of the section's first marked
+figure (`figures:lead-count`). Plan-time warnings from
 `plan-schema`: more than 2 `decision` sections, and for `audience: executive` more than 12 numbered
 sections (group into acts — the section count follows the content, §5), a developer-grade shape
 (`code-structure`, `interaction`, `entity-relations`, `rule-table`), a first section that is not
@@ -152,6 +164,13 @@ sections (group into acts — the section count follows the content, §5), a dev
 
 - **Keep the root marker.** The outer `<div data-component="…">` attribute stays exactly as pasted —
   the gate and reviewers find figures by it. Do not add CSS classes (inline styles only).
+- **Figure markers.** Templates carry three small attributes, appended after the element's `style`, that the gate reads: `data-value`
+  on a bar, row or segment (`bar-chart`, `hbar-chart`, `stacked-bar`, `status-board` rows that have a bar), `data-item` on one counted
+  item (`card-grid` card, `process-row` step, `pipeline` stage column, `kpi-row` tile — never an arrow cell), and `data-zone="as-is|to-be"`
+  on a current-state or target zone (`before-after` columns, `gantt` legacy and new-system bars, the `layer-map` legacy layer). Keep
+  them: copy a unit and its marker goes along, delete a unit and it goes too, and a unit you add gets one. `data-value` is filled with
+  the number the unit's label shows; `data-zone` follows the unit's meaning (a legacy bar is `as-is` whatever its text says). Never
+  remove a marker to pass a check — an unmarked figure is simply not checked.
 - **Replace every `⟦…⟧`.** The text inside is an example, not a default. Unknown values become the
   style's placeholder (`O` + muted "(추후 확정)"), never invented facts.
 - **Repeat, don't redraw.** `▼ REPEAT … ▲ /REPEAT` marks the unit to copy for more items; delete
@@ -176,7 +195,8 @@ sections (group into acts — the section count follows the content, §5), a dev
   takes `overflow-wrap:anywhere`, a grid cell takes `min-width:0` or a `minmax(0,Nfr)` track. Never pass the check by hiding the
   overflow; the probe reports a clipped figure.
 - **Percentages are slots tied to their label.** A bar's `width`/`height` slot and the value shown on
-  it (`35` and `35%`) are filled with the same value; a matrix cell glyph (`✓`/`✕`/short text) is a slot
+  it (`35` and `35%`) are filled with the same value, and the bar's `data-value` carries that value a third time (the gate's
+  `chart-proportions` compares the drawn size, the label and `data-value`); a matrix cell glyph (`✓`/`✕`/short text) is a slot
   whose color follows its shape (copy a cell of that shape).
 - **Numbers come from the plan.** Every number visible in the document appears in the plan's
   `payload`/`figure-data`/cover tokens (or its facts ledger). A template example is not a value; if the
@@ -192,7 +212,9 @@ sections (group into acts — the section count follows the content, §5), a dev
   the bare term appears before it; a banned variant (`terms-consistent`) is the hard check.
 - **What the gate reads in pasted figures** (`verify-doc`): `no-role-placeholders`, `palette` (with
   `--style`: every color literal must be in the style's `design.md` — no invented colors),
-  `grid-consistency`, and `numbers-traced` (with `--plan`).
+  `grid-consistency`, `chart-proportions` and `zone-colors` (where the figure carries its markers; `zone-colors` reads the
+  style's accent and warn/slate tokens, so its TO-BE half needs `--style`), `figures:lead-count` (warning), and
+  `numbers-traced` (with `--plan`).
 - **Text-safe muted ink.** Small informative text — a sub-line under a number or node, a footnote (`*`), legend and
   axis labels, a footer or field label, a state chip, the `(추정)` / `(추후 확정)` suffixes — is set in the style's
   text-safe muted role `⟨muted-text⟩` (≥4.5:1 on white). The faint roles `⟨muted-500⟩` / `⟨muted-400⟩` / `⟨muted-300⟩` are for
@@ -233,7 +255,9 @@ sections (group into acts — the section count follows the content, §5), a dev
   two tables of ≤10 rows each or the table's definition-list variant (a two-column "term — definition" list that keeps
   the `data-component="table"` root). Cell variants (a muted detail line under the first-column label, several value
   lines stacked in one cell) are listed in the table template's `HOW TO FILL`.
-- **Counts must match.** If the lead says "세 가지 상태", the figure shows three.
+- **Counts must match.** If the lead says "세 가지 상태", the figure shows three. The `data-item` markers are what the gate counts
+  (`figures:lead-count` warns when the lead's count and the figure's differ); a lead that counts something else than the figure's
+  items ("7단계 … 다섯 구간으로 묶어") is fine as long as one of its counts is the figure's.
 - **A not-built thing never gets the built look (cross-component rule).** Anything the source calls
   planned, designed-only, not yet built or not decided — a module, a pipeline node, a tree child or leaf, a
   timeline item, an ALT/OPT frame of messages — is drawn in the **shared planned look**: muted dashed

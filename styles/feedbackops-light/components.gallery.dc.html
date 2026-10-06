@@ -62,7 +62,7 @@
         <div data-component="before-after" style="border:1px solid #DCE5F2; border-radius:12px; padding:28px; background:#FBFDFF; overflow-wrap:anywhere;">
   <div style="display:flex; flex-wrap:wrap; justify-content:center; align-items:stretch;">
     <!-- AS-IS column -->
-    <div style="display:flex; flex-direction:column; justify-content:center; flex:1 1 260px; min-width:0;">
+    <div style="display:flex; flex-direction:column; justify-content:center; flex:1 1 260px; min-width:0;" data-zone="as-is">
       <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="font:700 11px/1 'JetBrains Mono',Pretendard,monospace; letter-spacing:.06em; color:#FFFFFF; background:#94A3B8; border-radius:4px; padding:6px 10px; white-space:nowrap; flex:none;">AS-IS</span><span style="font:600 15px/1.3 Inter,Pretendard,sans-serif; color:#475467;">현재 — 한 줄 요약</span></div>
       <div style="background:#EEF2F7; border:1.5px dashed #B8C4D6; border-radius:8px; padding:16px 14px;">
         <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#5D6679; text-align:center; margin-bottom:12px;">현재 구조 한 줄 설명</div>
@@ -84,7 +84,7 @@
     <!-- pivot arrow -->
     <div style="display:flex; align-items:center; justify-content:center; flex:0 0 50px; padding:8px 0;"><div style="width:36px; height:36px; border-radius:50%; background:#1428A0; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font:400 17px/1 Inter,Pretendard,sans-serif;">→</div></div>
     <!-- TO-BE column -->
-    <div style="display:flex; flex-direction:column; justify-content:center; flex:1 1 260px; min-width:0;">
+    <div style="display:flex; flex-direction:column; justify-content:center; flex:1 1 260px; min-width:0;" data-zone="to-be">
       <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="font:700 11px/1 'JetBrains Mono',Pretendard,monospace; letter-spacing:.06em; color:#FFFFFF; background:#1428A0; border-radius:4px; padding:6px 10px; white-space:nowrap; flex:none;">TO-BE</span><span style="font:600 15px/1.3 Inter,Pretendard,sans-serif; color:#101828;">목표 — 한 줄 요약</span></div>
       <div style="font:700 13px/1.3 Inter,Pretendard,sans-serif; color:#FFFFFF; background:#1428A0; border-radius:8px; padding:12px; text-align:center;">중심 노드</div>
       <div style="text-align:center; color:#B8C4D6; font:400 13px/1 Inter,Pretendard,sans-serif; padding:6px 0;">↓</div>
@@ -119,27 +119,27 @@
         <div data-component="process-row" style="background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:26px 22px 22px; overflow-x:auto; overflow-wrap:anywhere;">
   <div style="display:flex; align-items:flex-start; min-width:min-content;">
     <!-- ▼ REPEAT per step (3–5) -->
-    <div style="flex:1; min-width:44px; text-align:center; padding:0 4px;">
+    <div style="flex:1; min-width:44px; text-align:center; padding:0 4px;" data-item>
       <div style="width:38px; height:38px; border-radius:50%; background:#1428A0; color:#FFFFFF; font:700 15px/38px 'JetBrains Mono',Pretendard,monospace; margin:0 auto 12px;">1</div>
       <div style="font:600 13.5px/1.4 Inter,Pretendard,sans-serif; color:#101828;">단계 A</div>
       <div style="font:400 12px/1.6 Inter,Pretendard,sans-serif; color:#475467; margin-top:4px;">한 줄 설명</div>
     </div>
     <div style="flex:0 0 24px; padding-top:9px; text-align:center; color:#A9BDF5; font:400 18px/1 Inter,Pretendard,sans-serif;">→</div>
     <!-- ▲ /REPEAT -->
-    <div style="flex:1; min-width:44px; text-align:center; padding:0 4px;">
+    <div style="flex:1; min-width:44px; text-align:center; padding:0 4px;" data-item>
       <div style="width:38px; height:38px; border-radius:50%; background:#1428A0; color:#FFFFFF; font:700 15px/38px 'JetBrains Mono',Pretendard,monospace; margin:0 auto 12px;">2</div>
       <div style="font:600 13.5px/1.4 Inter,Pretendard,sans-serif; color:#101828;">단계 B</div>
       <div style="font:400 12px/1.6 Inter,Pretendard,sans-serif; color:#475467; margin-top:4px;">한 줄 설명</div>
     </div>
     <div style="flex:0 0 24px; padding-top:9px; text-align:center; color:#A9BDF5; font:400 18px/1 Inter,Pretendard,sans-serif;">→</div>
-    <div style="flex:1; min-width:44px; text-align:center; padding:0 4px;">
+    <div style="flex:1; min-width:44px; text-align:center; padding:0 4px;" data-item>
       <div style="width:38px; height:38px; border-radius:50%; background:#1428A0; color:#FFFFFF; font:700 15px/38px 'JetBrains Mono',Pretendard,monospace; margin:0 auto 12px;">3</div>
       <div style="font:600 13.5px/1.4 Inter,Pretendard,sans-serif; color:#101828;">단계 C</div>
       <div style="font:400 12px/1.6 Inter,Pretendard,sans-serif; color:#475467; margin-top:4px;">한 줄 설명</div>
     </div>
     <div style="flex:0 0 24px; padding-top:9px; text-align:center; color:#A9BDF5; font:400 18px/1 Inter,Pretendard,sans-serif;">→</div>
     <!-- VARIANT final step = done (✓, success colour) -->
-    <div style="flex:1; min-width:44px; text-align:center; padding:0 4px;">
+    <div style="flex:1; min-width:44px; text-align:center; padding:0 4px;" data-item>
       <div style="width:38px; height:38px; border-radius:50%; background:#10734A; color:#FFFFFF; font:700 15px/38px 'JetBrains Mono',Pretendard,monospace; margin:0 auto 12px;">✓</div>
       <div style="font:600 13.5px/1.4 Inter,Pretendard,sans-serif; color:#101828;">완료 단계</div>
       <div style="font:400 12px/1.6 Inter,Pretendard,sans-serif; color:#475467; margin-top:4px;">한 줄 설명</div>
@@ -555,7 +555,7 @@
   </div>
   <div style="text-align:center; font:500 11px/1.4 Inter,Pretendard,sans-serif; color:#5D6679; padding:7px 0;"><span style="color:#B8C4D6; font:400 14px/1 Inter,Pretendard,sans-serif;">↕</span> 연결·이관 방식</div>
   <!-- VARIANT legacy layer (AS-IS, to be replaced): slate family, never the target accent -->
-  <div style="display:grid; grid-template-columns:minmax(96px,min(160px,35%)) minmax(0,1fr); border:1.5px dashed #B8C4D6; border-radius:8px; background:#EEF2F7; overflow:hidden;">
+  <div style="display:grid; grid-template-columns:minmax(96px,min(160px,35%)) minmax(0,1fr); border:1.5px dashed #B8C4D6; border-radius:8px; background:#EEF2F7; overflow:hidden;" data-zone="as-is">
     <div style="padding:12px 14px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;">
       <span style="font:700 11px/1 'JetBrains Mono',Pretendard,monospace; letter-spacing:.06em; color:#FFFFFF; background:#94A3B8; border-radius:4px; padding:4px 6px;">AS-IS</span>
       <div style="font:600 13px/1.35 Inter,Pretendard,sans-serif; color:#5D6679; margin-top:6px;">기존 시스템 이름</div>
@@ -579,7 +579,7 @@
         <div data-component="pipeline" style="background:#F7FAFE; border:1px solid #DFE7F3; border-radius:8px; padding:24px; overflow-x:auto; overflow-wrap:anywhere;">
   <div style="display:flex; align-items:stretch; min-width:min-content;">
     <!-- ▼ REPEAT per stage -->
-    <div style="flex:1; min-width:88px; display:flex; flex-direction:column; gap:8px;">
+    <div style="flex:1; min-width:88px; display:flex; flex-direction:column; gap:8px;" data-item>
       <div style="font:700 10.5px/1 'JetBrains Mono',Pretendard,monospace; letter-spacing:.06em; color:#5D6679; text-align:center; padding-bottom:8px; border-bottom:1px solid #DCE5F2;">01 · 입력</div>
       <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px; text-align:center;">노드 A1<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#5D6679; margin-top:2px;">부가 설명</span></div>
       <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px; text-align:center;">노드 A2<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#5D6679; margin-top:2px;">부가 설명</span></div>
@@ -590,7 +590,7 @@
       <span style="font:500 10px/1.3 Inter,Pretendard,sans-serif; color:#5D6679; text-align:center; margin-top:4px;">전달 항목 1</span>
     </div>
     <!-- ▲ /REPEAT -->
-    <div style="flex:1; min-width:88px; display:flex; flex-direction:column; gap:8px;">
+    <div style="flex:1; min-width:88px; display:flex; flex-direction:column; gap:8px;" data-item>
       <div style="font:700 10.5px/1 'JetBrains Mono',Pretendard,monospace; letter-spacing:.06em; color:#5D6679; text-align:center; padding-bottom:8px; border-bottom:1px solid #DCE5F2;">02 · 처리</div>
       <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px; text-align:center;">노드 B1<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#5D6679; margin-top:2px;">부가 설명</span></div>
       <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px dashed #AEBBD3; border-radius:6px; padding:10px; text-align:center;">저장소·큐 노드<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#5D6679; margin-top:2px;">부가 설명</span></div>
@@ -601,7 +601,7 @@
       <span style="color:#1428A0; font:400 18px/1 Inter,Pretendard,sans-serif;">→</span>
       <span style="font:500 10px/1.3 Inter,Pretendard,sans-serif; color:#5D6679; text-align:center; margin-top:4px;">전달 항목 2</span>
     </div>
-    <div style="flex:1; min-width:88px; display:flex; flex-direction:column; gap:8px;">
+    <div style="flex:1; min-width:88px; display:flex; flex-direction:column; gap:8px;" data-item>
       <div style="font:700 10.5px/1 'JetBrains Mono',Pretendard,monospace; letter-spacing:.06em; color:#5D6679; text-align:center; padding-bottom:8px; border-bottom:1px solid #DCE5F2;">03 · 출력</div>
       <!-- VARIANT destination (one per figure) -->
       <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:6px; padding:10px; text-align:center;">목적지 노드<span style="display:block; font:400 10.5px/1.4 Inter,Pretendard,sans-serif; color:#475467; margin-top:2px;">부가 설명</span></div>
@@ -1047,21 +1047,21 @@
     <div style="display:flex; align-items:flex-end; gap:16px; height:180px; padding:22px 8px 0; border-bottom:1.5px solid #CBD6E6;">
       <!-- ▼ REPEAT per bar: height = value / max × 100 % -->
       <div style="flex:1 0 32px; height:100%; display:flex; align-items:flex-end; justify-content:center;">
-        <div style="position:relative; width:100%; max-width:56px; height:100%; background:#1428A0; border-radius:4px 4px 0 0;"><span style="position:absolute; bottom:100%; left:0; right:0; text-align:center; padding-bottom:5px; font:700 11px/1 'JetBrains Mono',Pretendard,monospace; color:#1D2939;">100</span></div>
+        <div style="position:relative; width:100%; max-width:56px; height:100%; background:#1428A0; border-radius:4px 4px 0 0;" data-value="100"><span style="position:absolute; bottom:100%; left:0; right:0; text-align:center; padding-bottom:5px; font:700 11px/1 'JetBrains Mono',Pretendard,monospace; color:#1D2939;">100</span></div>
       </div>
       <!-- ▲ /REPEAT -->
       <div style="flex:1 0 32px; height:100%; display:flex; align-items:flex-end; justify-content:center;">
-        <div style="position:relative; width:100%; max-width:56px; height:70%; background:#3157D5; border-radius:4px 4px 0 0;"><span style="position:absolute; bottom:100%; left:0; right:0; text-align:center; padding-bottom:5px; font:700 11px/1 'JetBrains Mono',Pretendard,monospace; color:#1D2939;">70</span></div>
+        <div style="position:relative; width:100%; max-width:56px; height:70%; background:#3157D5; border-radius:4px 4px 0 0;" data-value="70"><span style="position:absolute; bottom:100%; left:0; right:0; text-align:center; padding-bottom:5px; font:700 11px/1 'JetBrains Mono',Pretendard,monospace; color:#1D2939;">70</span></div>
       </div>
       <div style="flex:1 0 32px; height:100%; display:flex; align-items:flex-end; justify-content:center;">
-        <div style="position:relative; width:100%; max-width:56px; height:50%; background:#3157D5; border-radius:4px 4px 0 0;"><span style="position:absolute; bottom:100%; left:0; right:0; text-align:center; padding-bottom:5px; font:700 11px/1 'JetBrains Mono',Pretendard,monospace; color:#1D2939;">50</span></div>
+        <div style="position:relative; width:100%; max-width:56px; height:50%; background:#3157D5; border-radius:4px 4px 0 0;" data-value="50"><span style="position:absolute; bottom:100%; left:0; right:0; text-align:center; padding-bottom:5px; font:700 11px/1 'JetBrains Mono',Pretendard,monospace; color:#1D2939;">50</span></div>
       </div>
       <div style="flex:1 0 32px; height:100%; display:flex; align-items:flex-end; justify-content:center;">
-        <div style="position:relative; width:100%; max-width:56px; height:30%; background:#3157D5; border-radius:4px 4px 0 0;"><span style="position:absolute; bottom:100%; left:0; right:0; text-align:center; padding-bottom:5px; font:700 11px/1 'JetBrains Mono',Pretendard,monospace; color:#1D2939;">30</span></div>
+        <div style="position:relative; width:100%; max-width:56px; height:30%; background:#3157D5; border-radius:4px 4px 0 0;" data-value="30"><span style="position:absolute; bottom:100%; left:0; right:0; text-align:center; padding-bottom:5px; font:700 11px/1 'JetBrains Mono',Pretendard,monospace; color:#1D2939;">30</span></div>
       </div>
       <!-- VARIANT baseline / previous = grey -->
       <div style="flex:1 0 32px; height:100%; display:flex; align-items:flex-end; justify-content:center;">
-        <div style="position:relative; width:100%; max-width:56px; height:10%; background:#CBD6E6; border-radius:4px 4px 0 0;"><span style="position:absolute; bottom:100%; left:0; right:0; text-align:center; padding-bottom:5px; font:700 11px/1 'JetBrains Mono',Pretendard,monospace; color:#5D6679;">10</span></div>
+        <div style="position:relative; width:100%; max-width:56px; height:10%; background:#CBD6E6; border-radius:4px 4px 0 0;" data-value="10"><span style="position:absolute; bottom:100%; left:0; right:0; text-align:center; padding-bottom:5px; font:700 11px/1 'JetBrains Mono',Pretendard,monospace; color:#5D6679;">10</span></div>
       </div>
     </div>
     <!-- x labels: same count and order as bars -->
@@ -1089,24 +1089,24 @@
   <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:16px;"><span style="font:600 13px/1.4 Inter,Pretendard,sans-serif; color:#101828;">차트 제목</span><span style="font:500 11px/1 'JetBrains Mono',Pretendard,monospace; color:#5D6679;">점선 = 목표 값</span></div>
   <div style="display:flex; flex-direction:column; gap:12px;">
     <!-- ▼ REPEAT per row -->
-    <div style="display:grid; grid-template-columns:minmax(80px,min(170px,35%)) minmax(0,1fr) 52px; gap:14px; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(80px,min(170px,35%)) minmax(0,1fr) 52px; gap:14px; align-items:center;" data-value="90">
       <span style="font:500 12.5px/1.35 Inter,Pretendard,sans-serif; color:#374151;">항목 A</span>
       <div style="position:relative; height:18px; background:#EDF3FB; border-radius:5px;"><div style="width:90%; height:100%; background:#1428A0; border-radius:5px;"></div><div style="position:absolute; left:80%; top:-4px; bottom:-4px; border-left:2px dashed #374151;"></div></div>
       <span style="font:700 12px/1 'JetBrains Mono',Pretendard,monospace; color:#1428A0; text-align:right;">90%</span>
     </div>
     <!-- ▲ /REPEAT -->
-    <div style="display:grid; grid-template-columns:minmax(80px,min(170px,35%)) minmax(0,1fr) 52px; gap:14px; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(80px,min(170px,35%)) minmax(0,1fr) 52px; gap:14px; align-items:center;" data-value="70">
       <span style="font:500 12.5px/1.35 Inter,Pretendard,sans-serif; color:#374151;">항목 B</span>
       <div style="position:relative; height:18px; background:#EDF3FB; border-radius:5px;"><div style="width:70%; height:100%; background:#3157D5; border-radius:5px;"></div><div style="position:absolute; left:80%; top:-4px; bottom:-4px; border-left:2px dashed #374151;"></div></div>
       <span style="font:700 12px/1 'JetBrains Mono',Pretendard,monospace; color:#3157D5; text-align:right;">70%</span>
     </div>
     <!-- VARIANT below target = grey -->
-    <div style="display:grid; grid-template-columns:minmax(80px,min(170px,35%)) minmax(0,1fr) 52px; gap:14px; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(80px,min(170px,35%)) minmax(0,1fr) 52px; gap:14px; align-items:center;" data-value="30">
       <span style="font:500 12.5px/1.35 Inter,Pretendard,sans-serif; color:#374151;">항목 C</span>
       <div style="position:relative; height:18px; background:#EDF3FB; border-radius:5px;"><div style="width:30%; height:100%; background:#CBD6E6; border-radius:5px;"></div><div style="position:absolute; left:80%; top:-4px; bottom:-4px; border-left:2px dashed #374151;"></div></div>
       <span style="font:700 12px/1 'JetBrains Mono',Pretendard,monospace; color:#5D6679; text-align:right;">30%</span>
     </div>
-    <div style="display:grid; grid-template-columns:minmax(80px,min(170px,35%)) minmax(0,1fr) 52px; gap:14px; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(80px,min(170px,35%)) minmax(0,1fr) 52px; gap:14px; align-items:center;" data-value="10">
       <span style="font:500 12.5px/1.35 Inter,Pretendard,sans-serif; color:#374151;">항목 D</span>
       <div style="position:relative; height:18px; background:#EDF3FB; border-radius:5px;"><div style="width:10%; height:100%; background:#CBD6E6; border-radius:5px;"></div><div style="position:absolute; left:80%; top:-4px; bottom:-4px; border-left:2px dashed #374151;"></div></div>
       <span style="font:700 12px/1 'JetBrains Mono',Pretendard,monospace; color:#5D6679; text-align:right;">10%</span>
@@ -1127,11 +1127,11 @@
   <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px;"><span style="font:600 13px/1.4 Inter,Pretendard,sans-serif; color:#101828;">차트 제목</span><span style="font:500 11px/1 'JetBrains Mono',Pretendard,monospace; color:#5D6679;">n = 00</span></div>
   <div style="display:flex; height:34px; border-radius:6px; overflow:hidden;">
     <!-- ▼ REPEAT per segment: width = share % -->
-    <div style="width:40%; background:#1428A0; color:#FFFFFF; font:700 11px/34px 'JetBrains Mono',Pretendard,monospace; text-align:center;">40%</div>
+    <div style="width:40%; background:#1428A0; color:#FFFFFF; font:700 11px/34px 'JetBrains Mono',Pretendard,monospace; text-align:center;" data-value="40">40%</div>
     <!-- ▲ /REPEAT -->
-    <div style="width:30%; background:#3157D5; color:#FFFFFF; font:700 11px/34px 'JetBrains Mono',Pretendard,monospace; text-align:center;">30%</div>
-    <div style="width:20%; background:#A9BDF5; color:#0F1E78; font:700 11px/34px 'JetBrains Mono',Pretendard,monospace; text-align:center;">20%</div>
-    <div style="width:10%; background:#B8C4D6;"></div>
+    <div style="width:30%; background:#3157D5; color:#FFFFFF; font:700 11px/34px 'JetBrains Mono',Pretendard,monospace; text-align:center;" data-value="30">30%</div>
+    <div style="width:20%; background:#A9BDF5; color:#0F1E78; font:700 11px/34px 'JetBrains Mono',Pretendard,monospace; text-align:center;" data-value="20">20%</div>
+    <div style="width:10%; background:#B8C4D6;" data-value="10"></div>
   </div>
   <div style="display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:12px;">
     <span style="display:inline-flex; align-items:center; gap:6px; font:500 12px/1 Inter,Pretendard,sans-serif; color:#475467;"><span style="width:11px; height:11px; border-radius:3px; background:#1428A0;"></span>구간 A <b style="color:#101828;">40%</b></span>
@@ -1152,38 +1152,38 @@
         <div style="display:flex; gap:10px; background:#E7EFFC; border-radius:8px; padding:11px 14px; margin:10px 0 18px;"><span style="font:700 11px/1.6 Inter,Pretendard,sans-serif; letter-spacing:.03em; color:#1428A0; white-space:nowrap;">언제 쓰나</span><span style="font:400 12.5px/1.6 Inter,Pretendard,sans-serif; color:#475467;">숫자 1–4개 자체가 메시지다. 기간 대비 증감, 목표 대비 현재, 현재 방식이 치르는 비용·손실·수작업 시간, 보고서 첫 화면의 요약 지표. <span style="color:#98A2B3;">· 쓰지 않을 때: 항목이 5개 이상이거나 서로 비교가 핵심 → bar-chart/hbar-chart. 수치가 아직 없다 → 지표 대신 "O (추후 확정)" 자리표시.</span></span></div>
         <div data-component="kpi-row" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(max(min(100%,130px),calc(25% - 13px)),1fr)); gap:12px; overflow-wrap:anywhere;">
   <!-- VARIANT highlight tile (target / improvement ONLY — never a problem number) -->
-  <div style="background:#E7EFFC; border:1px solid #D8E7FB; border-radius:8px; padding:16px 18px;">
+  <div style="background:#E7EFFC; border:1px solid #D8E7FB; border-radius:8px; padding:16px 18px;" data-item>
     <div style="font:500 12px/1.4 Inter,Pretendard,sans-serif; color:#475467;">지표 A</div>
     <div style="display:flex; flex-wrap:wrap; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 Inter,Pretendard,sans-serif; color:#1428A0;">00<span style="font:700 16px/1 Inter,Pretendard,sans-serif;">단위</span></span><span style="font:700 11px/1 'JetBrains Mono',Pretendard,monospace; color:#10734A; background:#E7F5EE; border-radius:4px; padding:4px 7px;">▲ 00</span></div>
     <div style="font:400 11.5px/1.5 Inter,Pretendard,sans-serif; color:#5D6679; margin-top:8px;">비교 기준 한 줄</div>
   </div>
   <!-- ▼ REPEAT per tile -->
-  <div style="background:#FFFFFF; border:1px solid #DCE5F2; border-radius:8px; padding:16px 18px;">
+  <div style="background:#FFFFFF; border:1px solid #DCE5F2; border-radius:8px; padding:16px 18px;" data-item>
     <div style="font:500 12px/1.4 Inter,Pretendard,sans-serif; color:#475467;">지표 B</div>
     <div style="display:flex; flex-wrap:wrap; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 Inter,Pretendard,sans-serif; color:#101828;">00<span style="font:700 16px/1 Inter,Pretendard,sans-serif;">단위</span></span><span style="font:700 11px/1 'JetBrains Mono',Pretendard,monospace; color:#10734A; background:#E7F5EE; border-radius:4px; padding:4px 7px;">▼ 00</span></div>
     <div style="font:400 11.5px/1.5 Inter,Pretendard,sans-serif; color:#5D6679; margin-top:8px;">비교 기준 한 줄</div>
   </div>
   <!-- ▲ /REPEAT -->
   <!-- VARIANT problem tile (cost of the status quo: loss, manual hours, incident count) -->
-  <div style="background:#FCEDEE; border:1px solid #F3C7CB; border-radius:8px; padding:16px 18px;">
+  <div style="background:#FCEDEE; border:1px solid #F3C7CB; border-radius:8px; padding:16px 18px;" data-item>
     <div style="font:500 12px/1.4 Inter,Pretendard,sans-serif; color:#475467;">지표 C (현재 비용)</div>
     <div style="display:flex; flex-wrap:wrap; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 Inter,Pretendard,sans-serif; color:#B2202B;">00<span style="font:700 16px/1 Inter,Pretendard,sans-serif;">단위</span></span></div>
     <div style="font:400 11.5px/1.5 Inter,Pretendard,sans-serif; color:#8E5500; margin-top:8px;">산출 근거 한 줄</div>
   </div>
   <!-- VARIANT estimate suffix (estimate / owner statement): muted "(추정)" right after the value -->
-  <div style="background:#FFFFFF; border:1px solid #DCE5F2; border-radius:8px; padding:16px 18px;">
+  <div style="background:#FFFFFF; border:1px solid #DCE5F2; border-radius:8px; padding:16px 18px;" data-item>
     <div style="font:500 12px/1.4 Inter,Pretendard,sans-serif; color:#475467;">지표 D</div>
     <div style="display:flex; flex-wrap:wrap; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 Inter,Pretendard,sans-serif; color:#101828;">00<span style="font:700 16px/1 Inter,Pretendard,sans-serif;">단위</span></span><span style="font:500 12px/1 Inter,Pretendard,sans-serif; color:#5D6679;">(추정)</span></div>
     <div style="font:400 11.5px/1.5 Inter,Pretendard,sans-serif; color:#5D6679; margin-top:8px;">추정 근거 한 줄</div>
   </div>
   <!-- VARIANT worsened (bad direction = warning colour on the delta badge only) -->
-  <div style="background:#FFFFFF; border:1px solid #DCE5F2; border-radius:8px; padding:16px 18px;">
+  <div style="background:#FFFFFF; border:1px solid #DCE5F2; border-radius:8px; padding:16px 18px;" data-item>
     <div style="font:500 12px/1.4 Inter,Pretendard,sans-serif; color:#475467;">지표 E</div>
     <div style="display:flex; flex-wrap:wrap; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 Inter,Pretendard,sans-serif; color:#101828;">00<span style="font:700 16px/1 Inter,Pretendard,sans-serif;">단위</span></span><span style="font:700 11px/1 'JetBrains Mono',Pretendard,monospace; color:#B2202B; background:#FCEDEE; border-radius:4px; padding:4px 7px;">▲ 00</span></div>
     <div style="font:400 11.5px/1.5 Inter,Pretendard,sans-serif; color:#5D6679; margin-top:8px;">목표 한 줄</div>
   </div>
   <!-- VARIANT not yet measured -->
-  <div style="background:#FFFFFF; border:1px solid #DCE5F2; border-radius:8px; padding:16px 18px;">
+  <div style="background:#FFFFFF; border:1px solid #DCE5F2; border-radius:8px; padding:16px 18px;" data-item>
     <div style="font:500 12px/1.4 Inter,Pretendard,sans-serif; color:#475467;">지표 F</div>
     <div style="display:flex; flex-wrap:wrap; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 Inter,Pretendard,sans-serif; color:#101828;">O<span style="font:700 16px/1 Inter,Pretendard,sans-serif;">단위</span></span></div>
     <div style="font:400 11.5px/1.5 Inter,Pretendard,sans-serif; color:#5D6679; margin-top:8px;">(추후 확정)</div>
@@ -1210,21 +1210,21 @@
       <span>작업 흐름</span><span>상태</span><span>진척</span><span>메모</span>
     </div>
     <!-- VARIANT 차단 (blocked) -->
-    <div style="display:grid; grid-template-columns:minmax(96px,1.5fr) 88px minmax(120px,1fr) minmax(120px,1.8fr); gap:14px; padding:12px 18px; border-top:1px solid #E6EDF7; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(96px,1.5fr) 88px minmax(120px,1fr) minmax(120px,1.8fr); gap:14px; padding:12px 18px; border-top:1px solid #E6EDF7; align-items:center;" data-value="35">
       <div><div style="font:600 13px/1.35 Inter,Pretendard,sans-serif; color:#101828;">작업 흐름 A</div><div style="font:400 11.5px/1.4 Inter,Pretendard,sans-serif; color:#5D6679;">담당 · 인원</div></div>
       <span style="justify-self:start; font:700 11px/1 Inter,Pretendard,sans-serif; color:#B2202B; background:#FCEDEE; border:1px solid #F3C7CB; border-radius:4px; padding:5px 8px;">차단</span>
       <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; height:8px; background:#EDF3FB; border-radius:4px;"><div style="width:35%; height:100%; background:#B2202B; border-radius:4px;"></div></div><span style="font:600 11px/1 'JetBrains Mono',Pretendard,monospace; color:#5D6679;">35%</span></div>
       <span style="font:400 12.5px/1.5 Inter,Pretendard,sans-serif; color:#475467;">막힌 이유 한 줄</span>
     </div>
     <!-- VARIANT 주의 (at risk) -->
-    <div style="display:grid; grid-template-columns:minmax(96px,1.5fr) 88px minmax(120px,1fr) minmax(120px,1.8fr); gap:14px; padding:12px 18px; border-top:1px solid #E6EDF7; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(96px,1.5fr) 88px minmax(120px,1fr) minmax(120px,1.8fr); gap:14px; padding:12px 18px; border-top:1px solid #E6EDF7; align-items:center;" data-value="55">
       <div><div style="font:600 13px/1.35 Inter,Pretendard,sans-serif; color:#101828;">작업 흐름 B</div><div style="font:400 11.5px/1.4 Inter,Pretendard,sans-serif; color:#5D6679;">담당 · 인원</div></div>
       <span style="justify-self:start; font:700 11px/1 Inter,Pretendard,sans-serif; color:#8E5500; background:#EDF3FB; border:1px solid #CBD6E6; border-radius:4px; padding:5px 8px;">주의</span>
       <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; height:8px; background:#EDF3FB; border-radius:4px;"><div style="width:55%; height:100%; background:#3157D5; border-radius:4px;"></div></div><span style="font:600 11px/1 'JetBrains Mono',Pretendard,monospace; color:#5D6679;">55%</span></div>
       <span style="font:400 12.5px/1.5 Inter,Pretendard,sans-serif; color:#475467;">주의 사유 한 줄</span>
     </div>
     <!-- ▼ REPEAT per workstream — 정상 (on track) -->
-    <div style="display:grid; grid-template-columns:minmax(96px,1.5fr) 88px minmax(120px,1fr) minmax(120px,1.8fr); gap:14px; padding:12px 18px; border-top:1px solid #E6EDF7; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(96px,1.5fr) 88px minmax(120px,1fr) minmax(120px,1.8fr); gap:14px; padding:12px 18px; border-top:1px solid #E6EDF7; align-items:center;" data-value="70">
       <div><div style="font:600 13px/1.35 Inter,Pretendard,sans-serif; color:#101828;">작업 흐름 C</div><div style="font:400 11.5px/1.4 Inter,Pretendard,sans-serif; color:#5D6679;">담당 · 인원</div></div>
       <span style="justify-self:start; font:700 11px/1 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1px solid #B9C9F7; border-radius:4px; padding:5px 8px;">정상</span>
       <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; height:8px; background:#EDF3FB; border-radius:4px;"><div style="width:70%; height:100%; background:#1428A0; border-radius:4px;"></div></div><span style="font:600 11px/1 'JetBrains Mono',Pretendard,monospace; color:#5D6679;">70%</span></div>
@@ -1232,7 +1232,7 @@
     </div>
     <!-- ▲ /REPEAT -->
     <!-- VARIANT 완료 (done) -->
-    <div style="display:grid; grid-template-columns:minmax(96px,1.5fr) 88px minmax(120px,1fr) minmax(120px,1.8fr); gap:14px; padding:12px 18px; border-top:1px solid #E6EDF7; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(96px,1.5fr) 88px minmax(120px,1fr) minmax(120px,1.8fr); gap:14px; padding:12px 18px; border-top:1px solid #E6EDF7; align-items:center;" data-value="100">
       <div><div style="font:600 13px/1.35 Inter,Pretendard,sans-serif; color:#101828;">작업 흐름 D</div><div style="font:400 11.5px/1.4 Inter,Pretendard,sans-serif; color:#5D6679;">담당 · 인원</div></div>
       <span style="justify-self:start; font:700 11px/1 Inter,Pretendard,sans-serif; color:#10734A; background:#E7F5EE; border:1px solid #E7F5EE; border-radius:4px; padding:5px 8px;">완료</span>
       <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; height:8px; background:#EDF3FB; border-radius:4px;"><div style="width:100%; height:100%; background:#10734A; border-radius:4px;"></div></div><span style="font:600 11px/1 'JetBrains Mono',Pretendard,monospace; color:#5D6679;">100%</span></div>
@@ -1329,14 +1329,14 @@
       <div style="display:grid; grid-template-columns:150px repeat(6,minmax(72px,1fr)); margin-left:-150px; align-items:center; box-sizing:border-box; min-height:34px; padding:4px 0;">
         <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1D2939; padding-right:10px;">작업 B</div>
         <!-- VARIANT legacy (existing system / parallel run, AS-IS colour) -->
-        <div style="grid-column:2 / 4; height:24px; margin:0 3px; background:#CBD6E6; border-radius:4px; color:#374151; font:600 10.5px/24px Inter,Pretendard,sans-serif; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">병행 운영</div>
-        <div style="grid-column:4 / 7; height:24px; margin:0 3px; background:#1428A0; border-radius:4px; color:#FFFFFF; font:600 10.5px/24px Inter,Pretendard,sans-serif; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">신규 체제</div>
+        <div style="grid-column:2 / 4; height:24px; margin:0 3px; background:#CBD6E6; border-radius:4px; color:#374151; font:600 10.5px/24px Inter,Pretendard,sans-serif; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" data-zone="as-is">병행 운영</div>
+        <div style="grid-column:4 / 7; height:24px; margin:0 3px; background:#1428A0; border-radius:4px; color:#FFFFFF; font:600 10.5px/24px Inter,Pretendard,sans-serif; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" data-zone="to-be">신규 체제</div>
       </div>
       <!-- VARIANT overlap row (parallel run): both bars grid-row:1, half height, stacked; no text; min-height:36px -->
       <div style="display:grid; grid-template-columns:150px repeat(6,minmax(72px,1fr)); margin-left:-150px; align-items:center; box-sizing:border-box; min-height:36px; padding:4px 0;">
         <div style="grid-row:1; font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1D2939; padding-right:10px;">작업 C</div>
-        <div style="grid-column:2 / 5; grid-row:1; align-self:start; height:12px; margin:0 3px; background:#CBD6E6; border-radius:4px;"></div>
-        <div style="grid-column:4 / 7; grid-row:1; align-self:end; height:12px; margin:0 3px; background:#1428A0; border-radius:4px;"></div>
+        <div style="grid-column:2 / 5; grid-row:1; align-self:start; height:12px; margin:0 3px; background:#CBD6E6; border-radius:4px;" data-zone="as-is"></div>
+        <div style="grid-column:4 / 7; grid-row:1; align-self:end; height:12px; margin:0 3px; background:#1428A0; border-radius:4px;" data-zone="to-be"></div>
       </div>
       <div style="display:grid; grid-template-columns:150px repeat(6,minmax(72px,1fr)); margin-left:-150px; align-items:center; box-sizing:border-box; min-height:34px; padding:4px 0;">
         <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1D2939; padding-right:10px;">작업 D</div>
@@ -1590,21 +1590,21 @@
         <div data-component="card-grid" style="overflow-wrap:anywhere;">
   <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(max(min(100%,300px),calc(50% - 8px)),1fr)); gap:14px;">
     <!-- ▼ REPEAT per card -->
-    <div style="border:1px solid #DCE5F2; border-radius:8px; padding:20px 22px; background:#FFFFFF;">
+    <div style="border:1px solid #DCE5F2; border-radius:8px; padding:20px 22px; background:#FFFFFF;" data-item>
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:9px;"><span style="font:700 12px/1 'JetBrains Mono',Pretendard,monospace; color:#1428A0; background:#E7EFFC; border-radius:4px; padding:6px 9px;">1</span><span style="font:600 15.5px/1.35 Inter,Pretendard,sans-serif; color:#101828;">항목 1 제목</span></div>
       <div style="font:400 14px/1.7 Inter,Pretendard,sans-serif; color:#475467;">항목 1 설명 (1–3문장)</div>
     </div>
     <!-- ▲ /REPEAT -->
-    <div style="border:1px solid #DCE5F2; border-radius:8px; padding:20px 22px; background:#FFFFFF;">
+    <div style="border:1px solid #DCE5F2; border-radius:8px; padding:20px 22px; background:#FFFFFF;" data-item>
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:9px;"><span style="font:700 12px/1 'JetBrains Mono',Pretendard,monospace; color:#1428A0; background:#E7EFFC; border-radius:4px; padding:6px 9px;">2</span><span style="font:600 15.5px/1.35 Inter,Pretendard,sans-serif; color:#101828;">항목 2 제목</span></div>
       <div style="font:400 14px/1.7 Inter,Pretendard,sans-serif; color:#475467;">항목 2 설명 (1–3문장)</div>
     </div>
-    <div style="border:1px solid #DCE5F2; border-radius:8px; padding:20px 22px; background:#FFFFFF;">
+    <div style="border:1px solid #DCE5F2; border-radius:8px; padding:20px 22px; background:#FFFFFF;" data-item>
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:9px;"><span style="font:700 12px/1 'JetBrains Mono',Pretendard,monospace; color:#1428A0; background:#E7EFFC; border-radius:4px; padding:6px 9px;">3</span><span style="font:600 15.5px/1.35 Inter,Pretendard,sans-serif; color:#101828;">항목 3 제목</span></div>
       <div style="font:400 14px/1.7 Inter,Pretendard,sans-serif; color:#475467;">항목 3 설명 (1–3문장)</div>
     </div>
     <!-- VARIANT risk card (left accent rule + mitigation) -->
-    <div style="border:1px solid #DCE5F2; border-left:3px solid #1428A0; border-radius:0 8px 8px 0; padding:16px 20px; background:#FFFFFF;">
+    <div style="border:1px solid #DCE5F2; border-left:3px solid #1428A0; border-radius:0 8px 8px 0; padding:16px 20px; background:#FFFFFF;" data-item>
       <div style="font:600 15px/1.35 Inter,Pretendard,sans-serif; color:#101828; margin-bottom:6px;">리스크 이름</div>
       <div style="font:400 13px/1.65 Inter,Pretendard,sans-serif; color:#5D6679;">리스크 설명 한 줄</div>
       <div style="font:400 13px/1.65 Inter,Pretendard,sans-serif; color:#475467; margin-top:4px;">→ 대응 한 줄</div>

@@ -20,41 +20,42 @@ HOW TO FILL
   3. 증감 배지 색은 방향이 아니라 좋고 나쁨으로: 좋아짐=성공색 ▲/▼, 나빠짐=경고색 ▲/▼. 증감이 없으면 배지를 지운다.
   4. 값이 추정이거나 소유자 진술이면 값 바로 뒤에 흐린 "(추정)" 또는 "(소유자 진술)" 접미 변형(estimate)을 쓴다. 측정·문서·코드로 확인한 값에는 붙이지 않는다.
   5. 아직 측정 전이면 값 자리에 굵은 O 와 회색 "(추후 확정)"을 쓴다. 경고색을 쓰지 않는다.
+  6. 타일 div 의 data-item 속성은 지우지 않는다(모든 변형 타일에 있다). 게이트가 리드의 개수를 data-item 개수와 견준다(figures:lead-count).
 -->
 <div data-component="kpi-row" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(max(min(100%,130px),calc(25% - 13px)),1fr)); gap:12px; overflow-wrap:anywhere;">
   <!-- VARIANT highlight tile (target / improvement ONLY — never a problem number) -->
-  <div style="background:#EEF0FF; border:1px solid #DADEF8; border-radius:12px; padding:16px 18px;">
+  <div style="background:#EEF0FF; border:1px solid #DADEF8; border-radius:12px; padding:16px 18px;" data-item>
     <div style="font:500 12px/1.4 Pretendard,sans-serif; color:#5A6175;">⟦지표 A⟧</div>
     <div style="display:flex; flex-wrap:wrap; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 'Noto Serif KR',serif; color:#4338CA;">⟦00⟧<span style="font:700 16px/1 'Noto Serif KR',serif;">⟦단위⟧</span></span><span style="font:700 11px/1 'JetBrains Mono',Pretendard,monospace; color:#1F8A5B; background:#E6F5EE; border-radius:5px; padding:4px 7px;">⟦▲ 00⟧</span></div>
     <div style="font:400 11.5px/1.5 Pretendard,sans-serif; color:#6A7187; margin-top:8px;">⟦비교 기준 한 줄⟧</div>
   </div>
   <!-- ▼ REPEAT per tile -->
-  <div style="background:#FFFFFF; border:1px solid #E7E9F3; border-radius:12px; padding:16px 18px;">
+  <div style="background:#FFFFFF; border:1px solid #E7E9F3; border-radius:12px; padding:16px 18px;" data-item>
     <div style="font:500 12px/1.4 Pretendard,sans-serif; color:#5A6175;">⟦지표 B⟧</div>
     <div style="display:flex; flex-wrap:wrap; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 'Noto Serif KR',serif; color:#15172B;">⟦00⟧<span style="font:700 16px/1 'Noto Serif KR',serif;">⟦단위⟧</span></span><span style="font:700 11px/1 'JetBrains Mono',Pretendard,monospace; color:#1F8A5B; background:#E6F5EE; border-radius:5px; padding:4px 7px;">⟦▼ 00⟧</span></div>
     <div style="font:400 11.5px/1.5 Pretendard,sans-serif; color:#6A7187; margin-top:8px;">⟦비교 기준 한 줄⟧</div>
   </div>
   <!-- ▲ /REPEAT -->
   <!-- VARIANT problem tile (cost of the status quo: loss, manual hours, incident count) -->
-  <div style="background:#FBF1EE; border:1px solid #F0D7CF; border-radius:12px; padding:16px 18px;">
+  <div style="background:#FBF1EE; border:1px solid #F0D7CF; border-radius:12px; padding:16px 18px;" data-item>
     <div style="font:500 12px/1.4 Pretendard,sans-serif; color:#5A6175;">⟦지표 C (현재 비용)⟧</div>
     <div style="display:flex; flex-wrap:wrap; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 'Noto Serif KR',serif; color:#B4543F;">⟦00⟧<span style="font:700 16px/1 'Noto Serif KR',serif;">⟦단위⟧</span></span></div>
     <div style="font:400 11.5px/1.5 Pretendard,sans-serif; color:#94724F; margin-top:8px;">⟦산출 근거 한 줄⟧</div>
   </div>
   <!-- VARIANT estimate suffix (estimate / owner statement): muted "(추정)" right after the value -->
-  <div style="background:#FFFFFF; border:1px solid #E7E9F3; border-radius:12px; padding:16px 18px;">
+  <div style="background:#FFFFFF; border:1px solid #E7E9F3; border-radius:12px; padding:16px 18px;" data-item>
     <div style="font:500 12px/1.4 Pretendard,sans-serif; color:#5A6175;">⟦지표 D⟧</div>
     <div style="display:flex; flex-wrap:wrap; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 'Noto Serif KR',serif; color:#15172B;">⟦00⟧<span style="font:700 16px/1 'Noto Serif KR',serif;">⟦단위⟧</span></span><span style="font:500 12px/1 Pretendard,sans-serif; color:#6A7187;">⟦(추정)⟧</span></div>
     <div style="font:400 11.5px/1.5 Pretendard,sans-serif; color:#6A7187; margin-top:8px;">⟦추정 근거 한 줄⟧</div>
   </div>
   <!-- VARIANT worsened (bad direction = warning colour on the delta badge only) -->
-  <div style="background:#FFFFFF; border:1px solid #E7E9F3; border-radius:12px; padding:16px 18px;">
+  <div style="background:#FFFFFF; border:1px solid #E7E9F3; border-radius:12px; padding:16px 18px;" data-item>
     <div style="font:500 12px/1.4 Pretendard,sans-serif; color:#5A6175;">⟦지표 E⟧</div>
     <div style="display:flex; flex-wrap:wrap; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 'Noto Serif KR',serif; color:#15172B;">⟦00⟧<span style="font:700 16px/1 'Noto Serif KR',serif;">⟦단위⟧</span></span><span style="font:700 11px/1 'JetBrains Mono',Pretendard,monospace; color:#B4543F; background:#FBF1EE; border-radius:5px; padding:4px 7px;">⟦▲ 00⟧</span></div>
     <div style="font:400 11.5px/1.5 Pretendard,sans-serif; color:#6A7187; margin-top:8px;">⟦목표 한 줄⟧</div>
   </div>
   <!-- VARIANT not yet measured -->
-  <div style="background:#FFFFFF; border:1px solid #E7E9F3; border-radius:12px; padding:16px 18px;">
+  <div style="background:#FFFFFF; border:1px solid #E7E9F3; border-radius:12px; padding:16px 18px;" data-item>
     <div style="font:500 12px/1.4 Pretendard,sans-serif; color:#5A6175;">⟦지표 F⟧</div>
     <div style="display:flex; flex-wrap:wrap; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 'Noto Serif KR',serif; color:#15172B;">O<span style="font:700 16px/1 'Noto Serif KR',serif;">⟦단위⟧</span></span></div>
     <div style="font:400 11.5px/1.5 Pretendard,sans-serif; color:#6A7187; margin-top:8px;">⟦(추후 확정)⟧</div>

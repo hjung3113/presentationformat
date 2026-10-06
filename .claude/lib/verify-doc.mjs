@@ -6,6 +6,7 @@ import { basename, dirname, extname, join, resolve, sep } from 'node:path';
 import { tmpdir } from 'node:os';
 import { pathToFileURL } from 'node:url';
 import { runGate } from './gate.mjs';
+import { zoneRoles } from './figures.mjs';
 import { listTemplates, listStyles, loadTokens, shapeMap, STYLES_DIR } from './components.mjs';
 import { parsePlan } from './plan-schema.mjs';
 
@@ -607,13 +608,13 @@ function argValue(args, flag) {
   return i >= 0 ? args[i + 1] : undefined;
 }
 
-// The active style's gate inputs: accent, palette (every hex in design.md), figure-panel colors.
+// The active style's gate inputs: accent, palette (every hex in design.md), figure-panel colors, zone roles (accent family vs warn/slate).
 export function styleInputs(style) {
   const dir = join(STYLES_DIR, style);
   if (!existsSync(join(dir, 'design.md'))) throw new Error(`unknown style "${style}" (have: ${listStyles().join(', ')})`);
   const colors = loadTokens(style).colors;
   const paletteHexes = [...readFileSync(join(dir, 'design.md'), 'utf8').matchAll(/#[0-9a-fA-F]{6}\b|#[0-9a-fA-F]{3}\b/g)].map(m => m[0]);
-  return { accent: colors.accent, paletteHexes, panel: { bg: (colors['fig-tint'] || DEFAULT_PANEL.bg).toLowerCase(), border: (colors['border-fig'] || DEFAULT_PANEL.border).toLowerCase() } };
+  return { accent: colors.accent, paletteHexes, zoneRoles: zoneRoles(colors), panel: { bg: (colors['fig-tint'] || DEFAULT_PANEL.bg).toLowerCase(), border: (colors['border-fig'] || DEFAULT_PANEL.border).toLowerCase() } };
 }
 
 // accent: explicit hex (wins) or the style's; paletteHexes: set → `palette` check; planPath → plan checks.
@@ -627,6 +628,7 @@ export function gateOptions({ accent, sidecarPresent, planPath, style, paletteHe
     figureComponents: templates.filter(t => t.meta.kind !== 'content').map(t => t.meta.component),
   };
   if (paletteHexes || st) opts.paletteHexes = paletteHexes || st.paletteHexes;
+  if (st) opts.zoneRoles = st.zoneRoles;
   if (st) opts.panel = st.panel; // not a gate input — carried for the visual tier
   if (planPath) {
     opts.planText = readFileSync(planPath, 'utf8');

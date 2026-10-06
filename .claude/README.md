@@ -24,6 +24,9 @@ The gate itself is zero-dependency Node under `.claude/lib/`:
 - `.claude/lib/prose.mjs` — the text-level half of the gate, also pure: the reader's visible text split into
   paragraph-like blocks, the `## T — 용어` term-sheet parser, `terms-consistent` / `terms:first-use`, and the
   Korean `prose:*` heuristics. `gate.mjs` imports it, so the two files travel together.
+- `.claude/lib/figures.mjs` — the figure half of the gate, also pure: `chart-proportions`, `zone-colors` and
+  `figures:lead-count`, read from the `data-value` / `data-item` / `data-zone` markers the component templates carry
+  (see **Figure markers** below). `gate.mjs` imports it; it imports two palette helpers back from `gate.mjs`.
 - `.claude/lib/verify-doc.mjs` — CLI entry that runs the gate against a `.dc.html`
   (`<doc> --canonical-support <support.js> [--style <id>] [--accent <hex>] [--plan <content-plan.md>] [--no-visual] [--local-assets <dir>]`),
   checks the `support.js` sidecar is byte-identical to the canonical copy, runs the visual tier (see
@@ -45,7 +48,8 @@ The gate itself is zero-dependency Node under `.claude/lib/`:
   including: generated outputs up to date, every template renders in every style with no unresolved
   token, `core/` carries zero HEX, `core/components.md` §1 matches the templates' `@shape` metadata,
   each template's first `@data` key matches the figure-data contract, no template hard-codes an English label
-  outside a `⟦slot⟧` (label language), the visual tier's local-asset routing (`localAssetFor`: hosts, scoped packages, misses, path traversal) and its 390px probe (page overflow, figure overflow, silent clipping; the three component galleries must be clean at 390px), the narrow-width template contract (no bare `Nfr` track outside `minmax()`, `overflow-wrap:anywhere` on every root, a scrolling root has its `min-width:min-content` box), informative text uses `⟨muted-text⟩` and every style's `muted-text` is ≥4.5:1 on
+  outside a `⟦slot⟧` (label language), the figure markers (`figures.test.mjs`: each check with a positive, a negative and its
+  false-positive probes; `components.test.mjs`: the exact marker counts and zero findings on every rendered template and gallery in every style), the visual tier's local-asset routing (`localAssetFor`: hosts, scoped packages, misses, path traversal) and its 390px probe (page overflow, figure overflow, silent clipping; the three component galleries must be clean at 390px), the narrow-width template contract (no bare `Nfr` track outside `minmax()`, `overflow-wrap:anywhere` on every root, a scrolling root has its `min-width:min-content` box), informative text uses `⟨muted-text⟩` and every style's `muted-text` is ≥4.5:1 on
   white with a mono stack that ends in its Korean body font, the optional `labels: en|ko` plan key, the three CLIs run from a
   path with spaces/Korean and through a symlink (they once exited 0 without running), the worked
   example (`test/fixtures/example-brief/`) passes every plan-aware check, and the text half of the gate
@@ -66,7 +70,8 @@ wrapper, a `| tail`, or a wrong path can all hide a failure). A structural failu
 tier. Usage errors (missing flag, unknown `--style`) exit `2` with the usage text.
 
 Flags: `--style <id>` resolves `styles/<id>/` from the lib's own location, supplies the accent
-(`design.tokens.md` `colors.accent`) when `--accent` is absent, and enables the `palette` check.
+(`design.tokens.md` `colors.accent`) when `--accent` is absent, enables the `palette` check and supplies the accent / warn /
+slate roles the TO-BE half of `zone-colors` reads.
 `--accent <hex>` wins over the style's. `--plan <file>` enables `plan-alignment`, `plan-shapes`
 and `numbers-traced` — and `terms-consistent` when the plan's facts file has a `## T — 용어` table. `--no-visual` skips the browser tier. At least one of `--accent` / `--style`
 is required. `--local-assets <dir>` (env `DC_LOCAL_ASSETS`; the flag wins; a directory that does not exist exits `2`)
@@ -86,15 +91,17 @@ Every check is hard-fail unless marked non-blocking.
 | `slots-filled` · `no-role-placeholders` | no `⟦…⟧` slot and no `⟨role⟩` token left outside HTML comments |
 | `palette` (`--style`) | every `#RGB` / `#RRGGBB` in a `style` attribute (or `fill`/`stroke`/… attribute) or `<style>` text is in the style's `design.md` (case-insensitive, `#abc` = `#AABBCC`). Comments, `<script>`, `&#…;` entities, `href`/`id` fragments and `url(#…)` are ignored |
 | `grid-consistency` | inside each `[data-component]` root that uses `calc(100% / N)`, every `repeat(M, 1fr)` / `repeat(M, minmax(0, 1fr))` / floored `repeat(M, minmax(<length>, 1fr))` has M = N (nested components are judged on their own) |
+| `chart-proportions` | every `data-value`-marked bar, row and segment of a `bar-chart`, `hbar-chart`, `stacked-bar` or `status-board` is drawn at the size its number says (±2 points) and shows that number — **Figure markers** below. Runs only where the markers exist |
+| `zone-colors` | no `data-zone="as-is"` zone uses the style's accent, and no `data-zone="to-be"` zone is mostly warn/slate fills — **Figure markers** below. Runs only where the markers exist |
 | `known-components` | every `data-component` is a template id |
 | `plan-alignment` (`--plan`) | plan sections map to ids — a numbered title `N.` → `sN`, an unnumbered title → `sref` — and every one exists in the document; the document has no numbered `sN` the plan lacks. Act dividers must be `<div>`, never `<section>` |
 | `plan-shapes` (`--plan`) | each section (looked up by id) carries the component its shape requires |
 | `numbers-traced` (`--plan`) | every numeral a reader sees is traceable — next section |
 | `terms-consistent` (`--plan` + a facts file with a `## T — 용어` table) | no `쓰지 않을 말` variant of the term sheet appears in the visible text outside the `sref` appendix — see **Term sheet** below. Without a T table the gate prints `NOTE  terms-consistent  not checked …` |
 
-Non-blocking `figures:*` rows report per-section coverage, low variety, bare sections, and more
-than 2 main figures in one section. Non-blocking `prose:*` and `terms:first-use` rows report Korean-writing
-problems — see **Prose warnings** below.
+Non-blocking `figures:*` rows report per-section coverage, low variety, bare sections, more
+than 2 main figures in one section, and a lead whose count disagrees with its figure (`figures:lead-count`). Non-blocking
+`prose:*` and `terms:first-use` rows report Korean-writing problems — see **Prose warnings** below.
 
 **`numbers-traced`** exists so nothing in the document can be a number nobody supplied (template
 examples, plausible-looking invention). *Document side:* only visible text — comments, `<script>`,
@@ -108,6 +115,36 @@ eyebrows, a text node that is only 1–2 digits inside a section (step/number ba
 full, so a made-up hero token fails. Failure lists up to 8 untraced numbers with ~20 characters of
 context each; fix it by putting the real number in the plan (with its citation) or removing it
 from the document — never by editing the check.
+
+**Figure markers (`chart-proportions`, `zone-colors`, `figures:lead-count`).** The component templates carry three attributes,
+appended after the element's `style="…"` (`core/components.md` §4 "Figure markers" is the authoring contract), and `figures.mjs`
+reads them from the live markup (comments and `<script>` are ignored). A check has a row only where its markers are; a figure that
+could carry them but does not prints `NOTE  <check>  not checked — N figure(s) carry no …`, so a document built before the markers
+existed passes unchanged.
+
+- `chart-proportions` (hard) — over the `data-value` elements of each chart component (a non-numeric value such as `—` is skipped).
+  `bar-chart`: the bar's own `height:N%` is within ±2 of value ÷ the chart's largest value × 100 (the maximum is per chart).
+  `hbar-chart` and `status-board`: the first `width:N%` inside the row is within ±2 of the value when the row's text shows `value%`,
+  else of value ÷ the largest count of the chart (the `status-board` 대기 row has no bar and no marker). `stacked-bar`: each
+  segment's `width:N%` is within ±2 of its value and the marked segments add up to 100 ±2. In all four, `data-value` must equal a
+  numeral the element shows (±0.5; an element with no digits, like a textless segment, is skipped). A marked element with no
+  `height`/`width` percentage to compare fails — the marker sits on the wrong element.
+- `zone-colors` (hard) — over the `data-zone` elements. `as-is` fails when any hex inside it (a `style`, `fill`, `stroke`, `color` or
+  `bgcolor` attribute) is the style's accent (`--accent` wins when given). `to-be` fails when the zone's background fills
+  (`background`, `background-color`, `fill`, `bgcolor` — never borders or text) in the problem family outnumber those in the accent family, so
+  one slate chip among accent fills passes. The families come from `design.tokens.md`: accent family = every `accent*` token; problem
+  family = `warn`, `warn-2`, `warn-bg`, `warn-line`, `slate`, `slate-bar`, `mono-tint`, `mono-dashed`, minus any literal the accent family
+  shares. Only fills count because a style may reuse one literal for a border and a problem fill (feedbackops-light paints `slate-bar`
+  and `border-node` the same). Without `--style` only the AS-IS half runs and a `NOTE` names the skipped TO-BE zones. A `before-after`
+  with no `data-zone` is always listed in the NOTE; a `gantt` or `layer-map` only when it paints a problem-family fill (a legacy bar or
+  layer) and has no marker.
+- `figures:lead-count` (non-blocking) — the lead of each `sN` section (its first `<p>` of 25+ characters) against the number of
+  `data-item` markers in the section's first figure that has any. Count words are `두 세 네 다섯 여섯 일곱 여덟 아홉` or the digits 2–9
+  followed by 가지·단계·곳·개·층·갈래·구간·축·종 (`개` as a counter, never inside 개월/개선/개발); 1 and anything above 9 never counts
+  and the M of "N개 중 M개" is dropped. It warns only when the lead has count words and none equals the figure's count, so
+  "7단계 … 다섯 구간" over five steps passes; one `INFO` row lists what was read. Marked today: `card-grid` cards, `process-row` steps,
+  `pipeline` stage columns, `kpi-row` tiles. `layer-map` layers, `timeline` rows and `table` rows are not: calibrating against the
+  three pasted documents, the pitch's layer-map lead counts five responsibilities over four layers — a false positive.
 
 **Term sheet (`terms-consistent`, `terms:first-use`).** `/plan` Step 1 fixes one word per concept in the
 optional `## T — 용어` table of `facts.md` (`| 용어 | 뜻 | 처음 나올 때 | 쓰지 않을 말 |`; template

@@ -74,7 +74,7 @@ From `CLAUDE.md §"Core rules"`. A new style is not done until every line is tru
 1. **`core/` has zero HEX** — no color literal leaked into `core/`. (`support.js` internal HEX is exempt — it is the generated runtime, not style-scoped.)
 2. **Self-contained** — every HEX for this style lives in this folder's `design.md` only. Nothing style-specific outside `styles/<new-id>/`.
 3. **`core/` untouched** — `git diff` shows no changes under `core/`. If it does, a value leaked; move it into the style.
-4. **Semantic split defined & unmixed** — the style states its own current/problem vs target/improved color meaning once, and no single document mixes both sides.
+4. **Semantic split defined & unmixed** — the style states its own current/problem vs target/improved color meaning once, and no single document mixes both sides. The exit gate's `zone-colors` check reads the split from `design.tokens.md` by token name — the accent family (`accent`, `accent-*`) for target, `warn*` / `slate*` / `mono-*` for current and problem — so keep those names for those meanings.
 5. **Answer-key-wins** — `design-system.answerkey.dc.html` renders and agrees with `design.md`; on any disagreement, fix `design.md` to match the answer key.
 6. **Inline styles only** — no CSS classes/shared stylesheet; values pasted inline. Only global CSS = what cannot be inlined (font loading, `word-break`, selection, scrollbar) plus the one `@media print` block (attribute selectors only).
 7. **`word-break: keep-all` global** (mandatory for Korean line-breaking).

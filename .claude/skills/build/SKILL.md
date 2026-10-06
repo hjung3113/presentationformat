@@ -146,6 +146,9 @@ band takes `margin:24px 0 0` as the first block and `margin:8px 0 0` after a sec
    planned variant** — muted dashed outline + state chip (11px bold) — never the built look (`core/components.md` §4). A `[state: 텍스트]`
    marker (layer-map: built, but on sample data — e.g. `[state: 가짜 데이터]`) keeps the built look and adds the state chip with the plan's own words.
    A `card-grid` number chip is a bare integer 1, 2, 3 — never `2.1` (the gate's `numbers-traced` reads a decimal as an untraced number).
+   **Keep the template's `data-value` / `data-item` / `data-zone` attributes** (appended after an element's `style`): a copied unit
+   carries its marker, a deleted unit takes it along, `data-value` is the number the unit's label shows, and a legacy / AS-IS unit
+   keeps `data-zone="as-is"` (`core/components.md` §4 "Figure markers") — the exit gate reads them.
    **A `text-table` section pastes the `table` component and fills it from the section's figure-data**
    (`columns: … | rows: …` — those columns and those rows, nothing added or dropped). A table in the
    reference appendix (`sref`), or a secondary table that follows another figure, uses the table's **soft
@@ -281,6 +284,13 @@ The gate runs two tiers:
     another style; replace it with that style's own token value.
   - `grid-consistency` — a component's `repeat(M,…)` differs from its `calc(100% / N)`: make the
     count the same everywhere in that component (every row, header and background).
+  - `chart-proportions` — a `data-value`-marked bar, row or segment is drawn at a size its number does not say, or its label shows
+    another number than its `data-value` (the width/height slot, the label and `data-value` are three copies of one number; a bar's
+    height is value ÷ the chart's largest value × 100 and a stacked bar's segments add up to 100): correct the wrong copy. Runs only
+    where the markers are — never delete a marker to pass.
+  - `zone-colors` — the style's accent sits inside a `data-zone="as-is"` zone (an AS-IS column, a legacy gantt bar, the legacy
+    layer), or a `data-zone="to-be"` zone is mostly warn/slate fills: re-paste that zone from the variant of the right meaning
+    (current state = the slate/warn family, target = the accent family). Never move or delete the `data-zone` attribute to pass.
   - `known-components`, `plan-alignment`, `plan-shapes` — every `data-component` is a real component, the
     document's `<section>` ids equal the plan's `sN`/`sref` ids (act dividers are `<div>`s), and every
     section holds the component its shape requires.
@@ -293,11 +303,15 @@ The gate runs two tiers:
     sheet to make the gate pass** — a different word is a decision for `/plan`; without a table the gate prints a `NOTE`
     and skips it.
   It also prints non-blocking `figures:*` rows (coverage per section, low variety, bare sections,
-  crowded sections) — read them. **This gate does not verify semantic-color-split correctness** — it
-  cannot tell whether the AS-IS color family stayed in AS-IS/problem zones and the accent stayed in
-  TO-BE/target zones per the style's color law. That correctness depends on following Step 4's
-  state→color mapping and is checked, if at all, by the visual render tier below or by eyeballing
-  against the style's answer key — never claim the mechanical gate guarantees color-zone correctness.
+  crowded sections, and `figures:lead-count` — the section lead's count word, e.g. "다섯 단계", matches none of the figure's
+  `data-item` counts: make the lead and the figure agree) — read them. A `NOTE  chart-proportions` / `zone-colors` /
+  `figures:lead-count  not checked …` row means a figure lost its markers or never had them: restore the template's attributes.
+  **The gate verifies the semantic color split only inside marked zones** — `zone-colors` catches the accent inside an AS-IS
+  zone and a mostly warn/slate TO-BE zone (the `before-after` columns, `gantt` legacy and new-system bars, the `layer-map` legacy
+  layer). Everywhere else (tiles, chips, callouts, a cost number in the accent, a legacy element drawn outside a marked zone) it
+  still cannot tell whether the AS-IS family stayed in AS-IS/problem state and the accent in target state. That depends on
+  following Step 4's state→color mapping and on eyeballing against the style's answer key — never claim the mechanical gate
+  guarantees color-zone correctness beyond the marked zones.
 - A **warning-only composition tier** that only runs if a headless browser is available.
   It serves the document over localhost and evaluates desktop viewports `1366x768` and `1440x900`
   for section height, stacked grids, 4-column text grids, missing primary figures, low-emphasis

@@ -1,5 +1,6 @@
 // Pure gate checks over a document's HTML. No I/O here — verify-doc.mjs reads files and wires options.
 import { visibleBlocks, parseTerms, bannedTermHits, missingFirstUse, firstUseOrder, proseWarnings } from './prose.mjs';
+import { figureChecks } from './figures.mjs';
 const stripComments = (html) => html.replace(/<!--[\s\S]*?-->/g, '');
 const stripScripts = (html) => html.replace(/<script\b[\s\S]*?<\/script>/gi, '');
 
@@ -154,11 +155,13 @@ export function untracedNumbers(html, tracedText) {
 //         knownComponents?: string[], figureComponents?: string[],
 //         plan?: { sections: [{ id, title, shape }] }, shapeMap?: { [shape]: string[] },
 //         paletteHexes?: string[],                          // active style's design.md palette → `palette`
+//         zoneRoles?: { accentFamily, problem },            // active style's accent / warn+slate colors → the to-be half of `zone-colors`
 //         planText?: string, factsText?: string,            // with plan → `numbers-traced`; a `## T — 용어` table in the
 //                                                           //   facts → `terms-consistent` + `terms:first-use`
 //         factsError?: string }                             // facts file named by the plan could not be read
 // → { ok, checks, warnings, notes }: `warnings` never fail the gate (figures:*, prose:*, terms:first-use); `notes` say
-//   which optional check did not run and why.
+//   which optional check did not run and why. `chart-proportions` and `zone-colors` (figures.mjs) are rows only when the
+//   document carries their data-value / data-zone markers; `figures:lead-count` is a warning.
 export function runGate(html, opts) {
   const checks = [];
   const warnings = [];
@@ -201,6 +204,11 @@ export function runGate(html, opts) {
 
   const gridBad = gridInconsistencies(html);
   add('grid-consistency', gridBad.length === 0, gridBad.join(' ; '));
+
+  const fig = figureChecks(html, { accentHex: opts.accentHex, zoneRoles: opts.zoneRoles, blocks });
+  checks.push(...fig.checks);
+  warnings.push(...fig.warnings);
+  notes.push(...fig.notes);
 
   const sections = splitSections(html);
   if (opts.knownComponents) {

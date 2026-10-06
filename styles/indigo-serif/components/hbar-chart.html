@@ -16,29 +16,30 @@ HOW TO FILL
   2. 행 하나 = ▼REPEAT 행 하나. 큰 값부터 정렬한다(진척률이면 업무 순서대로도 가능).
   3. 색 변형: 목표 달성·높음=강조색, 중간=보조 강조색, 목표 미달=회색(값 글자도 회색).
   4. (선택) 목표선: 막대 칸 안 점선 left = 목표 값 %. 모든 행에 같은 값으로 넣는다.
+  5. 행 div 의 data-value 속성은 지우지 않는다. 오른쪽 값 글자가 보여 주는 숫자로 채운다(90% 면 90, 142건이면 142). 게이트의 chart-proportions 가 막대 width 를 견준다(±2): 값 글자에 %가 있으면 width = 값, 없으면 값 ÷ 이 차트의 최댓값 × 100.
 -->
 <div data-component="hbar-chart" style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:22px 24px 20px; overflow-wrap:anywhere;">
   <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:16px;"><span style="font:600 13px/1.4 Pretendard,sans-serif; color:#15172B;">⟦차트 제목⟧</span><span style="font:500 11px/1 'JetBrains Mono',Pretendard,monospace; color:#6A7187;">⟦점선 = 목표 값⟧</span></div>
   <div style="display:flex; flex-direction:column; gap:12px;">
     <!-- ▼ REPEAT per row -->
-    <div style="display:grid; grid-template-columns:minmax(80px,min(170px,35%)) minmax(0,1fr) 52px; gap:14px; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(80px,min(170px,35%)) minmax(0,1fr) 52px; gap:14px; align-items:center;" data-value="⟦90⟧">
       <span style="font:500 12.5px/1.35 Pretendard,sans-serif; color:#3A4255;">⟦항목 A⟧</span>
       <div style="position:relative; height:18px; background:#F6F7FB; border-radius:5px;"><div style="width:⟦90⟧%; height:100%; background:#4338CA; border-radius:5px;"></div><div style="position:absolute; left:80%; top:-4px; bottom:-4px; border-left:2px dashed #3A4255;"></div></div>
       <span style="font:700 12px/1 'JetBrains Mono',Pretendard,monospace; color:#4338CA; text-align:right;">⟦90%⟧</span>
     </div>
     <!-- ▲ /REPEAT -->
-    <div style="display:grid; grid-template-columns:minmax(80px,min(170px,35%)) minmax(0,1fr) 52px; gap:14px; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(80px,min(170px,35%)) minmax(0,1fr) 52px; gap:14px; align-items:center;" data-value="⟦70⟧">
       <span style="font:500 12.5px/1.35 Pretendard,sans-serif; color:#3A4255;">⟦항목 B⟧</span>
       <div style="position:relative; height:18px; background:#F6F7FB; border-radius:5px;"><div style="width:⟦70⟧%; height:100%; background:#6B63D6; border-radius:5px;"></div><div style="position:absolute; left:80%; top:-4px; bottom:-4px; border-left:2px dashed #3A4255;"></div></div>
       <span style="font:700 12px/1 'JetBrains Mono',Pretendard,monospace; color:#6B63D6; text-align:right;">⟦70%⟧</span>
     </div>
     <!-- VARIANT below target = grey -->
-    <div style="display:grid; grid-template-columns:minmax(80px,min(170px,35%)) minmax(0,1fr) 52px; gap:14px; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(80px,min(170px,35%)) minmax(0,1fr) 52px; gap:14px; align-items:center;" data-value="⟦30⟧">
       <span style="font:500 12.5px/1.35 Pretendard,sans-serif; color:#3A4255;">⟦항목 C⟧</span>
       <div style="position:relative; height:18px; background:#F6F7FB; border-radius:5px;"><div style="width:⟦30⟧%; height:100%; background:#C2C8D4; border-radius:5px;"></div><div style="position:absolute; left:80%; top:-4px; bottom:-4px; border-left:2px dashed #3A4255;"></div></div>
       <span style="font:700 12px/1 'JetBrains Mono',Pretendard,monospace; color:#6A7187; text-align:right;">⟦30%⟧</span>
     </div>
-    <div style="display:grid; grid-template-columns:minmax(80px,min(170px,35%)) minmax(0,1fr) 52px; gap:14px; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(80px,min(170px,35%)) minmax(0,1fr) 52px; gap:14px; align-items:center;" data-value="⟦10⟧">
       <span style="font:500 12.5px/1.35 Pretendard,sans-serif; color:#3A4255;">⟦항목 D⟧</span>
       <div style="position:relative; height:18px; background:#F6F7FB; border-radius:5px;"><div style="width:⟦10⟧%; height:100%; background:#C2C8D4; border-radius:5px;"></div><div style="position:absolute; left:80%; top:-4px; bottom:-4px; border-left:2px dashed #3A4255;"></div></div>
       <span style="font:700 12px/1 'JetBrains Mono',Pretendard,monospace; color:#6A7187; text-align:right;">⟦10%⟧</span>

@@ -83,22 +83,22 @@
       <h2 style="font:600 28px/1.32 Inter,Pretendard,sans-serif; color:#101828; margin:0 0 12px; letter-spacing:-.01em;">요약 — 오늘 요청하는 것</h2>
       <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 22px; max-width:760px;">요청은 하나다. 이미 만든 FeedbackOps를 한 팀에서 실제로 써 보고, 지금의 Jira 처리와 숫자로 비교한다. 오늘은 그 <b style="color:#1428A0;">준비 단계 2주</b>만 승인하면 된다. 운영 8주는 2주 뒤에 기준선(지금의 Jira 기록) 숫자와 함께 다시 올린다. 시범 중에도 Jira 접수는 그대로 둔다. 기준에 못 미치면 그 팀이 FeedbackOps 사용을 멈추기만 하면 된다. 새 예산은 요청하지 않는다. 대신 사람의 시간이 든다. 사내 통합 로그인(SSO) 담당과 인프라 담당의 협조, 시범 팀의 병행 운영, 발표자의 시간이다. 두 시스템은 사내 연결 직전까지 왔다. 다음 단계로 가려면 사내 담당의 회신과 보안 확인이 있어야 한다. 그 전까지는 실제 서버 대신 시험용 데이터를 쓴다. 그래서 지금 요청한다.</p>
       <div data-component="kpi-row" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(max(min(100%,130px),calc(25% - 13px)),1fr)); gap:12px; overflow-wrap:anywhere;">
-  <div style="background:#FFFFFF; border:1px solid #DCE5F2; border-radius:8px; padding:16px 18px;">
+  <div style="background:#FFFFFF; border:1px solid #DCE5F2; border-radius:8px; padding:16px 18px;" data-item>
     <div style="font:500 12px/1.4 Inter,Pretendard,sans-serif; color:#475467;">VOC→작업→진행 안내(공개 업데이트)</div>
     <div style="display:flex; flex-wrap:wrap; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 Inter,Pretendard,sans-serif; color:#101828;">구현됨</span></div>
     <div style="font:400 11.5px/1.5 Inter,Pretendard,sans-serif; color:#5D6679; margin-top:8px;">개발 항목 32개 중 31개 완료 · 사용자 매뉴얼 0–12장</div>
   </div>
-  <div style="background:#FFFFFF; border:1px solid #DCE5F2; border-radius:8px; padding:16px 18px;">
+  <div style="background:#FFFFFF; border:1px solid #DCE5F2; border-radius:8px; padding:16px 18px;" data-item>
     <div style="font:500 12px/1.4 Inter,Pretendard,sans-serif; color:#475467;">팀장 할 일 목록</div>
     <div style="display:flex; flex-wrap:wrap; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 Inter,Pretendard,sans-serif; color:#101828;">6<span style="font:700 16px/1 Inter,Pretendard,sans-serif;">종</span></span></div>
     <div style="font:400 11.5px/1.5 Inter,Pretendard,sans-serif; color:#5D6679; margin-top:8px;">담당자가 없는 VOC, 심각한데 작업이 없는 VOC 등</div>
   </div>
-  <div style="background:#FFFFFF; border:1px solid #DCE5F2; border-radius:8px; padding:16px 18px;">
+  <div style="background:#FFFFFF; border:1px solid #DCE5F2; border-radius:8px; padding:16px 18px;" data-item>
     <div style="font:500 12px/1.4 Inter,Pretendard,sans-serif; color:#475467;">사내 통합 로그인이 먼저 필요한 작업</div>
     <div style="display:flex; flex-wrap:wrap; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 Inter,Pretendard,sans-serif; color:#101828;">4<span style="font:700 16px/1 Inter,Pretendard,sans-serif;">건</span></span></div>
     <div style="font:400 11.5px/1.5 Inter,Pretendard,sans-serif; color:#5D6679; margin-top:8px;">사내 담당의 회신을 기다리는 일</div>
   </div>
-  <div style="background:#FCEDEE; border:1px solid #F3C7CB; border-radius:8px; padding:16px 18px;">
+  <div style="background:#FCEDEE; border:1px solid #F3C7CB; border-radius:8px; padding:16px 18px;" data-item>
     <div style="font:500 12px/1.4 Inter,Pretendard,sans-serif; color:#475467;">실제 서버 검증</div>
     <div style="display:flex; flex-wrap:wrap; align-items:baseline; gap:8px; margin-top:10px;"><span style="font:700 30px/1 Inter,Pretendard,sans-serif; color:#B2202B;">0<span style="font:700 16px/1 Inter,Pretendard,sans-serif;">건</span></span></div>
     <div style="font:400 11.5px/1.5 Inter,Pretendard,sans-serif; color:#8E5500; margin-top:8px;">플랫폼 화면 기준, 2주 점검에서 승인되면 연결</div>
@@ -116,7 +116,7 @@
       <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 28px; max-width:760px;">Jira에 VOC는 남는다. 하지만 어떤 VOC가 어떤 작업으로 이어졌는지, 문의자에게 무엇을 알렸는지는 따라가기 어렵다(소유자 진술). 준비 단계에서 Jira 기록을 뽑아 숫자로 확인한다. 발표자는 원인을 담당자의 노력이 아니라 흩어진 도구에서 찾는다. 그래서 여러 화면이 함께 쓰는 공통 기반 하나 위에 업무 화면(메뉴)을 얹고, 화면끼리 이어지게 하려 한다. Jira 전체를 바꾸지는 않고 VOC 흐름만 옮겨 시험한다. Jira 보강 같은 대안은 두 시스템을 소개한 뒤 8절에서 비교한다.</p>
       <div data-component="before-after" style="border:1px solid #DCE5F2; border-radius:12px; padding:28px; background:#FBFDFF; overflow-wrap:anywhere;">
   <div style="display:flex; flex-wrap:wrap; justify-content:center; align-items:stretch;">
-    <div style="display:flex; flex-direction:column; justify-content:center; flex:1 1 260px; min-width:0;">
+    <div style="display:flex; flex-direction:column; justify-content:center; flex:1 1 260px; min-width:0;" data-zone="as-is">
       <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="font:700 11px/1 'JetBrains Mono',Pretendard,monospace; letter-spacing:.06em; color:#FFFFFF; background:#94A3B8; border-radius:4px; padding:6px 10px; white-space:nowrap; flex:none;">지금</span><span style="font:600 15px/1.3 Inter,Pretendard,sans-serif; color:#475467;">도구가 따로 있다</span></div>
       <div style="background:#EEF2F7; border:1.5px dashed #B8C4D6; border-radius:8px; padding:16px 14px;">
         <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#5D6679; text-align:center; margin-bottom:12px;">도구마다 따로 있고 서로 이어지지 않는다</div>
@@ -136,7 +136,7 @@
       <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:13px;"><span style="font:500 11px/1 Inter,Pretendard,sans-serif; border-radius:100px; padding:6px 11px; color:#8E5500; background:#FCEDEE;">소유자 진술 — Jira 기록으로 확인 예정</span><span style="font:500 11px/1 Inter,Pretendard,sans-serif; border-radius:100px; padding:6px 11px; color:#8E5500; background:#FCEDEE;">VOC와 작업·안내의 연결이 끊김</span></div>
     </div>
     <div style="display:flex; align-items:center; justify-content:center; flex:0 0 50px; padding:8px 0;"><div style="width:36px; height:36px; border-radius:50%; background:#1428A0; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font:400 17px/1 Inter,Pretendard,sans-serif;">→</div></div>
-    <div style="display:flex; flex-direction:column; justify-content:center; flex:1 1 260px; min-width:0;">
+    <div style="display:flex; flex-direction:column; justify-content:center; flex:1 1 260px; min-width:0;" data-zone="to-be">
       <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="font:700 11px/1 'JetBrains Mono',Pretendard,monospace; letter-spacing:.06em; color:#FFFFFF; background:#1428A0; border-radius:4px; padding:6px 10px; white-space:nowrap; flex:none;">목표</span><span style="font:600 15px/1.3 Inter,Pretendard,sans-serif; color:#101828;">공통 기반 하나 위에 업무를 얹는다</span></div>
       <div style="font:700 13px/1.3 Inter,Pretendard,sans-serif; color:#FFFFFF; background:#1428A0; border-radius:8px; padding:12px; text-align:center;">공통 기반 하나</div>
       <div style="text-align:center; color:#B8C4D6; font:400 13px/1 Inter,Pretendard,sans-serif; padding:6px 0;">↓</div>
@@ -381,7 +381,7 @@
       <p style="font:400 15.5px/1.8 Inter,Pretendard,sans-serif; color:#374151; margin:0 0 28px; max-width:760px;">업무 화면을 따로 만들면 같은 기능을 화면마다 다시 만들게 된다. 플랫폼 저장소에서도 실제로 그랬다. 견본 화면 세 곳이 표 내보내기를 각자 만들었고, 그중 한 곳은 엑셀에서 한글이 깨질 수 있었다. 필터 입력도 다섯 곳이 각자 만들었다. 지금은 공통 기반이 이 일을 맡는다. 성공 기준은 하나다. 새 업무 화면을 얹을 때 플랫폼 코드를 고치지 않아야 한다. 화면 사이의 이동도 공통 기반이 맡는다. 예를 들어 사이클타임 상세 화면에서 느린 실행 건을 누르면 실행 상세 화면으로 넘어간다. 이 이동은 견본에 이미 있다. 분석 화면의 문맥을 담아 VOC를 올리는 기능은 아직 계획이다.</p>
       <div data-component="before-after" style="border:1px solid #DCE5F2; border-radius:12px; padding:28px; background:#FBFDFF; overflow-wrap:anywhere;">
   <div style="display:flex; flex-wrap:wrap; justify-content:center; align-items:stretch;">
-    <div style="display:flex; flex-direction:column; justify-content:center; flex:1 1 260px; min-width:0;">
+    <div style="display:flex; flex-direction:column; justify-content:center; flex:1 1 260px; min-width:0;" data-zone="as-is">
       <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="font:700 11px/1 'JetBrains Mono',Pretendard,monospace; letter-spacing:.06em; color:#FFFFFF; background:#94A3B8; border-radius:4px; padding:6px 10px; white-space:nowrap; flex:none;">지금</span><span style="font:600 15px/1.3 Inter,Pretendard,sans-serif; color:#475467;">화면마다 따로 만든다</span></div>
       <div style="background:#EEF2F7; border:1.5px dashed #B8C4D6; border-radius:8px; padding:16px 14px;">
         <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#5D6679; text-align:center; margin-bottom:12px;">화면마다 직접 만든 기능</div>
@@ -399,7 +399,7 @@
       <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:13px;"><span style="font:500 11px/1 Inter,Pretendard,sans-serif; border-radius:100px; padding:6px 11px; color:#8E5500; background:#FCEDEE;">견본 화면에서 실제로 겪음</span></div>
     </div>
     <div style="display:flex; align-items:center; justify-content:center; flex:0 0 50px; padding:8px 0;"><div style="width:36px; height:36px; border-radius:50%; background:#1428A0; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font:400 17px/1 Inter,Pretendard,sans-serif;">→</div></div>
-    <div style="display:flex; flex-direction:column; justify-content:center; flex:1 1 260px; min-width:0;">
+    <div style="display:flex; flex-direction:column; justify-content:center; flex:1 1 260px; min-width:0;" data-zone="to-be">
       <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="font:700 11px/1 'JetBrains Mono',Pretendard,monospace; letter-spacing:.06em; color:#FFFFFF; background:#1428A0; border-radius:4px; padding:6px 10px; white-space:nowrap; flex:none;">목표</span><span style="font:600 15px/1.3 Inter,Pretendard,sans-serif; color:#101828;">공통 기반이 한 번만 만든다</span></div>
       <div style="font:700 13px/1.3 Inter,Pretendard,sans-serif; color:#FFFFFF; background:#1428A0; border-radius:8px; padding:12px; text-align:center;">공통 기반</div>
       <div style="text-align:center; color:#B8C4D6; font:400 13px/1 Inter,Pretendard,sans-serif; padding:6px 0;">↓</div>
@@ -558,11 +558,11 @@
     </div>
     <div style="display:grid; grid-template-columns:150px repeat(6,minmax(72px,1fr)); margin-left:-150px; align-items:center; box-sizing:border-box; min-height:34px; padding:4px 0;">
       <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1D2939; padding-right:10px;">기존 Jira VOC 접수</div>
-      <div style="grid-column:2 / 8; height:24px; margin:0 3px; background:#CBD6E6; border-radius:4px;"></div>
+      <div style="grid-column:2 / 8; height:24px; margin:0 3px; background:#CBD6E6; border-radius:4px;" data-zone="as-is"></div>
     </div>
     <div style="display:grid; grid-template-columns:150px repeat(6,minmax(72px,1fr)); margin-left:-150px; align-items:center; box-sizing:border-box; min-height:34px; padding:4px 0;">
       <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1D2939; padding-right:10px;">FeedbackOps 시범 운영(한 팀)</div>
-      <div style="grid-column:3 / 7; height:24px; margin:0 3px; background:#1428A0; border-radius:4px;"></div>
+      <div style="grid-column:3 / 7; height:24px; margin:0 3px; background:#1428A0; border-radius:4px;" data-zone="to-be"></div>
     </div>
     <div style="display:grid; grid-template-columns:150px repeat(6,minmax(72px,1fr)); margin-left:-150px; align-items:center; box-sizing:border-box; min-height:34px; padding:4px 0;">
       <div style="font:600 12px/1.3 Inter,Pretendard,sans-serif; color:#1D2939; padding-right:10px;">플랫폼 사내 시험 서버 연결</div>

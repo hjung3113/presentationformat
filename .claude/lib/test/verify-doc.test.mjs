@@ -67,6 +67,14 @@ test('styleInputs: accent, palette (every hex of design.md) and figure-panel col
   assert.throws(() => styleInputs('nope'), /unknown style "nope" \(have: .*feedbackops-light/);
 });
 
+test('styleInputs / gateOptions: the style\'s zone roles (accent family vs warn/slate fills) reach the gate; --accent alone carries none', () => {
+  const roles = styleInputs(STYLE).zoneRoles;
+  assert.equal(roles.accent, ACCENT);
+  assert.ok(roles.accentFamily.has('#E7EFFC') && roles.problem.has('#B2202B') && roles.problem.has('#94A3B8')); // accent-050 · warn · slate
+  assert.equal(gateOptions({ sidecarPresent: true, style: STYLE }).zoneRoles.accent, ACCENT);
+  assert.equal(gateOptions({ sidecarPresent: true, accent: '#111111' }).zoneRoles, undefined);
+});
+
 test('gateOptions: --style supplies accent + palette; --accent wins; a plan adds plan text and its facts file', () => {
   const sidecarPresent = true;
   const a = gateOptions({ sidecarPresent, style: STYLE });
@@ -125,6 +133,26 @@ test('CLI: a failing check makes the last line `GATE FAILED (j/k checks)` and ex
   assert.match(r.stdout, /^FAIL {2}palette {2}1 color\(s\) not in the style's design\.md: #123456/m);
   assert.doesNotMatch(r.stdout, /VISUAL/); // no browser tier on a failed structural gate
   rmSync(dir, { recursive: true, force: true });
+});
+
+test('CLI: chart-proportions and zone-colors fail the gate (exit 1) on a wrong bar and on the accent inside an AS-IS zone; the same figures drawn right pass', () => {
+  const bars = (h) => `<div data-component="bar-chart" style="overflow-wrap:anywhere;"><div style="height:100%;" data-value="100"><span>100</span></div><div style="height:${h}%;" data-value="70"><span>70</span></div></div>`;
+  const zone = (color) => `<div data-component="before-after"><div data-zone="as-is"><b style="color:${color};">현재</b></div><div data-zone="to-be"><i style="background:${ACCENT};">목표</i></div></div>`;
+  const gate = (body) => {
+    const { dir, doc, support } = docDir(GOOD.replace('</body>', `${body}</body>`));
+    const r = run([doc, '--canonical-support', support, '--style', STYLE, '--no-visual']);
+    rmSync(dir, { recursive: true, force: true });
+    return r;
+  };
+  const ok = gate(bars(70) + zone('#475467'));
+  assert.equal(ok.status, 0, ok.stdout);
+  assert.match(ok.stdout, /^PASS {2}chart-proportions {2}1 chart\(s\), 2 value\(s\) drawn at the size they show$/m);
+  assert.match(ok.stdout, /^PASS {2}zone-colors {2}2 zone\(s\) checked$/m);
+  const bad = gate(bars(40) + zone(ACCENT));
+  assert.equal(bad.status, 1);
+  assert.match(bad.stdout, /^FAIL {2}chart-proportions {2}1 disagreement\(s\): bar-chart#1 bar 2 "70": height 40% but 70 of max 100 is 70%/m);
+  assert.match(bad.stdout, /^FAIL {2}zone-colors {2}1 zone\(s\) break the AS-IS \/ TO-BE color split: before-after#1 as-is zone uses the accent #1428A0/m);
+  assert.match(lines(bad.stdout).at(-1), /^GATE FAILED/);
 });
 
 test('CLI: --plan adds plan-alignment, plan-shapes and numbers-traced (a document number absent from the plan fails)', () => {

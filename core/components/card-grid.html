@@ -15,25 +15,26 @@ HOW TO FILL
      게이트의 numbers-traced 가 소수를 "계획에 없는 수"로 읽어 막는다(맨 정수 칩은 번호 배지라 면제). 리스크 카드(왼쪽 강조선)는 번호 칩이 없다.
   3. 카드 4개 이상이면 아래 결론 칩(→ 한 줄 종합)으로 그리드를 닫는다. 아니면 지운다.
   4. 리스크(대응책 포함)는 "왼쪽 강조선 카드" 변형을 쓴다.
+  5. 카드 div(리스크 카드 포함)의 data-item 속성은 지우지 않는다. 카드를 복사하거나 지우면 속성도 함께 간다. 게이트가 섹션 리드의 "N가지·N개" 같은 개수를 data-item 개수와 견주어 어긋나면 figures:lead-count 로 경고한다.
 -->
 <div data-component="card-grid" style="overflow-wrap:anywhere;">
   <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(max(min(100%,300px),calc(50% - 8px)),1fr)); gap:14px;">
     <!-- ▼ REPEAT per card -->
-    <div style="border:1px solid ⟨border⟩; border-radius:⟨r:card⟩; padding:20px 22px; background:⟨white⟩;">
+    <div style="border:1px solid ⟨border⟩; border-radius:⟨r:card⟩; padding:20px 22px; background:⟨white⟩;" data-item>
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:9px;"><span style="font:700 12px/1 ⟨f:mono⟩; color:⟨accent⟩; background:⟨accent-050⟩; border-radius:⟨r:pill-sm⟩; padding:6px 9px;">⟦1⟧</span><span style="font:600 15.5px/1.35 ⟨f:body⟩; color:⟨ink-900⟩;">⟦항목 1 제목⟧</span></div>
       <div style="font:400 14px/1.7 ⟨f:body⟩; color:⟨body⟩;">⟦항목 1 설명 (1–3문장)⟧</div>
     </div>
     <!-- ▲ /REPEAT -->
-    <div style="border:1px solid ⟨border⟩; border-radius:⟨r:card⟩; padding:20px 22px; background:⟨white⟩;">
+    <div style="border:1px solid ⟨border⟩; border-radius:⟨r:card⟩; padding:20px 22px; background:⟨white⟩;" data-item>
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:9px;"><span style="font:700 12px/1 ⟨f:mono⟩; color:⟨accent⟩; background:⟨accent-050⟩; border-radius:⟨r:pill-sm⟩; padding:6px 9px;">⟦2⟧</span><span style="font:600 15.5px/1.35 ⟨f:body⟩; color:⟨ink-900⟩;">⟦항목 2 제목⟧</span></div>
       <div style="font:400 14px/1.7 ⟨f:body⟩; color:⟨body⟩;">⟦항목 2 설명 (1–3문장)⟧</div>
     </div>
-    <div style="border:1px solid ⟨border⟩; border-radius:⟨r:card⟩; padding:20px 22px; background:⟨white⟩;">
+    <div style="border:1px solid ⟨border⟩; border-radius:⟨r:card⟩; padding:20px 22px; background:⟨white⟩;" data-item>
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:9px;"><span style="font:700 12px/1 ⟨f:mono⟩; color:⟨accent⟩; background:⟨accent-050⟩; border-radius:⟨r:pill-sm⟩; padding:6px 9px;">⟦3⟧</span><span style="font:600 15.5px/1.35 ⟨f:body⟩; color:⟨ink-900⟩;">⟦항목 3 제목⟧</span></div>
       <div style="font:400 14px/1.7 ⟨f:body⟩; color:⟨body⟩;">⟦항목 3 설명 (1–3문장)⟧</div>
     </div>
     <!-- VARIANT risk card (left accent rule + mitigation) -->
-    <div style="border:1px solid ⟨border⟩; border-left:3px solid ⟨accent⟩; border-radius:0 ⟨r:card-sm⟩ ⟨r:card-sm⟩ 0; padding:16px 20px; background:⟨white⟩;">
+    <div style="border:1px solid ⟨border⟩; border-left:3px solid ⟨accent⟩; border-radius:0 ⟨r:card-sm⟩ ⟨r:card-sm⟩ 0; padding:16px 20px; background:⟨white⟩;" data-item>
       <div style="font:600 15px/1.35 ⟨f:body⟩; color:⟨ink-900⟩; margin-bottom:6px;">⟦리스크 이름⟧</div>
       <div style="font:400 13px/1.65 ⟨f:body⟩; color:⟨muted-text⟩;">⟦리스크 설명 한 줄⟧</div>
       <div style="font:400 13px/1.65 ⟨f:body⟩; color:⟨body⟩; margin-top:4px;">→ ⟦대응 한 줄⟧</div>
