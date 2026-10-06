@@ -366,16 +366,22 @@ test('layer-map: more than 5 modules in one layer warns; tags, a bare `key` mark
     [{ name: '독립', n: 2 }, { name: 'Integration', n: 2 }, { name: 'Core', n: 1 }]);
 });
 
-test('text-table: more than 10 rows warns outside the appendix; the sref appendix may run longer; rows are `;`-separated', () => {
+test('text-table: a body table warns above 7 rows, the sref appendix above 10; rows are `;`-separated', () => {
   const rows = (n) => Array.from({ length: n }, (_, i) => `항목${i + 1} · 설명(가; 나)`).join(' ; ');
   const fd = (n) => `columns: 항목, 설명 | rows: ${rows(n)}`;
-  assert.match(countWarns('text-table', fd(11)), /^s1 \(text-table\): table has 11 rows \(>10\)/);
-  assert.doesNotMatch(countWarns('text-table', fd(10)), /rows/);
+  assert.match(countWarns('text-table', fd(8)), /^s1 \(text-table\): table has 8 rows \(>7\)/);
+  assert.match(countWarns('text-table', fd(11)), /^s1 \(text-table\): table has 11 rows \(>7\)/); // the body limit, not the appendix one
+  assert.doesNotMatch(countWarns('text-table', fd(7)), /rows/);
   assert.equal(tableRowCount(fd(12)), 12);
-  const appendix = plan([sec(1, 'none'), `## 부록 — 용어\n- intent: i\n- shape: text-table\n- payload: p\n- figure-data: ${fd(14)}\n- source-span: docs/a.md L1\n`]);
-  const res = validatePlan(appendix);
-  assert.equal(res.ok, true, res.errors.join('; '));
-  assert.deepEqual(res.warnings, []);
+  const appendix = (n) => validatePlan(plan([sec(1, 'none'), `## 부록 — 용어\n- intent: i\n- shape: text-table\n- payload: p\n- figure-data: ${fd(n)}\n- source-span: docs/a.md L1\n`]));
+  for (const n of [8, 10]) {
+    const res = appendix(n); // an appendix table may run to 10 rows
+    assert.equal(res.ok, true, res.errors.join('; '));
+    assert.deepEqual(res.warnings, [], `${n} appendix rows`);
+  }
+  const over = appendix(11);
+  assert.equal(over.ok, true, over.errors.join('; ')); // still only a warning
+  assert.match(over.warnings.join('\n'), /^sref \(text-table\): appendix table has 11 rows \(>10\)/);
 });
 
 test('the countable limits match the components\' @limits lines (the warning and the template cannot drift apart)', () => {
@@ -383,8 +389,11 @@ test('the countable limits match the components\' @limits lines (the warning and
   assert.equal(COUNT_LIMITS.goalsPerActor, 5);
   assert.match(by['use-case'], /행위자당 유스케이스 1–5/);
   assert.match(by['layer-map'], /레이어당 모듈 1–5/);
-  assert.match(by.table, /10행/);
-  assert.equal(COUNT_LIMITS.tableRows, 10);
+  // table.html: "행 3–7 (부록 용어·근거표는 10행까지 …)" — body limit first, appendix limit in the parenthesis
+  const [, body, appendix] = by.table.match(/행 \d+[–-](\d+)\s*\([^)]*?(\d+)행까지/);
+  assert.equal(COUNT_LIMITS.tableRows, Number(body));
+  assert.equal(COUNT_LIMITS.appendixTableRows, Number(appendix));
+  assert.deepEqual([COUNT_LIMITS.tableRows, COUNT_LIMITS.appendixTableRows], [7, 10]);
 });
 
 test('CLI prints warnings after OK, non-blocking', () => {

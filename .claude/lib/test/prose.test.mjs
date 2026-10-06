@@ -22,6 +22,14 @@ test('visibleBlocks: text outside every <section> is `hero`; each block carries 
   assert.deepEqual(blocks.map(b => [b.id, b.tag, b.text]), [['hero', 'div', '표지 문구'], ['s1', 'h2', '제목'], ['s1', 'p', '본문 문장이다.'], ['sref', 'p', '부록 문장이다.']]);
 });
 
+test('visibleBlocks: blocks come in document order; text between sections is `divider`, text after the last section is `closing`, only text before the first is `hero`', () => {
+  const html = '<body><nav>내비</nav><section id="s1"><p>하나.</p></section><div>2부 구분</div><section id="s2"><p>둘.</p></section>' +
+    '<div>3부 구분</div><section id="sref"><p>부록.</p></section><p>맺음말.</p></body>';
+  assert.deepEqual(visibleBlocks(html).map(b => [b.id, b.text]),
+    [['hero', '내비'], ['s1', '하나.'], ['divider', '2부 구분'], ['s2', '둘.'], ['divider', '3부 구분'], ['sref', '부록.'], ['closing', '맺음말.']]);
+  assert.deepEqual(visibleBlocks('<body><p>섹션 없음</p></body>').map(b => b.id), ['hero']); // no sections: all of it is the hero
+});
+
 test('visibleBlocks survives stray and unclosed tags', () => {
   assert.doesNotThrow(() => visibleBlocks('<div><p>열린 문단<section id="s1"><b>굵게</section></div></span><p>끝'));
   assert.ok(visibleBlocks('<p>a < b 이고 c > d</p>').some(b => b.text.includes('a < b')));
@@ -66,6 +74,10 @@ test('parseTerms: no T section (or only placeholders) means no ledger; columns m
   assert.deepEqual(parseTerms(swapped), [{ term: '작업', meaning: '일 한 건', first: '작업(Task)', banned: ['티켓'] }]);
 });
 
+test('parseTerms: a T table with no `용어` header cell is not a term sheet (its header row is not a term)', () => {
+  assert.deepEqual(parseTerms('## T — 용어\n| term | meaning | first | banned |\n|---|---|---|---|\n| 작업 | 일 | 작업(Task) | 태스크 |'), []);
+});
+
 const TERMS = parseTerms(LEDGER);
 const hits = (html) => bannedTermHits(visibleBlocks(html), TERMS);
 
@@ -74,6 +86,15 @@ test('bannedTermHits: substring match in visible text, Latin case-sensitive, Han
   assert.deepEqual(found.map(h => [h.variant, h.term, h.id]), [['태스크', '작업', 's1'], ['Task Request', '작업', 's1'], ['업무', '작업', 's1']]);
   assert.match(found[0].ctx, /^…태스크가 쌓인다/);
   assert.equal(hits(doc(['s1', '<p>task request와 업 무와 테스크는 괜찮다.</p>'])).length, 0);
+});
+
+test('bannedTermHits: a Latin/digit variant is a whole token (AD is not LOAD or ADR-0008, but is `AD 계정`); Hangul and mixed variants stay substrings', () => {
+  const t = parseTerms('## T — 용어\n| 용어 | 뜻 | 처음 나올 때 | 쓰지 않을 말 |\n|---|---|---|---|\n| 사내 계정 | 로그인 | 사내 계정 | AD, 태스크, C언어 |');
+  const run = (h) => bannedTermHits(visibleBlocks(h), t).map(x => x.variant);
+  assert.deepEqual(run(doc(['s1', '<p>LOAD 단계와 ADR-0008과 ADMIN, MAD2는 쓴다.</p>'])), []);
+  assert.deepEqual(run(doc(['s1', '<p>AD 계정으로 들어간다. AD는 하나다. (AD) · AD-계정 · x.AD</p>'])), ['AD', 'AD', 'AD', 'AD', 'AD']);
+  assert.deepEqual(run(doc(['s1', '<p>태스크보드와 새태스크를 본다. ABC언어도 있다.</p>'])), ['태스크', '태스크', 'C언어']); // inside a longer word
+  assert.match(bannedTermHits(visibleBlocks(doc(['s1', '<p>사내 AD 계정</p>'])), t)[0].ctx, /^…사내 AD 계정…$/);
 });
 
 test('bannedTermHits: the appendix is exempt; hero, other sections and nav-like text outside sections are not', () => {
@@ -144,6 +165,23 @@ test('firstUseOrder: a longer term holding the bare one, an appendix glossary an
   assert.deepEqual(early(doc(['s1', '<p>작업(Task)을 만든다.</p>'], ['sref', '<p>작업 — 처리하는 일</p>']), t), []); // a glossary entry is not a use
   assert.deepEqual(early(doc(['s1', '<p>작업이 쌓인다.</p>']), t), []); // no form anywhere: missingFirstUse reports it, not the order check
   assert.deepEqual(early(doc(['s1', '<p>작업이 쌓인다.</p>'], ['sref', '<p>작업(Task) — 일</p>']), t), [['작업', 's1']]); // the form exists, but the body used the term first
+});
+
+test('firstUseOrder: a bare term in the closing line after the first-use form is fine (the closing line reads last, not first)', () => {
+  const html = '<!DOCTYPE html><body><p>표지 문구</p><section id="s1"><p>접수(VOC)를 연다.</p></section><section id="s2"><p>둘째 섹션이다.</p></section><p>접수는 여기서 끝난다.</p></body>';
+  assert.deepEqual(early(html), []);
+});
+
+test('firstUseOrder: a bare term in an act divider between sections is fine once the first-use form was read; before it, it is not', () => {
+  const body = (divider) => `<!DOCTYPE html><body><p>표지 문구</p><section id="s1"><p>접수(VOC)를 연다.</p></section><section id="s2"><p>둘째 섹션이다.</p></section>${divider}<section id="s3"><p>셋째 섹션이다.</p></section></body>`;
+  assert.deepEqual(early(body('<div>2부 · 접수 이후</div>')), []);
+  const before = '<!DOCTYPE html><body><p>표지 문구</p><section id="s1"><p>첫째 섹션이다.</p></section><div>2부 · 접수 이후</div><section id="s2"><p>접수(VOC)를 연다.</p></section></body>';
+  assert.deepEqual(early(before), [['접수', 'divider']]);
+});
+
+test('firstUseOrder: a first-use form that appears only in the closing line does not excuse the bare uses before it', () => {
+  const html = '<!DOCTYPE html><body><p>표지 문구</p><section id="s1"><p>접수가 쌓인다.</p></section><p>접수(VOC)는 이렇게 끝난다.</p></body>';
+  assert.deepEqual(early(html), [['접수', 's1']]);
 });
 
 // ----- sentence splitting -----

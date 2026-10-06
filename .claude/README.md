@@ -112,19 +112,21 @@ from the document — never by editing the check.
 optional `## T — 용어` table of `facts.md` (`| 용어 | 뜻 | 처음 나올 때 | 쓰지 않을 말 |`; template
 `.claude/skills/plan/facts.template.md`). The gate reads that table through the plan's `facts:` header. *Check:* the
 reader's visible text (the same stripping as `numbers-traced`, but inline tags join the surrounding text) outside the
-`<section id="sref">` appendix — hero, nav and numbered sections — must contain no `쓰지 않을 말` variant (comma-separated;
-plain substring match, Latin case-sensitive, Hangul exact). A chosen term or first-use form that contains a variant
+`<section id="sref">` appendix — hero, nav, act dividers, closing line and numbered sections — must contain no `쓰지 않을 말` variant (comma-separated;
+Latin case-sensitive, Hangul exact; a variant made only of Latin letters/digits matches as a whole token — banned `AD` hits `AD 계정` but not `LOAD` or `ADR-0008`, and `Task` does not hit `Tasks`, so list a plural as its own variant — while a Hangul or mixed variant is an exact substring and also hits inside a longer word, `업무` in `업무량`). A chosen term or first-use form that contains a variant
 (`작업(Task)` holds `Task`) is masked first, so the prescribed form never trips its own ban. Failure lists up to 8 hits
 (`s3 "태스크" (use 작업) …context…`). *Warnings:* `terms:first-use` — (a) a term's `처음 나올 때` form (whitespace-insensitive)
 appears nowhere in the document, or (b) the bare term is read **before** its first-use form (order check, `firstUseOrder()`
-in `prose.mjs`). Order rules (`core/components.md §4` "Terms and first use"): the hero thesis counts as the first occurrence — when the
-form is in the hero, the hero and everything after it may use the bare term; when it is not, a bare term in the hero is out of
-order; nav labels and the fixed document title (hero blocks that are a link or an `<h1>`) are exempt; section titles (`h2`) are exempt too — the lead right below defines the term; a longer term that contains the bare one (`작업 요청` holds `작업`) and the `sref` glossary are not bare uses; a term whose form
+in `prose.mjs`). Order rules (`core/components.md §4` "Terms and first use"): blocks are read in document order — the pre-`<section>` hero first,
+then each section, with an act divider between sections and the closing line after the last at their real positions (a bare
+term there is fine once the form has been read, and out of order before it). The hero thesis counts as the first occurrence —
+when the form is in the hero, the hero and everything after it may use the bare term; when it is not, a bare term in the hero is
+out of order; a form that appears only in a divider or the closing line excuses nothing before it; nav labels and the fixed document title (hero blocks that are a link or an `<h1>`) are exempt; section titles (`h2`) are exempt too — the lead right below defines the term; a longer term that contains the bare one (`작업 요청` holds `작업`) and the `sref` glossary are not bare uses; a term whose form
 appears nowhere is left to (a). Placeholder rows (`<…>`) are ignored, so an unfilled template table means "no term
 sheet". Without `--plan`, without a facts file, or without a T table the check does not run (a `NOTE` says why).
 
-**Prose warnings (`prose:*`, never fail the gate).** Computed on the paragraph-like blocks of the hero and the numbered
-sections (the appendix and headings are excluded; only blocks of 25+ characters that end like a sentence — `.`/`!`/`?`,
+**Prose warnings (`prose:*`, never fail the gate).** Computed on the paragraph-like blocks of the hero, the numbered
+sections and the dividers/closing line between and after them (the appendix and headings are excluded; only blocks of 25+ characters that end like a sentence — `.`/`!`/`?`,
 or `다`/`요`/`까` — are prose, so figure labels and chips are ignored). Sentences end at `. ! ?` before a space or the end
 (3.5, v0.2.0 and file.md stay whole). Thresholds are constants in `prose.mjs`.
 
@@ -172,8 +174,8 @@ INVALID.
   numbered section that is not `headline-metric|decision`, or a last one that is not `decision`. Three **countable
   limits** also warn (never error; `COUNT_LIMITS` in `plan-schema.mjs`, the same numbers as each component's `@limits`): more than 5
   goals for one actor in an `actor-goals` figure-data (`actors: A: 목표, 목표 ‖ B: …`), more than 5 modules in one layer of a
-  `layered-structure` figure-data (bracket tags such as `[planned]` and a bare `key` marker do not count), and more than 10
-  rows in a `text-table` (`rows:` split on `;`) outside the `sref` appendix, which may run longer.
+  `layered-structure` figure-data (bracket tags such as `[planned]` and a bare `key` marker do not count), and more rows in a
+  `text-table` (`rows:` split on `;`) than `table.html` allows: more than 7 in a body table, more than 10 in the `sref` appendix.
 
 ## Prerequisites
 

@@ -236,7 +236,7 @@ working strictly from the source:
   figure, chart, or report block **and for `text-table`**; write `none` only for `none`/`peer-list`.
   A `text-table` section is a pasted `table` filled from its figure-data, so it MUST carry
   `columns: 열1, 열2, 열3 | rows: 값 · 값 · 값 ; 값 · 값 · 값 …` (cells split by `·`, rows by `;` — every row, every cell; the
-  document's table is exactly this; the plan validator rejects `none`, and warns above 10 rows outside the appendix). The format's first key is mandatory (`states:`, `lanes:`,
+  document's table is exactly this; the plan validator rejects `none`, and warns above 7 rows in a body table and above 10 in the appendix). The format's first key is mandatory (`states:`, `lanes:`,
   `tiles:`, `columns:`, …) and keys ending in `?` are optional.
   An item whose ledger status is `designed` or `planned` (not built yet) gets the marker `[planned]` right
   after it — a layer module, pipeline node, tree child or leaf, timeline item, sequence ALT/OPT group — so

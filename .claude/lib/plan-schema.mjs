@@ -214,7 +214,8 @@ function checkFigureData(where, s, specs, shapes, errors) {
 // A figure-data that plainly exceeds a component's simple, countable limit (its `@limits` line) is a plan-time warning:
 // the figure would have to be split anyway, and the plan is the cheapest place to say so. Kept to three counts that
 // need no real parsing — use-case goals per actor, layer-map modules per layer, table rows — and tested in plan-schema.test.mjs.
-export const COUNT_LIMITS = { goalsPerActor: 5, modulesPerLayer: 5, tableRows: 10 };
+// Table rows follow core/components/table.html: a body table runs to 7 rows, an appendix (sref) term/source table to 10.
+export const COUNT_LIMITS = { goalsPerActor: 5, modulesPerLayer: 5, tableRows: 7, appendixTableRows: 10 };
 
 // Split on top-level separators only: a separator inside ( ) [ ] { } belongs to the item ("메뉴 패키지(a, b)" is one module).
 function splitTop(text, seps) {
@@ -283,9 +284,12 @@ function countWarnings(plan) {
     if (s.shape === 'layered-structure')
       for (const l of layerModules(s.figureData).filter(l => l.n > L.modulesPerLayer))
         out.push(`${s.id} (layered-structure): layer "${l.name}" has ${l.n} modules (>${L.modulesPerLayer}) — layer-map shows 1–${L.modulesPerLayer} per layer; group modules or split the layer`);
-    if (s.shape === 'text-table' && s.id !== 'sref') {
+    if (s.shape === 'text-table') {
       const n = tableRowCount(s.figureData);
-      if (n > L.tableRows) out.push(`${s.id} (text-table): table has ${n} rows (>${L.tableRows}) — split it into two tables, or move reference rows to the appendix (only the sref appendix may run past ${L.tableRows})`);
+      if (s.id === 'sref') {
+        if (n > L.appendixTableRows) out.push(`${s.id} (text-table): appendix table has ${n} rows (>${L.appendixTableRows}) — split it into two tables of at most ${L.appendixTableRows} rows, or use the definition-list variant`);
+      } else if (n > L.tableRows)
+        out.push(`${s.id} (text-table): table has ${n} rows (>${L.tableRows}) — split it into two tables, or move reference rows to the appendix (only the sref appendix may run past ${L.tableRows}, up to ${L.appendixTableRows})`);
     }
   }
   return out;

@@ -1,5 +1,5 @@
 // Text-level gate logic over a document's HTML — pure functions, no I/O (verify-doc.mjs reads the files).
-//   visibleBlocks()  → the reader's text, one entry per paragraph-like block, tagged with its section id
+//   visibleBlocks()  → the reader's text, one entry per paragraph-like block, in document order, tagged with its region id
 //   parseTerms()     → the `## T — 용어` table of facts.md
 //   bannedTermHits() → `terms-consistent` (hard)      missingFirstUse() · firstUseOrder() → `terms:first-use` (warnings)
 //   proseWarnings()  → `prose:*` Korean-writing heuristics (warnings only — they never fail the gate)
@@ -70,24 +70,30 @@ function collect(node, out) {
   flush();
 }
 
-// The document split into the numbered/appendix <section>s (comments removed) and everything outside them (`hero`:
-// nav, cover, closing line). <section>s do not nest.
+// The document split, in document order, into the numbered/appendix <section>s (comments removed) and the text between
+// and around them: `hero` = everything before the first <section> (nav, cover, thesis), `divider` = what sits between two
+// sections (act dividers), `closing` = what follows the last section (closing line). Empty dividers/closing are dropped;
+// `hero` is always first. <section>s do not nest.
 export function regions(html) {
   const body = html.replace(/<!--[\s\S]*?-->/g, '');
   const out = [];
-  const outside = [];
+  let n = 0;
   let pos = 0;
   for (const m of body.matchAll(/<section\b[^>]*>[\s\S]*?<\/section>/gi)) {
-    outside.push(body.slice(pos, m.index));
+    const gap = body.slice(pos, m.index);
+    if (n === 0 || gap.trim()) out.push({ id: n === 0 ? 'hero' : 'divider', html: gap });
     pos = m.index + m[0].length;
-    const id = (m[0].match(/^<section\b[^>]*?(?<![\w-])id=["']([^"']+)["']/i) || [])[1] || `section${out.length + 1}`;
+    n++;
+    const id = (m[0].match(/^<section\b[^>]*?(?<![\w-])id=["']([^"']+)["']/i) || [])[1] || `section${n}`;
     out.push({ id, html: m[0] });
   }
-  outside.push(body.slice(pos));
-  return [{ id: 'hero', html: outside.join('\n') }, ...out];
+  const tail = body.slice(pos);
+  if (n === 0 || tail.trim()) out.push({ id: n === 0 ? 'hero' : 'closing', html: tail });
+  return out;
 }
 
-// Everything a reader sees, block by block, each tagged with its section id (`hero` outside the sections, `sref` = appendix).
+// Everything a reader sees, block by block in document order, each tagged with its region id (`hero` before the first
+// section, `divider` between sections, `closing` after the last, `sref` = appendix, otherwise the section id).
 export function visibleBlocks(html) {
   const blocks = [];
   for (const r of regions(html)) {
@@ -117,7 +123,8 @@ export function parseTerms(factsText) {
     if (l.trim().startsWith('|')) rows.push(cells(l));
   }
   const header = rows.findIndex(r => r.some(c => c.includes('용어')));
-  const head = header >= 0 ? rows[header] : [];
+  if (header < 0) return []; // no `용어` header cell → not a term sheet (the header row would otherwise parse as a term)
+  const head = rows[header];
   const col = (re, fallback) => { const i = head.findIndex(c => re.test(c)); return i >= 0 ? i : fallback; };
   const [iTerm, iMean, iFirst, iBan] = [col(/^용어/, 0), col(/^뜻/, 1), col(/처음/, 2), col(/쓰지|금지/, 3)];
   const out = [];
@@ -132,9 +139,15 @@ export function parseTerms(factsText) {
   return out;
 }
 
-// Banned variants in the reader's text outside the `sref` appendix (substring match; Latin is case-sensitive, Hangul
-// exact). A longer chosen term or first-use form that contains a variant ("작업(Task)" holds "Task") is masked first,
-// so the form the ledger itself prescribes never trips its own ban.
+// Banned variants in the reader's text outside the `sref` appendix (Latin case-sensitive, Hangul exact). A variant made only
+// of Latin letters, digits and ` . _ -` is matched as a whole token — not inside a longer Latin/digit run, so banned `AD`
+// does not hit `LOAD` or `ADR-0008` but does hit `AD 계정` and `AD는`; a Hangul or mixed variant is an exact substring
+// ("업무" hits "업무량"). A longer chosen term or first-use form that contains a variant ("작업(Task)" holds "Task") is
+// masked first, so the form the ledger itself prescribes never trips its own ban.
+const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const LATIN_ONLY = /^[A-Za-z0-9][A-Za-z0-9 ._-]*$/;
+const variantRe = (v) => (LATIN_ONLY.test(v) ? new RegExp(`(?<![A-Za-z0-9])${escapeRe(v)}(?![A-Za-z0-9])`, 'g') : new RegExp(escapeRe(v), 'g'));
+
 export function bannedTermHits(blocks, terms) {
   const known = [...new Set(terms.flatMap(t => [t.term, t.first]).filter(Boolean))];
   const hits = [];
@@ -144,8 +157,8 @@ export function bannedTermHits(blocks, terms) {
     for (const t of terms) for (const v of t.banned) {
       let text = b.text;
       for (const w of known) if (w.length > v.length && w.includes(v)) text = text.split(w).join('\u0002'.repeat(w.length));
-      for (let i = text.indexOf(v); i >= 0; i = text.indexOf(v, i + v.length))
-        here.push({ at: i, variant: v, term: t.term, id: b.id, ctx: `…${b.text.slice(Math.max(0, i - 14), i + v.length + 14)}…` });
+      for (const m of text.matchAll(variantRe(v)))
+        here.push({ at: m.index, variant: v, term: t.term, id: b.id, ctx: `…${b.text.slice(Math.max(0, m.index - 14), m.index + v.length + 14)}…` });
     }
     hits.push(...here.sort((a, b2) => a.at - b2.at));
   }
@@ -159,17 +172,19 @@ export function missingFirstUse(blocks, terms) {
 }
 
 // Terms whose bare form is read BEFORE their 처음 나올 때 form (core/components.md §4 "Terms and first use"). Order is the
-// order of `blocks`: the `hero` region (everything outside the sections — nav, cover, act dividers, closing line) reads
-// first, then the numbered sections; the `sref` appendix is a glossary, not a use, so its bare terms never count.
+// document order of `blocks`: the `hero` region (everything before the first section — nav, cover, thesis) reads first,
+// then each numbered section, with act dividers (`divider`) and the closing line (`closing`) at their real positions; the
+// `sref` appendix is a glossary, not a use, so its bare terms never count.
 //   · the hero thesis counts as the first occurrence: when the first-use form is in the hero, the hero's bare terms are
-//     excluded from the check (and everything after it is fine); when it is not, a bare term in the hero is out of order;
+//     excluded from the check (and everything after it is fine); when it is not, a bare term in the hero is out of order.
+//     Only the pre-section `hero` has this power — a first-use form that appears only in a divider or the closing line
+//     introduces nothing before it, so earlier bare uses are still reported;
 //   · nav labels, the fixed document title (hero blocks tagged a / nav / h1) and section titles (h2) are exempt — they
 //     neither count as a first use nor as a bare use;
 //   · a longer term or first-use form that contains the bare term ("작업 요청" holds "작업") is masked, so it is not a bare use.
 // A term whose first-use form appears nowhere is left to missingFirstUse(); a term with no distinct first-use form is skipped.
 // → [{ term, first, id, ctx }] (the first out-of-order use of each term)
 const NAV_OR_TITLE = new Set(['a', 'nav', 'h1']);
-const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const looseRe = (form) => new RegExp([...form.replace(/\s+/g, '')].map(escapeRe).join('\\s*'), 'u');
 const MASK = '\u0002';
 

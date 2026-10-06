@@ -56,7 +56,7 @@ AP = hjung3113/analytics-platform, FO = hjung3113/FeedbackOps. 줄 번호는 위
 | F47 | FeedbackOps가 먼저 만들어졌다: 첫 슬라이스 완료 2026-05-16, 플랫폼 레포 생성은 2026-09-17 | 2026-05-16 | 날짜 | doc | implemented | FO@87948f3:docs/implementation/08-mvp-slice-plan.md L16; F01 | 2026-10-05 | exec |
 | F48 | FeedbackOps는 사내 SSO 없이도 개발용 가짜 로그인(MockAuthProvider, 운영 환경에서는 꺼짐)으로 시연할 수 있다 — 회의에서 5분 시연(제안): VOC 2건 묶기 → 작업 요청 → 승인 → 공개 업데이트 → 문의자 '내 VOC' | — | — | doc | implemented | FO@87948f3:docs/adr/0006-authentication-and-actor-provisioning.md L18 | 2026-10-05 | exec |
 | F49 | 운영 콘솔의 '메뉴 활용률'로 어떤 메뉴가 실제로 쓰이는지 잰다 | — | — | code | implemented | AP@c20074d:menus/admin/src/index.ts L29-31 | 2026-10-05 | exec |
-| F80 | FeedbackOps 사용자 역할 4가지: 관리자(설정·권한·승인), 개발자(분류·근거 정리·작업 처리·진행 안내), 일반 사용자(VOC 등록·내 VOC 확인·설문 응답), 문의자(자기가 올린 VOC에 대한 관계) | 4 | 역할 | doc | implemented | FO@87948f3:PRODUCT.md L13-16 | 2026-10-05 | exec |
+| F80 | FeedbackOps 사용자 역할 3가지: 관리자(설정·권한·승인), 개발자(분류·근거 정리·작업 처리·진행 안내), 일반 사용자(VOC 등록·내 VOC 확인·설문 응답). 문의자는 역할이 아니라 자기가 올린 VOC에 대한 관계다 | 3 | 역할 | doc | implemented | FO@87948f3:PRODUCT.md L13-16 | 2026-10-05 | exec |
 | F81 | FeedbackOps의 흐름 5단계: 접수 → 분류 → 근거 정리 → 실행(작업 요청 → 작업) → 결과 확인(설문) | 5 | 단계 | doc | implemented | FO@87948f3:PRODUCT.md L24-28 | 2026-10-05 | exec |
 | F82 | FeedbackOps는 사내 계정으로 로그인하는 단일 업무 공간용 운영 도구다(외부 공개용 아님) | — | — | doc | designed | FO@87948f3:PRODUCT.md L9 | 2026-10-05 | exec |
 | F83 | 사용자 매뉴얼의 장 제목이 곧 할 수 있는 일이다: 문제 알리기, 내 VOC 진행 보기, 들어온 VOC 처리, 문의자에게 알리기, 반복되는 VOC 묶기, 근거로 판단 남기기, 작업으로 넘기기, 고친 뒤 효과 확인, 권한 요청, 업무 공간 관리 | 10 | 장 | doc | implemented | FO@87948f3:docs/USER-MANUAL.md L55-298 | 2026-10-05 | exec,user |
