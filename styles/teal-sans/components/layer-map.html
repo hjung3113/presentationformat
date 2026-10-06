@@ -32,11 +32,14 @@ HOW TO FILL
   5. figure-data 의 여러 레이어는 ‖ 로 구분한다(위에서 아래 순서). 연결 방식은 links 에 "레이어1↕레이어2 방식" 으로 모두 적는다.
   6. 라벨 언어: 층 이름표 ⟦LAYER A⟧ · 외부 층 ⟦EXTERNAL⟧ · 기존 층 ⟦AS-IS⟧ 는 슬롯이다. 슬롯 예시는 영문 기본(labels: en)이다.
      labels: ko 문서(경영진·사용자용)는 "층 A" · "외부" · "지금" 으로 바꾼다 (core/components.md §4 "라벨 언어").
-  7. 기존 체제(legacy) 층 div 의 data-zone="as-is" 속성은 지우지 않는다. 게이트의 zone-colors 가 이 층에 강조색이 없는지 본다. legacy 층을 쓰지 않으면 이 속성을 쓸 곳이 없다.
+  7. 층 이름 칸(왼쪽)의 폭은 모든 층 행이 같다: grid-template-columns:minmax(132px,min(160px,35%)). 하한 132px 은 영문 층 이름 한 단어(14자 안팎 —
+     13px/600 에서 "Authentication" 97px)가 14px 패딩 사이에 끊김 없이 들어가는 폭이다(132 - 28 = 104). 하한을 낮추면 390px 화면(시트 343px, 35% = 102px)에서
+     영문 층 이름이 overflow-wrap:anywhere 로 단어 중간에서 끊긴다. 넓은 화면에서는 160px 상한이 적용되어 하한은 보이지 않는다. 다섯 곳을 같은 값으로 둔다.
+  8. 기존 체제(legacy) 층 div 의 data-zone="as-is" 속성은 지우지 않는다. 게이트의 zone-colors 가 이 층에 강조색이 없는지 본다. legacy 층을 쓰지 않으면 이 속성을 쓸 곳이 없다.
 -->
 <div data-component="layer-map" style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:24px; overflow-wrap:anywhere;">
   <!-- ▼ REPEAT per layer -->
-  <div style="display:grid; grid-template-columns:minmax(96px,min(160px,35%)) minmax(0,1fr); border:1px solid #E2E5F0; border-radius:9px; background:#FFFFFF; overflow:hidden;">
+  <div style="display:grid; grid-template-columns:minmax(132px,min(160px,35%)) minmax(0,1fr); border:1px solid #E2E5F0; border-radius:9px; background:#FFFFFF; overflow:hidden;">
     <div style="padding:12px 14px; background:#F8F9FD; border-right:1px solid #E2E5F0; display:flex; flex-direction:column; justify-content:center;">
       <div style="font:700 10px/1 'IBM Plex Mono','IBM Plex Sans KR',monospace; letter-spacing:.06em; color:#6A7187; margin-bottom:6px;">⟦LAYER A⟧</div>
       <div style="font:600 13px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦상위 층 이름⟧</div>
@@ -55,7 +58,7 @@ HOW TO FILL
   <!-- connector between layers: ALWAYS name how they connect -->
   <div style="text-align:center; font:500 11px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#6A7187; padding:7px 0;"><span style="color:#0F766E; font:400 14px/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif;">↕</span> ⟦연결 방식 1⟧</div>
   <!-- VARIANT key layer (the subject of the document) -->
-  <div style="display:grid; grid-template-columns:minmax(96px,min(160px,35%)) minmax(0,1fr); border:1.5px solid #0F766E; border-radius:9px; background:#FFFFFF; overflow:hidden;">
+  <div style="display:grid; grid-template-columns:minmax(132px,min(160px,35%)) minmax(0,1fr); border:1.5px solid #0F766E; border-radius:9px; background:#FFFFFF; overflow:hidden;">
     <div style="padding:12px 14px; background:#ECFDF8; border-right:1px solid #99F6E4; display:flex; flex-direction:column; justify-content:center;">
       <div style="font:700 10px/1 'IBM Plex Mono','IBM Plex Sans KR',monospace; letter-spacing:.06em; color:#0F766E; margin-bottom:6px;">⟦LAYER B⟧</div>
       <!-- OPTIONAL badge: only when this layer is optional ([optional]) -->
@@ -68,7 +71,7 @@ HOW TO FILL
     </div>
   </div>
   <div style="text-align:center; font:500 11px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#6A7187; padding:7px 0;"><span style="color:#0F766E; font:400 14px/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif;">↕</span> ⟦연결 방식 2⟧</div>
-  <div style="display:grid; grid-template-columns:minmax(96px,min(160px,35%)) minmax(0,1fr); border:1px solid #E2E5F0; border-radius:9px; background:#FFFFFF; overflow:hidden;" data-state="caveat">
+  <div style="display:grid; grid-template-columns:minmax(132px,min(160px,35%)) minmax(0,1fr); border:1px solid #E2E5F0; border-radius:9px; background:#FFFFFF; overflow:hidden;" data-state="caveat">
     <div style="padding:12px 14px; background:#F8F9FD; border-right:1px solid #E2E5F0; display:flex; flex-direction:column; justify-content:center;">
       <div style="font:700 10px/1 'IBM Plex Mono','IBM Plex Sans KR',monospace; letter-spacing:.06em; color:#6A7187; margin-bottom:6px;">⟦LAYER C⟧</div>
       <div style="font:600 13px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦기반 층 이름⟧</div>
@@ -83,7 +86,7 @@ HOW TO FILL
   </div>
   <div style="text-align:center; font:500 11px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#6A7187; padding:7px 0;"><span style="color:#B6BBCB; font:400 14px/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif;">↕</span> ⟦연결 방식 3⟧</div>
   <!-- VARIANT external layer (not ours): NEUTRAL dashed — not a problem / legacy colour -->
-  <div style="display:grid; grid-template-columns:minmax(96px,min(160px,35%)) minmax(0,1fr); border:1px dashed #C2C8D4; border-radius:9px; background:#F8F9FD; overflow:hidden;">
+  <div style="display:grid; grid-template-columns:minmax(132px,min(160px,35%)) minmax(0,1fr); border:1px dashed #C2C8D4; border-radius:9px; background:#F8F9FD; overflow:hidden;">
     <div style="padding:12px 14px; display:flex; flex-direction:column; justify-content:center;">
       <div style="font:700 10px/1 'IBM Plex Mono','IBM Plex Sans KR',monospace; letter-spacing:.06em; color:#6A7187; margin-bottom:6px;">⟦EXTERNAL⟧</div>
       <div style="font:600 13px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#6A7187;">⟦외부 시스템 이름⟧</div>
@@ -95,7 +98,7 @@ HOW TO FILL
   </div>
   <div style="text-align:center; font:500 11px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#6A7187; padding:7px 0;"><span style="color:#B6BBCB; font:400 14px/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif;">↕</span> ⟦연결·이관 방식⟧</div>
   <!-- VARIANT legacy layer (AS-IS, to be replaced): slate family, never the target accent -->
-  <div style="display:grid; grid-template-columns:minmax(96px,min(160px,35%)) minmax(0,1fr); border:1.5px dashed #B7BECC; border-radius:9px; background:#F1F3F7; overflow:hidden;" data-zone="as-is">
+  <div style="display:grid; grid-template-columns:minmax(132px,min(160px,35%)) minmax(0,1fr); border:1.5px dashed #B7BECC; border-radius:9px; background:#F1F3F7; overflow:hidden;" data-zone="as-is">
     <div style="padding:12px 14px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;">
       <span style="font:700 11px/1 'IBM Plex Mono','IBM Plex Sans KR',monospace; letter-spacing:.06em; color:#FFFFFF; background:#94A0B4; border-radius:5px; padding:4px 6px;">⟦AS-IS⟧</span>
       <div style="font:600 13px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#6A7187; margin-top:6px;">⟦기존 시스템 이름⟧</div>

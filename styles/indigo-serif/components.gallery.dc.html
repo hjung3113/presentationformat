@@ -501,7 +501,7 @@
         <div style="display:flex; gap:10px; background:#EEF0FF; border-radius:12px; padding:11px 14px; margin:10px 0 18px;"><span style="font:700 11px/1.6 Pretendard,sans-serif; letter-spacing:.03em; color:#4338CA; white-space:nowrap;">언제 쓰나</span><span style="font:400 12.5px/1.6 Pretendard,sans-serif; color:#5A6175;">시스템이 어떤 층(사용자 접점·서비스·통합·데이터·외부)으로 나뉘고, 각 층에 어떤 모듈이 있으며, 층 사이가 무엇으로 연결되는지가 주장이다. 시스템 구성도, 아키텍처 개요, 공통 기반 위에 서비스가 얹히는 구조. <span style="color:#9AA0B2;">· 쓰지 않을 때: 데이터가 단계를 따라 흘러간다 → pipeline. 상하 소속(조직도·메뉴 트리) → tree. 한 허브가 여럿을 잇는다 → hub-spoke.</span></span></div>
         <div data-component="layer-map" style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:24px; overflow-wrap:anywhere;">
   <!-- ▼ REPEAT per layer -->
-  <div style="display:grid; grid-template-columns:minmax(96px,min(160px,35%)) minmax(0,1fr); border:1px solid #E2E5F0; border-radius:9px; background:#FFFFFF; overflow:hidden;">
+  <div style="display:grid; grid-template-columns:minmax(132px,min(160px,35%)) minmax(0,1fr); border:1px solid #E2E5F0; border-radius:9px; background:#FFFFFF; overflow:hidden;">
     <div style="padding:12px 14px; background:#F8F9FD; border-right:1px solid #E2E5F0; display:flex; flex-direction:column; justify-content:center;">
       <div style="font:700 10px/1 'JetBrains Mono',Pretendard,monospace; letter-spacing:.06em; color:#6A7187; margin-bottom:6px;">LAYER A</div>
       <div style="font:600 13px/1.35 Pretendard,sans-serif; color:#15172B;">상위 층 이름</div>
@@ -520,7 +520,7 @@
   <!-- connector between layers: ALWAYS name how they connect -->
   <div style="text-align:center; font:500 11px/1.4 Pretendard,sans-serif; color:#6A7187; padding:7px 0;"><span style="color:#4338CA; font:400 14px/1 Pretendard,sans-serif;">↕</span> 연결 방식 1</div>
   <!-- VARIANT key layer (the subject of the document) -->
-  <div style="display:grid; grid-template-columns:minmax(96px,min(160px,35%)) minmax(0,1fr); border:1.5px solid #4338CA; border-radius:9px; background:#FFFFFF; overflow:hidden;">
+  <div style="display:grid; grid-template-columns:minmax(132px,min(160px,35%)) minmax(0,1fr); border:1.5px solid #4338CA; border-radius:9px; background:#FFFFFF; overflow:hidden;">
     <div style="padding:12px 14px; background:#EEF0FF; border-right:1px solid #C9CEF4; display:flex; flex-direction:column; justify-content:center;">
       <div style="font:700 10px/1 'JetBrains Mono',Pretendard,monospace; letter-spacing:.06em; color:#4338CA; margin-bottom:6px;">LAYER B</div>
       <!-- OPTIONAL badge: only when this layer is optional ([optional]) -->
@@ -533,7 +533,7 @@
     </div>
   </div>
   <div style="text-align:center; font:500 11px/1.4 Pretendard,sans-serif; color:#6A7187; padding:7px 0;"><span style="color:#4338CA; font:400 14px/1 Pretendard,sans-serif;">↕</span> 연결 방식 2</div>
-  <div style="display:grid; grid-template-columns:minmax(96px,min(160px,35%)) minmax(0,1fr); border:1px solid #E2E5F0; border-radius:9px; background:#FFFFFF; overflow:hidden;" data-state="caveat">
+  <div style="display:grid; grid-template-columns:minmax(132px,min(160px,35%)) minmax(0,1fr); border:1px solid #E2E5F0; border-radius:9px; background:#FFFFFF; overflow:hidden;" data-state="caveat">
     <div style="padding:12px 14px; background:#F8F9FD; border-right:1px solid #E2E5F0; display:flex; flex-direction:column; justify-content:center;">
       <div style="font:700 10px/1 'JetBrains Mono',Pretendard,monospace; letter-spacing:.06em; color:#6A7187; margin-bottom:6px;">LAYER C</div>
       <div style="font:600 13px/1.35 Pretendard,sans-serif; color:#15172B;">기반 층 이름</div>
@@ -548,7 +548,7 @@
   </div>
   <div style="text-align:center; font:500 11px/1.4 Pretendard,sans-serif; color:#6A7187; padding:7px 0;"><span style="color:#B6BBCB; font:400 14px/1 Pretendard,sans-serif;">↕</span> 연결 방식 3</div>
   <!-- VARIANT external layer (not ours): NEUTRAL dashed — not a problem / legacy colour -->
-  <div style="display:grid; grid-template-columns:minmax(96px,min(160px,35%)) minmax(0,1fr); border:1px dashed #C2C8D4; border-radius:9px; background:#F8F9FD; overflow:hidden;">
+  <div style="display:grid; grid-template-columns:minmax(132px,min(160px,35%)) minmax(0,1fr); border:1px dashed #C2C8D4; border-radius:9px; background:#F8F9FD; overflow:hidden;">
     <div style="padding:12px 14px; display:flex; flex-direction:column; justify-content:center;">
       <div style="font:700 10px/1 'JetBrains Mono',Pretendard,monospace; letter-spacing:.06em; color:#6A7187; margin-bottom:6px;">EXTERNAL</div>
       <div style="font:600 13px/1.35 Pretendard,sans-serif; color:#6A7187;">외부 시스템 이름</div>
@@ -560,7 +560,7 @@
   </div>
   <div style="text-align:center; font:500 11px/1.4 Pretendard,sans-serif; color:#6A7187; padding:7px 0;"><span style="color:#B6BBCB; font:400 14px/1 Pretendard,sans-serif;">↕</span> 연결·이관 방식</div>
   <!-- VARIANT legacy layer (AS-IS, to be replaced): slate family, never the target accent -->
-  <div style="display:grid; grid-template-columns:minmax(96px,min(160px,35%)) minmax(0,1fr); border:1.5px dashed #B7BECC; border-radius:9px; background:#F1F3F7; overflow:hidden;" data-zone="as-is">
+  <div style="display:grid; grid-template-columns:minmax(132px,min(160px,35%)) minmax(0,1fr); border:1.5px dashed #B7BECC; border-radius:9px; background:#F1F3F7; overflow:hidden;" data-zone="as-is">
     <div style="padding:12px 14px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;">
       <span style="font:700 11px/1 'JetBrains Mono',Pretendard,monospace; letter-spacing:.06em; color:#FFFFFF; background:#94A0B4; border-radius:5px; padding:4px 6px;">AS-IS</span>
       <div style="font:600 13px/1.35 Pretendard,sans-serif; color:#6A7187; margin-top:6px;">기존 시스템 이름</div>

@@ -445,6 +445,49 @@ test('activity in a browser: at the phone width K = 2…5 outcomes wrap in pairs
   }
 });
 
+// The layer-name column of a layer-map: a floor, a share of the figure (35%) capped at 160px, and 14px of padding either side. At the 343px a phone
+// leaves the sheet the share is 102px — 74px of text, and an English layer name ("Infrastructure", 95px at 13px/600 in Pretendard, "Authentication" 97px)
+// broke mid-word through overflow-wrap:anywhere. The floor is what keeps a name whole, so it is set from the longest word, not from the share.
+const LAYER_WORD = 97; // the widest 14-character English word at 13px/600 in Pretendard ("Authentication", "Configurations")
+
+test('layer-map: every layer row shares one label column — a floor that leaves a 14-character English word whole next to its 14px padding, a 35% share capped at 160px', () => {
+  const body = live(tpl('layer-map'));
+  const cols = [...body.matchAll(/grid-template-columns:minmax\((\d+)px,min\((\d+)px,(\d+)%\)\) minmax\(0,1fr\);/g)].map(m => m.slice(1).map(Number));
+  assert.equal(cols.length, 5); // layer · key · state-chip · external · legacy
+  assert.deepEqual([...new Set(cols.map(c => c.join('/')))].length, 1, 'every row sets the same label column, so the labels line up');
+  const [floor, cap, share] = cols[0];
+  assert.deepEqual([cap, share], [160, 35]);
+  assert.ok(floor <= cap, 'the floor never exceeds the cap');
+  assert.ok(floor - 2 * 14 >= LAYER_WORD + 6, `a ${floor}px label column leaves ${floor - 28}px of text for a ${LAYER_WORD}px word`);
+  assert.equal([...body.matchAll(/<div style="padding:12px 14px; (?:background|display)/g)].length, 5); // the label cells keep the 14px padding the desktop look is drawn with
+  assert.match(tpl('layer-map').src, /HOW TO FILL[\s\S]*\d+px[\s\S]*영문 층 이름/); // the reason is written down
+});
+
+test('layer-map in a browser: at the 343px a phone leaves the sheet an English layer name stays whole in every label, with 100px+ of room for text; at 1000px the column is the 160px cap, as before', (t) => {
+  const got = inChrome(t, pasted('layer-map'), (host, R, broken) => {
+    const out = [];
+    for (const width of [343, 1000]) {
+      const d = host(width), root = d.firstElementChild;
+      // the layer-name div of each row: the 13px/600 one in the first cell of every grid row
+      const names = [...root.querySelectorAll('[style*="grid-template-columns"] > div:first-child > div:nth-of-type(n)')].filter(e => /font:600 13px/.test(e.getAttribute('style') || ''));
+      const words = ['Infrastructure', 'Authentication', 'Configurations', 'Observability', 'FileGateway.'];
+      names.forEach((e, i) => { e.textContent = words[i % words.length]; });
+      out.push({ width, rows: names.length, text: names.map(e => Math.round(R(e.parentElement).width - 2 * parseFloat(getComputedStyle(e.parentElement).paddingLeft))), cell: names.map(e => Math.round(R(e.parentElement).width)), broken: names.flatMap(e => broken(e)), pad: names.map(e => getComputedStyle(e.parentElement).paddingLeft) });
+      d.remove();
+    }
+    return out;
+  });
+  if (!got) return;
+  const [phone, desk] = got;
+  assert.equal(phone.rows, 5);
+  assert.deepEqual(phone.broken, [], 'no layer name split mid-word at the phone width');
+  assert.ok(phone.text.every(w => w >= 100), `label text widths at 343px: ${phone.text}`);
+  assert.equal(new Set(phone.cell).size, 1, `the label columns line up (${phone.cell})`);
+  assert.deepEqual(desk.broken, []);
+  assert.deepEqual([...new Set(desk.cell)], [160], 'the desktop column is the 160px cap, unchanged');
+  assert.deepEqual([...new Set(desk.pad)], ['14px'], 'with the 14px padding it was drawn with');
+});
+
 test('use-case: the system label is in flow in grid row 1 (never absolute) and the actors start at row 2, under a boundary that spans R + 1 rows', () => {
   const t = tpl('use-case');
   const body = live(t);
