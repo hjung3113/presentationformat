@@ -180,7 +180,8 @@ Use the `font: {weight} {size}/{line-height} {family}` shorthand verbatim.
 | Token | Value | Use |
 |-------|-------|-----|
 | `sheet-max` | `1100px` | Paper-sheet max-width |
-| `sheet-pad` | `0 64px` | Sheet horizontal padding |
+| `sheet-pad` | `0 min(64px,6vw)` | Sheet horizontal padding (fixed 64px from a 1067px viewport up; §8.1) |
+| `shell-pad-x` | `min(40px,5vw)` | Nav-inner and hero horizontal padding (fixed 40px from a 800px viewport up; §8.1) |
 | `section-pad` | `56px 0` | Section vertical padding |
 | `lead-max` | `760px` | Lead / body paragraph max-width |
 | `card-pad` | `20–26px` | Card inner padding |
@@ -202,7 +203,7 @@ Use the `font: {weight} {size}/{line-height} {family}` shorthand verbatim.
 ```
 bg: linear-gradient(155deg,#0D9488 0%,#0F766E 55%,#115E59 100%)
 overlay: radial-gradient(circle at 85% 15%, rgba(255,255,255,.10) 0%, transparent 42%)
-padding: 78px 40px 92px / inner max-width:1020px (h1 max-width:820px)
+padding: 78px min(40px,5vw) 92px / inner max-width:1020px (h1 max-width:820px)
 eyebrow pill: bg rgba(255,255,255,.13), border rgba(255,255,255,.18), radius 100px, pad 9px 16px,
               600 12px, letter-spacing .1em, color #CCFBF1
 title: t-hero (Plex Sans 52px, white)
@@ -214,7 +215,7 @@ stat tiles (×4): flex, each bg rgba(255,255,255,.10) + border rgba(255,255,255,
 
 **Compact variant** — for `doc-type: pitch` / `audience: executive` (`authoring-guide.md §4.1`; `template.dc.html` carries it as a commented `VARIANT compact hero` block). Same structure, colors, eyebrow pill and token tiles; a **lower, smaller hero** so the sheet starts higher and the first section's lead plus its first figure row are on screen at 1366×900. Each line shows the compact value, then the default in parentheses.
 ```
-padding:        44px 40px 64px                       (78px 40px 92px)
+padding:        44px min(40px,5vw) 64px                       (78px min(40px,5vw) 92px)
 eyebrow pill:   margin-bottom 18px                       (30px)
 title:          700 36px/1.28, margin 0 0 14px, max-width 900px      (52px/1.28, 0 0 24px, 820px)
 lead (thesis):  400 16px/1.75, margin 0 0 8px, max-width 820px       (18px/1.85, 0 0 14px, 680px)
@@ -231,13 +232,13 @@ The paper sheet's `−44px` overlap and `8px` top padding do not change. Use it 
 max-width:1100px; margin:-44px auto 0;  /* overlaps the hero */
 background:#fff; border-radius:12px 16px 0 0;
 box-shadow:0 -24px 60px rgba(30,34,70,.10);
-padding:8px 64px 100px;
+padding:8px min(64px,6vw) 100px;
 ```
 
 ### 4.3 Sticky nav + progress bar
 ```
 sticky bar: position:sticky; top:0; z-index:50; background:rgba(255,255,255,.86); backdrop-filter:blur(10px);
-            border-bottom:1px solid #E2E5F0; height:54px; inner max-width:1100px; pad 0 40px
+            border-bottom:1px solid #E2E5F0; height:54px; inner max-width:1100px; pad 0 min(40px,5vw)
 link row:   class="nav-scroll"; overflow-x:auto (scrollbar hidden via global .nav-scroll CSS, WebKit only)
 links: 500 13px; #8A91A6 (inactive) → #0F766E + 700 (active, set imperatively by the observer)
 ref link (labels: en): the appendix/glossary link is de-emphasized: color #B6BBCB + a 10px vertical-align:super "ref" superscript; never highlighted active
@@ -567,9 +568,14 @@ An identifier that appears **inside prose** — a file name or path, a class / f
 ## 8. Responsive & anti-patterns
 
 ### 8.1 Responsive
-Supported reading target: desktop/company-computer view. Minimum review viewport is **1366×768**; preferred review viewport is **1440×900** or wider. Narrow/mobile overflow is not a release blocker unless explicitly requested for a given artifact.
+Reading target: desktop / company computer first — minimum review viewport **1366×768**, preferred **1440×900** or wider. **Narrow floor: 390px.** At a 390px-wide viewport (a phone) the page never scrolls sideways: the `verify-doc` visual tier measures it at 390×844 and warns (`composition:mobile-overflow` for the page, `composition:figure-overflow` for a figure wider than its own frame or content cut off by `overflow:hidden`). A figure whose geometry is inherently wide scrolls sideways **inside its own box** (`overflow-x:auto`) — allowed, and listed as `composition:mobile-scroll-figure`; it is never page overflow.
 
-Desktop-first reading document (~1100px). **No media queries by default** — mobile resilience comes only from intrinsic flex (hero stat tiles `flex:1; min-width:150px` in a `flex-wrap:wrap` row; nav row `overflow-x:auto`). If you must support narrow widths, the sanctioned minimum: below ~720px, `sheet-pad → 0 20px`; all `1fr 1fr` / `repeat(3,…)` grids collapse to one column; the comparison panel stacks (arrow rotates `↓`); the gantt label column shrinks. Don't improvise ad-hoc breakpoints — that's how "same author" breaks across docs.
+**No media queries, no classes.** Narrow behavior comes only from inline CSS functions:
+- **Shell paddings are fluid** — sheet `padding:8px min(64px,6vw) 100px`; nav inner `padding:0 min(40px,5vw)`; hero `padding:<top> min(40px,5vw) <bottom>`. At a viewport ≥1067px that is the fixed 64px / 40px; a 390px phone gets ≈23px / 20px, which leaves figures about 343px of sheet width. This section owns the values (the `sheet-pad` row of §3.2 and the paddings in §4.1–§4.3 mirror them).
+- **Components reflow** by their own markup (`repeat(auto-fit,minmax(min(100%,Npx),1fr))`, `flex-wrap` with a `flex-basis` floor, `minmax(0,Nfr)` tracks, `overflow-wrap:anywhere`) or scroll inside themselves — the per-component values live in `core/components/*`, the rule in `core/components.md §4` "Narrow widths". Paste them; do not re-derive.
+- **Chrome** — hero stat tiles `flex:1; min-width:150px` in a `flex-wrap:wrap` row; the nav link row `overflow-x:auto`.
+
+Hand-written content follows the same two rules: a run that cannot break (mono identifier, path, URL, signature) takes `overflow-wrap:anywhere`, and a grid cell takes `min-width:0` or a `minmax(0,Nfr)` track. Don't improvise breakpoints or per-document narrow rules — that is how "same author" breaks across documents.
 
 ### 8.2 Anti-patterns (never do)
 - Teal inside an AS-IS zone, or slate/red inside a TO-BE zone (the strongest fingerprint).

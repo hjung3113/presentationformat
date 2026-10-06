@@ -7,12 +7,15 @@
 @use 화면이 어떤 영역으로 나뉘고, 사용자가 어느 영역에서 무엇을 하는지가 주장이다. UI 원칙, 화면 구성, 역할별 작업 위치, 목록+상세 구조.
 @avoid 화면을 오가는 순서 → process-row/swimlane. 기능 목록만 → card-grid. 실제 스크린샷이 있으면 이미지 + 번호 범례(같은 범례 형식)를 쓴다.
 @limits 영역 3–6, 번호 마커 3–6
+@limits-x regions=3..6
 @data layout: list-detail|page|workbench | regions: ①영역명: 하는 일, ②영역명: 하는 일 … ⑤영역명[above]: 하는 일, ⑥영역명[below]: 하는 일 (5·6번째는 메인 열 위/아래 띠)
 HOW TO FILL
   1. 레이아웃 프리셋을 고른다 (와이어프레임 상자의 grid-template-columns):
-       목록+상세(list-detail)  44px 150px 1fr 200px   → 레일 · 사이드바 · 목록 · 상세 패널 (기본)
-       페이지(page)            44px 150px 1fr          → 상세 패널 칸을 지운다
-       작업대(workbench)       44px 1fr 240px          → 사이드바 칸을 지운다
+       목록+상세(list-detail)  44px 150px minmax(112px,1fr) 200px   → 레일 · 사이드바 · 목록 · 상세 패널 (기본)
+       페이지(page)            44px 150px minmax(112px,1fr)          → 상세 패널 칸을 지운다
+       작업대(workbench)       44px minmax(112px,1fr) 240px          → 사이드바 칸을 지운다
+     와이어프레임 상자는 스크롤 래퍼(overflow-x:auto)에 들어 있고 상자는 min-width:min-content 다 — 휴대폰 폭에서는 상자가 래퍼 안에서 가로로 스크롤되고
+     범례는 상자 아래로 내려온다. 두 값은 그대로 둔다.
   2. 각 영역 안 회색 막대는 내용 자리표시(skeleton)다. 글자를 쓰지 않는다. 영역 이름만 mono 라벨로.
   3. 사용자가 행동하는 곳에 번호 마커(①②③…)를 둔다. 오른쪽 범례에 같은 번호로 "영역 — 하는 일"을 적는다.
      마커 수 = 범례 수. 강조색 칸(선택 행·주 버튼)은 문서가 말하는 핵심 행동 한 곳에만.
@@ -27,13 +30,13 @@ HOW TO FILL
      labels: ko 문서(사용자용)는 "상단 바" · "사이드바" · "툴바" · "목록" · "하단 줄" · "상세" 처럼 화면에서 쓰는 우리말로 바꾼다
      (core/components.md §4 "라벨 언어").
 -->
-<div data-component="screen-map" style="background:⟨fig-tint⟩; border:1px solid ⟨border-fig⟩; border-radius:⟨r:card-sm⟩; padding:24px;">
-  <div style="display:grid; grid-template-columns:1.45fr 1fr; gap:22px; align-items:start;">
+<div data-component="screen-map" style="background:⟨fig-tint⟩; border:1px solid ⟨border-fig⟩; border-radius:⟨r:card-sm⟩; padding:24px; overflow-wrap:anywhere;">
+  <div style="display:flex; flex-wrap:wrap; gap:22px; align-items:flex-start;">
     <!-- wireframe: preset list-detail -->
-    <div style="display:grid; grid-template-columns:44px 150px 1fr 200px; grid-template-rows:34px minmax(236px,auto); border:1px solid ⟨border-node⟩; border-radius:⟨r:node-lg⟩; overflow:hidden; background:⟨white⟩;">
+    <div style="flex:1.45 1 480px; min-width:0; overflow-x:auto;"><div style="display:grid; grid-template-columns:44px 150px minmax(112px,1fr) 200px; grid-template-rows:34px minmax(236px,auto); border:1px solid ⟨border-node⟩; border-radius:⟨r:node-lg⟩; min-width:min-content; overflow:hidden; background:⟨white⟩;">
       <!-- top bar -->
       <div style="grid-column:1 / -1; display:flex; align-items:center; gap:8px; padding:0 10px; background:⟨fill-50⟩; border-bottom:1px solid ⟨border-node⟩;">
-        <span style="font:700 9.5px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨muted-text⟩;">⟦TOP BAR⟧</span>
+        <span style="font:700 9.5px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨muted-text⟩; white-space:nowrap;">⟦TOP BAR⟧</span>
         <div style="flex:1; height:6px; max-width:120px; border-radius:3px; background:⟨border⟩;"></div>
         <span style="margin-left:auto; width:18px; height:18px; border-radius:⟨r:circle⟩; background:⟨accent⟩; color:⟨white⟩; font:700 10px/18px ⟨f:mono⟩; text-align:center;">1</span>
       </div>
@@ -46,7 +49,7 @@ HOW TO FILL
       </div>
       <!-- sidebar -->
       <div style="background:⟨fill-100⟩; border-right:1px solid ⟨border-node⟩; padding:10px; display:flex; flex-direction:column; gap:7px;">
-        <div style="display:flex; align-items:center; justify-content:space-between;"><span style="font:700 9.5px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨muted-text⟩;">⟦SIDEBAR⟧</span><span style="width:18px; height:18px; border-radius:⟨r:circle⟩; background:⟨accent⟩; color:⟨white⟩; font:700 10px/18px ⟨f:mono⟩; text-align:center;">2</span></div>
+        <div style="display:flex; align-items:center; justify-content:space-between;"><span style="font:700 9.5px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨muted-text⟩; white-space:nowrap;">⟦SIDEBAR⟧</span><span style="width:18px; height:18px; border-radius:⟨r:circle⟩; background:⟨accent⟩; color:⟨white⟩; font:700 10px/18px ⟨f:mono⟩; text-align:center;">2</span></div>
         <div style="height:6px; width:80%; border-radius:3px; background:⟨border⟩;"></div>
         <div style="height:6px; width:65%; border-radius:3px; background:⟨border⟩;"></div>
         <div style="height:6px; width:72%; border-radius:3px; background:⟨border⟩;"></div>
@@ -55,53 +58,53 @@ HOW TO FILL
       <!-- main list column (the OPTIONAL strips above / below add regions 5 and 6) -->
       <div style="padding:10px; display:flex; flex-direction:column; gap:6px;">
         <!-- OPTIONAL region 5 (above the list): toolbar / filter / tabs strip -->
-        <div style="display:flex; align-items:center; gap:8px; padding:5px 8px; background:⟨fill-50⟩; border:1px solid ⟨border⟩; border-radius:4px;"><span style="font:700 9.5px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨muted-text⟩;">⟦TOOLBAR⟧</span><div style="flex:1; height:6px; max-width:70px; border-radius:3px; background:⟨border⟩;"></div><span style="margin-left:auto; width:18px; height:18px; border-radius:⟨r:circle⟩; background:⟨accent⟩; color:⟨white⟩; font:700 10px/18px ⟨f:mono⟩; text-align:center;">5</span></div>
-        <div style="display:flex; align-items:center; justify-content:space-between;"><span style="font:700 9.5px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨muted-text⟩;">⟦LIST⟧</span><span style="width:18px; height:18px; border-radius:⟨r:circle⟩; background:⟨accent⟩; color:⟨white⟩; font:700 10px/18px ⟨f:mono⟩; text-align:center;">3</span></div>
+        <div style="display:flex; align-items:center; gap:8px; padding:5px 8px; background:⟨fill-50⟩; border:1px solid ⟨border⟩; border-radius:4px;"><span style="font:700 9.5px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨muted-text⟩; white-space:nowrap;">⟦TOOLBAR⟧</span><div style="flex:1; height:6px; max-width:70px; border-radius:3px; background:⟨border⟩;"></div><span style="margin-left:auto; width:18px; height:18px; border-radius:⟨r:circle⟩; background:⟨accent⟩; color:⟨white⟩; font:700 10px/18px ⟨f:mono⟩; text-align:center;">5</span></div>
+        <div style="display:flex; align-items:center; justify-content:space-between;"><span style="font:700 9.5px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨muted-text⟩; white-space:nowrap;">⟦LIST⟧</span><span style="width:18px; height:18px; border-radius:⟨r:circle⟩; background:⟨accent⟩; color:⟨white⟩; font:700 10px/18px ⟨f:mono⟩; text-align:center;">3</span></div>
         <div style="height:26px; border:1px solid ⟨border⟩; border-radius:4px; display:flex; align-items:center; padding:0 8px;"><div style="height:6px; width:60%; border-radius:3px; background:⟨border⟩;"></div></div>
         <!-- selected row = accent -->
         <div style="height:26px; border:1px solid ⟨accent⟩; background:⟨accent-050⟩; border-radius:4px; display:flex; align-items:center; padding:0 8px;"><div style="height:6px; width:70%; border-radius:3px; background:⟨accent-line⟩;"></div></div>
         <div style="height:26px; border:1px solid ⟨border⟩; border-radius:4px; display:flex; align-items:center; padding:0 8px;"><div style="height:6px; width:52%; border-radius:3px; background:⟨border⟩;"></div></div>
         <div style="height:26px; border:1px solid ⟨border⟩; border-radius:4px; display:flex; align-items:center; padding:0 8px;"><div style="height:6px; width:64%; border-radius:3px; background:⟨border⟩;"></div></div>
         <!-- OPTIONAL region 6 (below the list): pagination / bulk-action strip -->
-        <div style="margin-top:auto; display:flex; align-items:center; gap:8px; padding:5px 8px; background:⟨fill-50⟩; border:1px solid ⟨border⟩; border-radius:4px;"><span style="font:700 9.5px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨muted-text⟩;">⟦FOOTER⟧</span><div style="flex:1; height:6px; max-width:70px; border-radius:3px; background:⟨border⟩;"></div><span style="margin-left:auto; width:18px; height:18px; border-radius:⟨r:circle⟩; background:⟨accent⟩; color:⟨white⟩; font:700 10px/18px ⟨f:mono⟩; text-align:center;">6</span></div>
+        <div style="margin-top:auto; display:flex; align-items:center; gap:8px; padding:5px 8px; background:⟨fill-50⟩; border:1px solid ⟨border⟩; border-radius:4px;"><span style="font:700 9.5px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨muted-text⟩; white-space:nowrap;">⟦FOOTER⟧</span><div style="flex:1; height:6px; max-width:70px; border-radius:3px; background:⟨border⟩;"></div><span style="margin-left:auto; width:18px; height:18px; border-radius:⟨r:circle⟩; background:⟨accent⟩; color:⟨white⟩; font:700 10px/18px ⟨f:mono⟩; text-align:center;">6</span></div>
       </div>
       <!-- detail panel -->
       <div style="border-left:1px solid ⟨border-node⟩; padding:10px; display:flex; flex-direction:column; gap:7px; background:⟨white⟩;">
-        <div style="display:flex; align-items:center; justify-content:space-between;"><span style="font:700 9.5px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨muted-text⟩;">⟦DETAIL⟧</span><span style="width:18px; height:18px; border-radius:⟨r:circle⟩; background:⟨accent⟩; color:⟨white⟩; font:700 10px/18px ⟨f:mono⟩; text-align:center;">4</span></div>
+        <div style="display:flex; align-items:center; justify-content:space-between;"><span style="font:700 9.5px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨muted-text⟩; white-space:nowrap;">⟦DETAIL⟧</span><span style="width:18px; height:18px; border-radius:⟨r:circle⟩; background:⟨accent⟩; color:⟨white⟩; font:700 10px/18px ⟨f:mono⟩; text-align:center;">4</span></div>
         <div style="height:8px; width:75%; border-radius:3px; background:⟨hairline⟩;"></div>
         <div style="height:6px; width:90%; border-radius:3px; background:⟨border⟩;"></div>
         <div style="height:6px; width:82%; border-radius:3px; background:⟨border⟩;"></div>
         <div style="height:46px; border-radius:4px; background:⟨fill-100⟩;"></div>
         <div style="margin-top:auto; height:24px; border-radius:4px; background:⟨accent⟩;"></div>
       </div>
-    </div>
+    </div></div>
     <!-- legend: same numbers as the markers -->
-    <div style="display:flex; flex-direction:column; gap:12px;">
+    <div style="display:flex; flex-direction:column; gap:12px; flex:1 1 331px; min-width:0;">
       <!-- ▼ REPEAT per marker -->
-      <div style="display:grid; grid-template-columns:22px 1fr; gap:10px; align-items:start;">
+      <div style="display:grid; grid-template-columns:22px minmax(0,1fr); gap:10px; align-items:start;">
         <span style="width:20px; height:20px; border-radius:⟨r:circle⟩; background:⟨accent⟩; color:⟨white⟩; font:700 10.5px/20px ⟨f:mono⟩; text-align:center;">1</span>
         <div><div style="font:600 13px/1.35 ⟨f:body⟩; color:⟨ink-900⟩;">⟦영역 1 이름⟧</div><div style="font:400 12px/1.6 ⟨f:body⟩; color:⟨body⟩;">⟦하는 일 한 줄⟧</div></div>
       </div>
       <!-- ▲ /REPEAT -->
-      <div style="display:grid; grid-template-columns:22px 1fr; gap:10px; align-items:start;">
+      <div style="display:grid; grid-template-columns:22px minmax(0,1fr); gap:10px; align-items:start;">
         <span style="width:20px; height:20px; border-radius:⟨r:circle⟩; background:⟨accent⟩; color:⟨white⟩; font:700 10.5px/20px ⟨f:mono⟩; text-align:center;">2</span>
         <div><div style="font:600 13px/1.35 ⟨f:body⟩; color:⟨ink-900⟩;">⟦영역 2 이름⟧</div><div style="font:400 12px/1.6 ⟨f:body⟩; color:⟨body⟩;">⟦하는 일 한 줄⟧</div></div>
       </div>
-      <div style="display:grid; grid-template-columns:22px 1fr; gap:10px; align-items:start;">
+      <div style="display:grid; grid-template-columns:22px minmax(0,1fr); gap:10px; align-items:start;">
         <span style="width:20px; height:20px; border-radius:⟨r:circle⟩; background:⟨accent⟩; color:⟨white⟩; font:700 10.5px/20px ⟨f:mono⟩; text-align:center;">3</span>
         <div><div style="font:600 13px/1.35 ⟨f:body⟩; color:⟨ink-900⟩;">⟦영역 3 이름⟧</div><div style="font:400 12px/1.6 ⟨f:body⟩; color:⟨body⟩;">⟦하는 일 한 줄⟧</div></div>
       </div>
-      <div style="display:grid; grid-template-columns:22px 1fr; gap:10px; align-items:start;">
+      <div style="display:grid; grid-template-columns:22px minmax(0,1fr); gap:10px; align-items:start;">
         <span style="width:20px; height:20px; border-radius:⟨r:circle⟩; background:⟨accent⟩; color:⟨white⟩; font:700 10.5px/20px ⟨f:mono⟩; text-align:center;">4</span>
         <div><div style="font:600 13px/1.35 ⟨f:body⟩; color:⟨ink-900⟩;">⟦영역 4 이름⟧</div><div style="font:400 12px/1.6 ⟨f:body⟩; color:⟨body⟩;">⟦하는 일 한 줄⟧</div></div>
       </div>
       <!-- OPTIONAL legend item for region 5 (delete with its strip) -->
-      <div style="display:grid; grid-template-columns:22px 1fr; gap:10px; align-items:start;">
+      <div style="display:grid; grid-template-columns:22px minmax(0,1fr); gap:10px; align-items:start;">
         <span style="width:20px; height:20px; border-radius:⟨r:circle⟩; background:⟨accent⟩; color:⟨white⟩; font:700 10.5px/20px ⟨f:mono⟩; text-align:center;">5</span>
         <div><div style="font:600 13px/1.35 ⟨f:body⟩; color:⟨ink-900⟩;">⟦영역 5 이름⟧</div><div style="font:400 12px/1.6 ⟨f:body⟩; color:⟨body⟩;">⟦하는 일 한 줄⟧</div></div>
       </div>
       <!-- OPTIONAL legend item for region 6 (delete with its strip) -->
-      <div style="display:grid; grid-template-columns:22px 1fr; gap:10px; align-items:start;">
+      <div style="display:grid; grid-template-columns:22px minmax(0,1fr); gap:10px; align-items:start;">
         <span style="width:20px; height:20px; border-radius:⟨r:circle⟩; background:⟨accent⟩; color:⟨white⟩; font:700 10.5px/20px ⟨f:mono⟩; text-align:center;">6</span>
         <div><div style="font:600 13px/1.35 ⟨f:body⟩; color:⟨ink-900⟩;">⟦영역 6 이름⟧</div><div style="font:400 12px/1.6 ⟨f:body⟩; color:⟨body⟩;">⟦하는 일 한 줄⟧</div></div>
       </div>

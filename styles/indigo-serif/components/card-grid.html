@@ -9,32 +9,35 @@
 @use 서로 동등한 항목 3–6개를 나열한다: 문제점, 발견 사항, 원칙, 리스크(등급 없음), 요구사항. 항목 사이에 순서·흐름·관계가 없다.
 @avoid 항목 사이에 순서가 있다 → process-row. 관계·연결이 있다 → er-relations/layer-map. 행과 열이 모두 의미가 있다 → table/matrix. 이미 도식이 있는 섹션에 "더 자세히"를 덧붙이는 용도로 쓰지 않는다.
 @limits 카드 3–6 (2열), 짧은 글로스면 3열
+@limits-x items=3..6
 @data items: 번호(1부터 맨 정수) · 제목(명사구) · 설명 1–3문장
 HOW TO FILL
-  1. 카드 본문이 한 문단이면 2열(기본), 두 줄 이하 글로스면 grid-template-columns:repeat(3,1fr).
+  1. 열 수는 폭에 따라 저절로 정해진다(고칠 열 수 값이 없다). 카드 본문이 한 문단이면 기본 그대로(데스크톱 2열, 휴대폰 1열),
+     두 줄 이하 글로스면 그리드의 grid-template-columns 를 repeat(auto-fit,minmax(max(min(100%,220px),calc(33.333% - 10px)),1fr)) 로 바꾼다(데스크톱 3열).
   2. 카드 하나 = ▼REPEAT 하나. 번호 칩은 맨 정수 1, 2, 3 … (카드 순서대로 1부터). "2.1" · "5.3" 같은 섹션.항목 소수 표기는 쓰지 않는다 —
      게이트의 numbers-traced 가 소수를 "계획에 없는 수"로 읽어 막는다(맨 정수 칩은 번호 배지라 면제). 리스크 카드(왼쪽 강조선)는 번호 칩이 없다.
   3. 카드 4개 이상이면 아래 결론 칩(→ 한 줄 종합)으로 그리드를 닫는다. 아니면 지운다.
   4. 리스크(대응책 포함)는 "왼쪽 강조선 카드" 변형을 쓴다.
+  5. 카드 div(리스크 카드 포함)의 data-item 속성은 지우지 않는다. 카드를 복사하거나 지우면 속성도 함께 간다. 게이트가 섹션 리드의 "N가지·N개" 같은 개수를 data-item 개수와 견주어 어긋나면 figures:lead-count 로 경고한다.
 -->
-<div data-component="card-grid">
-  <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+<div data-component="card-grid" style="overflow-wrap:anywhere;">
+  <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(max(min(100%,300px),calc(50% - 8px)),1fr)); gap:14px;">
     <!-- ▼ REPEAT per card -->
-    <div style="border:1px solid #E7E9F3; border-radius:14px; padding:20px 22px; background:#FFFFFF;">
+    <div style="border:1px solid #E7E9F3; border-radius:14px; padding:20px 22px; background:#FFFFFF;" data-item>
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:9px;"><span style="font:700 12px/1 'JetBrains Mono',Pretendard,monospace; color:#4338CA; background:#EEF0FF; border-radius:5px; padding:6px 9px;">⟦1⟧</span><span style="font:600 15.5px/1.35 Pretendard,sans-serif; color:#15172B;">⟦항목 1 제목⟧</span></div>
       <div style="font:400 14px/1.7 Pretendard,sans-serif; color:#5A6175;">⟦항목 1 설명 (1–3문장)⟧</div>
     </div>
     <!-- ▲ /REPEAT -->
-    <div style="border:1px solid #E7E9F3; border-radius:14px; padding:20px 22px; background:#FFFFFF;">
+    <div style="border:1px solid #E7E9F3; border-radius:14px; padding:20px 22px; background:#FFFFFF;" data-item>
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:9px;"><span style="font:700 12px/1 'JetBrains Mono',Pretendard,monospace; color:#4338CA; background:#EEF0FF; border-radius:5px; padding:6px 9px;">⟦2⟧</span><span style="font:600 15.5px/1.35 Pretendard,sans-serif; color:#15172B;">⟦항목 2 제목⟧</span></div>
       <div style="font:400 14px/1.7 Pretendard,sans-serif; color:#5A6175;">⟦항목 2 설명 (1–3문장)⟧</div>
     </div>
-    <div style="border:1px solid #E7E9F3; border-radius:14px; padding:20px 22px; background:#FFFFFF;">
+    <div style="border:1px solid #E7E9F3; border-radius:14px; padding:20px 22px; background:#FFFFFF;" data-item>
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:9px;"><span style="font:700 12px/1 'JetBrains Mono',Pretendard,monospace; color:#4338CA; background:#EEF0FF; border-radius:5px; padding:6px 9px;">⟦3⟧</span><span style="font:600 15.5px/1.35 Pretendard,sans-serif; color:#15172B;">⟦항목 3 제목⟧</span></div>
       <div style="font:400 14px/1.7 Pretendard,sans-serif; color:#5A6175;">⟦항목 3 설명 (1–3문장)⟧</div>
     </div>
     <!-- VARIANT risk card (left accent rule + mitigation) -->
-    <div style="border:1px solid #E7E9F3; border-left:3px solid #4338CA; border-radius:0 12px 12px 0; padding:16px 20px; background:#FFFFFF;">
+    <div style="border:1px solid #E7E9F3; border-left:3px solid #4338CA; border-radius:0 12px 12px 0; padding:16px 20px; background:#FFFFFF;" data-item>
       <div style="font:600 15px/1.35 Pretendard,sans-serif; color:#15172B; margin-bottom:6px;">⟦리스크 이름⟧</div>
       <div style="font:400 13px/1.65 Pretendard,sans-serif; color:#6A7187;">⟦리스크 설명 한 줄⟧</div>
       <div style="font:400 13px/1.65 Pretendard,sans-serif; color:#5A6175; margin-top:4px;">→ ⟦대응 한 줄⟧</div>

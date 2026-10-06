@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, mkdirSync, copyFileSync, readdirSync, symlinkSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, copyFileSync, readdirSync, readFileSync, symlinkSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -25,7 +25,7 @@ function repoCopy() {
   const root = join(base, '발표 자료', 'pf');
   const lib = join(root, '.claude', 'lib');
   mkdirSync(lib, { recursive: true });
-  for (const f of ['components.mjs', 'gate.mjs', 'prose.mjs', 'plan-schema.mjs', 'verify-doc.mjs']) copyFileSync(join(REPO, '.claude/lib', f), join(lib, f));
+  for (const f of ['components.mjs', 'gate.mjs', 'prose.mjs', 'figures.mjs', 'facts.mjs', 'figure-counts.mjs', 'plan-schema.mjs', 'verify-doc.mjs']) copyFileSync(join(REPO, '.claude/lib', f), join(lib, f));
   mkdirSync(join(root, 'core', 'components'), { recursive: true });
   for (const f of readdirSync(join(REPO, 'core/components'))) copyFileSync(join(REPO, 'core/components', f), join(root, 'core/components', f));
   mkdirSync(join(root, 'styles', STYLE), { recursive: true });
@@ -72,6 +72,45 @@ test('through a symlinked directory the CLIs still run (realpath-based entry gua
     const r = run(join(link, 'plan-schema.mjs'), [fixture('plan-bad-shape.md')]);
     assert.equal(r.status, 1);
     assert.match(r.stderr, /INVALID/);
+  } finally {
+    rmSync(base, { recursive: true, force: true });
+  }
+});
+
+test('plan-schema: a bug inside the plan check is not reported as an unreadable component template — only the template read is wrapped, so the stack survives', () => {
+  const { base, root, lib } = repoCopy();
+  try {
+    const counts = join(lib, 'figure-counts.mjs');
+    const src = readFileSync(counts, 'utf8');
+    const bugged = src.replace('export function countWarnings(component, limits, figureData, section) {', "export function countWarnings(component, limits, figureData, section) {\n  throw new Error('boom in the plan check');");
+    assert.notEqual(bugged, src, 'the fixture found the function to break');
+    writeFileSync(counts, bugged);
+    const p = run(join(lib, 'plan-schema.mjs'), [fixture('plan-valid.md')]);
+    assert.notEqual(p.status, 0, p.stdout);
+    assert.match(p.stderr, /boom in the plan check/);
+    assert.match(p.stderr, /\n\s+at .*countWarnings/); // the stack points at the bug
+    assert.doesNotMatch(p.stderr, /cannot read the component templates/);
+    assert.notEqual(p.status, 2, 'exit 2 is for an unreadable template or a usage error, not for a bug');
+  } finally {
+    rmSync(base, { recursive: true, force: true });
+  }
+});
+
+test('a malformed @limits-x in a component template exits 2 with one clean message from plan-schema and verify-doc — never a stack trace out of an import', () => {
+  const { base, root, lib } = repoCopy();
+  try {
+    const tpl = join(root, 'core/components/bar-chart.html');
+    writeFileSync(tpl, readFileSync(tpl, 'utf8').replace('@limits-x bars=3..8', '@limits-x bars=3..'));
+    const p = run(join(lib, 'plan-schema.mjs'), [fixture('plan-valid.md')]);
+    assert.equal(p.status, 2, p.stdout + p.stderr);
+    assert.match(p.stderr, /^cannot read the component templates: @limits-x: "bars=3\.\." is not key=min\.\.max\n$/);
+
+    const doc = join(root, 'doc.dc.html');
+    writeFileSync(doc, '<!DOCTYPE html><html><body></body></html>');
+    const v = run(join(lib, 'verify-doc.mjs'), [doc, '--style', STYLE, '--no-visual', '--canonical-support', join(root, 'styles', STYLE, 'support.js')]);
+    assert.equal(v.status, 2, v.stdout + v.stderr);
+    assert.match(v.stderr, /^@limits-x: "bars=3\.\." is not key=min\.\.max\nusage: node verify-doc\.mjs /);
+    for (const out of [p.stderr, v.stderr]) assert.doesNotMatch(out, /\n\s+at /); // no stack
   } finally {
     rmSync(base, { recursive: true, force: true });
   }

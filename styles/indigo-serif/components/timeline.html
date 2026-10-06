@@ -9,6 +9,7 @@
 @use 날짜가 붙은 사건·마일스톤을 순서대로 보여 준다. 지금까지 한 일과 다음 일정, 릴리스 이력, 의사결정 이력.
 @avoid 기간이 겹치는 작업 계획 → gantt. 날짜 없는 단계 → process-row.
 @limits 항목 3–8
+@limits-x items=3..8
 @data items: 날짜 · 제목 · 한 줄 설명 · 상태(done|current|planned|risk) (아직 없는 항목은 항목 뒤 [planned] — 상태 planned 와 같다)
 HOW TO FILL
   1. 항목 하나 = ▼REPEAT 행 하나. 위에서 아래로 시간 순서.
@@ -17,42 +18,43 @@ HOW TO FILL
   4. 예정(planned) 항목은 어느 행에나 올 수 있다 — 마지막 행이 아니어도 된다. 세로선은 이어진 채 예정 변형(점선 원 · 회색 제목 · 상태 칩)으로 그린다.
      figure-data 에서 상태가 planned 이거나 항목 뒤에 "[planned]" 가 붙은 항목이 이 모양이다.
      칩 문구는 출처의 상태 그대로(예정·계획·미설계·미구현·대기). 날짜만으로 예정임이 분명하면 칩은 지워도 된다.
+     예정 행(마지막 행 변형 포함)의 data-state="planned" 는 지우지 않는다 — planned:unmarked 가 읽는 표지다(core/components.md §4).
      아직 없는 것을 완료·현재 항목과 같은 모양으로 그리지 않는다(core/components.md §4 공통 규칙).
   5. 마지막 행은 상태와 상관없이 "마지막 행" 처리를 한다: 점 칸의 background 를 center top/2px 9px 한 줄로 바꿔 세로선이 점에서 멈추게 한다(아래 마지막 행 예시).
 -->
-<div data-component="timeline" style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:22px 24px 10px;">
+<div data-component="timeline" style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:22px 24px 10px; overflow-wrap:anywhere;">
   <!-- ▼ REPEAT per item — done -->
-  <div style="display:grid; grid-template-columns:96px 28px 1fr; column-gap:10px;">
+  <div style="display:grid; grid-template-columns:96px 28px minmax(0,1fr); column-gap:10px;">
     <div style="font:600 11.5px/1.4 'JetBrains Mono',Pretendard,monospace; color:#6A7187; text-align:right; padding-top:2px;">⟦YYYY-MM-DD⟧</div>
     <div style="display:flex; justify-content:center; background:linear-gradient(#E7E9F3,#E7E9F3) center/2px 100% no-repeat;"><div style="width:18px; height:18px; border-radius:50%; background:#1F8A5B; color:#FFFFFF; font:700 10px/18px Pretendard,sans-serif; text-align:center;">✓</div></div>
     <div style="padding:0 0 18px;"><div style="font:600 13.5px/1.4 Pretendard,sans-serif; color:#15172B;">⟦사건 A 제목⟧</div><div style="font:400 12.5px/1.6 Pretendard,sans-serif; color:#5A6175; margin-top:2px;">⟦한 줄 설명⟧</div></div>
   </div>
   <!-- ▲ /REPEAT -->
-  <div style="display:grid; grid-template-columns:96px 28px 1fr; column-gap:10px;">
+  <div style="display:grid; grid-template-columns:96px 28px minmax(0,1fr); column-gap:10px;">
     <div style="font:600 11.5px/1.4 'JetBrains Mono',Pretendard,monospace; color:#6A7187; text-align:right; padding-top:2px;">⟦YYYY-MM-DD⟧</div>
     <div style="display:flex; justify-content:center; background:linear-gradient(#E7E9F3,#E7E9F3) center/2px 100% no-repeat;"><div style="width:18px; height:18px; border-radius:50%; background:#1F8A5B; color:#FFFFFF; font:700 10px/18px Pretendard,sans-serif; text-align:center;">✓</div></div>
     <div style="padding:0 0 18px;"><div style="font:600 13.5px/1.4 Pretendard,sans-serif; color:#15172B;">⟦사건 B 제목⟧</div><div style="font:400 12.5px/1.6 Pretendard,sans-serif; color:#5A6175; margin-top:2px;">⟦한 줄 설명⟧</div></div>
   </div>
   <!-- VARIANT current -->
-  <div style="display:grid; grid-template-columns:96px 28px 1fr; column-gap:10px;">
+  <div style="display:grid; grid-template-columns:96px 28px minmax(0,1fr); column-gap:10px;">
     <div style="font:700 11.5px/1.4 'JetBrains Mono',Pretendard,monospace; color:#4338CA; text-align:right; padding-top:2px;">⟦YYYY-MM 현재⟧</div>
     <div style="display:flex; justify-content:center; background:linear-gradient(#E7E9F3,#E7E9F3) center/2px 100% no-repeat;"><div style="width:18px; height:18px; border-radius:50%; background:#4338CA; box-shadow:0 0 0 4px #EEF0FF;"></div></div>
     <div style="padding:0 0 18px;"><div style="font:600 13.5px/1.4 Pretendard,sans-serif; color:#4338CA;">⟦현재 항목 제목⟧</div><div style="font:400 12.5px/1.6 Pretendard,sans-serif; color:#5A6175; margin-top:2px;">⟦한 줄 설명⟧</div></div>
   </div>
   <!-- VARIANT risk -->
-  <div style="display:grid; grid-template-columns:96px 28px 1fr; column-gap:10px;">
+  <div style="display:grid; grid-template-columns:96px 28px minmax(0,1fr); column-gap:10px;">
     <div style="font:600 11.5px/1.4 'JetBrains Mono',Pretendard,monospace; color:#6A7187; text-align:right; padding-top:2px;">⟦YYYY-MM⟧</div>
     <div style="display:flex; justify-content:center; background:linear-gradient(#E7E9F3,#E7E9F3) center/2px 100% no-repeat;"><div style="width:18px; height:18px; border-radius:50%; background:#FBF1EE; border:2px solid #B4543F; box-sizing:border-box;"></div></div>
     <div style="padding:0 0 18px;"><div style="font:600 13.5px/1.4 Pretendard,sans-serif; color:#15172B;">⟦위험 항목 제목⟧ <span style="font:700 10px/1 Pretendard,sans-serif; color:#B4543F; background:#FBF1EE; border-radius:5px; padding:3px 6px; vertical-align:2px;">⟦지연 위험⟧</span></div><div style="font:400 12.5px/1.6 Pretendard,sans-serif; color:#5A6175; margin-top:2px;">⟦한 줄 설명⟧</div></div>
   </div>
   <!-- VARIANT planned, not the last row ([planned]): dashed empty circle + muted text + state chip; the line keeps running -->
-  <div style="display:grid; grid-template-columns:96px 28px 1fr; column-gap:10px;">
+  <div style="display:grid; grid-template-columns:96px 28px minmax(0,1fr); column-gap:10px;" data-state="planned">
     <div style="font:600 11.5px/1.4 'JetBrains Mono',Pretendard,monospace; color:#6A7187; text-align:right; padding-top:2px;">⟦YYYY-MM⟧</div>
     <div style="display:flex; justify-content:center; background:linear-gradient(#E7E9F3,#E7E9F3) center/2px 100% no-repeat;"><div style="width:18px; height:18px; border-radius:50%; background:#FFFFFF; border:2px dashed #B6BBCB; box-sizing:border-box;"></div></div>
     <div style="padding:0 0 18px;"><div style="font:600 13.5px/1.4 Pretendard,sans-serif; color:#6A7187;">⟦예정 항목 제목⟧ <span style="font:700 11px/1 Pretendard,sans-serif; color:#6A7187; background:#FFFFFF; border:1px solid #B6BBCB; border-radius:5px; padding:2px 6px; white-space:nowrap; vertical-align:2px;">⟦예정⟧</span></div><div style="font:400 12.5px/1.6 Pretendard,sans-serif; color:#6A7187; margin-top:2px;">⟦한 줄 설명⟧</div></div>
   </div>
   <!-- VARIANT planned + last row (line stops at the dot) -->
-  <div style="display:grid; grid-template-columns:96px 28px 1fr; column-gap:10px;">
+  <div style="display:grid; grid-template-columns:96px 28px minmax(0,1fr); column-gap:10px;" data-state="planned">
     <div style="font:600 11.5px/1.4 'JetBrains Mono',Pretendard,monospace; color:#6A7187; text-align:right; padding-top:2px;">⟦YYYY-MM⟧</div>
     <div style="display:flex; justify-content:center; background:linear-gradient(#E7E9F3,#E7E9F3) center top/2px 9px no-repeat;"><div style="width:18px; height:18px; border-radius:50%; background:#FFFFFF; border:2px dashed #B6BBCB; box-sizing:border-box;"></div></div>
     <div style="padding:0 0 18px;"><div style="font:600 13.5px/1.4 Pretendard,sans-serif; color:#6A7187;">⟦예정 항목 제목⟧ <span style="font:700 11px/1 Pretendard,sans-serif; color:#6A7187; background:#FFFFFF; border:1px solid #B6BBCB; border-radius:5px; padding:2px 6px; white-space:nowrap; vertical-align:2px;">⟦예정⟧</span></div><div style="font:400 12.5px/1.6 Pretendard,sans-serif; color:#6A7187; margin-top:2px;">⟦한 줄 설명⟧</div></div>

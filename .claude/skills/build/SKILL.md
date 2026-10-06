@@ -140,12 +140,21 @@ band takes `margin:24px 0 0` as the first block and `margin:8px 0 0` after a sec
 4. Paste the `<div data-component="…">` block under the section's lead paragraph and fill it from
    the section's `figure-data`: replace every `⟦…⟧`, copy `▼ REPEAT` units to match the item count,
    pick `VARIANT`s by meaning, delete unused `OPTIONAL` blocks, and set only the values the header
-   names (column count — the same N in **every** `repeat(N,1fr)` and `calc(100% / N)` — a
+   names (column count — the same N in **every** `repeat(N,…)` and `calc(100% / N)` — a
    `grid-column`, a percentage slot together with its label, or a margin from its lookup table).
    **A thing the plan marks `[planned]` (or whose fact is `designed`/`planned`) is drawn with the component's
    planned variant** — muted dashed outline + state chip (11px bold) — never the built look (`core/components.md` §4). A `[state: 텍스트]`
    marker (layer-map: built, but on sample data — e.g. `[state: 가짜 데이터]`) keeps the built look and adds the state chip with the plan's own words.
    A `card-grid` number chip is a bare integer 1, 2, 3 — never `2.1` (the gate's `numbers-traced` reads a decimal as an untraced number).
+   **Keep the template's `data-value` / `data-item` / `data-zone` / `data-state` attributes** (appended after an element's `style`): a copied unit
+   carries its marker, a deleted unit takes it along, `data-value` is the number the unit's label shows, a legacy / AS-IS unit
+   keeps `data-zone="as-is"`, and a planned or state-chip variant keeps its `data-state` (`core/components.md` §4 "Figure markers") — the exit gate reads them.
+   **Bind every number the plan cites to its fact with `data-f`.** The plan writes `[F07]` after a number; write that id as
+   `data-f="F07"` on the narrowest element that shows the number — the value span of a tile or hero token, the sub-line that states a
+   count, a table cell (two rows: `data-f="F06 F07"`). The gate checks every numeral inside the element against the cited row's
+   `값` and `사실`, so cite the row the number comes from; the number never moves to a different id to pass. A number whose row is
+   `designed` / `planned` keeps the plan's planned wording (계획·예정·미구현·미설계·제안·요청·대기) within 3 elements of the `data-f`, or sits inside a
+   variant that carries `data-state="planned|caveat"` (`core/components.md` §4 "Numbers come from the plan").
    **A `text-table` section pastes the `table` component and fills it from the section's figure-data**
    (`columns: … | rows: …` — those columns and those rows, nothing added or dropped). A table in the
    reference appendix (`sref`), or a secondary table that follows another figure, uses the table's **soft
@@ -247,7 +256,8 @@ node .claude/lib/verify-doc.mjs <doc.dc.html> --canonical-support <styles/<style
 
 `--style` supplies the accent color and turns on the palette check; `--plan` turns on the section,
 shape, number and term-sheet checks — always pass both. (`--no-visual` skips the headless-browser tier; the
-environment variable `CHROME_PATH` picks the browser.)
+environment variable `CHROME_PATH` picks the browser; on a machine without outbound network add
+`--local-assets <dir>` or set `DC_LOCAL_ASSETS` so the tier can render at all — `.claude/README.md` Prerequisites.)
 
 **Success means the literal last gate line `GATE PASSED (k/k checks)`** — nothing else. An exit code of
 0 without that line (for example because the command did not run) is not a pass; `GATE FAILED` is not
@@ -278,13 +288,22 @@ The gate runs two tiers:
     re-paste it from `styles/<style>/components/`.
   - `palette` — a color literal is not in the style's `design.md`: it was invented or copied from
     another style; replace it with that style's own token value.
-  - `grid-consistency` — a component's `repeat(M,1fr)` differs from its `calc(100% / N)`: make the
+  - `grid-consistency` — a component's `repeat(M,…)` differs from its `calc(100% / N)`: make the
     count the same everywhere in that component (every row, header and background).
+  - `chart-proportions` — a `data-value`-marked bar, row or segment is drawn at a size its number does not say, or its label shows
+    another number than its `data-value` (the width/height slot, the label and `data-value` are three copies of one number; bar
+    heights share one scale — value ÷ the chart's largest value × 100, or the value itself on a 0–100 axis — and a stacked bar's segments add up to 100): correct the wrong copy. Runs only
+    where the markers are — never delete a marker to pass.
+  - `zone-colors` — the style's accent (or a tint of it, `accent-050` …) sits inside a `data-zone="as-is"` zone (an AS-IS column, a legacy gantt bar, the legacy
+    layer), or a `data-zone="to-be"` zone is mostly warn/slate fills: re-paste that zone from the variant of the right meaning
+    (current state = the slate/warn family, target = the accent family). Never move or delete the `data-zone` attribute to pass.
   - `known-components`, `plan-alignment`, `plan-shapes` — every `data-component` is a real component, the
     document's `<section>` ids equal the plan's `sN`/`sref` ids (act dividers are `<div>`s), and every
     section holds the component its shape requires.
-  - `numbers-traced` — a number shown in the document is not in the plan or its `facts.md`. **The number
-    must come from the plan or be removed from the document.** Never add a number to the plan or facts
+  - `numbers-traced` — a number shown in the document is not in the plan or its `facts.md`, or a `data-f` binding is wrong (an id
+    that is no row of the ledger, or a numeral the cited row does not state — the row is named in the detail). **The number
+    must come from the plan or be removed from the document.** Fix a binding by citing the row the number comes from, or by correcting
+    the number to what that row says. Never add a number to the plan or facts
     just to pass: if the number is real it needs a source, so go back to `/plan`, add the fact with its
     citation, and re-confirm.
   - `terms-consistent` — runs only when the plan's `facts.md` has a `## T — 용어` table. A banned variant
@@ -292,18 +311,26 @@ The gate runs two tiers:
     sheet to make the gate pass** — a different word is a decision for `/plan`; without a table the gate prints a `NOTE`
     and skips it.
   It also prints non-blocking `figures:*` rows (coverage per section, low variety, bare sections,
-  crowded sections) — read them. **This gate does not verify semantic-color-split correctness** — it
-  cannot tell whether the AS-IS color family stayed in AS-IS/problem zones and the accent stayed in
-  TO-BE/target zones per the style's color law. That correctness depends on following Step 4's
-  state→color mapping and is checked, if at all, by the visual render tier below or by eyeballing
-  against the style's answer key — never claim the mechanical gate guarantees color-zone correctness.
-- A **warning-only desktop composition tier** that only runs if a headless browser is available.
+  crowded sections, and `figures:lead-count` — the section lead's count word, e.g. "다섯 단계", matches none of the figure's
+  `data-item` counts: make the lead and the figure agree) and `planned:unmarked` (a `data-f` element cites a `designed` / `planned`
+  fact and has no planned wording or `data-state` within 3 levels: say it is planned, or use the component's planned variant) — read them. A `NOTE  chart-proportions` / `zone-colors` /
+  `figures:lead-count  not checked …` row means a figure lost its markers or never had them: restore the template's attributes.
+  **The gate verifies the semantic color split only inside marked zones** — `zone-colors` catches the accent inside an AS-IS
+  zone and a mostly warn/slate TO-BE zone (the `before-after` columns, `gantt` legacy and new-system bars, the `layer-map` legacy
+  layer). Everywhere else (tiles, chips, callouts, a cost number in the accent, a legacy element drawn outside a marked zone) it
+  still cannot tell whether the AS-IS family stayed in AS-IS/problem state and the accent in target state. That depends on
+  following Step 4's state→color mapping and on eyeballing against the style's answer key — never claim the mechanical gate
+  guarantees color-zone correctness beyond the marked zones.
+- A **warning-only composition tier** that only runs if a headless browser is available.
   It serves the document over localhost and evaluates desktop viewports `1366x768` and `1440x900`
   for section height, stacked grids, 4-column text grids, missing primary figures, low-emphasis
-  decision asks, meaning-block count, and desktop overflow. These rows print as `WARN` and do
-  **not** change the exit code until the warnings have been calibrated against accepted artifacts.
-  If a headless browser is not available, the gate reports the visual check as unverified rather
-  than silently skipping it — treat that as an honest "not checked," not a pass.
+  decision asks, meaning-block count, and desktop overflow, then a `390x844` phone-width probe that
+  warns `composition:mobile-overflow` when the page scrolls sideways (the row names the figures that
+  cause it — read it, and fix the figure or its container rather than hiding the overflow). These
+  rows print as `WARN` and do **not** change the exit code until the warnings have been calibrated
+  against accepted artifacts. If a headless browser is not available, or the document cannot load
+  its runtime (no network and no `--local-assets`), the gate reports the visual check as unverified
+  rather than silently skipping it — treat that as an honest "not checked," not a pass.
 
 - **Non-blocking Korean-writing rows**, printed as `WARN` whatever the plan: `prose:long-sentence` (>110 characters),
   `prose:dot-chain` (4+ `·` in one sentence), `prose:dash` (more than one `—` in a sentence, or more than 3 in a lead),

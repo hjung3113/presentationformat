@@ -24,14 +24,23 @@ The gate itself is zero-dependency Node under `.claude/lib/`:
 - `.claude/lib/prose.mjs` — the text-level half of the gate, also pure: the reader's visible text split into
   paragraph-like blocks, the `## T — 용어` term-sheet parser, `terms-consistent` / `terms:first-use`, and the
   Korean `prose:*` heuristics. `gate.mjs` imports it, so the two files travel together.
+- `.claude/lib/figures.mjs` — the figure half of the gate, also pure: `chart-proportions`, `zone-colors` and
+  `figures:lead-count`, read from the `data-value` / `data-item` / `data-zone` markers the component templates carry
+  (see **Figure markers** below). `gate.mjs` imports it; it imports two palette helpers back from `gate.mjs`.
+- `.claude/lib/facts.mjs` — fact bindings, also pure: the `facts.md` F-table parser (`parseFacts`), the numeral helpers
+  `numbers-traced` shares, and the `data-f` / `planned:unmarked` checks (see **Fact bindings** below). `gate.mjs` imports it; it
+  reads the tag index of `figures.mjs`.
+- `.claude/lib/figure-counts.mjs` — the plan-time counter registry: for each component, how to count each of its `@limits-x`
+  keys in that component's figure-data format (see **Plan checks**). `plan-schema.mjs` imports it.
 - `.claude/lib/verify-doc.mjs` — CLI entry that runs the gate against a `.dc.html`
-  (`<doc> --canonical-support <support.js> [--style <id>] [--accent <hex>] [--plan <content-plan.md>] [--no-visual]`),
+  (`<doc> --canonical-support <support.js> [--style <id>] [--accent <hex>] [--plan <content-plan.md>] [--no-visual] [--local-assets <dir>]`),
   checks the `support.js` sidecar is byte-identical to the canonical copy, runs the visual tier (see
   below) and ends with the **GATE line**.
 - `.claude/lib/plan-schema.mjs` — schema/shape checks for `content-plan.md`. CLI entry
   (`node .claude/lib/plan-schema.mjs <content-plan.md>`): exit `0` valid (prints each section's id,
   shape and title, then any `WARN` lines), `1` malformed (lists header and per-section errors — see
-  **Plan checks**), `2` usage or read error. `/plan` runs it to self-check its emitted plan before
+  **Plan checks**), `2` usage error, an unreadable plan or an unreadable component template (only the template read is reported that
+  way — a bug inside the check itself surfaces with its stack). `/plan` runs it to self-check its emitted plan before
   Gate 2; `/build` runs it as a fail-fast at Step 1 ingest.
 - `.claude/lib/components.mjs` — the **component generator**. Reads `core/components/*.html`
   (structure, role placeholders) and each style's `design.tokens.md` (`colors`, `rounded`,
@@ -40,17 +49,21 @@ The gate itself is zero-dependency Node under `.claude/lib/`:
   `build [--style <id>]` regenerates, `check` exits 1 if anything committed is stale, `list` / `shapes`
   print the catalog. Outputs are committed so documents need no build step. `parseMeta` also exposes
   `dataKeys` (`[{key, optional}]`, from each template's `@data` line), which `plan-schema.mjs` matches
-  a section's `figure-data` against.
+  a section's `figure-data` against, and `limitsX` (`{key: {min, max}}`, from the `@limits-x` line).
 - `.claude/lib/test/*.test.mjs` — the test suite for the above (`node --test .claude/lib/test/*.test.mjs`),
   including: generated outputs up to date, every template renders in every style with no unresolved
   token, `core/` carries zero HEX, `core/components.md` §1 matches the templates' `@shape` metadata,
   each template's first `@data` key matches the figure-data contract, no template hard-codes an English label
-  outside a `⟦slot⟧` (label language), informative text uses `⟨muted-text⟩` and every style's `muted-text` is ≥4.5:1 on
+  outside a `⟦slot⟧` (label language), the figure markers (`figures.test.mjs`: each check with a positive, a negative and its
+  false-positive probes; `components.test.mjs`: the exact marker counts and zero findings on every rendered template and gallery in every style), the visual tier's local-asset routing (`localAssetFor`: hosts, scoped packages, misses, path traversal) and its 390px probe (page overflow, figure overflow, silent clipping; the three component galleries must be clean at 390px), the narrow-width template contract (no bare `Nfr` track outside `minmax()`, `overflow-wrap:anywhere` on every root, a scrolling root has its `min-width:min-content` box; per component in a browser at the 343px a phone leaves: `activity` outcomes wrap in pairs with the rail over the first row and nothing scrolls, the `use-case` system label never touches a use case, a `decision-table` key and a `sequence` label are not split mid-word and those two scroll inside their box, a `status-board` row wraps to two lines with its memo in view, with or without the progress column — also at the fractional width of a zoomed page, where the `before-after` pivot shows one arrow and the `status-board` header folds with its rows; `before-after`, `activity` and `status-board` keep their host's width in a flex column (flex-start, center) and a flex row — `components.test.mjs`; `composition:figure-collapsed`, with a collapsed figure, a grid, a flex row and a figure beside text as probes, and the three roots without their `width:100%` — `verify-doc.test.mjs`; the gallery's `mobile-scroll-figure` row names exactly which figures scroll — `verify-doc.test.mjs`), informative text uses `⟨muted-text⟩` and every style's `muted-text` is ≥4.5:1 on
   white with a mono stack that ends in its Korean body font, the optional `labels: en|ko` plan key, the three CLIs run from a
   path with spaces/Korean and through a symlink (they once exited 0 without running), the worked
   example (`test/fixtures/example-brief/`) passes every plan-aware check, and the text half of the gate
   (`prose.test.mjs`: visible-text blocks, the term-sheet parser, `terms-consistent` / sref exemption, each `prose:*`
-  heuristic positive and negative).
+  heuristic positive and negative), the fact bindings (`facts.test.mjs`: ledger parsing, `data-f` passes and failures, the
+  set-membership fallback, `planned:unmarked` with markers at each ancestor level), and the plan-time counts (`plan-schema.test.mjs`:
+  every `@limits-x` key has a counter with an at-limit and an over-limit case, and a drift test holds each `@limits-x` range to the
+  `min–max` in its template's `@limits` prose).
 
 ### The GATE line
 
@@ -66,10 +79,13 @@ wrapper, a `| tail`, or a wrong path can all hide a failure). A structural failu
 tier. Usage errors (missing flag, unknown `--style`) exit `2` with the usage text.
 
 Flags: `--style <id>` resolves `styles/<id>/` from the lib's own location, supplies the accent
-(`design.tokens.md` `colors.accent`) when `--accent` is absent, and enables the `palette` check.
+(`design.tokens.md` `colors.accent`) when `--accent` is absent, enables the `palette` check and supplies the accent / warn /
+slate roles the TO-BE half of `zone-colors` reads.
 `--accent <hex>` wins over the style's. `--plan <file>` enables `plan-alignment`, `plan-shapes`
 and `numbers-traced` — and `terms-consistent` when the plan's facts file has a `## T — 용어` table. `--no-visual` skips the browser tier. At least one of `--accent` / `--style`
-is required.
+is required. `--local-assets <dir>` (env `DC_LOCAL_ASSETS`; the flag wins; a directory that does not exist exits `2`, but the env var
+is only looked at when the visual tier runs — a stale one does not stop a `--no-visual` gate) lets the visual tier render without
+outbound network — see **Prerequisites**.
 
 ### Gate checks
 
@@ -84,16 +100,20 @@ Every check is hard-fail unless marked non-blocking.
 | `inline-only` | no class selector in any `<style>` — including `.a, .b {` lists, `div.x {` and rules inside `@media`. Attribute/element/pseudo selectors, `@font-face`, `::selection` and `::-webkit-scrollbar` stay allowed |
 | `slots-filled` · `no-role-placeholders` | no `⟦…⟧` slot and no `⟨role⟩` token left outside HTML comments |
 | `palette` (`--style`) | every `#RGB` / `#RRGGBB` in a `style` attribute (or `fill`/`stroke`/… attribute) or `<style>` text is in the style's `design.md` (case-insensitive, `#abc` = `#AABBCC`). Comments, `<script>`, `&#…;` entities, `href`/`id` fragments and `url(#…)` are ignored |
-| `grid-consistency` | inside each `[data-component]` root that uses `calc(100% / N)`, every `repeat(M, 1fr)` has M = N (nested components are judged on their own) |
+| `grid-consistency` | inside each `[data-component]` root that uses `calc(100% / N)`, every `repeat(M, 1fr)` / `repeat(M, minmax(0, 1fr))` / floored `repeat(M, minmax(<length>, 1fr))` has M = N (nested components are judged on their own) |
+| `chart-proportions` | every `data-value`-marked bar, row and segment of a `bar-chart`, `hbar-chart`, `stacked-bar` or `status-board` is drawn at the size its number says (±2 points) and shows that number — **Figure markers** below. Runs only where the markers exist |
+| `zone-colors` | no `data-zone="as-is"` zone uses the style's accent, and no `data-zone="to-be"` zone is mostly warn/slate fills — **Figure markers** below. Runs only where the markers exist |
 | `known-components` | every `data-component` is a template id |
 | `plan-alignment` (`--plan`) | plan sections map to ids — a numbered title `N.` → `sN`, an unnumbered title → `sref` — and every one exists in the document; the document has no numbered `sN` the plan lacks. Act dividers must be `<div>`, never `<section>` |
 | `plan-shapes` (`--plan`) | each section (looked up by id) carries the component its shape requires |
-| `numbers-traced` (`--plan`) | every numeral a reader sees is traceable — next section |
+| `numbers-traced` (`--plan`) | every numeral a reader sees is traceable, and a number marked `data-f` is a number of the facts row it cites — next sections |
 | `terms-consistent` (`--plan` + a facts file with a `## T — 용어` table) | no `쓰지 않을 말` variant of the term sheet appears in the visible text outside the `sref` appendix — see **Term sheet** below. Without a T table the gate prints `NOTE  terms-consistent  not checked …` |
 
-Non-blocking `figures:*` rows report per-section coverage, low variety, bare sections, and more
-than 2 main figures in one section. Non-blocking `prose:*` and `terms:first-use` rows report Korean-writing
-problems — see **Prose warnings** below.
+Non-blocking `figures:*` rows report per-section coverage, low variety, bare sections, more
+than 2 main figures in one section, and a lead whose count disagrees with its figure (`figures:lead-count`). The non-blocking
+`planned:unmarked` row reports an element whose `data-f` cites a `designed` / `planned` fact with no planned marker near it
+(an `INFO` row says when every such element is marked). Non-blocking
+`prose:*` and `terms:first-use` rows report Korean-writing problems — see **Prose warnings** below.
 
 **`numbers-traced`** exists so nothing in the document can be a number nobody supplied (template
 examples, plausible-looking invention). *Document side:* only visible text — comments, `<script>`,
@@ -107,6 +127,68 @@ eyebrows, a text node that is only 1–2 digits inside a section (step/number ba
 full, so a made-up hero token fails. Failure lists up to 8 untraced numbers with ~20 characters of
 context each; fix it by putting the real number in the plan (with its citation) or removing it
 from the document — never by editing the check.
+
+**Fact bindings (`data-f`, `planned:unmarked`).** Set membership alone cannot tell a right number from a wrong one that happens to
+exist elsewhere in the ledger, so a number can be bound to its row. An element that shows a number from the facts ledger carries
+`data-f="F03"` (several rows: `data-f="F03 F07"`); `core/components.md` §4 "Numbers come from the plan" is the authoring contract.
+`facts.mjs` reads the F tables of the facts file named by the plan (every `F\d+` row of every table whose header has `id` and
+`사실` or `값`, columns found by header name, so the order may differ and the table may be split under sub-headings) and, for each
+`data-f` element: an id that is not a ledger row **fails**; a numeral the element shows (thousands commas and leading zeros
+normalized, `F`/`Q`/`C` ids and `L12` refs dropped) that is in none of the cited rows' `값` or `사실` **fails** — the `사실`
+sentence counts because the ledger states 16,796 and 15,768 in the sentence of F04, whose `값` is the ratio 1.07. Both are folded into the
+`numbers-traced` row. The element's text is then removed from the set-membership fallback, which still reads every number
+without `data-f` exactly as before, so a document without `data-f` passes unchanged. Put `data-f` on the narrowest element that shows
+the number (the value span of a tile, the sub-line that states the count): everything the element shows is checked — except what a
+`data-f` element nested inside it shows, which that element's own binding checks (`<b data-f="F01">18일<i data-f="F04">1.07</i></b>`).
+A decimal's trailing zeros do not matter (`1.070` is `1.07`, `2.0` is `2`).
+`planned:unmarked` (warning) covers the other half of the ledger's `상태`: an element citing a row whose 상태 is `designed` or
+`planned` must not read as built, so it needs `계획` / `예정` / `미구현` / `미설계` / `제안` / `요청` / `대기` in its own text or in an ancestor's text within 3
+levels, or `data-state="planned"` / `"caveat"` on itself or on an ancestor within 3 levels (the planned and state-chip variants of
+`layer-map`, `pipeline`, `tree`, `timeline`, `sequence` and `before-after` carry `data-state`). An ancestor that holds other `data-f` elements
+is a shared container, so only its `data-state` counts — its text belongs to all of them. The row never fails the gate.
+
+**Figure markers (`chart-proportions`, `zone-colors`, `figures:lead-count`).** The component templates carry four attributes,
+appended after the element's `style="…"` (`core/components.md` §4 "Figure markers" is the authoring contract); `figures.mjs`
+reads three of them from the live markup (comments and `<script>` are ignored) and `facts.mjs` the fourth, `data-state`
+(**Fact bindings** above). A check has a row only where its markers are; a figure that
+could carry them but does not prints `NOTE  <check>  not checked — N figure(s) carry no …`, so a document built before the markers
+existed passes unchanged.
+
+- `chart-proportions` (hard) — over the `data-value` elements of each chart component (a non-numeric value such as `—` is skipped).
+  One scale per chart, read off its largest-value mark (k = size ÷ value): `bar-chart` — the bar's own `height:N%` is within ±2 of
+  value × k, and the largest bar's size is more than 2 (a largest bar drawn at ~0 gives no scale — every other bar would be "proportional"
+  to nothing, as would a chart of all-0 bars with one drawn: with a largest value of 0 every bar must be drawn at 0) and at most 102 (it must
+  fit the plot), so a chart drawn to its maximum (k = 100 ÷ max) and a
+  percent chart on an absolute 0–100 axis (k = 1) both pass while a bar off the proportion fails. `hbar-chart` and `status-board` —
+  the first `width:N%` inside the row is within ±2 of the value when the row's text shows `value%` (or `value％`) — and at most 102, like
+  the largest proportional bar (`120%` drawn at 120% fails) — else within ±2 of
+  value × k over the rows that show no `%` (`70/100건` drawn at 70% passes; the `status-board` 대기 row has no bar and no marker). `stacked-bar`: each
+  segment's `width:N%` is within ±2 of its value and the marked segments add up to 100 ±2. In all four, `data-value` must equal a
+  numeral the element shows (±0.5; an element with no digits, like a textless segment, is skipped). A marked element with no
+  `height`/`width` percentage to compare fails — the marker sits on the wrong element. A chart that marks some of its bars and not
+  others prints `NOTE  chart-proportions  partly checked …` naming how many `height:N%` / `width:N%` bars carry no marker (the
+  fills inside a marked row and the columns that wrap a marked bar are not bars). A chart that marks nothing prints
+  `NOTE  chart-proportions  not checked — N figure(s) carry no data-value` whatever its bars are drawn in (a `bar-chart` in px
+  included); only a `status-board` that draws no bar at all (built without its progress column) is left out. Entities in a label (`&#55;`, `&#x37;`) read as the
+  character they name.
+- `zone-colors` (hard) — over the `data-zone` elements. `as-is` fails when any hex inside it (a `style`, `fill`, `stroke`, `color` or
+  `bgcolor` attribute) is the style's accent or any other color of the accent family — `accent` and every `accent-*` token, e.g.
+  `accent-050` (`--accent` wins for the accent itself; without `--style` only the accent is known). `to-be` fails when the zone's background fills
+  (`background`, `background-color`, `fill`, `bgcolor` — never borders or text) in the problem family outnumber those in the accent family, so
+  one slate chip among accent fills passes. The families come from `design.tokens.md`: accent family = every `accent*` token; problem
+  family = `warn`, `warn-2`, `warn-bg`, `warn-line`, `slate`, `slate-bar`, `mono-tint`, `mono-dashed`, minus any literal the accent family
+  shares. Only fills count because a style may reuse one literal for a border and a problem fill (feedbackops-light paints `slate-bar`
+  and `border-node` the same), and an element drawn at 2px or less in width or height is a rule, not a fill (every style paints its
+  `hairline` in the `slate-bar` literal). Without `--style` only the AS-IS half runs and a `NOTE` names the skipped TO-BE zones. A `before-after`
+  with no `data-zone` is always listed in the NOTE; a `gantt` or `layer-map` only when it paints a problem-family fill (a legacy bar or
+  layer) and has no marker.
+- `figures:lead-count` (non-blocking) — the lead of each `sN` section (its first `<p>` of 25+ characters) against the number of
+  `data-item` markers in the section's first figure that has any. Count words are `두 세 네 다섯 여섯 일곱 여덟 아홉` or the digits 2–9
+  followed by 가지·단계·곳·개·층·갈래·구간·축·종 (`개` as a counter, never inside 개월/개선/개발); 1 and anything above 9 never counts
+  and the M of "N개 중 M개" is dropped. It warns only when the lead has count words and none equals the figure's count, so
+  "7단계 … 다섯 구간" over five steps passes; one `INFO` row lists what was read. Marked today: `card-grid` cards, `process-row` steps,
+  `pipeline` stage columns, `kpi-row` tiles. `layer-map` layers, `timeline` rows and `table` rows are not: calibrating against the
+  three pasted documents, the pitch's layer-map lead counts five responsibilities over four layers — a false positive.
 
 **Term sheet (`terms-consistent`, `terms:first-use`).** `/plan` Step 1 fixes one word per concept in the
 optional `## T — 용어` table of `facts.md` (`| 용어 | 뜻 | 처음 나올 때 | 쓰지 않을 말 |`; template
@@ -171,11 +253,17 @@ INVALID.
 - **Warnings:** more than 2 sections with shape `decision`; `audience: executive` with more than 12
   numbered sections (the text suggests grouping into acts — the section count follows the content, and a document that
   covers several products/systems gives each its own section set; `core/components.md` §5), any of `code-structure|interaction|entity-relations|rule-table`, a first
-  numbered section that is not `headline-metric|decision`, or a last one that is not `decision`. Three **countable
-  limits** also warn (never error; `COUNT_LIMITS` in `plan-schema.mjs`, the same numbers as each component's `@limits`): more than 5
-  goals for one actor in an `actor-goals` figure-data (`actors: A: 목표, 목표 ‖ B: …`), more than 5 modules in one layer of a
-  `layered-structure` figure-data (bracket tags such as `[planned]` and a bare `key` marker do not count), and more rows in a
-  `text-table` (`rows:` split on `;`) than `table.html` allows: more than 7 in a body table, more than 10 in the `sref` appendix.
+  numbered section that is not `headline-metric|decision`, or a last one that is not `decision`. **Countable
+  limits** also warn (never error): every component whose countable parts have a limit states it twice, as the prose `@limits`
+  line and as machine-readable `@limits-x` tokens (`key=min..max`, e.g. `layers=2..5 modules-per-layer=1..5`; `parseLimitsX` in
+  `components.mjs`). For a section whose shape maps to such a component, `figure-counts.mjs` counts each key in the component's
+  figure-data format (`COUNTERS`: component → key → counter) and warns on a count **above `max`** only, naming the section, the
+  thing counted and the limit — `s2 (hierarchy): "분석 공간" has 7 leaves (>6) — tree shows 0–6 per child; …`. Counters read
+  top-level separators only (a comma inside `( )`, `[ ]` or a number such as `1,200` is not a separator) and under-count what
+  they cannot tell apart, so an ambiguous format yields a missed warning rather than a false one. `COUNT_LIMITS` in `plan-schema.mjs`
+  (goals per actor, modules per layer, table rows 7, `sref` appendix rows 10) is derived from `@limits-x`. A new countable
+  part gets its `@limits-x` token **and** a counter; a drift test fails when a range differs from the `min–max` in the prose, when a
+  prose range has no token, or when a token has no counter.
 
 ## Prerequisites
 
@@ -184,12 +272,17 @@ INVALID.
   ```bash
   node --test .claude/lib/test/*.test.mjs
   ```
+  The browser-gated tests skip when there is no headless browser; the one that renders a real gallery
+  also needs `DC_LOCAL_ASSETS` (see **Local assets** below).
 - **Headless browser (optional)** — the visual tier wants Chrome/Chromium. It is found via
   `$CHROME_PATH` (checked first), then `google-chrome`, `chromium`, `chromium-browser`,
   `chrome-headless-shell` on `PATH`, then the macOS app bundle. As root (containers) it passes
-  `--no-sandbox`. The documents load React/Babel and fonts from CDNs, so the browser also needs
-  **outbound network** to render them. The tier never blocks the gate; it ends in one of:
-  - `VISUAL: composition warnings 0 at 1366x768 and 1440x900` — measured, clean;
+  `--no-sandbox`. The documents load React/Babel (unpkg) and Pretendard (jsdelivr) from CDNs, and Google
+  Fonts, so the browser needs **outbound network** to render them — or `--local-assets` (below). It
+  renders three viewports in turn: `1366x768` and `1440x900` for the desktop composition rows, and
+  `390x844` (a phone, scrollbars hidden) for the narrow-width probe. The tier never blocks the gate;
+  it ends in one of:
+  - `VISUAL: composition warnings 0 at 1366x768, 1440x900 and 390x844` — measured, clean;
   - warning rows, then `VISUAL: composition warnings are non-blocking until calibrated against accepted artifacts`;
   - `VISUAL: UNVERIFIED (reason)` — no browser, the browser died or timed out at every viewport,
     or no `<section>` rendered at all (so "0 warnings" would be meaningless). Treat it as "not
@@ -197,6 +290,29 @@ INVALID.
 
   The figure-panel colors the analyzer looks for come from the active style's `fig-tint` /
   `border-fig` tokens (indigo-serif values when `--style` is absent).
+- **Local assets (optional, for offline rendering)** — `--local-assets <dir>` or env `DC_LOCAL_ASSETS=<dir>`
+  answers the page's CDN requests from `<dir>/node_modules` (the flag wins; a directory that does not
+  exist exits `2` — for the env var only when the visual tier runs, never under `--no-visual`; no flag and no env changes nothing). `unpkg.com/<pkg>@<ver>/<path>` and
+  `cdn.jsdelivr.net/{npm/<pkg>@<ver>,gh/<user>/<repo>@<ver>}/<path>` map to `<dir>/node_modules/<pkg>/<path>`
+  (scoped names too; `x.min.css` falls back to `x.css`); Google Fonts requests fail at once, so the page
+  falls back to system fonts and text metrics differ slightly from the real render. Install what the
+  document loads, at the versions `support.js` asks for (it checks React with SRI, so they must match
+  exactly): `npm install --prefix <dir> react@<v> react-dom@<v> pretendard@<v>`, plus `@babel/standalone@<v>`
+  if a document uses JSX. A request the directory cannot answer, or a package at another version, is
+  printed as a `local-assets:*` row below, and a page that then renders nothing is `UNVERIFIED`.
+
+  Rows that come from the 390px viewport and from `--local-assets` (`composition:figure-collapsed` is the one 390px row the desktop
+  viewports print too). The 390px viewport skips the desktop height and stacking rows, so these are the only rows it prints:
+
+  | row | level | printed when |
+  |---|---|---|
+  | `composition:mobile-overflow` | WARN | at 390px the page scrolls sideways (`scrollWidth` > viewport + 2). Lists the offending `data-component` ids as `id×n (+Npx)` (n figures with an overflowing node, N the largest overshoot), then non-figure offenders as `<section> <tag>×n "text"`. A node inside an ancestor with `overflow-x` auto, scroll, hidden or clip is clipped or scrolls, so it is not an offender. Page level only — the next row covers a figure that is too wide without making the page scroll |
+  | `composition:figure-overflow` | WARN | at 390px a `data-component` root is wider than its frame — also when the page itself does not scroll sideways — or silently loses content. Two parts, each `id×n (+Npx)`: `wider than their frame:` — the root's border box extends past its parent's content box (so it ends inside the sheet's side padding), or its own contents spill out of it (`overflow-x` visible and `scrollWidth` > `clientWidth` + 2); `content clipped by overflow:hidden:` — the root or a node inside it has `overflow-x` hidden or clip and `scrollWidth` > `clientWidth` + 2 (a `text-overflow: ellipsis` truncation is intended and ignored). A root whose parent scrolls, or that scrolls itself (`overflow-x` auto or scroll), is not reported here: that is `composition:mobile-scroll-figure` |
+  | `composition:figure-collapsed` | WARN | a `data-component` root renders narrower than half the content width of its parent — at **any** of the three viewports, so the desktop ones print it too. Lists `id×n (Wpx of Fpx)` (n roots, W the narrowest, F its frame) then `render narrower than half their frame at Npx`. It is the failure the two overflow rows cannot see: a figure whose layout reads `100cqw` (`container-type:inline-size`) has no intrinsic width, so in a host that sizes to its content (a flex column with `align-items:flex-start` or `center`, an `inline-block`, `width:fit-content`, a grid `auto` track) it folds to its padding while nothing overflows and nothing is clipped (`before-after` 58px wide and ~1,950px tall). A figure that shares its row with another visible child of the same parent (a grid cell, a figure beside a figure or a paragraph) takes a share of the frame on purpose and is skipped, as is a frame under 120px. `core/components.md` §4 "Narrow widths" is the contract |
+  | `composition:mobile-scroll-figure` | INFO | a figure root, or a node inside it, has `overflow-x` auto or scroll and really scrolls at 390px — the intended narrow fallback, listed so it is visible rather than counted as overflow |
+  | `composition:narrow-metrics` | INFO | the 390px viewport rendered; carries the section count and the document `scrollWidth` |
+  | `local-assets` | INFO | `--local-assets` is active; names the directory and any host that was blocked |
+  | `local-assets:version` · `local-assets:miss` | WARN | a package is installed at another version than the URL asks for · a requested file is not under `<dir>/node_modules` |
 
 ## Host-neutral install
 

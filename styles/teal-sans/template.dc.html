@@ -36,7 +36,7 @@
 
   <!-- sticky nav (z-index 50). Keep nav labels Korean & short (2-4 chars). -->
   <div data-nav style="position:sticky; top:0; z-index:50; background:rgba(255,255,255,.86); backdrop-filter:blur(10px); border-bottom:1px solid #E2E5F0;">
-    <div style="max-width:1100px; margin:0 auto; padding:0 40px; display:flex; align-items:center; gap:20px; height:54px;">
+    <div style="max-width:1100px; margin:0 auto; padding:0 min(40px,5vw); display:flex; align-items:center; gap:20px; height:54px;">
       <a href="#top" style="text-decoration:none; font:700 14px/1 IBM Plex Sans; color:#15172B; white-space:nowrap; letter-spacing:-.01em;">⟦문서 제목⟧ <span style="color:#0F766E;">⟦부제⟧</span></a>
       <div class="nav-scroll" style="display:flex; gap:18px; overflow-x:auto; margin-left:auto;">
         <a data-navlink="s1" href="#s1" style="text-decoration:none; font:500 13px/1 IBM Plex Sans; color:#8A91A6; white-space:nowrap;">⟦배경⟧</a>
@@ -49,7 +49,7 @@
   </div>
 
   <!-- HERO -->
-  <div id="top" style="background:linear-gradient(155deg,#0D9488 0%,#0F766E 55%,#115E59 100%); color:#fff; padding:78px 40px 92px; position:relative; overflow:hidden;">
+  <div id="top" style="background:linear-gradient(155deg,#0D9488 0%,#0F766E 55%,#115E59 100%); color:#fff; padding:78px min(40px,5vw) 92px; position:relative; overflow:hidden;">
     <div style="position:absolute; inset:0; background-image:radial-gradient(circle at 85% 15%, rgba(255,255,255,.10) 0%, transparent 42%); pointer-events:none;"></div>
     <div style="max-width:1020px; margin:0 auto; position:relative;">
       <div style="display:inline-flex; align-items:center; gap:9px; font:600 12px/1 IBM Plex Sans; letter-spacing:.1em; color:#CCFBF1; background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.18); border-radius:100px; padding:9px 16px; margin-bottom:30px;">⟦EYEBROW — 계획의 eyebrow 값. 없으면 en: PROPOSAL · 관리자용 / ko: 제안서 · 관리자용⟧</div>
@@ -69,7 +69,7 @@
 
   <!-- VARIANT compact hero — for doc-type pitch / audience executive (authoring-guide §4.1, design.md §4.1). Replace the default HERO block above with this one (delete the other).
        Lower and smaller so the sheet starts higher: the first section's lead + its first figure row are visible at 1366×900. No purpose line; keep 2–4 tokens. Pair it with the first section padding:36px 0 48px.
-  <div id="top" style="background:linear-gradient(155deg,#0D9488 0%,#0F766E 55%,#115E59 100%); color:#fff; padding:44px 40px 64px; position:relative; overflow:hidden;">
+  <div id="top" style="background:linear-gradient(155deg,#0D9488 0%,#0F766E 55%,#115E59 100%); color:#fff; padding:44px min(40px,5vw) 64px; position:relative; overflow:hidden;">
     <div style="position:absolute; inset:0; background-image:radial-gradient(circle at 85% 15%, rgba(255,255,255,.10) 0%, transparent 42%); pointer-events:none;"></div>
     <div style="max-width:1020px; margin:0 auto; position:relative;">
       <div style="display:inline-flex; align-items:center; gap:9px; font:600 12px/1 IBM Plex Sans; letter-spacing:.1em; color:#CCFBF1; background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.18); border-radius:100px; padding:9px 16px; margin-bottom:18px;">⟦EYEBROW — 계획의 eyebrow 값. 없으면 en: PROPOSAL · 관리자용 / ko: 제안서 · 관리자용⟧</div>
@@ -87,7 +87,7 @@
   -->
 
   <!-- PAPER SHEET (-44px overlaps hero) -->
-  <div style="max-width:1100px; margin:-44px auto 0; background:#fff; border-radius:12px 16px 0 0; box-shadow:0 -24px 60px rgba(30,34,70,.10); padding:8px 64px 100px; position:relative;">
+  <div style="max-width:1100px; margin:-44px auto 0; background:#fff; border-radius:12px 16px 0 0; box-shadow:0 -24px 60px rgba(30,34,70,.10); padding:8px min(64px,6vw) 100px; position:relative;">
 
     <!-- first section: ~60px top, NO border-top. With the compact hero (see the VARIANT block in the hero above): padding:36px 0 48px and the lead's margin-bottom 22px.
          Eyebrow language = the document's label language (core components.md §4): labels:en → "01 · BACKGROUND" (English category, upper case); labels:ko → "01 · 배경" (Korean category). Same language for every eyebrow, the appendix label and the component badges. -->

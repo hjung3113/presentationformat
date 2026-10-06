@@ -6,7 +6,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { validatePlan, parsePlan, parseCoverTokens, labelLanguage, COUNT_LIMITS, useCaseGoals, layerModules, tableRowCount } from '../plan-schema.mjs';
-import { listTemplates } from '../components.mjs';
+import { listTemplates, parseLimitsX } from '../components.mjs';
+import { COUNTERS } from '../figure-counts.mjs';
 
 const read = (f) => readFileSync(new URL(`./fixtures/${f}`, import.meta.url), 'utf8');
 const planDir = fileURLToPath(new URL('./fixtures/', import.meta.url));
@@ -384,16 +385,136 @@ test('text-table: a body table warns above 7 rows, the sref appendix above 10; r
   assert.match(over.warnings.join('\n'), /^sref \(text-table\): appendix table has 11 rows \(>10\)/);
 });
 
-test('the countable limits match the components\' @limits lines (the warning and the template cannot drift apart)', () => {
-  const by = Object.fromEntries(listTemplates().map(t => [t.meta.component, t.meta.limits]));
-  assert.equal(COUNT_LIMITS.goalsPerActor, 5);
-  assert.match(by['use-case'], /행위자당 유스케이스 1–5/);
-  assert.match(by['layer-map'], /레이어당 모듈 1–5/);
-  // table.html: "행 3–7 (부록 용어·근거표는 10행까지 …)" — body limit first, appendix limit in the parenthesis
-  const [, body, appendix] = by.table.match(/행 \d+[–-](\d+)\s*\([^)]*?(\d+)행까지/);
-  assert.equal(COUNT_LIMITS.tableRows, Number(body));
-  assert.equal(COUNT_LIMITS.appendixTableRows, Number(appendix));
-  assert.deepEqual([COUNT_LIMITS.tableRows, COUNT_LIMITS.appendixTableRows], [7, 10]);
+// ---- @limits-x: the machine-readable limits every countable template states beside its @limits prose ----
+
+test('COUNT_LIMITS derives from @limits-x (a body table runs to 7 rows, an appendix table to 10)', () => {
+  assert.deepEqual(COUNT_LIMITS, { goalsPerActor: 5, modulesPerLayer: 5, tableRows: 7, appendixTableRows: 10 });
+  const by = Object.fromEntries(listTemplates().map(t => [t.meta.component, t.meta.limitsX]));
+  assert.deepEqual(by.table, { columns: { min: 2, max: 4 }, rows: { min: 3, max: 7 }, 'appendix-rows': { min: 3, max: 10 } });
+  assert.equal(by['use-case']['goals-per-actor'].max, COUNT_LIMITS.goalsPerActor);
+  assert.equal(by['layer-map']['modules-per-layer'].max, COUNT_LIMITS.modulesPerLayer);
+});
+
+test('drift: every @limits-x range reads min–max in the template\'s @limits prose, every prose range is an @limits-x range, every key has a counter', () => {
+  const NO_LIMITS_X = new Set(['callout']); // "섹션당 0–2" — a content aside, nothing to count in a figure-data
+  const ids = new Set();
+  for (const t of listTemplates()) {
+    const id = t.meta.component;
+    ids.add(id);
+    const keys = Object.keys(t.meta.limitsX);
+    if (NO_LIMITS_X.has(id)) { assert.deepEqual(keys, [], `${id} states no countable limit`); continue; }
+    assert.ok(keys.length, `${id}: @limits-x is missing`);
+    const prose = new Set([...(t.meta.limits || '').matchAll(/(\d+)[–-](\d+)/g)].map(m => `${m[1]}..${m[2]}`));
+    const machine = new Set(Object.values(t.meta.limitsX).map(r => `${r.min}..${r.max}`));
+    for (const r of machine) assert.ok(prose.has(r), `${id}: @limits-x range ${r} is not written ${r.replace('..', '–')} in @limits "${t.meta.limits}"`);
+    for (const r of prose) assert.ok(machine.has(r), `${id}: @limits states ${r.replace('..', '–')} but no @limits-x key has it`);
+    for (const key of keys) assert.equal(typeof COUNTERS[id]?.[key]?.count, 'function', `${id}: @limits-x key "${key}" has no counter in figure-counts.mjs`);
+    for (const key of Object.keys(COUNTERS[id] || {})) assert.ok(key in t.meta.limitsX, `${id}: counter "${key}" has no @limits-x key`);
+  }
+  for (const id of Object.keys(COUNTERS)) assert.ok(ids.has(id), `figure-counts.mjs has counters for unknown component "${id}"`);
+});
+
+test('parseLimitsX: key=min..max tokens; malformed, inverted and repeated tokens throw', () => {
+  assert.deepEqual(parseLimitsX('layers=2..5 modules-per-layer=1..5'), { layers: { min: 2, max: 5 }, 'modules-per-layer': { min: 1, max: 5 } });
+  assert.deepEqual(parseLimitsX(undefined), {});
+  for (const bad of ['layers=2-5', 'layers=5..2', 'layers=1..3 layers=1..4', 'Layers=1..2', 'layers=..3'])
+    assert.throws(() => parseLimitsX(bad), /@limits-x/, bad);
+});
+
+// One at-limit and one over-limit figure-data per counter. gen(n) builds a figure-data holding n of the counted thing and
+// nothing else over a limit; `who` is the warning's subject, `unit` its noun. A label starts with `component.key`.
+const list = (n, f = (i) => `항목${i}`, sep = ', ') => Array.from({ length: n }, (_, i) => f(i + 1)).join(sep);
+const CIRCLED = '①②③④⑤⑥⑦⑧';
+const COUNT_CASES = [
+  // [label, shape, gen(n), max, who, unit, warnings at max+1 (default 1)]
+  ['activity.decisions', 'branching-flow', (n) => `start: 시작 | actions: 가 → 나 | decision: ${list(n, (i) => `질문${i}?`, ' ‖ ')} | outcomes: [예] 가(target), [아니오] 나(negative, 사유)`, 2, 'activity', 'decisions'],
+  ['activity.outcomes', 'branching-flow', (n) => `start: 시작 | actions: 가 → 나 | decision: 질문? | outcomes: ${list(n, (i) => `[라벨${i}] 결말${i}(negative, 사유 ${i})`)}`, 5, 'activity', 'outcomes'],
+  ['bar-chart.bars (a thousands comma is not a separator)', 'quantity', (n) => `bars: ${list(n, (i) => `항목${i}=1,${200 + i}`)} | unit?: 건`, 8, 'bar-chart', 'bars'],
+  ['before-after.nodes-per-side (before side)', 'before-after', (n) => `before: ${list(n)} | after: 루트 / 가, 나`, 6, 'before side', 'nodes'],
+  ['before-after.nodes-per-side (after side: the root before " / " is not one of them)', 'before-after', (n) => `before: 가, 나 | after: 루트 / ${list(n)}`, 6, 'after side', 'nodes'],
+  ['before-after.tags-per-side', 'before-after', (n) => `before: 가, 나 | after: 루트 / 가, 나 | before-tags: ${list(n)}`, 3, 'before side', 'tags'],
+  ['card-grid.items', 'peer-list', (n) => `items: ${list(n, (i) => `${i} · 제목${i} · 설명`, ' ; ')}`, 6, 'card-grid', 'cards'],
+  ['class-diagram.children', 'code-structure', (n) => `parent: «interface» 기반(+메서드) | children: ${list(n, (i) => `하위${i}(+속성)`)}`, 4, 'class-diagram', 'child classes'],
+  ['class-diagram.members-per-class', 'code-structure', (n) => `parent: «interface» 기반(+메서드) | children: 하위1(${list(n, (i) => `+멤버${i}`)}), 하위2(+속성)`, 4, 'class "하위1"', 'members'],
+  ['decision-block.options', 'decision', (n) => `question: 질문 | options: ${list(n, (i) => `옵션${i}(+장점, −단점)`)} | recommend: 옵션1`, 3, 'decision-block', 'options'],
+  ['decision-block.pros-cons', 'decision', (n) => `question: 질문 | options: A(${list(n, (i) => `+장점${i}`)}, −단점), B(+장점) | recommend: A`, 3, 'option "A" pros', 'lines'],
+  ['decision-table.conditions', 'rule-table', (n) => `conditions: ${list(n)} | rules: 예 → 승인(positive) ; 아니오 → 반려(negative) ; — → 기록(neutral)`, 4, 'decision-table', 'condition columns'],
+  ['decision-table.rules', 'rule-table', (n) => `conditions: 가, 나 | rules: ${list(n, (i) => `예/${i} → 결과${i}(neutral)`, ' ; ')}`, 7, 'decision-table', 'rules'],
+  ['er-relations.entities', 'entity-relations', (n) => `entities: ${list(n, (i) => `E${i}(id, 이름)`)} | relations: A 1—N B "소유" [owned] · B 1—N C "연결" [link]`, 6, 'er-relations', 'entities'],
+  ['er-relations.relations (counted by cardinality pairs, whatever separates them)', 'entity-relations', (n) => `entities: A, B | relations: ${list(n, (i) => `A${i} ${i % 2 ? '1—N' : '0..1—0..N'} B${i} "관계${i}" [owned]`, ' · ')}`, 7, 'er-relations', 'relations'],
+  ['forbidden-path.allowed (the alternatives after the arrow)', 'forbidden-path', (n) => `allowed: 출발 → ${list(n, (i) => `대안${i}(이유, 둘)`)} | forbidden: 출발 ✕ 도착 (이유)`, 4, 'forbidden-path', 'allowed paths'],
+  ['forbidden-path.forbidden', 'forbidden-path', (n) => `allowed: 출발 → 대안 | forbidden: ${list(n, (i) => `출발 ✕ 도착${i} (이유)`, ' ; ')}`, 2, 'forbidden-path', 'forbidden paths'],
+  ['gantt.periods', 'schedule', (n) => `periods: ${list(n, (i) => `${i}월`)} | rows: 가 = 1–2 (core) ; 나 = 1–3 (planned) ; 다 = 2–3 (core)`, 12, 'gantt', 'period columns'],
+  ['gantt.rows (`;` separated)', 'schedule', (n) => `periods: 1월, 2월, 3월 | rows: ${list(n, (i) => `작업${i} = 1–2 (core)`, ' ; ')}`, 8, 'gantt', 'rows'],
+  ['gantt.rows (` · ` separated, counted by " = ")', 'schedule', (n) => `periods: 1월, 2월, 3월 | rows: ${list(n, (i) => `Core·작업${i} = 1–2 (core)`, ' · ')}`, 8, 'gantt', 'rows'],
+  ['gantt.bars-per-row', 'schedule', (n) => `periods: 1월, 2월, 3월, 4월, 5월 | rows: 가 = 1–2 (legacy) ${'+ 3–4 (core) '.repeat(n - 1)}; 나 = 1–2 (core) ; 다 = 2–3 (core)`, 2, 'row "가"', 'bars'],
+  ['hbar-chart.rows', 'progress', (n) => `rows: ${list(n, (i) => `항목${i}=${i * 10}`)}`, 8, 'hbar-chart', 'rows'],
+  ['hub-spoke.spokes', 'hub', (n) => `hub: 허브(설명) | left: ${list(Math.min(n, 4))} | right: ${list(Math.max(0, n - 4))}`, 8, 'hub-spoke', 'spokes', 2], // 9 spokes cannot sit within 4 per side: the side limit warns too
+  ['hub-spoke.spokes-per-side', 'hub', (n) => `hub: 허브(설명) | left: ${list(n, (i) => `대상${i}(연결)`)} | right: 가(연결)`, 4, 'left side', 'spokes'],
+  ['kpi-row.tiles', 'headline-metric', (n) => `tiles: ${list(n, (i) => `라벨${i}=${i} 건 · 설명`, ' ; ')}`, 4, 'kpi-row', 'tiles'],
+  ['layer-map.layers', 'layered-structure', (n) => `layers: ${list(n, (i) => `층${i}: 모듈`, ' ‖ ')} | links: a ↕ b = c`, 5, 'layer-map', 'layers'],
+  ['matrix.columns', 'capability-matrix', (n) => `columns: ${list(n)} | rows: 가: ✓ ✕ ; 나: ✓ ✕ ; 다: — ✓`, 5, 'matrix', 'columns'],
+  ['matrix.rows', 'capability-matrix', (n) => `columns: 가, 나 | rows: ${list(n, (i) => `행${i}: ✓ ✕`, ' ; ')}`, 7, 'matrix', 'rows'],
+  ['pipeline.stages', 'data-flow', (n) => `stages: ${list(n, (i) => `단계${i}[노드 A, 노드 B [planned]]`, ' → ')}`, 5, 'pipeline', 'stages'],
+  ['pipeline.nodes-per-stage', 'data-flow', (n) => `stages: 입력[${list(n, (i) => `노드${i}(설명, 둘)`)}] → 처리[가] → 출력[나]`, 4, 'stage "입력"', 'nodes'],
+  ['process-row.steps (an arrow inside a parenthesis is not a step)', 'linear-steps', (n) => `steps: ${list(n, (i) => `${i} 단계${i}(설명 → 보충)`, ' → ')}`, 5, 'process-row', 'steps'],
+  ['risk-matrix.risks', 'risk', (n) => `risks: ${list(n, (i) => `R${i} 위험${i} (가능성 상, 영향 중) → 대응(R1과 같이)`, ' ; ')}`, 7, 'risk-matrix', 'risks'],
+  ['screen-map.regions (the numbered markers)', 'ui-surface', (n) => `layout: page | regions: ${list(n, (i) => `${CIRCLED[i - 1]}영역${i}: 일`, ' ')}`, 6, 'screen-map', 'regions'],
+  ['sequence.participants', 'interaction', (n) => `participants: ${list(n)} | messages: 항목1→항목2 요청 · 항목2⇢항목1 응답 · 항목1→항목2 다시`, 5, 'sequence', 'participants'],
+  ['sequence.messages (one arrow per message, none counted inside a parenthesis)', 'interaction', (n) => `participants: A, B | messages: ${list(n, (i) => `A→B 요청${i}(a → b)`, ' · ')}`, 10, 'sequence', 'messages'],
+  ['sequence.groups', 'interaction', (n) => `participants: A, B | messages: A→B 요청 · B⇢A 응답 · A→B 다시 | alt: ${list(n, (i) => `조건${i} = ${i}`, ' · ')}`, 2, 'sequence', 'ALT/OPT groups'],
+  ['stacked-bar.parts', 'share', (n) => `parts: ${list(n, (i) => `구간${i}=10%`)}`, 5, 'stacked-bar', 'parts'],
+  ['state-machine.main-states (● ◉ and the (전이) labels are not states)', 'lifecycle', (n) => `states: 가, 나 | main: ● → ${list(n, (i) => `상태${i}`, ' →(전이) ')} → ◉`, 5, 'state-machine', 'main-path states'],
+  ['state-machine.other-transitions', 'lifecycle', (n) => `states: 가, 나 | main: ● → 가 →(전이) 나 →(전이) 다 → ◉ | other: ${list(n, (i) => `가 →(전이) 상태${i}[retry]`, ' · ')}`, 5, 'state-machine', 'other transitions'],
+  ['status-board.rows', 'status', (n) => `rows: ${list(n, (i) => `작업${i}(담당) · 정상 · 50% · 메모`, ' ; ')}`, 7, 'status-board', 'rows'],
+  ['swimlane.lanes', 'role-handoff', (n) => `lanes: ${list(n)} | steps: 항목1:단계 → 항목2:단계 → 항목1:끝`, 5, 'swimlane', 'lanes'],
+  ['swimlane.steps (→, →[라벨], →(라벨) and ↓ all separate steps)', 'role-handoff', (n) => `lanes: 가, 나 | steps: ${list(n, (i) => `${i % 2 ? '가' : '나'}:단계${i}(a → b)`, ' →[예] ').replace(/→\[예\]/g, (m, off) => ['→[예]', '→(알림)', '↓', '→'][off % 4])}`, 8, 'swimlane', 'steps'],
+  ['table.columns', 'text-table', (n) => `columns: ${list(n)} | rows: ${list(3, (i) => `값${i} · 값`, ' ; ')}`, 4, 'table', 'columns'],
+  ['timeline.items', 'milestones', (n) => `items: ${list(n, (i) => `${i}월 · 제목${i} · 설명 · done`, ' ; ')}`, 8, 'timeline', 'items'],
+  ['tree.children', 'hierarchy', (n) => `root: 루트 | children: ${list(n, (i) => `하위${i}[잎, 잎 [planned]]`)}`, 5, 'tree', 'children'],
+  ['tree.leaves-per-child (the [planned] group is not the leaf group)', 'hierarchy', (n) => `root: 루트 | children: 가 [planned][${list(n, (i) => `잎${i}(설명, 둘)`)}], 나[잎 [planned]]`, 6, '"가"', 'leaves'],
+  ['use-case.actors', 'actor-goals', (n) => `system: 도구 | actors: ${list(n, (i) => `행위자${i}: 목표`, ' ‖ ')}`, 4, 'use-case', 'actors'],
+];
+// counted by their own tests above: use-case goals-per-actor, layer-map modules-per-layer, table rows / appendix-rows
+const COUNTED_ELSEWHERE = ['use-case.goals-per-actor', 'layer-map.modules-per-layer', 'table.rows', 'table.appendix-rows'];
+
+test('every @limits-x counter: max items pass, max+1 warns once with its subject and unit', () => {
+  const warnsOf = (shape, fd) => {
+    const res = validatePlan(plan([sec(1, shape, fd)]));
+    assert.equal(res.ok, true, `${shape}: ${fd}\n${res.errors.join('; ')}`); // a count is only ever a warning
+    return res.warnings.filter(w => /\(>\d+\)/.test(w));
+  };
+  const esc = (t) => t.replace(/[.*+?^${}()|[\]\\"]/g, '\\$&');
+  for (const [label, shape, gen, max, who, unit, total = 1] of COUNT_CASES) {
+    assert.deepEqual(warnsOf(shape, gen(max)), [], `${label}: ${max} must pass`);
+    const over = warnsOf(shape, gen(max + 1));
+    assert.equal(over.length, total, `${label}: ${max + 1} must warn ${total}x, got ${JSON.stringify(over)}`);
+    assert.match(over[0], new RegExp(`^s1 \\(${shape}\\): ${esc(who)} has ${max + 1} ${esc(unit)} \\(>${max}\\) — `), label);
+  }
+  // every counter is exercised by a case, and the case's limit is the template's @limits-x max
+  const limits = Object.fromEntries(listTemplates().map(t => [t.meta.component, t.meta.limitsX]));
+  const cased = new Set();
+  for (const [label, , , max] of COUNT_CASES) {
+    const [id, key] = label.split(/[ (]/)[0].split('.');
+    cased.add(`${id}.${key}`);
+    assert.equal(limits[id][key].max, max, `${label}: the case's max is not ${id}.${key}'s @limits-x max`);
+  }
+  const all = Object.entries(COUNTERS).flatMap(([id, keys]) => Object.keys(keys).map(k => `${id}.${k}`));
+  assert.deepEqual(all.filter(k => !cased.has(k) && !COUNTED_ELSEWHERE.includes(k)), [], 'counters with no at-limit / over-limit case');
+});
+
+test('tree: a child with 7 leaves warns by name (6 pass), and it is still only a warning', () => {
+  const tree = (n) => `root: 플랫폼 | children: 분석 공간[${list(n)}], 운영 콘솔 공간[관리·감사]`;
+  const res = validatePlan(plan([sec(1, 'hierarchy', tree(7))]));
+  assert.equal(res.ok, true);
+  assert.match(res.warnings.join('\n'), /^s1 \(hierarchy\): "분석 공간" has 7 leaves \(>6\) — tree shows 0–6 per child; /);
+  assert.deepEqual(validatePlan(plan([sec(1, 'hierarchy', tree(6))])).warnings, []);
+});
+
+test('the shipped example plan stays quiet on the countable limits', () => {
+  const repo = fileURLToPath(new URL('../../../', import.meta.url));
+  const warnsFor = (rel) => validatePlan(readFileSync(join(repo, rel), 'utf8'), { planDir: join(repo, rel, '..') }).warnings.filter(w => /\(>\d+\)/.test(w));
+  assert.deepEqual(warnsFor('examples/feedbackops-light-brief/content-plan.md'), []);
 });
 
 test('CLI prints warnings after OK, non-blocking', () => {

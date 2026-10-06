@@ -6,7 +6,8 @@
 @title 현재 → 목표 비교 (AS-IS / TO-BE)
 @use 지금의 구조·방식과 바꾸려는 구조·방식을 나란히 대비한다. "현재는 한 덩어리 → 목표는 분리" 같은 구조 대비가 섹션의 주장일 때.
 @avoid 현재 상태가 없는 신규 설계 → layer-map 또는 pipeline. 수치만 바뀐다 → kpi-row.
-@limits 양쪽 노드 2–5개씩, 태그 2–3개씩
+@limits 양쪽 노드 2–6개씩, 태그 2–3개씩
+@limits-x nodes-per-side=2..6 tags-per-side=2..3
 @data before: 요소 A, 요소 B(통점) | after: 루트 노드 / 핵심 노드, 노드, 노드 [planned], 노드 [full] | before-tags?: … | after-tags?: …
 HOW TO FILL
   1. 왼쪽(AS-IS) 칸에는 현재 상태만 넣는다. 통점(pain)은 경고색 셀로, 나머지는 흰 셀로.
@@ -18,19 +19,26 @@ HOW TO FILL
                   core/components.md §4 의 "없는 것은 구축된 모양으로 그리지 않는다" 규칙이 허용하는 TO-BE 칸의 예정 칸이다 —
                   이 칸의 회색 점선은 위 3번의 색 규칙을 어기지 않는다(경고색도 강조색도 아니다). 칩 문구는 출처의 말 그대로(예정·계획·미설계·대기).
                   AS-IS 칸에는 쓰지 않는다(현재 상태에는 예정이 없다).
+                  예정 칸의 data-state="planned" 는 지우지 않는다 — planned:unmarked 가 읽는 표지다(core/components.md §4).
        [full]     2열 격자를 한 줄 전체로 가로지르는 칸 → "전체 너비 핵심 칸" 변형(VARIANT full-width). grid-column:1 / -1 하나만 더한다.
                   이 칸 하나가 목표 칸의 핵심이거나 요소가 홀수일 때 쓴다(핵심 칸으로 쓰면 TO-BE 칸의 강조 칸은 이 하나다). AS-IS 칸에서도 같은 grid-column 으로 흰 칸·통점 칸 하나를 한 줄로 넓힐 수 있다.
   6. 배지 문구 ⟦AS-IS⟧ · ⟦TO-BE⟧ 는 슬롯이다. 예시는 영문 기본(labels: en)이다. labels: ko 문서(경영진·사용자용)는 "지금" · "목표" 로 바꾼다
      (core/components.md §4 "라벨 언어"). 색(slate / accent)은 문구와 무관하게 그대로다.
+  7. 두 칸의 data-zone="as-is" · data-zone="to-be" 속성은 지우지 않는다(3번 규칙을 게이트가 읽는 표지다). 게이트의 zone-colors 가 AS-IS 칸에 강조색이 없는지, TO-BE 칸의 배경이 경고·slate 색 위주가 아닌지(칩 하나는 허용) 본다.
+  8. 가운데 화살표는 두 개(→ · ↓)이고 둘 다 남긴다. 두 칸이 한 줄에 들어가는 폭(570px 이상 = 칸 기준폭 260 × 2 + 화살표 50)에서는 → 만, 칸이 위아래로 쌓이는
+     좁은 폭에서는 ↓ 만 보인다. 안 보이는 쪽은 너비와 글자 크기가 0 이 된다 — flex-basis·font-size 의 clamp(calc(… 100cqw …)) 가 갈아 끼우므로 미디어 쿼리가 없고,
+     두 칸을 담은 flex 줄의 container-type:inline-size 가 100cqw 의 기준이다. 칸의 flex-basis(260px)를 바꾸면 570 도 같이 바꾼다(→ 의 calc 두 곳과 ↓ 의 calc 두 곳 — 모두 같은 값).
+     → 의 "+ 50px" · "+ 17px" 는 그 칸의 크기(clamp 의 맨 위 값)다: 570px 바로 아래의 1/999px 에서 0 이 되어, 소수 폭(확대한 화면)에서도 두 화살표가 함께 보이지 않는다.
+     루트의 width:100% · box-sizing:border-box 는 지우지 않는다 — 안쪽 줄이 container-type 이라 루트에는 고유 폭이 없고, 내용 폭을 따르는 상자(flex 열의 flex-start·center)에서 padding 만 남기고 접히기 때문이다(core/components.md §4).
 -->
-<div data-component="before-after" style="border:1px solid ⟨border⟩; border-radius:⟨r:panel⟩; padding:28px; background:⟨paper-tint⟩;">
-  <div style="display:grid; grid-template-columns:1fr 50px 1fr; align-items:stretch;">
+<div data-component="before-after" style="border:1px solid ⟨border⟩; border-radius:⟨r:panel⟩; padding:28px; background:⟨paper-tint⟩; overflow-wrap:anywhere; width:100%; box-sizing:border-box;">
+  <div style="display:flex; flex-wrap:wrap; justify-content:center; align-items:stretch; container-type:inline-size;">
     <!-- AS-IS column -->
-    <div style="display:flex; flex-direction:column; justify-content:center;">
-      <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="font:700 11px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨white⟩; background:⟨slate⟩; border-radius:⟨r:pill-sm⟩; padding:6px 10px;">⟦AS-IS⟧</span><span style="font:600 15px/1.3 ⟨f:body⟩; color:⟨body⟩;">⟦현재 — 한 줄 요약⟧</span></div>
+    <div style="display:flex; flex-direction:column; justify-content:center; flex:1 1 260px; min-width:0;" data-zone="as-is">
+      <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="font:700 11px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨white⟩; background:⟨slate⟩; border-radius:⟨r:pill-sm⟩; padding:6px 10px; white-space:nowrap; flex:none;">⟦AS-IS⟧</span><span style="font:600 15px/1.3 ⟨f:body⟩; color:⟨body⟩;">⟦현재 — 한 줄 요약⟧</span></div>
       <div style="background:⟨mono-tint⟩; border:1.5px dashed ⟨mono-dashed⟩; border-radius:⟨r:card⟩; padding:16px 14px;">
         <div style="font:600 12px/1.3 ⟨f:body⟩; color:⟨muted-text⟩; text-align:center; margin-bottom:12px;">⟦현재 구조 한 줄 설명⟧</div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+        <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:8px;">
           <!-- ▼ REPEAT per current element (2–6) -->
           <div style="font:500 12px/1.35 ⟨f:body⟩; color:⟨body⟩; background:⟨white⟩; border:1px solid ⟨border-chip⟩; border-radius:⟨r:node⟩; padding:10px 8px; text-align:center;">⟦요소 A⟧</div>
           <!-- ▲ /REPEAT -->
@@ -45,20 +53,22 @@ HOW TO FILL
         <span style="font:500 11px/1 ⟨f:body⟩; border-radius:⟨r:pill⟩; padding:6px 11px; color:⟨warn-2⟩; background:⟨warn-bg⟩;">⟦부정 태그 B⟧</span>
       </div>
     </div>
-    <!-- pivot arrow -->
-    <div style="display:flex; align-items:center; justify-content:center;"><div style="width:36px; height:36px; border-radius:⟨r:circle⟩; background:⟨accent⟩; color:⟨white⟩; display:flex; align-items:center; justify-content:center; font:400 17px/1 ⟨f:body⟩;">→</div></div>
+    <!-- pivot arrow, side by side: → is 50px wide while both columns fit in one row (row width ≥ 570px = 2 × 260 + 50), 0px wide (font-size 0 too) otherwise -->
+    <div style="display:flex; align-items:center; justify-content:center; flex:0 0 clamp(0px,calc((100cqw - 570px) * 999 + 50px),50px); min-width:0; padding:8px 0;"><div style="width:36px; max-width:100%; height:36px; border-radius:⟨r:circle⟩; background:⟨accent⟩; color:⟨white⟩; display:flex; align-items:center; justify-content:center; font:400 clamp(0px,calc((100cqw - 570px) * 999 + 17px),17px)/1 ⟨f:body⟩;">→</div></div>
+    <!-- pivot arrow, stacked: ↓ takes a row of its own between the columns when they wrap, 0px wide otherwise -->
+    <div style="display:flex; align-items:center; justify-content:center; flex:0 0 clamp(0px,calc((570px - 100cqw) * 999),100cqw); min-width:0; padding:8px 0;"><div style="width:36px; max-width:100%; height:36px; border-radius:⟨r:circle⟩; background:⟨accent⟩; color:⟨white⟩; display:flex; align-items:center; justify-content:center; font:400 clamp(0px,calc((570px - 100cqw) * 999),17px)/1 ⟨f:body⟩;">↓</div></div>
     <!-- TO-BE column -->
-    <div style="display:flex; flex-direction:column; justify-content:center;">
-      <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="font:700 11px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨white⟩; background:⟨accent⟩; border-radius:⟨r:pill-sm⟩; padding:6px 10px;">⟦TO-BE⟧</span><span style="font:600 15px/1.3 ⟨f:body⟩; color:⟨ink-900⟩;">⟦목표 — 한 줄 요약⟧</span></div>
+    <div style="display:flex; flex-direction:column; justify-content:center; flex:1 1 260px; min-width:0;" data-zone="to-be">
+      <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="font:700 11px/1 ⟨f:mono⟩; letter-spacing:.06em; color:⟨white⟩; background:⟨accent⟩; border-radius:⟨r:pill-sm⟩; padding:6px 10px; white-space:nowrap; flex:none;">⟦TO-BE⟧</span><span style="font:600 15px/1.3 ⟨f:body⟩; color:⟨ink-900⟩;">⟦목표 — 한 줄 요약⟧</span></div>
       <div style="font:700 13px/1.3 ⟨f:body⟩; color:⟨white⟩; background:⟨accent⟩; border-radius:⟨r:node-lg⟩; padding:12px; text-align:center;">⟦중심 노드⟧</div>
       <div style="text-align:center; color:⟨muted-300⟩; font:400 13px/1 ⟨f:body⟩; padding:6px 0;">↓</div>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+      <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:8px;">
         <!-- ▼ REPEAT per target element (2–6) -->
         <div style="font:600 12px/1.35 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:⟨r:node⟩; padding:10px 8px; text-align:center;">⟦분리된 요소 A⟧</div>
         <!-- ▲ /REPEAT -->
         <div style="font:600 12px/1.35 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:10px 8px; text-align:center;">⟦분리된 요소 B⟧</div>
         <!-- VARIANT planned cell ([planned]): a TO-BE element that is not built yet — muted dashed box + state chip, never the built or accent look (core/components.md §4). TO-BE zone only -->
-        <div style="font:600 12px/1.35 ⟨f:body⟩; color:⟨muted-text⟩; background:⟨fill-50⟩; border:1px dashed ⟨muted-300⟩; border-radius:⟨r:node⟩; padding:10px 8px; text-align:center;">⟦예정 요소⟧ <span style="font:700 11px/1 ⟨f:body⟩; color:⟨muted-text⟩; background:⟨white⟩; border:1px solid ⟨muted-300⟩; border-radius:⟨r:pill-sm⟩; padding:2px 6px; white-space:nowrap; vertical-align:1px;">⟦예정⟧</span></div>
+        <div style="font:600 12px/1.35 ⟨f:body⟩; color:⟨muted-text⟩; background:⟨fill-50⟩; border:1px dashed ⟨muted-300⟩; border-radius:⟨r:node⟩; padding:10px 8px; text-align:center;" data-state="planned">⟦예정 요소⟧ <span style="font:700 11px/1 ⟨f:body⟩; color:⟨muted-text⟩; background:⟨white⟩; border:1px solid ⟨muted-300⟩; border-radius:⟨r:pill-sm⟩; padding:2px 6px; white-space:nowrap; vertical-align:1px;">⟦예정⟧</span></div>
         <div style="font:600 12px/1.35 ⟨f:body⟩; color:⟨ink-800⟩; background:⟨white⟩; border:1px solid ⟨border-node⟩; border-radius:⟨r:node⟩; padding:10px 8px; text-align:center;">⟦분리된 요소 C⟧</div>
         <!-- VARIANT full-width key cell ([full]): one cell across both columns (grid-column:1 / -1) — the zone's key element, or the odd one out -->
         <div style="grid-column:1 / -1; font:600 12px/1.35 ⟨f:body⟩; color:⟨accent⟩; background:⟨accent-050⟩; border:1.5px solid ⟨accent⟩; border-radius:⟨r:node⟩; padding:10px 8px; text-align:center;">⟦전체 너비 핵심 요소⟧</div>

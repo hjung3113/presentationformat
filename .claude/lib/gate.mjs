@@ -1,5 +1,7 @@
 // Pure gate checks over a document's HTML. No I/O here — verify-doc.mjs reads files and wires options.
 import { visibleBlocks, parseTerms, bannedTermHits, missingFirstUse, firstUseOrder, proseWarnings } from './prose.mjs';
+import { figureChecks } from './figures.mjs';
+import { NUM, normNum, scrubRefs, parseFacts, factBindings, withoutBound } from './facts.mjs';
 const stripComments = (html) => html.replace(/<!--[\s\S]*?-->/g, '');
 const stripScripts = (html) => html.replace(/<script\b[\s\S]*?<\/script>/gi, '');
 
@@ -80,7 +82,7 @@ function componentSpans(body) {
   });
 }
 
-// For each component root: every repeat(M,1fr) must equal N when the root uses calc(100% / N).
+// For each component root: every repeat(M,1fr | minmax(…,1fr)) must equal N when the root uses calc(100% / N).
 export function gridInconsistencies(html) {
   const body = stripComments(html);
   const spans = componentSpans(body);
@@ -92,7 +94,8 @@ export function gridInconsistencies(html) {
       text = text.slice(0, c.start - s.start) + text.slice(c.end - s.start);
     const ns = [...new Set([...text.matchAll(/calc\(\s*100%\s*\/\s*(\d+(?:\.\d+)?)\s*\)/g)].map(m => m[1]))];
     if (!ns.length) continue;
-    const ms = [...new Set([...text.matchAll(/repeat\(\s*(\d+)\s*,\s*(?:1fr|minmax\(\s*0\s*,\s*1fr\s*\))\s*\)/g)].map(m => m[1]))];
+    // a track is `1fr`, `minmax(0,1fr)` or a floored `minmax(<length>,1fr)` (the narrow-width scroll fallback: sequence, swimlane, gantt …)
+    const ms = [...new Set([...text.matchAll(/repeat\(\s*(\d+)\s*,\s*(?:1fr|minmax\(\s*[\d.]+(?:px|%|em|rem)?\s*,\s*1fr\s*\))\s*\)/g)].map(m => m[1]))];
     const off = ms.filter(m => !ns.includes(m));
     if (off.length) bad.push(`${s.name}: calc(100%/N) N=${ns.join(',')} but repeat(M,1fr) M=${ms.join(',')}`);
   }
@@ -101,13 +104,6 @@ export function gridInconsistencies(html) {
 
 // ---------- numbers-traced ----------
 
-const NUM = /\d+(?:,\d{3})*(?:\.\d+)?/g;
-const normNum = (t) => t.replace(/,/g, '').replace(/^0+(?=\d)/, '');
-// Source line refs (`L12-40`, `L7`) and ledger ids (`F07`, `Q01`, `C03`) name a place, not a value — they
-// must not "trace" a number the document shows, and a ledger id the document cites is not a value either.
-const scrubRefs = (text) => text
-  .replace(/\bL\d+(?:\s*[-–]\s*L?\d+)?/g, ' ')
-  .replace(/\b[FQC]\d{1,3}(?:\s*[-–]\s*[FQC]?\d{1,3})?\b/g, ' ');
 // Plan section headings (`## 3. …`) number the plan, not the subject.
 const numSet = (text) => new Set([...scrubRefs(text.replace(/^##\s+\d+\.\s/gm, '## ')).matchAll(NUM)].map(m => normNum(m[0])));
 
@@ -153,11 +149,13 @@ export function untracedNumbers(html, tracedText) {
 //         knownComponents?: string[], figureComponents?: string[],
 //         plan?: { sections: [{ id, title, shape }] }, shapeMap?: { [shape]: string[] },
 //         paletteHexes?: string[],                          // active style's design.md palette → `palette`
-//         planText?: string, factsText?: string,            // with plan → `numbers-traced`; a `## T — 용어` table in the
+//         zoneRoles?: { accentFamily, problem },            // active style's accent / warn+slate colors → the to-be half of `zone-colors`
+//         planText?: string, factsText?: string,            // with plan → `numbers-traced` (a `data-f` element is held to its F row, facts.mjs); a `## T — 용어` table in the
 //                                                           //   facts → `terms-consistent` + `terms:first-use`
 //         factsError?: string }                             // facts file named by the plan could not be read
-// → { ok, checks, warnings, notes }: `warnings` never fail the gate (figures:*, prose:*, terms:first-use); `notes` say
-//   which optional check did not run and why.
+// → { ok, checks, warnings, notes }: `warnings` never fail the gate (figures:*, prose:*, terms:first-use, planned:unmarked); `notes` say
+//   which optional check did not run and why. `chart-proportions` and `zone-colors` (figures.mjs) are rows only when the
+//   document carries their data-value / data-zone markers; `figures:lead-count` is a warning.
 export function runGate(html, opts) {
   const checks = [];
   const warnings = [];
@@ -201,6 +199,11 @@ export function runGate(html, opts) {
   const gridBad = gridInconsistencies(html);
   add('grid-consistency', gridBad.length === 0, gridBad.join(' ; '));
 
+  const fig = figureChecks(html, { accentHex: opts.accentHex, zoneRoles: opts.zoneRoles, blocks });
+  checks.push(...fig.checks);
+  warnings.push(...fig.warnings);
+  notes.push(...fig.notes);
+
   const sections = splitSections(html);
   if (opts.knownComponents) {
     const used = sections.flatMap(s => s.components);
@@ -232,9 +235,18 @@ export function runGate(html, opts) {
     if (opts.planText !== undefined) {
       if (opts.factsError) add('numbers-traced', false, opts.factsError);
       else {
-        const untraced = untracedNumbers(html, `${opts.planText}\n${opts.factsText || ''}`);
-        add('numbers-traced', untraced.length === 0, untraced.length
-          ? `${untraced.length} number(s) not in the plan or facts: ${untraced.slice(0, 8).map(u => `${u.num} ${u.ctx}`).join(' ; ')}` : '');
+        // data-f binds a number to a ledger row (facts.mjs): an id that is no row, or a numeral the cited rows do not state, fails;
+        // what is bound is checked against its row, so only the unbound numbers go through the set-membership fallback below.
+        const bound = factBindings(html, parseFacts(opts.factsText));
+        const untraced = untracedNumbers(bound.count ? withoutBound(html) : html, `${opts.planText}\n${opts.factsText || ''}`);
+        const problems = [];
+        if (bound.violations.length) problems.push(`${bound.violations.length} data-f binding(s) do not match the facts ledger: ${bound.violations.slice(0, 8).join(' ; ')}`);
+        if (untraced.length) problems.push(`${untraced.length} number(s) not in the plan or facts: ${untraced.slice(0, 8).map(u => `${u.num} ${u.ctx}`).join(' ; ')}`);
+        add('numbers-traced', problems.length === 0, problems.length ? problems.join(' ; ') : bound.count ? `${bound.count} number element(s) bound to their facts row via data-f` : '');
+        if (bound.planned.unmarked.length)
+          warnings.push({ name: 'planned:unmarked', detail: `${bound.planned.unmarked.length} of ${bound.planned.cited} element(s) citing a designed/planned fact carry no 계획·예정·미구현·미설계·제안·요청·대기 text or data-state="planned|caveat" within 3 levels: ${bound.planned.unmarked.slice(0, 8).join(' ; ')}` });
+        else if (bound.planned.cited)
+          warnings.push({ level: 'INFO', name: 'planned:unmarked', detail: `${bound.planned.cited} element(s) citing a designed/planned fact, all marked` });
         const terms = parseTerms(opts.factsText);
         if (terms.length) {
           const hits = bannedTermHits(blocks(), terms);

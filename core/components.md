@@ -62,7 +62,7 @@ shape and move the other to the next section. One primary figure per idea.
 | `text-table` | 행·열 모두 의미, 칸마다 짧은 문장: 문제↔해결↔효과, 미정 질문 | `table` | 카드 |
 | `decision` | 결정 요청·승인 필요·선택지와 권고·"언제까지 누가 정하나" | `decision-block` | 작은 카드 안에 숨긴 질문 |
 | `risk` | 리스크 + 가능성·영향 두 등급을 출처가 모두 매긴 경우, 대응책 | `risk-matrix` | 등급을 지어낸 매트릭스 |
-| `status` | 워크스트림·팀별 현재 상태(정상/주의/차단/완료), 진척 | `status-board` | 문단 |
+| `status` | 워크스트림·팀별 현재 상태(정상/주의/차단/완료)와 메모, 진척(수치가 있을 때만 — 없으면 진척 열 없는 변형) | `status-board` | 문단 |
 | `milestones` | 날짜가 붙은 사건: 완료 이력·현재·다음 일정 | `timeline` | 단계 행 |
 | `schedule` | 기간에 걸친 작업 계획, 겹침, 로드맵, MVP/이후 범위, 이관·병행·컷오버·전환 일정 | `gantt` | 날짜 목록 |
 | `headline-metric` | 숫자 1–4개 자체가 메시지, 증감, 목표 대비, 현재 방식의 비용·손실·수작업 시간·건수 | `kpi-row` | 차트 |
@@ -136,15 +136,33 @@ each section whose shape is not `none` contains a `data-component` the shape all
 - any `⟦` left in the document (outside comments) **fails**, and so does any `⟨role⟩` left
   (`no-role-placeholders` — it means the figure was pasted from the style-agnostic `core/components/`
   instead of the active style's `components/`);
-- a `data-component` value that is not a known component **fails**.
+- a `data-component` value that is not a known component **fails**;
+- a bar, row or segment marked `data-value` that is drawn at a size its number does not say, or whose label shows another number than its
+  `data-value`, **fails** (`chart-proportions`, ±2 points: a chart has one scale, read off its largest-value bar — every `bar-chart` height and every
+  `hbar-chart` / `status-board` width (rows whose label carries `%` are drawn at the value itself) must be value × that scale, and the
+  largest must not run past 102% (a `%` row included) nor be drawn at 2% or less — a bar that is not drawn gives no scale — so a chart
+  drawn to its maximum and one on an absolute 0–100 axis both pass; `stacked-bar` width ≈ value and the marked segments add up to 100);
+- an AS-IS zone (`data-zone="as-is"`: the `before-after` AS-IS column, a `gantt` legacy bar, the `layer-map` legacy layer) that uses the
+  style's accent or any tint of it (`accent-*` tokens) **fails**, and so does a TO-BE zone (`data-zone="to-be"`) whose background fills are mostly warn or slate family
+  (`zone-colors`; the roles come from the active style's tokens, only fills count, one slate chip inside a TO-BE zone is allowed);
+- an element marked `data-f` (§4 "Numbers come from the plan") whose id is not a row of the plan's `facts.md`, or that shows a numeral
+  none of the cited rows states in its 값 or 사실, **fails** (`numbers-traced`). A number without `data-f` is still held to set
+  membership: it must appear somewhere in the plan or the ledger.
+
+`chart-proportions` and `zone-colors` run only where the markers are (§4 "Figure markers"), and the `data-f` check only on elements
+that carry it; a figure without markers passes as before and the gate prints a `NOTE` saying how many it could not check.
 
 Warnings (non-blocking): fewer than 3 distinct figure components in a document with ≥5 numbered
 sections; more than one third of numbered sections with shape `none`; a section with **more than 2**
-main figures (the gate warns above 2 — one idea per figure). Plan-time warnings from
+main figures (the gate warns above 2 — one idea per figure); a section lead whose count word ("세 가지", "다섯 단계", "7개" — a number
+plus 가지·단계·곳·개·층·갈래·구간·축·종; 1 and 10+ never count) matches none of the `data-item` markers of the section's first marked
+figure (`figures:lead-count`); an element whose `data-f` cites a fact with 상태 `designed` or `planned` and that carries no planned
+marker within 3 ancestor levels — 계획·예정·미구현·미설계·제안·요청·대기 in its text or `data-state="planned|caveat"` (`planned:unmarked`). Plan-time warnings from
 `plan-schema`: more than 2 `decision` sections, and for `audience: executive` more than 12 numbered
 sections (group into acts — the section count follows the content, §5), a developer-grade shape
 (`code-structure`, `interaction`, `entity-relations`, `rule-table`), a first section that is not
-`headline-metric` or `decision`, or a last section that is not `decision`.
+`headline-metric` or `decision`, a last section that is not `decision`, or a figure-data that holds more of something than its
+component's `@limits-x` allows (a tree child with seven leaves, a use-case actor with six goals).
 
 ---
 
@@ -152,26 +170,71 @@ sections (group into acts — the section count follows the content, §5), a dev
 
 - **Keep the root marker.** The outer `<div data-component="…">` attribute stays exactly as pasted —
   the gate and reviewers find figures by it. Do not add CSS classes (inline styles only).
+- **Figure markers.** Templates carry four small attributes, appended after the element's `style`, that the gate reads: `data-value`
+  on a bar, row or segment (`bar-chart`, `hbar-chart`, `stacked-bar`, `status-board` rows that have a bar), `data-item` on one counted
+  item (`card-grid` card, `process-row` step, `pipeline` stage column, `kpi-row` tile — never an arrow cell), and `data-zone="as-is|to-be"`
+  on a current-state or target zone (`before-after` columns, `gantt` legacy and new-system bars, the `layer-map` legacy layer), and
+  `data-state="planned"` on a not-built variant or `data-state="caveat"` on a built-with-caveat (state chip) variant (`layer-map`,
+  `pipeline`, `tree`, `timeline`, `sequence`, `before-after`). Keep
+  them: copy a unit and its marker goes along, delete a unit and it goes too, and a unit you add gets one. `data-value` is filled with
+  the number the unit's label shows; `data-zone` follows the unit's meaning (a legacy bar is `as-is` whatever its text says);
+  `data-state` follows the variant, so changing a variant changes it. Never
+  remove a marker to pass a check — an unmarked figure is simply not checked. The one honest absence is a `status-board` without its
+  progress column (the template's VARIANT no progress column, for sources that give a status but no progress figure): it draws no bar,
+  so it has no `data-value` to carry and the gate prints no "carries no data-value" NOTE for it — no bar, nothing to mark. A board that
+  keeps the column marks every row that has a bar.
 - **Replace every `⟦…⟧`.** The text inside is an example, not a default. Unknown values become the
   style's placeholder (`O` + muted "(추후 확정)"), never invented facts.
 - **Repeat, don't redraw.** `▼ REPEAT … ▲ /REPEAT` marks the unit to copy for more items; delete
   copies for fewer. `VARIANT` marks alternative looks (pick by meaning). `OPTIONAL` blocks may be
   deleted. Comments may be deleted after filling.
 - **Only change what HOW TO FILL names.** Typically: the column count `N` in
-  `repeat(N,1fr)` / `calc(100% / N)`, a `grid-column` start/end, a `width`/`height` percentage, or a
+  `repeat(N,…)` / `calc(100% / N)`, a `grid-column` start/end, a `width`/`height` percentage, or a
   margin from the lookup table in the header. Never edit colors, radii, or fonts in a pasted component.
-- **N appears in EVERY `repeat(N,1fr)` and `calc(100% / N)` in the component** — every row, the header,
+- **N appears in EVERY `repeat(N,…)` and `calc(100% / N)` in the component** — every row, the header,
   and the lifeline/lane/period background, not just "the main grid". Change all of them together; the
-  gate's `grid-consistency` check fails a component whose `repeat(M,1fr)` differs from its
+  gate's `grid-consistency` check fails a component whose `repeat(M,…)` differs from its
   `calc(100% / N)`.
+- **Narrow widths (390px floor).** A document must not scroll sideways at a 390px viewport; the visual tier checks it
+  (`composition:mobile-overflow` for the page, `composition:figure-overflow` for a figure wider than its frame or cut off by
+  `overflow:hidden`) and the active style's `design.md §8.1` owns the shell paddings that leave a phone about 343px of sheet.
+  Pasted components already carry the recipe — keep it. A grid reflows with `repeat(auto-fit,minmax(min(100%,Npx),1fr))` (the
+  column count is not a slot) or wraps with `flex-wrap` over a `flex-basis` floor; a fixed-ratio grid uses `minmax(0,Nfr)` tracks; a
+  component whose geometry is inherently wide (wireframe, Gantt, table or matrix with 4+ columns, `decision-table`, sequence with 3+
+  participants or swimlane with 4+ columns, tree, class diagram, pipeline) scrolls **inside itself** — `overflow-x:auto` on its root (or
+  on its scroll wrapper) over tracks with a `minmax(Npx,…)` floor and a `min-width:min-content` box — and the page never moves.
+  The floor is what keeps a word whole, so it is set for legibility, not to make the figure fit: a `decision-table` key column is
+  120px (result 140px) and a `sequence` column 144px (the width of a message label between neighbours); never lower a floor to avoid the
+  scroll. Two components do not scroll at all because a scroll there hides content: `activity` reflows its outcomes (K in one row, else
+  two per row, the branch rail following — the `100cqw` switch below) and `status-board` wraps each row into two lines with the memo
+  in view (`flex-wrap` over floored `flex-basis:0` cells, its header folded to 0px by the same `100cqw` step). Every root carries
+  `overflow-wrap:anywhere`. Hand-written content follows the same rule: an unbreakable run (mono identifier, path, URL, signature)
+  takes `overflow-wrap:anywhere`, a grid cell takes `min-width:0` or a `minmax(0,Nfr)` track. Never pass the check by hiding the
+  overflow; the probe reports a clipped figure. A glyph or rail that must follow the layout (the `before-after` pivot: → side by side, ↓
+  stacked; the `activity` branch rail, 50 / K % over K outcomes in one row, 25% over the first pair when they wrap) is switched without a
+  media query: its `flex-basis`, `font-size`, `margin` or the grid floor is `clamp(…, calc(… 100cqw … * 999), …)` — one value on each side
+  of the switch width — over an ancestor that is a `container-type:inline-size`; the pivot is pasted twice (each copy 0 outside its
+  layout). Keep the switch and the container. `before-after`, `activity` and `status-board` read that `100cqw` from a container with no
+  intrinsic width of its own, so each root carries `width:100%; box-sizing:border-box` (keep it) and the three go only in normal block flow
+  or in a stretched or `1fr` grid cell. A flex column (`align-items:flex-start` or `center`) or a flex row hands them their host's width
+  through that `width:100%`; an `inline-block`, `width:fit-content` or a grid `auto` track still sizes the root to its content and folds it
+  to its padding (a `before-after` 58px wide and 1,900px tall), and the visual tier warns `composition:figure-collapsed` when a figure
+  renders narrower than half its frame.
 - **Percentages are slots tied to their label.** A bar's `width`/`height` slot and the value shown on
-  it (`35` and `35%`) are filled with the same value; a matrix cell glyph (`✓`/`✕`/short text) is a slot
+  it (`35` and `35%`) are filled with the same value, and the bar's `data-value` carries that value a third time (the gate's
+  `chart-proportions` compares the drawn size, the label and `data-value`); a matrix cell glyph (`✓`/`✕`/short text) is a slot
   whose color follows its shape (copy a cell of that shape).
 - **Numbers come from the plan.** Every number visible in the document appears in the plan's
   `payload`/`figure-data`/cover tokens (or its facts ledger). A template example is not a value; if the
   plan has no number for a slot, use the `O … (추후 확정)` placeholder. A **number chip** (the `card-grid`
   item badge) is a bare integer — 1, 2, 3 in card order — never a `2.1` / `5.3` section.item decimal; the gate's
   `numbers-traced` reads a decimal as a number the plan never supplied.
+  **Bind a number to its fact with `data-f`.** The element that shows a number the plan cites to a ledger row (`[F07]`) carries
+  `data-f="F07"` (`data-f="F06 F07"` for two rows), appended after its `style` like the other markers — the narrowest element that
+  shows it (a tile's value, a hero token, the sub-line that states a count, a table cell), because every numeral inside the element
+  is checked (a `data-f` element nested inside it is read by its own binding, not by the outer one's). The gate then asks whether the numeral is one the cited row states (its 값 or a number in its 사실 sentence) instead of
+  whether it appears anywhere in the plan, so a wrong-but-existing number fails and an unknown id fails. Bound text leaves the
+  set-membership pool; numbers without `data-f` stay in it.
 - **Terms and first use.** A concept the plan's term sheet (`## T — 용어` in `facts.md`) names is written in one form
   only: its `처음 나올 때` form the first time the reader meets it, the bare term afterwards. **The hero thesis counts as
   the first occurrence** — a term the thesis uses carries its first-use form there; a term the thesis does not use gets
@@ -181,7 +244,9 @@ sections (group into acts — the section count follows the content, §5), a dev
   the bare term appears before it; a banned variant (`terms-consistent`) is the hard check.
 - **What the gate reads in pasted figures** (`verify-doc`): `no-role-placeholders`, `palette` (with
   `--style`: every color literal must be in the style's `design.md` — no invented colors),
-  `grid-consistency`, and `numbers-traced` (with `--plan`).
+  `grid-consistency`, `chart-proportions` and `zone-colors` (where the figure carries its markers; `zone-colors` reads the
+  style's accent and warn/slate tokens, so its TO-BE half needs `--style`), `figures:lead-count` and `planned:unmarked` (warnings), and
+  `numbers-traced` (with `--plan`, including every `data-f` binding).
 - **Text-safe muted ink.** Small informative text — a sub-line under a number or node, a footnote (`*`), legend and
   axis labels, a footer or field label, a state chip, the `(추정)` / `(추후 확정)` suffixes — is set in the style's
   text-safe muted role `⟨muted-text⟩` (≥4.5:1 on white). The faint roles `⟨muted-500⟩` / `⟨muted-400⟩` / `⟨muted-300⟩` are for
@@ -211,8 +276,9 @@ sections (group into acts — the section count follows the content, §5), a dev
   The labels change; the colors, geometry and the semantic split do not (a `지금` badge is still the AS-IS color).
   Never mix: an executive document with `01 · SUMMARY` eyebrows and a `지금` badge is half-converted.
 - **Lookup, don't compute geometry.** Every spanning connector uses the same table: span S columns →
-  `margin:0 X%` with S=2 → 25%, 3 → 16.667%, 4 → 12.5%, 5 → 10%. Gantt bars: period k starts at grid
-  line k+1. Bar heights: value ÷ max × 100.
+  `margin:0 X%` with S=2 → 25%, 3 → 16.667%, 4 → 12.5%, 5 → 10% (the `activity` branch rail is the same 50 / K %, written
+  `calc(50% / K)` inside its narrow-width `clamp(…)`, §4). Gantt bars: period k starts at grid
+  line k+1. Bar heights: one scale per chart (usually value ÷ max × 100).
 - **Placement.** Lead paragraph first, then the figure (full width). Never put the figure before the
   lead. One primary figure per section; a support block (callout or small table) may follow it.
 - **A `text-table` section is a pasted `table`, filled from its figure-data.** The plan carries
@@ -222,7 +288,9 @@ sections (group into acts — the section count follows the content, §5), a dev
   two tables of ≤10 rows each or the table's definition-list variant (a two-column "term — definition" list that keeps
   the `data-component="table"` root). Cell variants (a muted detail line under the first-column label, several value
   lines stacked in one cell) are listed in the table template's `HOW TO FILL`.
-- **Counts must match.** If the lead says "세 가지 상태", the figure shows three.
+- **Counts must match.** If the lead says "세 가지 상태", the figure shows three. The `data-item` markers are what the gate counts
+  (`figures:lead-count` warns when the lead's count and the figure's differ); a lead that counts something else than the figure's
+  items ("7단계 … 다섯 구간으로 묶어") is fine as long as one of its counts is the figure's.
 - **A not-built thing never gets the built look (cross-component rule).** Anything the source calls
   planned, designed-only, not yet built or not decided — a module, a pipeline node, a tree child or leaf, a
   timeline item, an ALT/OPT frame of messages — is drawn in the **shared planned look**: muted dashed
@@ -231,7 +299,9 @@ sections (group into acts — the section count follows the content, §5), a dev
   variant: `layer-map`, `pipeline`, `tree`, `timeline`, `sequence`, and `before-after` (a planned cell inside the
   **TO-BE** zone only — the muted dashed look is neutral, so it does not break the zone's color rule; the AS-IS zone
   has no planned things); any other figure draws a planned thing the same way. A planned thing is never given the key-node, accent or success look — passing a design off as
-  an existing system is the most common overstatement a diagram makes.
+  an existing system is the most common overstatement a diagram makes. The same rule covers a number: an element whose `data-f` cites a
+  fact with 상태 `designed` or `planned` is marked within 3 ancestor levels — the planned variant's `data-state="planned"`, a state-chip
+  variant's `data-state="caveat"`, or one of the words 계획·예정·미구현·미설계·제안·요청·대기 in the text — and the gate's `planned:unmarked` warns when it is not.
 - **figure-data arrows.** Flow-shaped figure-data (`sequence`, `swimlane`, `state-machine`, `activity`,
   `pipeline`, `process-row`, …) may use the glyphs `→ ⇢ ↻` or ASCII: `->` for a request or transition,
   two hyphens followed by `>` for a response, `(self)` for internal processing. The plan validator

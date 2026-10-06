@@ -1,9 +1,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { listTemplates, listStyles, buildStyle, staleFiles, shapeMap, parseMeta, parseDataKeys, loadTokens, CORE_DIR } from '../components.mjs';
+import { listTemplates, listStyles, buildStyle, staleFiles, shapeMap, parseMeta, parseDataKeys, loadTokens, renderTemplate, stripSlots, CORE_DIR } from '../components.mjs';
+import { figureChecks, chartProportions, zoneRoles, markup, elementsWith, htmlOf, attrOf } from '../figures.mjs';
+import { findHeadlessChrome } from '../verify-doc.mjs';
 
 const CORE = join(CORE_DIR, '..');
 
@@ -51,6 +54,16 @@ test('parseDataKeys: key[?]: segments split on " | "; first key is never optiona
   assert.deepEqual(parseDataKeys('first?: x | second: y'), [{ key: 'first', optional: false }, { key: 'second', optional: false }]);
   assert.deepEqual(parseDataKeys('variant: KEY|OK|WARN|NOTE · 한 문장'), [{ key: 'variant', optional: false }]);
   assert.deepEqual(parseDataKeys(undefined), []);
+});
+
+test('parseMeta accepts hyphenated @keys: `@limits-x` is read into limitsX (and stays a string under meta[\'limits-x\'])', () => {
+  const head = '<!--\n@component zed\n@kind chart\n@title T\n@use U\n@limits 막대 3–8\n';
+  const meta = parseMeta(`${head}@limits-x bars=3..8 bars-per-row=1..2\n-->\n<div data-component="zed"></div>\n`);
+  assert.equal(meta.limits, '막대 3–8');
+  assert.equal(meta['limits-x'], 'bars=3..8 bars-per-row=1..2');
+  assert.deepEqual(meta.limitsX, { bars: { min: 3, max: 8 }, 'bars-per-row': { min: 1, max: 2 } });
+  assert.deepEqual(parseMeta(`${head}-->\n<div data-component="zed"></div>\n`).limitsX, {});
+  assert.throws(() => parseMeta(`${head}@limits-x bars=8..3\n-->\n<div data-component="zed"></div>\n`), /min above max/);
 });
 
 test('parseMeta exposes dataKeys; listTemplates/shapeMap accept an injected templates dir', () => {
@@ -188,8 +201,508 @@ test('table: two cell variants (first-column detail line, stacked lines with a m
   const t = tpl('table');
   assert.match(t.src, /<!-- VARIANT first-column detail line[^>]*-->\s*<div[^>]*>\s*<div[^>]*>⟦핵심어 B⟧<span style="display:block; font:400 12px\/1\.5 ⟨f:body⟩; color:⟨muted-text⟩/);
   assert.match(t.src, /<!-- VARIANT stacked cell[^>]*-->[\s\S]*⟦값 줄 1⟧<div style="border-top:1px solid ⟨border-row⟩;[^"]*">⟦값 줄 2⟧<\/div>/);
-  assert.match(t.src, /<!-- VARIANT definition list[\s\S]*?<div data-component="table" style="display:grid; grid-template-columns:1fr 1fr; gap:0 40px;">/);
+  assert.match(t.src, /<!-- VARIANT definition list[\s\S]*?<div data-component="table" style="display:grid; grid-template-columns:repeat\(auto-fit,minmax\(min\(100%,380px\),1fr\)\); gap:0 40px; overflow-wrap:anywhere;">/);
   assert.match(t.src, /본문 표는 7행까지[\s\S]*부록\(sref\)[\s\S]*10행/);
   assert.match(t.meta.limits, /10행/);
   assert.match(readFileSync(join(CORE, 'components.md'), 'utf8'), /appendix glossary or source table may be longer/);
+});
+
+// ---- narrow widths (core/components.md §4 "Narrow widths"): static guards for what the 390px gallery probe verifies in a browser ----
+// A grid track is `Nfr`, i.e. minmax(auto, Nfr): its automatic minimum is the widest unbreakable run, so it widens past its frame.
+// Only a minmax(...) track (a floor, or 0) keeps a fr track in bounds.
+const withoutMinmax = (value) => {
+  let out = '';
+  for (let i = 0; i < value.length;) {
+    if (value.startsWith('minmax(', i)) {
+      let depth = 0, j = i + 'minmax'.length;
+      for (; j < value.length; j++) { if (value[j] === '(') depth++; else if (value[j] === ')' && --depth === 0) break; }
+      i = j + 1;
+    } else out += value[i++];
+  }
+  return out;
+};
+
+test('narrow width: no template has a bare `Nfr` grid track outside minmax() (comments included: a pasted variant must not reintroduce one)', () => {
+  for (const t of listTemplates()) {
+    for (const m of bodyOf(t.src).matchAll(/grid-template-columns:([^;"]*)/g))
+      assert.doesNotMatch(withoutMinmax(m[1]), /\d(?:\.\d+)?fr\b/, `${t.file}: bare fr track in "${m[1].trim()}" — wrap it in minmax(0,Nfr) or a floored minmax(Npx,Nfr)`);
+  }
+});
+
+test('narrow width: every template root carries overflow-wrap:anywhere, and a root that scrolls (overflow-x:auto) has a min-width:min-content box inside it', () => {
+  for (const t of listTemplates()) {
+    const root = live(t).match(/^<div data-component="[\w-]+"(?: style="([^"]*)")?>/);
+    assert.ok(root && root[1] && /overflow-wrap:anywhere;/.test(root[1]), `${t.file}: root lacks overflow-wrap:anywhere`);
+    const body = live(t);
+    if (/overflow-x:auto/.test(root[1])) assert.match(body, /min-width:min-content;/, `${t.file}: scrolls but has no min-width:min-content box to scroll`);
+  }
+});
+
+// ---- figure markers (core/components.md §3, §4): data-value / data-item / data-zone read by figures.mjs, data-state by facts.mjs (`planned:unmarked`) ----
+const MARKERS = {
+  'data-value': { 'bar-chart': 5, 'hbar-chart': 4, 'stacked-bar': 4, 'status-board': 4 }, // a bar, row or segment — not the 대기 row
+  'data-item': { 'card-grid': 4, 'process-row': 4, pipeline: 3, 'kpi-row': 6 },            // a card, step, stage column or tile — not an arrow cell
+  'data-zone': { 'before-after': 2, gantt: 4, 'layer-map': 1 },                              // both sides · legacy + new bars (two rows) · the legacy layer
+  'data-state': { 'layer-map': 3, pipeline: 1, tree: 2, timeline: 2, sequence: 1, 'before-after': 1 }, // planned module · state-chip module · state-chip layer row · planned node · planned child + leaf · both planned rows · planned frame · planned cell
+};
+
+test('data-state: a planned variant says planned, a built-with-caveat (state chip) variant says caveat, on the element that holds the variant', () => {
+  const states = (id) => [...live(tpl(id)).matchAll(/ data-state="(\w+)"/g)].map(m => m[1]);
+  assert.deepEqual(states('layer-map'), ['planned', 'caveat', 'caveat']);
+  for (const id of ['pipeline', 'tree', 'timeline', 'sequence', 'before-after']) assert.ok(states(id).length && states(id).every(v => v === 'planned'), id);
+  for (const t of listTemplates()) // appended after style="…", never before it (components.test pins tag heads)
+    for (const m of live(t).matchAll(/<\w+ ([^>]*)>/g)) if (/data-state/.test(m[1])) assert.match(m[1], /^style="[^"]*" (?:data-[\w-]+(?:="[^"]*")? )*data-state="\w+"$/, t.file);
+});
+
+test('figure markers: every style renders each template with exactly the markers its HOW TO FILL promises, and the figure checks find nothing in any template or gallery', () => {
+  for (const t of listTemplates())
+    for (const [attr, counts] of Object.entries(MARKERS))
+      if (counts[t.meta.component]) assert.ok(t.src.slice(0, t.src.indexOf('-->')).includes(attr), `${t.file}: HOW TO FILL does not tell the author to keep ${attr}`);
+  for (const style of listStyles()) {
+    const { colors } = loadTokens(style);
+    const opts = { accentHex: colors.accent, zoneRoles: zoneRoles(colors) };
+    const files = buildStyle(style);
+    for (const t of listTemplates()) {
+      const html = stripSlots(files[join('components', `${t.meta.component}.html`)].replace(/<!--[\s\S]*?-->/g, ''));
+      for (const [attr, counts] of Object.entries(MARKERS))
+        assert.equal((html.match(new RegExp(` ${attr}(?=[\\s>=])`, 'g')) || []).length, counts[t.meta.component] || 0, `${style}/${t.file}: ${attr} count`);
+      const r = figureChecks(html, opts);
+      assert.deepEqual(r.checks.filter(c => !c.ok), [], `${style}/${t.file}`);
+      assert.deepEqual(r.warnings.filter(w => !w.level), [], `${style}/${t.file}`);
+      assert.deepEqual(r.notes, [], `${style}/${t.file}: a template must carry every marker its figure kind reads`);
+    }
+    const gallery = figureChecks(stripSlots(files['components.gallery.dc.html']), opts);
+    assert.deepEqual(gallery.checks.map(c => [c.name, c.ok, c.detail]), [
+      ['chart-proportions', true, '4 chart(s), 17 value(s) drawn at the size they show'],
+      ['zone-colors', true, '7 zone(s) checked'],
+    ], style);
+    assert.deepEqual(gallery.notes, [], style);
+  }
+});
+
+// ---- the 390px matrix and the before-after pivot (core/components.md §4 "Narrow widths") ----
+
+test('matrix: a column floor leaves room for text (padding included) and 4+ columns scroll inside the matrix at the 343px a phone leaves the sheet', () => {
+  const body = live(tpl('matrix'));
+  const floors = [...body.matchAll(/repeat\((\d+),minmax\((\d+)px,1fr\)\)/g)];
+  assert.ok(floors.length, 'the matrix has repeat(C,minmax(Npx,1fr)) tracks');
+  const label = Number(body.match(/grid-template-columns:minmax\((\d+)px,1\.4fr\)/)[1]);
+  for (const [, , floor] of floors) {
+    assert.ok(Number(floor) >= 72, `a ${floor}px column leaves under 52px of text next to its 10px side padding`);
+    for (const columns of [4, 5]) assert.ok(label + columns * Number(floor) > 343, `${columns} columns of ${floor}px must overflow the 343px sheet so the matrix scrolls instead of squeezing`);
+  }
+  assert.match(tpl('matrix').src, /HOW TO FILL[\s\S]*repeat\(C,minmax\(72px,1fr\)\)/); // the instruction names the same floor
+});
+
+test('before-after: the pivot is pasted twice — → while both columns fit one row, ↓ on its own row when they stack — and the switch point is 2 × column basis + pivot', () => {
+  const body = live(tpl('before-after'));
+  const basis = [...body.matchAll(/flex:1 1 (\d+)px; min-width:0;" data-zone/g)].map(m => Number(m[1]));
+  assert.deepEqual(basis, [260, 260]);
+  assert.match(body, /align-items:stretch; container-type:inline-size;">/); // the row is the container 100cqw measures
+  // → ramps up over the 1/999px just below the switch width (+ its own size), so it is already 0 at 569.99px: no fractional width has both arrows
+  const side = body.match(/flex:0 0 clamp\(0px,calc\(\(100cqw - (\d+)px\) \* 999 \+ (\d+)px\),(\d+)px\);[^"]*"><div style="width:36px; max-width:100%;[^"]*font:400 clamp\(0px,calc\(\(100cqw - (\d+)px\) \* 999 \+ (\d+)px\),(\d+)px\)[^"]*">→<\/div>/);
+  const stacked = body.match(/flex:0 0 clamp\(0px,calc\(\((\d+)px - 100cqw\) \* 999\),100cqw\);[^"]*"><div style="width:36px; max-width:100%;[^"]*font:400 clamp\(0px,calc\(\((\d+)px - 100cqw\) \* 999\),17px\)[^"]*">↓<\/div>/);
+  assert.ok(side && stacked, 'both pivots collapse their box and their glyph (font-size) to 0px outside their layout — nothing is clipped, so the figure-overflow probe stays quiet');
+  const switchAt = 2 * basis[0] + Number(side[3]);
+  assert.deepEqual([side[1], side[4]].map(Number), [switchAt, switchAt]); // → is 0 below 570px, 50px from 570px (its box ramps from 569.95px)
+  assert.deepEqual([side[2], side[5]].map(Number), [side[3], side[6]].map(Number)); // the ramp offset is the clamp's own top: 50px box, 17px glyph
+  assert.equal(Number(side[6]), 17);
+  assert.deepEqual([Number(stacked[1]), Number(stacked[2])], [switchAt, switchAt]); // ↓ is 100cqw wide up to 569px, 0 from 570px
+  assert.doesNotMatch(body, /flex:0 0 50px|overflow:hidden/); // no fixed always-→ pivot, no clipping trick
+  assert.doesNotMatch(body, /100cqw - 569px/); // the one-pixel window in which both arrows showed
+  assert.match(tpl('before-after').src, /HOW TO FILL[\s\S]*container-type:inline-size/); // the contract is written down
+});
+
+test('before-after pivot in a browser: ↓ sits on its own row between the stacked columns and → is 0px wide; side by side it is the other way round', (t) => {
+  const chrome = findHeadlessChrome();
+  if (!chrome) return t.skip('no headless browser');
+  const fig = stripSlots(buildStyle('feedbackops-light')['components/before-after.html'].replace(/<!--[\s\S]*?-->/g, ''));
+  const rows = [285, 400, 560, 569.5, 569.9, 570, 570.4, 1000]; // the row inside the figure's 28px padding and 1px border; 569.5 – 569.9 is a zoomed page (fractional CSS px)
+  const page = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0">${rows.map(w => `<div class="f" data-w="${w}" style="width:${w + 58}px">${fig}</div>`).join('')}<pre id="out"></pre><script>
+    document.getElementById('out').textContent = JSON.stringify([...document.querySelectorAll('.f')].map(f => {
+      const row = f.querySelector('[data-component] > div'), r = (e) => e.getBoundingClientRect();
+      const [asIs, ...rest] = [...row.children], toBe = rest.pop();
+      const pivot = (glyph) => rest.find(e => e.textContent.trim() === glyph);
+      return { w: Number(f.dataset.w), row: Math.round(r(row).width * 100) / 100, arrow: Math.round(r(pivot('→')).width), down: Math.round(r(pivot('↓')).width),
+        glyph: [pivot('→'), pivot('↓')].map(e => parseFloat(getComputedStyle(e.firstElementChild).fontSize)),
+        order: [r(asIs).top, r(pivot('↓')).top, r(toBe).top].map(Math.round) };
+    }));
+  </script></body></html>`;
+  const dir = mkdtempSync(join(tmpdir(), 'ba-'));
+  try {
+    writeFileSync(join(dir, 'p.html'), page);
+    let out;
+    try { out = execFileSync(chrome, ['--headless=new', ...(process.getuid?.() === 0 ? ['--no-sandbox'] : []), '--disable-gpu', '--dump-dom', `file://${join(dir, 'p.html')}`], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 30000 }); }
+    catch (e) { return t.skip(`browser cannot run here: ${e.message.split('\n')[0]}`); }
+    const got = JSON.parse(out.match(/<pre id="out">([\s\S]*?)<\/pre>/)[1].replace(/&quot;/g, '"'));
+    assert.equal(got.length, rows.length);
+    for (const g of got) {
+      assert.ok(Math.abs(g.row - g.w) < 0.1, `the row measures ${g.row}px for a nominal ${g.w}px`);
+      if (g.w < 570) {
+        assert.equal(g.arrow, 0, `row ${g.w}: → is hidden`);
+        assert.equal(g.glyph[0], 0, `row ${g.w}: the → glyph has no font size`);
+        assert.ok(g.down > 0 && g.glyph[1] > 0, `row ${g.w}: ↓ shows`);
+        if (g.w < 569) assert.equal(g.down, Math.round(g.w), `row ${g.w}: ↓ takes the row`);
+        // just under 570px the ↓ box is still ramping up to the row's width (1/999px per px), so for a fraction of a pixel it may sit beside the first column: only "one arrow" is promised there
+        if (g.w <= 569.5) assert.ok(g.order[0] < g.order[1] && g.order[1] < g.order[2], `row ${g.w}: ↓ sits between the stacked columns (${g.order})`);
+      } else {
+        assert.deepEqual([g.arrow, g.down], [50, 0], `row ${g.w}`);
+        assert.deepEqual([g.glyph[0] > 0, g.glyph[1]], [true, 0], `row ${g.w}: only the → glyph has a font size`);
+        assert.equal(g.order[0], g.order[2], `row ${g.w}: the columns share a row`);
+      }
+    }
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+// ---- documents built from the components keep the planned marker (core/components.md §4 "Figure markers") ----
+
+test('documents: every element drawn in the planned look (muted dashed box on the fill tint; a timeline row with the dashed empty marker) carries data-state="planned"', () => {
+  const { colors } = loadTokens('feedbackops-light');
+  const box = `background:${colors['fill-50']}; border:1px dashed ${colors['muted-300']};`;
+  const ring = `border:2px dashed ${colors['muted-300']}`;
+  for (const file of ['presentations/platform-pitch/platform-pitch.dc.html', 'presentations/platform-guide/platform-guide.dc.html']) {
+    const mk = markup(readFileSync(join(CORE, '..', file), 'utf8'));
+    const looks = elementsWith(mk, 'style').filter(el => el.value.includes(box) || (el.value.includes('96px 28px') && htmlOf(mk, el).includes(ring)));
+    assert.ok(looks.length, `${file} draws planned things`);
+    for (const el of looks) assert.equal(attrOf(el.attrs, 'data-state'), 'planned', `${file}: <${el.name}> "${htmlOf(mk, el).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 30)}" has the planned look but no data-state="planned"`);
+  }
+});
+
+// ---- the 390px phone: five components that did not survive a real document (core/components.md §4 "Narrow widths") ----
+// A 390px viewport leaves the sheet 343px (design.md §8.1), a figure root 341px inside its border and its content 293px inside its padding.
+
+const PHONE = 343;
+// The generated component of a style with slots and comments stripped — what a document pastes.
+const pasted = (id, style = 'feedbackops-light') => stripSlots(buildStyle(style)[join('components', `${id}.html`)].replace(/<!--[\s\S]*?-->/g, '')).trim();
+
+// Runs `probe(host, R, broken)` in headless Chrome over `html` and returns its JSON, or null (and skips) when no browser can run.
+// `host(width, markup?)` mounts the component in a block of that width and returns the block; `R(el)` is its bounding rect;
+// `broken(el)` lists the words the browser wrapped mid-word. The system fonts are whatever the machine has — the floors are tested with margin.
+function inChrome(t, html, probe) {
+  const chrome = findHeadlessChrome();
+  if (!chrome) { t.skip('no headless browser'); return null; }
+  const page = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0; word-break:keep-all"><pre id="out"></pre><script>
+    const HTML = ${JSON.stringify(html).replace(/</g, '\\u003c')};
+    const host = (width, markup = HTML) => { const d = document.createElement('div'); d.style.cssText = 'width:' + width + 'px; margin:0 0 24px;'; d.innerHTML = markup; document.body.appendChild(d); return d; };
+    const R = (e) => e.getBoundingClientRect();
+    const broken = (el) => { const out = [], w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      for (let n; (n = w.nextNode());) for (const m of n.textContent.matchAll(/\\S+/g)) {
+        if (m[0].length < 3) continue;
+        const r = document.createRange(); r.setStart(n, m.index); r.setEnd(n, m.index + m[0].length);
+        if (new Set([...r.getClientRects()].map(x => Math.round(x.top / 4))).size > 1) out.push(m[0]);
+      } return out; };
+    document.getElementById('out').textContent = encodeURIComponent(JSON.stringify((${probe.toString()})(host, R, broken)));
+  </script></body></html>`;
+  const dir = mkdtempSync(join(tmpdir(), 'phone-'));
+  try {
+    writeFileSync(join(dir, 'p.html'), page);
+    let out;
+    try { out = execFileSync(chrome, ['--headless=new', ...(process.getuid?.() === 0 ? ['--no-sandbox'] : []), '--disable-gpu', '--dump-dom', `file://${join(dir, 'p.html')}`], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 30000 }); }
+    catch (e) { t.skip(`browser cannot run here: ${e.message.split('\n')[0]}`); return null; }
+    return JSON.parse(decodeURIComponent(out.match(/<pre id="out">([\s\S]*?)<\/pre>/)[1]));
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+}
+
+test('activity: the outcome grid reflows (K in one row, else two per row) instead of scrolling — K in the rail and in both 100cqw switches, 104px floor + 10px gap = 114', () => {
+  const t = tpl('activity');
+  const body = live(t);
+  const grid = body.match(/grid-template-columns:repeat\(auto-fit,minmax\(clamp\(104px,calc\(\((\d) \* 114px - 10px - 100cqw\) \* 999\),calc\(50% - 6px\)\),1fr\)\);/);
+  const rail = body.match(/margin:0 clamp\(calc\(50% \/ (\d)\), calc\(\((\d) \* 114px - 10px - 100cqw\) \* 999\), 25%\);/);
+  assert.ok(grid && rail, 'grid and rail carry the cqw switch');
+  assert.deepEqual([grid[1], rail[1], rail[2]], ['4', '4', '4']); // the template shows K = 4, and every K in it is the same one
+  assert.match(body, /<div style="align-self:stretch; container-type:inline-size;">\s*<div style="height:12px; margin:0 clamp/); // rail and grid share the container 100cqw measures
+  assert.doesNotMatch(body, /repeat\(4,minmax\(84px,1fr\)\)/); // the 84px-floor grid that needed 414px for four outcomes is gone
+  assert.match(t.src, /HOW TO FILL[\s\S]*calc\(50% \/ K\)[\s\S]*K \* 114px - 10px - 100cqw[\s\S]*두 칸씩 줄이 바뀌고/);
+});
+
+test('activity in a browser: at the phone width K = 2…5 outcomes wrap in pairs with nothing clipped or scrolling and the rail over the first row; at 700px they share one row', (t) => {
+  const got = inChrome(t, pasted('activity'), (host, R) => {
+    const rows = [];
+    for (const K of [2, 3, 4, 5]) for (const width of [343, 700]) {
+      const d = host(width, HTML.replaceAll('4 * 114px', `${K} * 114px`).replace('calc(50% / 4)', `calc(50% / ${K})`));
+      const grid = d.querySelector('[style*="auto-fit"]');
+      while (grid.children.length > K) grid.lastElementChild.remove();
+      while (grid.children.length < K) grid.appendChild(grid.children[1].cloneNode(true));
+      const root = d.firstElementChild, rail = grid.previousElementSibling, outs = [...grid.children];
+      const box = R(root), firstRow = outs.filter(o => Math.abs(R(o).top - R(outs[0]).top) < 4), centre = (e) => R(e).left + R(e).width / 2;
+      rows.push({
+        K, width, scroll: [root, ...root.querySelectorAll('*')].some(e => e.scrollWidth > e.clientWidth + 1 && /auto|scroll/.test(getComputedStyle(e).overflowX)),
+        inside: outs.every(o => R(o).left >= box.left && R(o).right <= box.right), perRow: firstRow.length,
+        railLeft: Math.round(R(rail).left - centre(outs[0])), railRight: Math.round(R(rail).right - centre(firstRow.at(-1))),
+      });
+      d.remove();
+    }
+    return rows;
+  });
+  if (!got) return;
+  assert.equal(got.length, 8);
+  for (const g of got) {
+    const at = `K=${g.K} at ${g.width}px`;
+    assert.equal(g.scroll, false, `${at}: no hidden scroll`);
+    assert.equal(g.inside, true, `${at}: every outcome inside the figure`);
+    assert.equal(g.perRow, g.width === PHONE ? Math.min(g.K, 2) : g.K, `${at}: outcomes per row`);
+    assert.ok(Math.abs(g.railLeft) <= 4 && Math.abs(g.railRight) <= 4, `${at}: the rail runs from the first outcome's centre to the last one of the first row (off by ${g.railLeft}, ${g.railRight}px)`);
+  }
+});
+
+// The layer-name column of a layer-map: a floor, a share of the figure (35%) capped at 160px, and 14px of padding either side. At the 343px a phone
+// leaves the sheet the share is 102px — 74px of text, and an English layer name ("Infrastructure", 95px at 13px/600 in Pretendard, "Authentication" 97px)
+// broke mid-word through overflow-wrap:anywhere. The floor is what keeps a name whole, so it is set from the longest word, not from the share.
+const LAYER_WORD = 97; // the widest 14-character English word at 13px/600 in Pretendard ("Authentication", "Configurations")
+
+test('layer-map: every layer row shares one label column — a floor that leaves a 14-character English word whole next to its 14px padding, a 35% share capped at 160px', () => {
+  const body = live(tpl('layer-map'));
+  const cols = [...body.matchAll(/grid-template-columns:minmax\((\d+)px,min\((\d+)px,(\d+)%\)\) minmax\(0,1fr\);/g)].map(m => m.slice(1).map(Number));
+  assert.equal(cols.length, 5); // layer · key · state-chip · external · legacy
+  assert.deepEqual([...new Set(cols.map(c => c.join('/')))].length, 1, 'every row sets the same label column, so the labels line up');
+  const [floor, cap, share] = cols[0];
+  assert.deepEqual([cap, share], [160, 35]);
+  assert.ok(floor <= cap, 'the floor never exceeds the cap');
+  assert.ok(floor - 2 * 14 >= LAYER_WORD + 6, `a ${floor}px label column leaves ${floor - 28}px of text for a ${LAYER_WORD}px word`);
+  assert.equal([...body.matchAll(/<div style="padding:12px 14px; (?:background|display)/g)].length, 5); // the label cells keep the 14px padding the desktop look is drawn with
+  assert.match(tpl('layer-map').src, /HOW TO FILL[\s\S]*\d+px[\s\S]*영문 층 이름/); // the reason is written down
+});
+
+test('layer-map in a browser: at the 343px a phone leaves the sheet an English layer name stays whole in every label, with 100px+ of room for text; at 1000px the column is the 160px cap, as before', (t) => {
+  const got = inChrome(t, pasted('layer-map'), (host, R, broken) => {
+    const out = [];
+    for (const width of [343, 1000]) {
+      const d = host(width), root = d.firstElementChild;
+      // the layer-name div of each row: the 13px/600 one in the first cell of every grid row
+      const names = [...root.querySelectorAll('[style*="grid-template-columns"] > div:first-child > div:nth-of-type(n)')].filter(e => /font:600 13px/.test(e.getAttribute('style') || ''));
+      const words = ['Infrastructure', 'Authentication', 'Configurations', 'Observability', 'FileGateway.'];
+      names.forEach((e, i) => { e.textContent = words[i % words.length]; });
+      out.push({ width, rows: names.length, text: names.map(e => Math.round(R(e.parentElement).width - 2 * parseFloat(getComputedStyle(e.parentElement).paddingLeft))), cell: names.map(e => Math.round(R(e.parentElement).width)), broken: names.flatMap(e => broken(e)), pad: names.map(e => getComputedStyle(e.parentElement).paddingLeft) });
+      d.remove();
+    }
+    return out;
+  });
+  if (!got) return;
+  const [phone, desk] = got;
+  assert.equal(phone.rows, 5);
+  assert.deepEqual(phone.broken, [], 'no layer name split mid-word at the phone width');
+  assert.ok(phone.text.every(w => w >= 100), `label text widths at 343px: ${phone.text}`);
+  assert.equal(new Set(phone.cell).size, 1, `the label columns line up (${phone.cell})`);
+  assert.deepEqual(desk.broken, []);
+  assert.deepEqual([...new Set(desk.cell)], [160], 'the desktop column is the 160px cap, unchanged');
+  assert.deepEqual([...new Set(desk.pad)], ['14px'], 'with the 14px padding it was drawn with');
+});
+
+test('use-case: the system label is in flow in grid row 1 (never absolute) and the actors start at row 2, under a boundary that spans R + 1 rows', () => {
+  const t = tpl('use-case');
+  const body = live(t);
+  assert.doesNotMatch(body, /position:absolute/); // the label that overlapped the first oval at 390px is gone
+  assert.match(body, /<div style="grid-column:3; grid-row:1; align-self:start; padding:8px 12px 0; text-align:right;[^"]*">⟦SYSTEM⟧ · ⟦시스템 이름⟧<\/div>/);
+  const rows = (col) => [...body.matchAll(new RegExp(`grid-column:${col}; grid-row:(\\d)`, 'g'))].map(m => Number(m[1]));
+  assert.deepEqual(rows(1), [2, 3, 4]); // actor K sits in row K + 1 …
+  assert.deepEqual(rows(2), [2, 3, 4]); // … with its line …
+  assert.deepEqual(rows(3), [1, 1, 2, 3, 4]); // … and its use cases; the boundary and the label take row 1
+  assert.match(body, /grid-row:1 \/ span 4; align-self:stretch;/); // R + 1 rows for R = 3 actors
+  assert.match(t.src, /HOW TO FILL[\s\S]*grid-row:1 \/ span R\+1[\s\S]*grid-row:K \(K = 2, 3, 4/);
+});
+
+test('use-case in a browser: at 343, 500 and 760px the label never touches a use case, whatever its length and however the ovals wrap', (t) => {
+  const got = inChrome(t, pasted('use-case'), (host, R) => {
+    const rows = [];
+    for (const text of ['SYSTEM · 시스템 이름', 'SYSTEM · 파일 게이트웨이 업로드 처리 시스템 전체 이름이 아주 긴 경우']) for (const width of [343, 500, 760]) {
+      const d = host(width);
+      const label = [...d.querySelectorAll('div')].find(e => e.textContent.startsWith('SYSTEM · ') && e.children.length === 0);
+      label.textContent = text;
+      const ovals = [...d.querySelectorAll('div')].filter(e => getComputedStyle(e).borderRadius === '50%' && e.children.length === 0 && R(e).width > 40);
+      const l = R(label), box = R(label.parentElement.firstElementChild);
+      rows.push({ text: text.length, width, position: getComputedStyle(label).position, ovals: ovals.length,
+        clear: ovals.every(o => R(o).top >= l.bottom - 0.5 || R(o).bottom <= l.top + 0.5 || R(o).left >= l.right || R(o).right <= l.left),
+        gap: Math.round(Math.min(...ovals.map(o => R(o).top)) - l.bottom), inBox: l.left >= box.left && l.right <= box.right && l.top >= box.top });
+      d.remove();
+    }
+    return rows;
+  });
+  if (!got) return;
+  assert.equal(got.length, 6);
+  for (const g of got) {
+    const at = `${g.text}-char label at ${g.width}px`;
+    assert.equal(g.ovals, 10, `${at}: use cases found`);
+    assert.equal(g.position, 'static', at);
+    assert.equal(g.clear, true, `${at}: label clear of every use case`);
+    assert.ok(g.gap >= 4, `${at}: the first use case starts ${g.gap}px under the label`);
+    assert.equal(g.inBox, true, `${at}: label inside the system box`);
+  }
+});
+
+test('decision-table: condition floors 120px and result floor 140px in every row (a short key stays whole); the narrow fallback is the sanctioned scroll inside the box', () => {
+  const t = tpl('decision-table');
+  const body = live(t);
+  const grids = [...body.matchAll(/grid-template-columns:([^;"]*)/g)].map(m => m[1]);
+  assert.equal(grids.length, 5); // the header and the four rules the template draws
+  assert.deepEqual([...new Set(grids)], ['repeat(3,minmax(120px,1fr)) minmax(140px,1.3fr)']);
+  assert.ok(120 - 2 * 16 >= 88, 'a condition column keeps 88px of text beside its 16px side padding: "Continuous" (10 letters, about 75px at 12.5px) stays whole');
+  for (const c of [2, 3, 4]) assert.ok(c * 120 + 140 > PHONE - 2, `${c} conditions are wider than the 341px figure, so the table scrolls inside its box instead of squeezing a key`);
+  assert.match(body, /overflow-x:auto;[^"]*">\s*<div style="min-width:min-content;">/);
+  assert.match(t.src, /HOW TO FILL[\s\S]*repeat\(C,minmax\(120px,1fr\)\) minmax\(140px,1\.3fr\)[\s\S]*가로로 스크롤/);
+});
+
+test('decision-table in a browser: at the phone width "Continuous 로그" is not split mid-word and the table scrolls in its own box; at 760px it fits without scrolling', (t) => {
+  const got = inChrome(t, pasted('decision-table'), (host, R, broken) => [343, 760].map(width => {
+    const d = host(width);
+    const keys = [...d.querySelectorAll('div')].filter(e => e.children.length === 0 && e.textContent === '예');
+    ['Continuous 로그', 'Streaming 로그', 'Batch 로그'].forEach((text, i) => { keys[i].textContent = text; });
+    const root = d.firstElementChild;
+    const out = { width, broken: broken(root), scrolls: root.scrollWidth > root.clientWidth + 1, scrollWidth: root.scrollWidth, client: root.clientWidth };
+    d.remove();
+    return out;
+  }));
+  if (!got) return;
+  const [phone, desk] = got;
+  assert.deepEqual(phone.broken, [], 'no word split across lines at the phone width');
+  assert.equal(phone.scrolls, true, `the table scrolls inside its box (${phone.scrollWidth}px in ${phone.client}px)`);
+  assert.deepEqual(desk.broken, []);
+  assert.equal(desk.scrolls, false, 'three conditions fit a 760px sheet');
+});
+
+// The status-board variant without a progress column, as a pasteable board: the template's own root, the header and the row its VARIANT comment holds.
+const noProgressVariant = () => {
+  const variant = tpl('status-board').src.match(/<!-- VARIANT no progress column[^\n]*\n([\s\S]*?)\n\s*-->/)[1];
+  const markupOnly = variant.split('\n').filter(l => l.trim().startsWith('<')).join('\n'); // the comment's two prose lines are not markup
+  const cut = markupOnly.indexOf('</div>\n    <div') + 6;
+  return { markupOnly, header: markupOnly.slice(0, cut), row: markupOnly.slice(cut + 1) };
+};
+const noProgressBoard = (style = 'feedbackops-light') => {
+  const { header, row } = noProgressVariant();
+  const root = pasted('status-board', style).match(/^<div data-component="status-board"[^>]*>/)[0];
+  return stripSlots(renderTemplate(`${root}<div style="min-width:min-content;">${header}${row}${row}${row}</div></div>`, loadTokens(style)).out);
+};
+
+test('status-board: rows are flex-wrap lines over floored flex-basis-0 cells (the old 1.5fr 88px 1fr 1.8fr), the header collapses at the width the four floors need on one line, and a no-progress variant is documented', () => {
+  const t = tpl('status-board');
+  const body = live(t);
+  assert.doesNotMatch(body, /grid-template-columns/); // the grid whose floors summed to 502px and pushed the memo behind a scroll
+  const rows = [...body.matchAll(/<div style="display:flex; flex-wrap:wrap; align-items:center; gap:6px 14px; padding:12px 18px; border-top:1px solid ⟨border-row⟩;"/g)];
+  assert.equal(rows.length, 5); // blocked · at risk · on track · done · not started
+  assert.equal([...body.matchAll(/flex:1\.5 1 0px; min-width:96px;/g)].length, 6); // the name cell of every row and of the header
+  assert.equal([...body.matchAll(/flex:0 0 88px;/g)].length, 6);
+  assert.equal([...body.matchAll(/flex:1\.8 1 0px; min-width:120px;/g)].length, 6);
+  assert.equal([...body.matchAll(/flex:1 1 0px; min-width:120px;/g)].length, 6); // progress cell (a bar or the — of a row not started)
+  const need = 96 + 88 + 120 + 120 + 3 * 14 + 2 * 18; // the four floors, three gaps and the row's side padding
+  // padding and font-size ramp up over the 1/999px below the width a row needs (+ their own size), one threshold: 502 = the width below which a row wraps
+  const collapse = [...body.matchAll(/clamp\(0px,calc\(\(100cqw - (\d+)px\) \* 999 \+ (\d+)px\),(\d+)px\)/g)].map(m => [Number(m[1]), Number(m[2]), Number(m[3])]);
+  assert.deepEqual(collapse, [[need, 11, 11], [need, 12, 12]]);
+  assert.doesNotMatch(body, /100cqw - 501px/); // the 1px window in which the header showed (12px, wrapped, 53px tall) over rows that had already wrapped
+  assert.match(body, /overflow-wrap:anywhere; container-type:inline-size; width:100%; box-sizing:border-box;">/); // 100cqw is the board's own width, and the root fills its host (no intrinsic width of its own)
+  // the variant without a progress column
+  const { markupOnly } = noProgressVariant();
+  assert.doesNotMatch(markupOnly, /data-value|width:⟦|⟦진척⟧/); // no bar, no marker, no progress label
+  assert.deepEqual([...markupOnly.matchAll(/100cqw - (\d+)px/g)].map(m => Number(m[1])), [96 + 88 + 120 + 2 * 14 + 2 * 18, 96 + 88 + 120 + 2 * 14 + 2 * 18]); // 368: the three floors, two gaps, the side padding
+  assert.deepEqual([...markupOnly.matchAll(/calc\(\(100cqw - \d+px\) \* 999 \+ (\d+)px\),(\d+)px\)/g)].map(m => [Number(m[1]), Number(m[2])]), [[11, 11], [12, 12]]);
+  assert.match(t.meta.data, /진척 %\(출처에 진척이 없으면 이 열을 뺀다\)/);
+  assert.match(t.src, /HOW TO FILL[\s\S]*VARIANT no progress[\s\S]*data-value 속성을 지운다[\s\S]*NOTE 도 나오지 않는다[\s\S]*두 줄이 된다/);
+  assert.match(readFileSync(join(CORE, 'components.md'), 'utf8'), /`status-board` without its\s+progress column/);
+});
+
+test('status-board in a browser: below the one-line width (the phone, and 501.5px of a zoomed page) every row wraps to two lines with the memo in view and the header folded away; from it up to 760px it is one line under its header — with and without the progress column', (t) => {
+  const got = inChrome(t, `${pasted('status-board')}<!--SPLIT-->${noProgressBoard()}`, (host, R) => {
+    const [full, none] = HTML.split('<!--SPLIT-->');
+    const out = [];
+    // the widths are the board's own box + its 2px border: 343 (a phone), just under and at the one-line width (502 / 368 — 501.5 is a zoomed page), 760
+    for (const [name, markup, need] of [['progress', full, 502], ['no progress', none, 368]]) for (const width of [343, need - 0.5 + 2, need + 2, 760]) {
+      const d = host(width, markup), root = d.firstElementChild, box = root.firstElementChild, [header, ...rows] = [...box.children];
+      const cells = (row) => [...row.children]; // cells of one line share a vertical centre (align-items:center); a new line is 8px+ lower
+      const lines = (row) => cells(row).map(c => R(c).top + R(c).height / 2).sort((a, b) => a - b).reduce((n, y, i, all) => n + (i && y - all[i - 1] > 8 ? 1 : 0), 1);
+      out.push({
+        name, width, folded: R(root).width - 2 < need, scroll: [root, box, ...root.querySelectorAll('*')].some(e => e.scrollWidth > e.clientWidth + 1 && /auto|scroll/.test(getComputedStyle(e).overflowX)),
+        header: Math.round(R(header).height), rows: rows.length, lines: [...new Set(rows.map(lines))],
+        memoSeen: rows.every(r => { const m = cells(r).at(-1); return R(m).right <= R(root).right - 1 && R(m).left >= R(root).left && R(m).width >= 110 && R(m).height > 10; }),
+        aligned: R(root).width - 2 >= need ? cells(header).every((h, i) => rows.every(r => Math.abs(R(h).left - R(cells(r)[i]).left) <= 1)) : null,
+        cellsPerRow: [...new Set(rows.map(r => cells(r).length))],
+      });
+      d.remove();
+    }
+    return out;
+  });
+  if (!got) return;
+  for (const g of got) {
+    const at = `${g.name} board at ${g.width}px`;
+    assert.equal(g.scroll, false, `${at}: no scroll, so no memo behind one`);
+    assert.equal(g.memoSeen, true, `${at}: the memo is inside the board and wide enough to read`);
+    assert.deepEqual(g.cellsPerRow, [g.name === 'progress' ? 4 : 3], at);
+    if (g.folded) { assert.equal(g.header, 0, `${at}: header folded`); assert.deepEqual(g.lines, [2], `${at}: two lines per row`); } // a header over rows that already wrapped is the 1px window
+    else { assert.ok(g.header >= 20, `${at}: header shown`); assert.deepEqual(g.lines, [1], `${at}: one line per row`); assert.equal(g.aligned, true, `${at}: header labels sit over their columns`); }
+  }
+});
+
+// A root whose layout reads 100cqw (a container-type:inline-size inside it or on it) has an intrinsic width of ~0: put in a host that sizes
+// to its content — a flex column with align-items:flex-start or center, a flex row, an inline-block — it collapsed to its padding (before-after
+// 58px wide and 1952px tall, activity 200px, status-board 2px). width:100% makes it fill a stretched host and a flex one; the contract in
+// core/components.md §4 says where the three still must not go (inline-block, width:fit-content, a grid auto track).
+const CQW_ROOTS = ['before-after', 'activity', 'status-board'];
+
+test('before-after, activity and status-board: the root fills its host (width:100%; box-sizing:border-box), because a container-type:inline-size in it gives it no intrinsic width', () => {
+  for (const id of CQW_ROOTS) {
+    const root = tpl(id).src.match(/^<div data-component="[^"]*" style="([^"]*)"/m)[1];
+    assert.match(root, /(?<![\w-])width:100%;/, `${id}: the root sets width:100%`);
+    assert.match(root, /box-sizing:border-box;/, `${id}: and it counts its padding and border inside that width`);
+    assert.match(root, /overflow-wrap:anywhere;/, `${id}: the root keeps overflow-wrap:anywhere`);
+  }
+  assert.match(readFileSync(join(CORE, 'components.md'), 'utf8'), /before-after`, `activity` and `status-board`[^.]*(normal block flow|block flow)[^.]*(stretch|1fr)/); // where they may be pasted is written down
+});
+
+test('before-after, activity and status-board in a browser: in a host that sizes to its content (flex column, flex-start or center; a flex row) the root is the host\'s width, not its padding', (t) => {
+  const got = inChrome(t, CQW_ROOTS.map(id => pasted(id)).join('<!--SPLIT-->'), (host, R) => {
+    const out = [];
+    const hosts = { 'column flex-start': 'display:flex; flex-direction:column; align-items:flex-start;', 'column center': 'display:flex; flex-direction:column; align-items:center;', row: 'display:flex;', block: '' };
+    for (const markup of HTML.split('<!--SPLIT-->')) for (const [where, css] of Object.entries(hosts)) {
+      const d = host(800, '<div style="' + css + '">' + markup + '</div>'), parent = d.firstElementChild, root = parent.firstElementChild;
+      out.push({ id: root.getAttribute('data-component'), where, host: Math.round(R(parent).width), width: Math.round(R(root).width), height: Math.round(R(root).height) });
+      d.remove();
+    }
+    return out;
+  });
+  if (!got) return;
+  assert.equal(got.length, 12);
+  for (const g of got) {
+    assert.equal(g.width, g.host, `${g.id} in a ${g.where} host is ${g.width}px of ${g.host}px`);
+    assert.ok(g.height < 700, `${g.id} in a ${g.where} host is ${g.height}px tall (a collapsed before-after wrapped its text to 1952px)`);
+  }
+});
+
+test('status-board without a progress column: the gate reads no bar, so chart-proportions has nothing to mark — no "carries no data-value" NOTE, no failure; a board that keeps its progress column is still checked', () => {
+  const { colors } = loadTokens('feedbackops-light');
+  const opts = { accentHex: colors.accent, zoneRoles: zoneRoles(colors) };
+  const board = noProgressBoard();
+  assert.equal((board.match(/data-value/g) || []).length, 0);
+  assert.deepEqual(chartProportions(board), { charts: 0, values: 0, unmarked: [], partial: [], violations: [] });
+  const r = figureChecks(board, opts);
+  assert.deepEqual(r.checks, []);
+  assert.deepEqual(r.notes, []);
+  const withProgress = figureChecks(pasted('status-board'), opts);
+  assert.deepEqual(withProgress.checks.map(c => [c.name, c.ok]), [['chart-proportions', true]]);
+  assert.equal(chartProportions(pasted('status-board').replaceAll(/ data-value="[^"]*"/g, '')).unmarked.length, 1); // strip the markers and it is noted again
+});
+
+test('sequence: every track has a 144px floor (the message label width between neighbours), so 3+ participants scroll inside the box at 343px instead of crushing labels', () => {
+  const t = tpl('sequence');
+  const body = live(t);
+  const tracks = [...body.matchAll(/repeat\((\d),minmax\((\d+)px,1fr\)\)/g)].map(m => `${m[1]}/${m[2]}`);
+  assert.ok(tracks.length >= 8);
+  assert.deepEqual([...new Set(tracks)], ['3/144']);
+  assert.doesNotMatch(body, /minmax\(96px,1fr\)/);
+  assert.ok(3 * 144 > PHONE - 2 - 48, 'three participants are wider than the 293px a phone leaves inside the figure padding');
+  assert.ok(2 * 144 <= PHONE - 2 - 48, 'two participants still fit it without scrolling');
+  assert.match(t.src, /HOW TO FILL[\s\S]*repeat\(N,minmax\(144px,1fr\)\)[\s\S]*\/v1\/files\/complete[\s\S]*가로로 스크롤/);
+});
+
+test('sequence in a browser: at the phone width a long identifier label is not split mid-word and the figure scrolls in its own box; at 760px it fits without scrolling', (t) => {
+  const got = inChrome(t, pasted('sequence').replace('요청 1', 'POST /v1/files/complete'), (host, R, broken) => [343, 760].map(width => {
+    const d = host(width);
+    const root = d.firstElementChild, label = [...root.querySelectorAll('span')].find(e => e.textContent.includes('/v1/files/complete'));
+    const out = { width, broken: broken(root), scrolls: root.scrollWidth > root.clientWidth + 1, label: Math.round(R(label).width) };
+    d.remove();
+    return out;
+  }));
+  if (!got) return;
+  const [phone, desk] = got;
+  assert.ok(phone.label >= 130, `the label has ${phone.label}px`);
+  assert.deepEqual(phone.broken, [], 'no identifier split across lines');
+  assert.equal(phone.scrolls, true);
+  assert.deepEqual(desk.broken, []);
+  assert.equal(desk.scrolls, false);
 });

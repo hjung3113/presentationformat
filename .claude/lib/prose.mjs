@@ -106,7 +106,7 @@ export function visibleBlocks(html) {
 
 // ---------- terms ledger (`## T — 용어` in facts.md) ----------
 
-const cells = (line) => line.trim().replace(/^\||\|$/g, '').split(/(?<!\\)\|/).map(c => c.replace(/\\\|/g, '|').trim());
+export const cells = (line) => line.trim().replace(/^\||\|$/g, '').split(/(?<!\\)\|/).map(c => c.replace(/\\\|/g, '|').trim());
 const unwrap = (v) => v.trim().replace(/^[`"'“‘「]+|[`"'”’」]+$/g, '').trim();
 const isBlank = (v) => !v || /^(?:—|-|–|none|n\/a|없음)$/i.test(v);
 const isPlaceholder = (v) => /^<[^>]*>$/.test(v.trim());

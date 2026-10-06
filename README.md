@@ -32,7 +32,7 @@ Every style also has a **component gallery** — `styles/<style>/components.gall
 
 > **Using this from an agent host:** Claude Code and opencode pick up the `/plan → /build` skills on clone. For **Codex**, run `./install.sh` then restart. See [`AGENTS.md`](AGENTS.md).
 
-Worked examples live in [`examples/`](examples/) — start with [`examples/feedbackops-light-brief/`](examples/feedbackops-light-brief/) (content plan with shapes → nine figure components → gate passing with `--plan`), then [`examples/feedbackops.dc.html`](examples/feedbackops.dc.html). (The indigo-serif specs were originally abstracted from an older design reference now frozen under [`archive/parserimprove/`](archive/parserimprove/); it is historical provenance only, not part of this project.)
+Worked examples live in [`examples/`](examples/) — start with [`examples/feedbackops-light-brief/`](examples/feedbackops-light-brief/) (content plan with shapes → nine figure components → gate passing with `--plan`), then [`examples/feedbackops.dc.html`](examples/feedbackops.dc.html). [`presentations/`](presentations/) is the second set of full-pipeline documents, each with its `content-plan.md` and `facts.md` ledger: a management pitch (`platform-pitch`) and a developer guide (`platform-guide`), both in feedbackops-light, and an API explainer (`filegateway-intro`) in indigo-serif — a copy of the deck kept in the FileGateway repo. (The indigo-serif specs were originally abstracted from an older design reference now frozen under [`archive/parserimprove/`](archive/parserimprove/); it is historical provenance only, not part of this project.)
 
 The **rendered answer key** — a live gallery of every token, component, chart, flowchart shape, data-viz and UML diagram a style defines — is that style's `design-system.answerkey.dc.html`. `design.md` is the written mirror of it; when the two disagree, the answer key wins and `design.md` is updated to match. Open it (served over http) to *see* what each spec value produces.
 
@@ -104,4 +104,4 @@ styles/<id>/support.js --style <id> --plan <content-plan.md>` — prints the `GA
 
 ## Requirements
 
-Serve over http(s) (not `file://`), keep a copy of `support.js` **beside** each `.dc.html` file (there is no build step — copies are the byte-identical generated runtime), and allow outbound network for fonts + React UMD. Details in `core/runtime-spec.md §4`.
+Serve over http(s) (not `file://`), keep a copy of `support.js` **beside** each `.dc.html` file (there is no build step — copies are the byte-identical generated runtime), and allow outbound network for fonts + React UMD. Details in `core/runtime-spec.md §4`. To run the authoring gate's visual tier without network, see `.claude/README.md` Prerequisites (`--local-assets`).

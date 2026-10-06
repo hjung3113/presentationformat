@@ -7,36 +7,39 @@
 @use 항목별 달성률·진척률, 또는 이름이 긴 항목 여러 개의 크기 순위를 비교한다. 목표 대비 진척, 커버리지, 상위 N개.
 @avoid 기간별 추이 → bar-chart. 전체 대비 구성비 → stacked-bar.
 @limits 행 3–8
+@limits-x rows=3..8
 @data rows: 라벨=값(/목표), … | unit?: % | target?: 값
 HOW TO FILL
   1. 막대 width 슬롯(%)과 오른쪽 값 글자 슬롯은 같은 값으로 함께 채운다.
-     진척률(%)이면 width = 값 그대로(예: 70%). 건수 비교면 width = 값 ÷ 최댓값 × 100.
+     진척률(%)이면 width = 값 그대로(예: 70%). 건수 비교면 한 차트의 막대를 모두 같은 비례로 그린다(보통 width = 값 ÷ 최댓값 × 100,
+     목표가 100 인 `70/100건` 은 값 그대로 70%).
   2. 행 하나 = ▼REPEAT 행 하나. 큰 값부터 정렬한다(진척률이면 업무 순서대로도 가능).
   3. 색 변형: 목표 달성·높음=강조색, 중간=보조 강조색, 목표 미달=회색(값 글자도 회색).
   4. (선택) 목표선: 막대 칸 안 점선 left = 목표 값 %. 모든 행에 같은 값으로 넣는다.
+  5. 행 div 의 data-value 속성은 지우지 않는다. 오른쪽 값 글자가 보여 주는 숫자로 채운다(90% 면 90, 142건이면 142). 게이트의 chart-proportions 가 막대 width 를 견준다(±2): 값 글자에 %가 있으면 width = 값, 없으면 가장 큰 행에서 뽑은 비례(width ÷ 값)를 모든 행이 같이 가져야(±2) 하고 가장 큰 행이 102% 를 넘으면 안 된다.
 -->
-<div data-component="hbar-chart" style="background:⟨fig-tint⟩; border:1px solid ⟨border-fig⟩; border-radius:⟨r:card-sm⟩; padding:22px 24px 20px;">
+<div data-component="hbar-chart" style="background:⟨fig-tint⟩; border:1px solid ⟨border-fig⟩; border-radius:⟨r:card-sm⟩; padding:22px 24px 20px; overflow-wrap:anywhere;">
   <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:16px;"><span style="font:600 13px/1.4 ⟨f:body⟩; color:⟨ink-900⟩;">⟦차트 제목⟧</span><span style="font:500 11px/1 ⟨f:mono⟩; color:⟨muted-text⟩;">⟦점선 = 목표 값⟧</span></div>
   <div style="display:flex; flex-direction:column; gap:12px;">
     <!-- ▼ REPEAT per row -->
-    <div style="display:grid; grid-template-columns:170px 1fr 52px; gap:14px; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(80px,min(170px,35%)) minmax(0,1fr) 52px; gap:14px; align-items:center;" data-value="⟦90⟧">
       <span style="font:500 12.5px/1.35 ⟨f:body⟩; color:⟨ink-700⟩;">⟦항목 A⟧</span>
       <div style="position:relative; height:18px; background:⟨fill-100⟩; border-radius:5px;"><div style="width:⟦90⟧%; height:100%; background:⟨accent⟩; border-radius:5px;"></div><div style="position:absolute; left:80%; top:-4px; bottom:-4px; border-left:2px dashed ⟨ink-700⟩;"></div></div>
       <span style="font:700 12px/1 ⟨f:mono⟩; color:⟨accent⟩; text-align:right;">⟦90%⟧</span>
     </div>
     <!-- ▲ /REPEAT -->
-    <div style="display:grid; grid-template-columns:170px 1fr 52px; gap:14px; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(80px,min(170px,35%)) minmax(0,1fr) 52px; gap:14px; align-items:center;" data-value="⟦70⟧">
       <span style="font:500 12.5px/1.35 ⟨f:body⟩; color:⟨ink-700⟩;">⟦항목 B⟧</span>
       <div style="position:relative; height:18px; background:⟨fill-100⟩; border-radius:5px;"><div style="width:⟦70⟧%; height:100%; background:⟨accent-soft⟩; border-radius:5px;"></div><div style="position:absolute; left:80%; top:-4px; bottom:-4px; border-left:2px dashed ⟨ink-700⟩;"></div></div>
       <span style="font:700 12px/1 ⟨f:mono⟩; color:⟨accent-soft⟩; text-align:right;">⟦70%⟧</span>
     </div>
     <!-- VARIANT below target = grey -->
-    <div style="display:grid; grid-template-columns:170px 1fr 52px; gap:14px; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(80px,min(170px,35%)) minmax(0,1fr) 52px; gap:14px; align-items:center;" data-value="⟦30⟧">
       <span style="font:500 12.5px/1.35 ⟨f:body⟩; color:⟨ink-700⟩;">⟦항목 C⟧</span>
       <div style="position:relative; height:18px; background:⟨fill-100⟩; border-radius:5px;"><div style="width:⟦30⟧%; height:100%; background:⟨slate-bar⟩; border-radius:5px;"></div><div style="position:absolute; left:80%; top:-4px; bottom:-4px; border-left:2px dashed ⟨ink-700⟩;"></div></div>
       <span style="font:700 12px/1 ⟨f:mono⟩; color:⟨muted-text⟩; text-align:right;">⟦30%⟧</span>
     </div>
-    <div style="display:grid; grid-template-columns:170px 1fr 52px; gap:14px; align-items:center;">
+    <div style="display:grid; grid-template-columns:minmax(80px,min(170px,35%)) minmax(0,1fr) 52px; gap:14px; align-items:center;" data-value="⟦10⟧">
       <span style="font:500 12.5px/1.35 ⟨f:body⟩; color:⟨ink-700⟩;">⟦항목 D⟧</span>
       <div style="position:relative; height:18px; background:⟨fill-100⟩; border-radius:5px;"><div style="width:⟦10⟧%; height:100%; background:⟨slate-bar⟩; border-radius:5px;"></div><div style="position:absolute; left:80%; top:-4px; bottom:-4px; border-left:2px dashed ⟨ink-700⟩;"></div></div>
       <span style="font:700 12px/1 ⟨f:mono⟩; color:⟨muted-text⟩; text-align:right;">⟦10%⟧</span>

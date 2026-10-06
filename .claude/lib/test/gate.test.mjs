@@ -125,6 +125,11 @@ test('grid-consistency: repeat(M,1fr) must equal N wherever a component uses cal
   const run = (html) => check(runGate(page(html), opts), 'grid-consistency');
   assert.equal(run(comp('<i style="background-size:calc(100% / 6) 100%"></i><b style="grid-template-columns:150px repeat(6,1fr)"></b>')).ok, true);
   assert.equal(run(comp('<i style="background-size:calc(100%/6) 100%"></i><b style="grid-template-columns:repeat( 6 , minmax(0, 1fr))"></b>')).ok, true);
+  // floored tracks (the narrow-width scroll fallback) count like 1fr
+  assert.equal(run(comp('<i style="background-size:calc(100% / 6) 100%"></i><b style="grid-template-columns:150px repeat(6,minmax(40px,1fr))"></b>')).ok, true);
+  const floored = run(comp('<i style="background-size:calc(100% / 6) 100%"></i><b style="grid-template-columns:repeat(6,minmax(96px,1fr))"></b><u style="grid-template-columns:repeat(7,minmax(96px,1fr))"></u>'));
+  assert.equal(floored.ok, false);
+  assert.match(floored.detail, /calc\(100%\/N\) N=6 but repeat\(M,1fr\) M=6,7/);
   const bad = run(comp('<i style="background-size:calc(100% / 7) 100%"></i><b style="grid-template-columns:repeat(6,1fr)"></b><u style="grid-template-columns:repeat(7,1fr)"></u>'));
   assert.equal(bad.ok, false);
   assert.match(bad.detail, /gantt: calc\(100%\/N\) N=7 but repeat\(M,1fr\) M=6,7/);

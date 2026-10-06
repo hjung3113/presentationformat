@@ -37,7 +37,7 @@
 
   <!-- sticky nav (z-index 50). Keep nav labels Korean & short (2-4 chars). -->
   <div data-nav style="position:sticky; top:0; z-index:50; background:rgba(255,255,255,.86); backdrop-filter:blur(10px); border-bottom:1px solid #CBD6E6;">
-    <div style="max-width:1100px; margin:0 auto; padding:0 40px; display:flex; align-items:center; gap:20px; height:54px;">
+    <div style="max-width:1100px; margin:0 auto; padding:0 min(40px,5vw); display:flex; align-items:center; gap:20px; height:54px;">
       <a href="#top" style="text-decoration:none; font:700 14px/1 Inter,Pretendard,sans-serif; color:#101828; white-space:nowrap; letter-spacing:-.01em;">⟦문서 제목⟧ <span style="color:#1428A0;">⟦부제⟧</span></a>
       <div class="nav-scroll" style="display:flex; gap:18px; overflow-x:auto; margin-left:auto;">
         <a data-navlink="s1" href="#s1" style="text-decoration:none; font:500 13px/1 Inter,Pretendard,sans-serif; color:#667083; white-space:nowrap;">⟦배경⟧</a>
@@ -50,7 +50,7 @@
   </div>
 
   <!-- HERO -->
-  <div id="top" style="background:#1428A0; color:#fff; padding:64px 40px 84px; position:relative; overflow:hidden;">
+  <div id="top" style="background:#1428A0; color:#fff; padding:64px min(40px,5vw) 84px; position:relative; overflow:hidden;">
     <div style="position:absolute; inset:0; background-image:none; pointer-events:none;"></div>
     <div style="max-width:1020px; margin:0 auto; position:relative;">
       <div style="display:inline-flex; align-items:center; gap:9px; font:600 12px/1 Inter,Pretendard,sans-serif; letter-spacing:.1em; color:#D8E7FB; background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.18); border-radius:100px; padding:9px 16px; margin-bottom:30px;">⟦EYEBROW — 계획의 eyebrow 값. 없으면 en: PROPOSAL · 관리자용 / ko: 제안서 · 관리자용⟧</div>
@@ -70,7 +70,7 @@
 
   <!-- VARIANT compact hero — for doc-type pitch / audience executive (authoring-guide §4.1, design.md §4.1). Replace the default HERO block above with this one (delete the other).
        Lower and smaller so the sheet starts higher: the first section's lead + its first figure row are visible at 1366×900. No purpose line; keep 2–4 tokens. Pair it with the first section padding:36px 0 48px.
-  <div id="top" style="background:#1428A0; color:#fff; padding:36px 40px 60px; position:relative; overflow:hidden;">
+  <div id="top" style="background:#1428A0; color:#fff; padding:36px min(40px,5vw) 60px; position:relative; overflow:hidden;">
     <div style="position:absolute; inset:0; background-image:none; pointer-events:none;"></div>
     <div style="max-width:1020px; margin:0 auto; position:relative;">
       <div style="display:inline-flex; align-items:center; gap:9px; font:600 12px/1 Inter,Pretendard,sans-serif; letter-spacing:.1em; color:#D8E7FB; background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.18); border-radius:100px; padding:9px 16px; margin-bottom:18px;">⟦EYEBROW — 계획의 eyebrow 값. 없으면 en: PROPOSAL · 관리자용 / ko: 제안서 · 관리자용⟧</div>
@@ -88,7 +88,7 @@
   -->
 
   <!-- PAPER SHEET (-44px overlaps hero) -->
-  <div style="max-width:1100px; margin:-44px auto 0; background:#fff; border-radius:12px 12px 0 0; box-shadow:0 -24px 60px rgba(16,24,40,.08); padding:8px 64px 100px; position:relative;">
+  <div style="max-width:1100px; margin:-44px auto 0; background:#fff; border-radius:12px 12px 0 0; box-shadow:0 -24px 60px rgba(16,24,40,.08); padding:8px min(64px,6vw) 100px; position:relative;">
 
     <!-- first section: ~60px top, NO border-top. With the compact hero (see the VARIANT block in the hero above): padding:36px 0 48px and the lead's margin-bottom 22px.
          Eyebrow language = the document's label language (core components.md §4): labels:en → "01 · BACKGROUND" (English category, upper case); labels:ko → "01 · 배경" (Korean category). Same language for every eyebrow, the appendix label and the component badges. -->

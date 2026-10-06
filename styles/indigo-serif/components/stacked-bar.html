@@ -9,21 +9,23 @@
 @use 하나의 전체가 몇 부분으로 나뉘는 비율이 주장이다. 유형별 점유율, 처리 결과 구성, 시간 배분.
 @avoid 부분 6개 이상 → hbar-chart. 항목 간 크기 비교 → bar-chart. 비율 하나만 중요 → kpi-row.
 @limits 구간 2–5
+@limits-x parts=2..5
 @data parts: 라벨=비율%, … (합계 100) | total?: 값
 HOW TO FILL
   1. 구간 width 슬롯(%)과 구간 안·범례의 값 글자 슬롯은 같은 값으로 함께 채운다. 합계는 100. 큰 구간부터 왼쪽에.
   2. 색 순서(큰 → 작은): 강조색 → 보조 강조색 → 연한 강조색 → 회색(기타).
   3. 막대 안 글자는 12% 이상 구간에만. 범례에는 모든 구간을 같은 순서·색으로 적는다.
+  4. 구간 div 의 data-value 속성은 지우지 않는다(글자가 없는 구간도). 그 구간의 비율 숫자로 채운다. 게이트의 chart-proportions 가 구간 width ≈ data-value(±2)인지, 모든 구간의 합이 100(±2)인지 본다 — 구간 하나를 빼먹으면 합이 어긋난다.
 -->
-<div data-component="stacked-bar" style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:22px 24px 20px;">
+<div data-component="stacked-bar" style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:22px 24px 20px; overflow-wrap:anywhere;">
   <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px;"><span style="font:600 13px/1.4 Pretendard,sans-serif; color:#15172B;">⟦차트 제목⟧</span><span style="font:500 11px/1 'JetBrains Mono',Pretendard,monospace; color:#6A7187;">⟦n = 00⟧</span></div>
   <div style="display:flex; height:34px; border-radius:8px; overflow:hidden;">
     <!-- ▼ REPEAT per segment: width = share % -->
-    <div style="width:⟦40⟧%; background:#4338CA; color:#FFFFFF; font:700 11px/34px 'JetBrains Mono',Pretendard,monospace; text-align:center;">⟦40%⟧</div>
+    <div style="width:⟦40⟧%; background:#4338CA; color:#FFFFFF; font:700 11px/34px 'JetBrains Mono',Pretendard,monospace; text-align:center;" data-value="⟦40⟧">⟦40%⟧</div>
     <!-- ▲ /REPEAT -->
-    <div style="width:⟦30⟧%; background:#6B63D6; color:#FFFFFF; font:700 11px/34px 'JetBrains Mono',Pretendard,monospace; text-align:center;">⟦30%⟧</div>
-    <div style="width:⟦20⟧%; background:#C7CCF2; color:#312E81; font:700 11px/34px 'JetBrains Mono',Pretendard,monospace; text-align:center;">⟦20%⟧</div>
-    <div style="width:⟦10⟧%; background:#B6BBCB;"></div>
+    <div style="width:⟦30⟧%; background:#6B63D6; color:#FFFFFF; font:700 11px/34px 'JetBrains Mono',Pretendard,monospace; text-align:center;" data-value="⟦30⟧">⟦30%⟧</div>
+    <div style="width:⟦20⟧%; background:#C7CCF2; color:#312E81; font:700 11px/34px 'JetBrains Mono',Pretendard,monospace; text-align:center;" data-value="⟦20⟧">⟦20%⟧</div>
+    <div style="width:⟦10⟧%; background:#B6BBCB;" data-value="⟦10⟧"></div>
   </div>
   <div style="display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:12px;">
     <span style="display:inline-flex; align-items:center; gap:6px; font:500 12px/1 Pretendard,sans-serif; color:#5A6175;"><span style="width:11px; height:11px; border-radius:3px; background:#4338CA;"></span>⟦구간 A⟧ <b style="color:#15172B;">⟦40%⟧</b></span>
