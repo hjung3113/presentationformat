@@ -8,7 +8,8 @@
 @title 현재 → 목표 비교 (AS-IS / TO-BE)
 @use 지금의 구조·방식과 바꾸려는 구조·방식을 나란히 대비한다. "현재는 한 덩어리 → 목표는 분리" 같은 구조 대비가 섹션의 주장일 때.
 @avoid 현재 상태가 없는 신규 설계 → layer-map 또는 pipeline. 수치만 바뀐다 → kpi-row.
-@limits 양쪽 노드 2–5개씩, 태그 2–3개씩
+@limits 양쪽 노드 2–6개씩, 태그 2–3개씩
+@limits-x nodes-per-side=2..6 tags-per-side=2..3
 @data before: 요소 A, 요소 B(통점) | after: 루트 노드 / 핵심 노드, 노드, 노드 [planned], 노드 [full] | before-tags?: … | after-tags?: …
 HOW TO FILL
   1. 왼쪽(AS-IS) 칸에는 현재 상태만 넣는다. 통점(pain)은 경고색 셀로, 나머지는 흰 셀로.
@@ -20,6 +21,7 @@ HOW TO FILL
                   core/components.md §4 의 "없는 것은 구축된 모양으로 그리지 않는다" 규칙이 허용하는 TO-BE 칸의 예정 칸이다 —
                   이 칸의 회색 점선은 위 3번의 색 규칙을 어기지 않는다(경고색도 강조색도 아니다). 칩 문구는 출처의 말 그대로(예정·계획·미설계·대기).
                   AS-IS 칸에는 쓰지 않는다(현재 상태에는 예정이 없다).
+                  예정 칸의 data-state="planned" 는 지우지 않는다 — planned:unmarked 가 읽는 표지다(core/components.md §4).
        [full]     2열 격자를 한 줄 전체로 가로지르는 칸 → "전체 너비 핵심 칸" 변형(VARIANT full-width). grid-column:1 / -1 하나만 더한다.
                   이 칸 하나가 목표 칸의 핵심이거나 요소가 홀수일 때 쓴다(핵심 칸으로 쓰면 TO-BE 칸의 강조 칸은 이 하나다). AS-IS 칸에서도 같은 grid-column 으로 흰 칸·통점 칸 하나를 한 줄로 넓힐 수 있다.
   6. 배지 문구 ⟦AS-IS⟧ · ⟦TO-BE⟧ 는 슬롯이다. 예시는 영문 기본(labels: en)이다. labels: ko 문서(경영진·사용자용)는 "지금" · "목표" 로 바꾼다
@@ -61,7 +63,7 @@ HOW TO FILL
         <!-- ▲ /REPEAT -->
         <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px 8px; text-align:center;">⟦분리된 요소 B⟧</div>
         <!-- VARIANT planned cell ([planned]): a TO-BE element that is not built yet — muted dashed box + state chip, never the built or accent look (core/components.md §4). TO-BE zone only -->
-        <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#5D6679; background:#F3F7FE; border:1px dashed #B8C4D6; border-radius:6px; padding:10px 8px; text-align:center;">⟦예정 요소⟧ <span style="font:700 11px/1 Inter,Pretendard,sans-serif; color:#5D6679; background:#FFFFFF; border:1px solid #B8C4D6; border-radius:4px; padding:2px 6px; white-space:nowrap; vertical-align:1px;">⟦예정⟧</span></div>
+        <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#5D6679; background:#F3F7FE; border:1px dashed #B8C4D6; border-radius:6px; padding:10px 8px; text-align:center;" data-state="planned">⟦예정 요소⟧ <span style="font:700 11px/1 Inter,Pretendard,sans-serif; color:#5D6679; background:#FFFFFF; border:1px solid #B8C4D6; border-radius:4px; padding:2px 6px; white-space:nowrap; vertical-align:1px;">⟦예정⟧</span></div>
         <div style="font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1D2939; background:#FFFFFF; border:1px solid #CBD6E6; border-radius:6px; padding:10px 8px; text-align:center;">⟦분리된 요소 C⟧</div>
         <!-- VARIANT full-width key cell ([full]): one cell across both columns (grid-column:1 / -1) — the zone's key element, or the odd one out -->
         <div style="grid-column:1 / -1; font:600 12px/1.35 Inter,Pretendard,sans-serif; color:#1428A0; background:#E7EFFC; border:1.5px solid #1428A0; border-radius:6px; padding:10px 8px; text-align:center;">⟦전체 너비 핵심 요소⟧</div>

@@ -94,6 +94,11 @@ for each concept. You fill it in Step 1, before any payload; the exit gate (`ter
 - `estimate` → the number is written with "(추정)"; `owner` → "(소유자 진술)". The marker stays wherever
   the number is repeated (hero token, tile, chart, table).
 - `designed` and `planned` facts are never written in the present tense as if they exist today.
+- **A number's `[Fnn]` is how the document binds it.** `/build` writes each citation as `data-f="Fnn"` on the element that shows
+  the number, and the gate fails a numeral the cited row does not state (its `값`, or a number in its `사실` sentence). So cite the
+  row the number actually comes from — a number that combines two facts cites both (`[F06][F07]`) — and give a ratio's row both
+  its `값` and the inputs in its `사실`. A `designed`/`planned` row's number needs the planned wording beside it
+  (`planned:unmarked` warns otherwise).
 
 ### Step 1 — Take stock
 
@@ -236,8 +241,12 @@ working strictly from the source:
   figure, chart, or report block **and for `text-table`**; write `none` only for `none`/`peer-list`.
   A `text-table` section is a pasted `table` filled from its figure-data, so it MUST carry
   `columns: 열1, 열2, 열3 | rows: 값 · 값 · 값 ; 값 · 값 · 값 …` (cells split by `·`, rows by `;` — every row, every cell; the
-  document's table is exactly this; the plan validator rejects `none`, and warns above 7 rows in a body table and above 10 in the appendix). The format's first key is mandatory (`states:`, `lanes:`,
+  document's table is exactly this; the plan validator rejects `none`). The format's first key is mandatory (`states:`, `lanes:`,
   `tiles:`, `columns:`, …) and keys ending in `?` are optional.
+  **Stay inside the component's `@limits-x`** (the Limits column of `core/components/README.md`: layers, modules per layer, leaves
+  per child, rows, options, …). The validator counts what the figure-data holds and warns above the maximum
+  (`s2 (hierarchy): "분석 공간" has 6 leaves (>5)`). When a figure's counts exceed it, split the section in the TOC, group the items,
+  or move the surplus to the appendix or a table — never write more than the figure can show, and never ask `/build` to raise a limit.
   An item whose ledger status is `designed` or `planned` (not built yet) gets the marker `[planned]` right
   after it — a layer module, pipeline node, tree child or leaf, timeline item, sequence ALT/OPT group — so
   `/build` draws it in the shared planned look instead of the built look (`core/components.md` §4).
@@ -313,7 +322,7 @@ those sections with the §2 procedure), go to Step 7. Exit `1` = the CLI lists t
 per-section fields still missing, unknown values, placeholders, figure shapes without their
 figure-data key — fix them and re-run before Gate 2. **Treat every `WARN` line as a review item**
 (too many `decision` sections, an executive plan that is too long or uses developer shapes, a wrong
-opening or closing shape): fix it, or show it to the user at Gate 2 with your reason for keeping it.
+opening or closing shape, a figure over its `@limits-x`): fix it, or show it to the user at Gate 2 with your reason for keeping it.
 (Repo-relative path — run from the repo root; if `node` cannot find `.claude/lib/`, this skill is
 running outside its repo.)
 

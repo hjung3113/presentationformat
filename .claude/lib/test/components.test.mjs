@@ -54,6 +54,16 @@ test('parseDataKeys: key[?]: segments split on " | "; first key is never optiona
   assert.deepEqual(parseDataKeys(undefined), []);
 });
 
+test('parseMeta accepts hyphenated @keys: `@limits-x` is read into limitsX (and stays a string under meta[\'limits-x\'])', () => {
+  const head = '<!--\n@component zed\n@kind chart\n@title T\n@use U\n@limits 막대 3–8\n';
+  const meta = parseMeta(`${head}@limits-x bars=3..8 bars-per-row=1..2\n-->\n<div data-component="zed"></div>\n`);
+  assert.equal(meta.limits, '막대 3–8');
+  assert.equal(meta['limits-x'], 'bars=3..8 bars-per-row=1..2');
+  assert.deepEqual(meta.limitsX, { bars: { min: 3, max: 8 }, 'bars-per-row': { min: 1, max: 2 } });
+  assert.deepEqual(parseMeta(`${head}-->\n<div data-component="zed"></div>\n`).limitsX, {});
+  assert.throws(() => parseMeta(`${head}@limits-x bars=8..3\n-->\n<div data-component="zed"></div>\n`), /min above max/);
+});
+
 test('parseMeta exposes dataKeys; listTemplates/shapeMap accept an injected templates dir', () => {
   const src = '<!--\n@component zed\n@kind chart\n@shape quantity trend\n@title T\n@use U\n@data rows: a | gap?: b\n-->\n<div data-component="zed"></div>\n';
   assert.deepEqual(parseMeta(src).dataKeys, [{ key: 'rows', optional: false }, { key: 'gap', optional: true }]);
@@ -226,12 +236,21 @@ test('narrow width: every template root carries overflow-wrap:anywhere, and a ro
   }
 });
 
-// ---- figure markers (core/components.md §3, §4): data-value / data-item / data-zone, read by figures.mjs ----
+// ---- figure markers (core/components.md §3, §4): data-value / data-item / data-zone read by figures.mjs, data-state by facts.mjs (`planned:unmarked`) ----
 const MARKERS = {
   'data-value': { 'bar-chart': 5, 'hbar-chart': 4, 'stacked-bar': 4, 'status-board': 4 }, // a bar, row or segment — not the 대기 row
   'data-item': { 'card-grid': 4, 'process-row': 4, pipeline: 3, 'kpi-row': 6 },            // a card, step, stage column or tile — not an arrow cell
   'data-zone': { 'before-after': 2, gantt: 4, 'layer-map': 1 },                              // both sides · legacy + new bars (two rows) · the legacy layer
+  'data-state': { 'layer-map': 3, pipeline: 1, tree: 2, timeline: 2, sequence: 1, 'before-after': 1 }, // planned module · state-chip module · state-chip layer row · planned node · planned child + leaf · both planned rows · planned frame · planned cell
 };
+
+test('data-state: a planned variant says planned, a built-with-caveat (state chip) variant says caveat, on the element that holds the variant', () => {
+  const states = (id) => [...live(tpl(id)).matchAll(/ data-state="(\w+)"/g)].map(m => m[1]);
+  assert.deepEqual(states('layer-map'), ['planned', 'caveat', 'caveat']);
+  for (const id of ['pipeline', 'tree', 'timeline', 'sequence', 'before-after']) assert.ok(states(id).length && states(id).every(v => v === 'planned'), id);
+  for (const t of listTemplates()) // appended after style="…", never before it (components.test pins tag heads)
+    for (const m of live(t).matchAll(/<\w+ ([^>]*)>/g)) if (/data-state/.test(m[1])) assert.match(m[1], /^style="[^"]*" (?:data-[\w-]+(?:="[^"]*")? )*data-state="\w+"$/, t.file);
+});
 
 test('figure markers: every style renders each template with exactly the markers its HOW TO FILL promises, and the figure checks find nothing in any template or gallery', () => {
   for (const t of listTemplates())

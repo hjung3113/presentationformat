@@ -9,6 +9,7 @@
 @use 하나의 객체(요청·작업·주문 등)가 어떤 상태를 거치고, 무엇이 상태를 바꾸는지가 주장이다. 상태값·라이프사이클·재시도·반려.
 @avoid 사람이 하는 작업 순서 → process-row/activity. 두 객체의 상태가 따로 움직인다 → state-machine 두 개 + callout(WARN) "자동 연동 없음".
 @limits 주 경로 상태 3–5, 기타 전이 0–5
+@limits-x main-states=3..5 other-transitions=0..5
 @data states: 상태 A, 상태 B, 상태 C | main: ● → 상태 A →(전이) 상태 B →(전이) 종료 상태[ok] → ◉ | other?: 상태 B →(전이) 상태 D[retry] · 상태 B →(전이) 실패 상태[negative] · 상태 B →(전이) 취소 상태[neutral] · 실패 상태[negative] →(전이) 상태 A | callout?: WARN 한 문장
 HOW TO FILL
   1. 윗줄 = 주 경로(정상 진행): ● 시작 → 상태 → 상태 → … → ◉ 종료. ▼REPEAT(전이 화살표 + 상태)를 복사한다.

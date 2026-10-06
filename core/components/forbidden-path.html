@@ -7,6 +7,7 @@
 @use "A를 B로 바로 바꾸면 안 된다, 대신 C로 간다"가 주장이다. 금지된 자동 변환·지름길과 그것을 대신하는 정식 경로를 함께 보여 준다.
 @avoid 여러 조건에 따른 허용 여부 표 → decision-table. 단순 주의 한 줄 → callout(WARN).
 @limits 허용 경로 1–4, 금지 경로 1–2
+@limits-x allowed=1..4 forbidden=1..2
 @data allowed: 출발 → 대안 경로들 | forbidden: 출발 ✕ 금지된 도착 (이유)
 HOW TO FILL
   1. 왼쪽 = 허용 경로(강조색), 오른쪽 = 금지 경로(경고색). 가운데 ≠ 표시는 그대로 둔다.

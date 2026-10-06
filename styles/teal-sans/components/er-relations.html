@@ -9,6 +9,7 @@
 @use 객체(엔티티·테이블·도메인 개념) 사이에 어떤 관계가 있고 몇 대 몇인지가 주장이다. 도메인 모델, 데이터 모델, "A는 B를 여러 개 가진다", 선택적 링크 vs 필수 소유.
 @avoid 코드 클래스의 속성·메서드·상속 → class-diagram. 하나가 여럿을 모으는 개념만 → hub-spoke. 관계 규칙이 표로 길다(7행 이상) → table.
 @limits 엔티티 카드 0–6, 관계 행 2–7
+@limits-x entities=0..6 relations=2..7
 @data entities: 이름(핵심 필드, 필드) … | relations: A 1—N B "관계명" [owned|link|forbidden]
 HOW TO FILL
   1. (선택) 위 엔티티 카드 줄: 등장하는 엔티티와 핵심 필드 2–4개(mono). 칸 수는 auto-fit 이 맞춘다(고칠 값 없음, 한 줄에 최대 4개 — 5개 이상이면 두 줄).

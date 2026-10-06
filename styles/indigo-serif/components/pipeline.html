@@ -9,6 +9,7 @@
 @use 무엇이 들어와서(입력) 어떤 처리를 거쳐 어디로 나가는지(출력)가 주장이다. 여러 출처가 합류하거나 한 처리 결과가 여러 곳으로 퍼진다. ETL, 수집·정제·적재, 근거→판단→실행.
 @avoid 사람의 업무 순서 → process-row/swimlane. 층 구조와 소속 → layer-map. 분기 조건이 핵심 → activity.
 @limits 단계 3–5, 단계당 노드 1–4
+@limits-x stages=3..5 nodes-per-stage=1..4
 @data stages: 입력[노드 A, 노드 B] → 처리[노드 C, 노드 D [planned]] → 출력[노드 E, 노드 F] | arrow-labels?: 전달 항목 1, 전달 항목 2
 HOW TO FILL
   1. 단계 하나 = ▼REPEAT 블록(머리표 + 노드 1–4개). 단계 사이에 화살표 칸을 하나씩 둔다(마지막 단계 뒤에는 없음).
@@ -16,6 +17,7 @@ HOW TO FILL
   3. 노드 변형: 일반=흰 노드, 저장소·큐=점선 노드, 최종 목적지=강조 노드(한 개), 아직 없는 노드=예정 노드.
      아직 없는 노드(계획·예정·미구현)는 figure-data 에서 노드 뒤 "[planned]" 로 적고 → 예정 변형(흐린 점선 + 상태 칩)으로 그린다.
      칩 문구는 출처의 상태 그대로(예정·계획·미설계·미구현·대기). 구축된 노드와 같은 모양으로 그리지 않는다(core/components.md §4 공통 규칙).
+     예정 노드의 data-state="planned" 는 지우지 않는다 — 노드의 숫자에 data-f 를 달았을 때 planned:unmarked 가 읽는 표지다(core/components.md §4).
   4. 합류(여러 → 하나)·분산(하나 → 여러)은 단계의 노드 수로 표현한다. 선을 따로 그리지 않는다.
   5. figure-data 의 화살표(→)는 ASCII 꺾쇠 형태(->)로 적어도 같은 뜻이다.
   6. 단계 열 div 의 data-item 속성은 지우지 않는다(화살표 칸에는 없다). 게이트가 리드의 "N단계" 같은 개수를 data-item 개수와 견준다(figures:lead-count).
@@ -39,7 +41,7 @@ HOW TO FILL
       <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:10px; text-align:center;">⟦노드 B1⟧<span style="display:block; font:400 10.5px/1.4 Pretendard,sans-serif; color:#6A7187; margin-top:2px;">⟦부가 설명⟧</span></div>
       <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#1E2233; background:#FFFFFF; border:1px dashed #B9BEDB; border-radius:8px; padding:10px; text-align:center;">⟦저장소·큐 노드⟧<span style="display:block; font:400 10.5px/1.4 Pretendard,sans-serif; color:#6A7187; margin-top:2px;">⟦부가 설명⟧</span></div>
       <!-- VARIANT planned node ([planned]): not built yet — muted dashed box + state chip, never the built look -->
-      <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#6A7187; background:#F8F9FD; border:1px dashed #B6BBCB; border-radius:8px; padding:10px; text-align:center;">⟦예정 노드⟧ <span style="font:700 11px/1 Pretendard,sans-serif; color:#6A7187; background:#FFFFFF; border:1px solid #B6BBCB; border-radius:5px; padding:2px 6px; white-space:nowrap; vertical-align:1px;">⟦예정⟧</span><span style="display:block; font:400 10.5px/1.4 Pretendard,sans-serif; color:#6A7187; margin-top:2px;">⟦부가 설명⟧</span></div>
+      <div style="font:600 12px/1.35 Pretendard,sans-serif; color:#6A7187; background:#F8F9FD; border:1px dashed #B6BBCB; border-radius:8px; padding:10px; text-align:center;" data-state="planned">⟦예정 노드⟧ <span style="font:700 11px/1 Pretendard,sans-serif; color:#6A7187; background:#FFFFFF; border:1px solid #B6BBCB; border-radius:5px; padding:2px 6px; white-space:nowrap; vertical-align:1px;">⟦예정⟧</span><span style="display:block; font:400 10.5px/1.4 Pretendard,sans-serif; color:#6A7187; margin-top:2px;">⟦부가 설명⟧</span></div>
     </div>
     <div style="flex:0 0 64px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding-top:20px;">
       <span style="color:#4338CA; font:400 18px/1 Pretendard,sans-serif;">→</span>

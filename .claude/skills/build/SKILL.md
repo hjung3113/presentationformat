@@ -146,9 +146,15 @@ band takes `margin:24px 0 0` as the first block and `margin:8px 0 0` after a sec
    planned variant** — muted dashed outline + state chip (11px bold) — never the built look (`core/components.md` §4). A `[state: 텍스트]`
    marker (layer-map: built, but on sample data — e.g. `[state: 가짜 데이터]`) keeps the built look and adds the state chip with the plan's own words.
    A `card-grid` number chip is a bare integer 1, 2, 3 — never `2.1` (the gate's `numbers-traced` reads a decimal as an untraced number).
-   **Keep the template's `data-value` / `data-item` / `data-zone` attributes** (appended after an element's `style`): a copied unit
-   carries its marker, a deleted unit takes it along, `data-value` is the number the unit's label shows, and a legacy / AS-IS unit
-   keeps `data-zone="as-is"` (`core/components.md` §4 "Figure markers") — the exit gate reads them.
+   **Keep the template's `data-value` / `data-item` / `data-zone` / `data-state` attributes** (appended after an element's `style`): a copied unit
+   carries its marker, a deleted unit takes it along, `data-value` is the number the unit's label shows, a legacy / AS-IS unit
+   keeps `data-zone="as-is"`, and a planned or state-chip variant keeps its `data-state` (`core/components.md` §4 "Figure markers") — the exit gate reads them.
+   **Bind every number the plan cites to its fact with `data-f`.** The plan writes `[F07]` after a number; write that id as
+   `data-f="F07"` on the narrowest element that shows the number — the value span of a tile or hero token, the sub-line that states a
+   count, a table cell (two rows: `data-f="F06 F07"`). The gate checks every numeral inside the element against the cited row's
+   `값` and `사실`, so cite the row the number comes from; the number never moves to a different id to pass. A number whose row is
+   `designed` / `planned` keeps the plan's planned wording (계획·예정·미구현·미설계·제안·요청·대기) within 3 elements of the `data-f`, or sits inside a
+   variant that carries `data-state="planned|caveat"` (`core/components.md` §4 "Numbers come from the plan").
    **A `text-table` section pastes the `table` component and fills it from the section's figure-data**
    (`columns: … | rows: …` — those columns and those rows, nothing added or dropped). A table in the
    reference appendix (`sref`), or a secondary table that follows another figure, uses the table's **soft
@@ -294,8 +300,10 @@ The gate runs two tiers:
   - `known-components`, `plan-alignment`, `plan-shapes` — every `data-component` is a real component, the
     document's `<section>` ids equal the plan's `sN`/`sref` ids (act dividers are `<div>`s), and every
     section holds the component its shape requires.
-  - `numbers-traced` — a number shown in the document is not in the plan or its `facts.md`. **The number
-    must come from the plan or be removed from the document.** Never add a number to the plan or facts
+  - `numbers-traced` — a number shown in the document is not in the plan or its `facts.md`, or a `data-f` binding is wrong (an id
+    that is no row of the ledger, or a numeral the cited row does not state — the row is named in the detail). **The number
+    must come from the plan or be removed from the document.** Fix a binding by citing the row the number comes from, or by correcting
+    the number to what that row says. Never add a number to the plan or facts
     just to pass: if the number is real it needs a source, so go back to `/plan`, add the fact with its
     citation, and re-confirm.
   - `terms-consistent` — runs only when the plan's `facts.md` has a `## T — 용어` table. A banned variant
@@ -304,7 +312,8 @@ The gate runs two tiers:
     and skips it.
   It also prints non-blocking `figures:*` rows (coverage per section, low variety, bare sections,
   crowded sections, and `figures:lead-count` — the section lead's count word, e.g. "다섯 단계", matches none of the figure's
-  `data-item` counts: make the lead and the figure agree) — read them. A `NOTE  chart-proportions` / `zone-colors` /
+  `data-item` counts: make the lead and the figure agree) and `planned:unmarked` (a `data-f` element cites a `designed` / `planned`
+  fact and has no planned wording or `data-state` within 3 levels: say it is planned, or use the component's planned variant) — read them. A `NOTE  chart-proportions` / `zone-colors` /
   `figures:lead-count  not checked …` row means a figure lost its markers or never had them: restore the template's attributes.
   **The gate verifies the semantic color split only inside marked zones** — `zone-colors` catches the accent inside an AS-IS
   zone and a mostly warn/slate TO-BE zone (the `before-after` columns, `gantt` legacy and new-system bars, the `layer-map` legacy

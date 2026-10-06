@@ -9,6 +9,7 @@
 @use 몇 가지 조건의 조합에 따라 결과가 정해지는 규칙이 주장이다. 목록 포함 규칙, 분류 정책, 공개 여부, 자동화 여부. 조건들이 서로 독립적이고 행끼리 비교된다.
 @avoid 판단이 순서대로 이어진다 → activity. 대상×기능의 허용 여부 → matrix.
 @limits 조건 열 2–4, 규칙 행 3–7
+@limits-x conditions=2..4 rules=3..7
 @data conditions: 조건1, 조건2, 조건3 | rules: 예/아니오/— … → 결과(positive|neutral|negative)
 HOW TO FILL
   1. C = 조건 열 수. 모든 행의 grid-template-columns:repeat(C,minmax(76px,1fr)) minmax(92px,1.3fr) 의 C를 고친다.

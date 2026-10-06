@@ -7,6 +7,7 @@
 @use 코드 구조가 주장이다: 상위 타입(인터페이스·추상 클래스)과 그것을 구현·상속하는 하위 타입, 각 타입의 핵심 속성·메서드.
 @avoid 도메인 개념 간 관계·카디널리티 → er-relations. 모듈 배치와 층 → layer-map.
 @limits 상위 1, 하위 2–4, 클래스당 속성·메서드 1–4줄
+@limits-x children=2..4 members-per-class=1..4
 @data parent: «interface» 이름(+메서드) | children: 이름(+속성, +메서드) … | relation?: implements|extends
 HOW TO FILL
   1. K = 하위 클래스 수. 하위 그리드 repeat(K,minmax(112px,1fr)) 과 가로 레일 margin(K=2 → 25%, 3 → 16.667%, 4 → 12.5%)을 고친다.

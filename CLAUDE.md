@@ -43,6 +43,8 @@ A further style is added by **copying the folder**, never by forking `core/` —
 | `examples/feedbackops-light-brief/` | Worked example of the **full pipeline**: `content-plan.md` with shapes → `.dc.html` with nine pasted components → gate passing with `--plan`; desktop render |
 | `examples/feedbackops.dc.html` | Worked example (support.js sidecar in `examples/`) |
 | `examples/feedbackops-design-report/` | Second worked example + desktop/mobile renders |
+| `presentations/platform-pitch/` | Management pitch (feedbackops-light): `content-plan.md` + `facts.md` ledger → `.dc.html`, full pipeline, gate passing with `--plan` |
+| `presentations/platform-guide/` | Developer guide (feedbackops-light): `content-plan.md` + `facts.md` ledger → `.dc.html`, full pipeline, gate passing with `--plan` |
 | `archive/parserimprove/` | **Archived.** Old design reference (semiconductor log-parser docs). Not part of this project — kept only for provenance |
 
 Worked examples live in `examples/`. `archive/parserimprove/` is a frozen historical
@@ -103,6 +105,8 @@ the `.dc.html`, allow outbound network (fonts + React UMD). Details in `core/run
 - When adding/changing a component: edit `core/components/<id>.html` (metadata header + roles only),
   keep `core/components.md` §1 in sync (a test checks it), run `components.mjs build`, and look at
   every style's gallery.
+- When a component has a countable part (items, rows, leaves, options …): add `@limits-x key=min..max` beside its `@limits` prose
+  and a counter for the key in `.claude/lib/figure-counts.mjs` — a drift test ties each range to the prose and each key to a counter.
 - When extending structure (new runtime behavior, DOM contract): put it in `core/`, keep it
   style-agnostic (token names, no HEX, no style-folder paths) so every style inherits it.
 - `archive/parserimprove/` is frozen historical reference only — not authoritative, no live

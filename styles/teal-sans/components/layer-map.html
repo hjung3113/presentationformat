@@ -9,6 +9,7 @@
 @use 시스템이 어떤 층(사용자 접점·서비스·통합·데이터·외부)으로 나뉘고, 각 층에 어떤 모듈이 있으며, 층 사이가 무엇으로 연결되는지가 주장이다. 시스템 구성도, 아키텍처 개요, 공통 기반 위에 서비스가 얹히는 구조.
 @avoid 데이터가 단계를 따라 흘러간다 → pipeline. 상하 소속(조직도·메뉴 트리) → tree. 한 허브가 여럿을 잇는다 → hub-spoke.
 @limits 레이어 2–5(외부·레거시 층 포함), 레이어당 모듈 1–5
+@limits-x layers=2..5 modules-per-layer=1..5
 @data layers: 위 레이어명 [key|optional|external|legacy] [state: 텍스트]: 모듈(부가설명), 모듈 [planned], 모듈 [state: 텍스트] ‖ 다음 레이어명: 모듈(부가설명), 모듈 | links?: 레이어1↕레이어2 연결 방식
 HOW TO FILL
   1. 레이어 하나 = ▼REPEAT 블록 하나(왼쪽 라벨 칸 + 오른쪽 모듈 칸). 위에서 아래로 사용자에 가까운 층부터.
@@ -23,6 +24,8 @@ HOW TO FILL
      아직 없는 모듈(계획·예정·미설계)은 모듈 뒤 "[planned]" 태그 → 예정 모듈 변형(흐린 점선 + 상태 칩).
      칩 문구는 출처의 상태 그대로(예정·계획·미설계·대기). 구축된 모듈과 같은 모양으로 그리지 않는다 — 없는 것을 있는 것처럼 보이게 하는 것이 이 도식의 가장 흔한 과장이다.
      칩은 11px 굵게, 읽히는 글자색이다(작고 흐린 칩은 못 읽는다).
+     예정 모듈의 data-state="planned", 상태 칩 모듈의 data-state="caveat", 상태 칩이 붙은 층 행의 data-state="caveat" 는 지우지 않는다(변형을 바꾸면 속성도 맞게 바꾼다) —
+     그 모듈의 숫자에 data-f 를 달았을 때 게이트의 planned:unmarked 가 읽는 표지다(core/components.md §4).
      만들어졌지만 가짜(샘플) 데이터로 도는 모듈·층은 "[state: 가짜 데이터]" 처럼 모듈 또는 층 이름 뒤에 "[state: 텍스트]" 로 적는다
      → 구축된 모양(실선 테두리) 그대로 + 이름 옆에 상태 칩(모듈 변형 "state chip", 층 이름표 아래 OPTIONAL 칩). 텍스트는 출처의 말 그대로
      (가짜 데이터·샘플 데이터·목업 연결 …). "예정"과 다르다: 예정 = 아직 없음(점선), state = 있지만 조건부(실선 + 칩). 둘을 섞지 않는다.
@@ -43,9 +46,9 @@ HOW TO FILL
       <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:9px 10px; text-align:center;">⟦모듈 B⟧<span style="display:block; font:400 10.5px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#6A7187; margin-top:2px;">⟦부가 설명⟧</span></div>
       <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:9px 10px; text-align:center;">⟦모듈 C⟧<span style="display:block; font:400 10.5px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#6A7187; margin-top:2px;">⟦부가 설명⟧</span></div>
       <!-- VARIANT planned module ([planned]): not built yet — muted dashed box + state chip, never the built look -->
-      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#6A7187; background:#F8F9FD; border:1px dashed #B6BBCB; border-radius:8px; padding:9px 10px; text-align:center;">⟦예정 모듈⟧ <span style="font:700 11px/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#6A7187; background:#FFFFFF; border:1px solid #B6BBCB; border-radius:5px; padding:2px 6px; white-space:nowrap; vertical-align:1px;">⟦예정⟧</span><span style="display:block; font:400 10.5px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#6A7187; margin-top:2px;">⟦부가 설명⟧</span></div>
+      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#6A7187; background:#F8F9FD; border:1px dashed #B6BBCB; border-radius:8px; padding:9px 10px; text-align:center;" data-state="planned">⟦예정 모듈⟧ <span style="font:700 11px/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#6A7187; background:#FFFFFF; border:1px solid #B6BBCB; border-radius:5px; padding:2px 6px; white-space:nowrap; vertical-align:1px;">⟦예정⟧</span><span style="display:block; font:400 10.5px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#6A7187; margin-top:2px;">⟦부가 설명⟧</span></div>
       <!-- VARIANT state-chip module ([state: 텍스트]): BUILT (solid outline, built look) but on sample data / with a caveat — the chip carries the source's own words -->
-      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:9px 10px; text-align:center;">⟦상태 모듈⟧ <span style="font:700 11px/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#3A4255; background:#F6F7FB; border:1px solid #DDE1EA; border-radius:5px; padding:2px 6px; white-space:nowrap; vertical-align:1px;">⟦가짜 데이터⟧</span><span style="display:block; font:400 10.5px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#6A7187; margin-top:2px;">⟦부가 설명⟧</span></div>
+      <div style="flex:1 1 min(130px,100%); min-width:0; font:600 12px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#1E2233; background:#FFFFFF; border:1px solid #E2E5F0; border-radius:8px; padding:9px 10px; text-align:center;" data-state="caveat">⟦상태 모듈⟧ <span style="font:700 11px/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#3A4255; background:#F6F7FB; border:1px solid #DDE1EA; border-radius:5px; padding:2px 6px; white-space:nowrap; vertical-align:1px;">⟦가짜 데이터⟧</span><span style="display:block; font:400 10.5px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#6A7187; margin-top:2px;">⟦부가 설명⟧</span></div>
     </div>
   </div>
   <!-- ▲ /REPEAT -->
@@ -65,7 +68,7 @@ HOW TO FILL
     </div>
   </div>
   <div style="text-align:center; font:500 11px/1.4 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#6A7187; padding:7px 0;"><span style="color:#0F766E; font:400 14px/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif;">↕</span> ⟦연결 방식 2⟧</div>
-  <div style="display:grid; grid-template-columns:minmax(96px,min(160px,35%)) minmax(0,1fr); border:1px solid #E2E5F0; border-radius:9px; background:#FFFFFF; overflow:hidden;">
+  <div style="display:grid; grid-template-columns:minmax(96px,min(160px,35%)) minmax(0,1fr); border:1px solid #E2E5F0; border-radius:9px; background:#FFFFFF; overflow:hidden;" data-state="caveat">
     <div style="padding:12px 14px; background:#F8F9FD; border-right:1px solid #E2E5F0; display:flex; flex-direction:column; justify-content:center;">
       <div style="font:700 10px/1 'IBM Plex Mono','IBM Plex Sans KR',monospace; letter-spacing:.06em; color:#6A7187; margin-bottom:6px;">⟦LAYER C⟧</div>
       <div style="font:600 13px/1.35 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#15172B;">⟦기반 층 이름⟧</div>

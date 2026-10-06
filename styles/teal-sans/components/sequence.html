@@ -9,6 +9,7 @@
 @use 둘 이상의 참여자(사용자·서비스·DB·외부 시스템)가 정해진 순서로 요청과 응답을 주고받는다. API 호출, 시스템 연동, 인증, 동기화.
 @avoid 참여자 1명의 단계 → process-row. "다음은 누가"가 핵심인 사람 업무 → swimlane. 조건별 결말 → activity.
 @limits 참여자 2–5, 메시지 3–10, ALT/OPT 묶음 0–2
+@limits-x participants=2..5 messages=3..10 groups=0..2
 @data participants: 참여자 A, 참여자 B, 참여자 C | messages: A→B 요청 1 · B→C 요청 2 · C⇢B 응답 2 · B↻ 내부 처리 · B⇢A 최종 응답 | alt?: 조건 = 메시지 번호들 · 예정·미구현 구간 = 메시지 번호들 [planned]   (→ 요청, ⇢ 응답, ↻ 내부 처리. ASCII 대체: -> 요청 · 응답은 하이픈 두 개+꺾쇠 · (self) 내부 처리)
 HOW TO FILL
   1. N = 참여자 수. N 은 이 컴포넌트의 모든 repeat(N,…) 와 모든 calc(100% / N) 에 같은 값으로 들어간다(게이트가 검사한다):
@@ -25,6 +26,7 @@ HOW TO FILL
      아직 없는 구간(예정·미구현)은 figure-data 에서 구간 뒤 "[planned]" 로 적고 예정 프레임(OPT 변형)으로 그린다:
        프레임 = 흐린 점선 테두리, 라벨 = 회색 칩 "OPT 예정·미구현"(칩 문구는 출처의 상태 그대로: 예정·계획·미설계·미구현·대기),
        그 안의 요청 화살표는 회색 실선(muted 변형), 응답은 원래 점선 회색 그대로. 구축된 구간과 같은 모양으로 그리지 않는다(core/components.md §4 공통 규칙).
+       예정 프레임의 data-state="planned" 는 지우지 않는다 — planned:unmarked 가 읽는 표지다(core/components.md §4).
   6. figure-data 의 메시지 방향 기호는 → ⇢ ↻ 외에 ASCII 로 적어도 된다: 요청 ->, 응답은 하이픈 두 개+꺾쇠, 내부 처리 (self).
   7. N=5 참여자(가장 빽빽한 경우)는 칸 폭이 N=3 의 60% 라 글자가 넘치기 쉽다. 다음을 지킨다:
        생명선 컨테이너의 max-width:760px 를 900px 로 키운다(시트 안 도해 폭 한도, 칸 폭은 N=3 의 약 70%가 된다).
@@ -88,7 +90,7 @@ HOW TO FILL
       </div>
     </div>
     <!-- VARIANT planned frame (OPT 예정·미구현, [planned]): the messages inside are not built — muted dashed frame + muted label chip + muted call arrow -->
-    <div style="border:1px dashed #B6BBCB; border-radius:8px; margin:6px 0;">
+    <div style="border:1px dashed #B6BBCB; border-radius:8px; margin:6px 0;" data-state="planned">
       <div style="display:inline-block; font:700 11px/1 'IBM Plex Mono','IBM Plex Sans KR',monospace; letter-spacing:.04em; color:#6A7187; background:#F8F9FD; padding:5px 8px; border-radius:8px 0 8px 0;">⟦OPT⟧ ⟦예정·미구현⟧</div>
       <!-- message 7 — planned call → (muted solid), participant 2 to 3 -->
       <div style="display:grid; grid-template-columns:repeat(3,minmax(96px,1fr)); padding:2px 0 8px;">

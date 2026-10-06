@@ -6,7 +6,8 @@
 @title 간트 — 기간에 걸친 작업 일정
 @use 여러 작업이 언제 시작해 언제 끝나는지, 무엇이 겹치는지가 주장이다. 로드맵, 분기 계획, 단계별 범위(MVP / 이후), 기존 체제와 신규 체제의 병행 운영·이관·컷오버.
 @avoid 날짜 하나짜리 사건 → timeline. 진척률만 → hbar-chart/status-board.
-@limits 기간 열 3–12, 작업 행 3–8, 한 행에 막대 2개까지
+@limits 기간 열 3–12, 작업 행 3–8, 한 행에 막대 1–2개
+@limits-x periods=3..12 rows=3..8 bars-per-row=1..2
 @data periods: 기간 1, 기간 2, … | rows: 작업명 = 시작–끝 (core|partial|planned|risk|legacy) [+ 시작–끝 (종류)] | milestones?: 기간: 이름 [(cutover)]
 HOW TO FILL
   1. P = 기간 열 수. P 는 이 컴포넌트의 모든 repeat(P,…) 와 calc(100% / P) 에 같은 값으로 들어간다(게이트가 검사한다):

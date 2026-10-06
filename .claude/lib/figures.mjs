@@ -8,7 +8,8 @@
 //
 // A document without markers is not judged: each check then prints a NOTE saying how many figures it could not check, so
 // documents built before the markers existed pass unchanged. (gate.mjs imports this file and this file imports two palette
-// helpers back from it; both sides only call the other's function declarations at run time, so the cycle is harmless.)
+// helpers back from it; both sides only call the other's function declarations at run time, so the cycle is harmless.) The tag
+// index below (markup, elementsWith, parentIndex …) is exported for facts.mjs, which reads `data-f` and `data-state` with it.
 import { normHex, usedHexes } from './gate.mjs';
 import { visibleBlocks } from './prose.mjs';
 
@@ -23,7 +24,7 @@ const TAG = /<(\/?)([A-Za-z][\w:.-]*)((?:"[^"]*"|'[^']*'|[^'">])*?)(\/?)>/g;
 const VOID = new Set(['br', 'hr', 'img', 'input', 'meta', 'link', 'source', 'area', 'base', 'col', 'embed', 'param', 'track', 'wbr']);
 
 // The live markup (comments, <script>, <style> gone) and every tag in it.
-function markup(html) {
+export function markup(html) {
   const body = html.replace(/<!--[\s\S]*?-->/g, '').replace(/<(script|style)\b[\s\S]*?<\/\1>/gi, '');
   const tags = [...body.matchAll(TAG)].map(m => {
     const name = m[2].toLowerCase();
@@ -33,14 +34,14 @@ function markup(html) {
 }
 
 // Value of an attribute (`''` for a bare one), null when absent.
-function attrOf(attrs, name) {
+export function attrOf(attrs, name) {
   if (!attrs.includes(name)) return null;
   const m = attrs.match(new RegExp(`(?<![\\w-])${name}(?:\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s"'>]+)))?(?![\\w-])`));
   return m ? (m[1] ?? m[2] ?? m[3] ?? '') : null;
 }
 
 // Index just past the element's closing tag (tag balancing by name); an unclosed element ends with its own tag.
-function endOf(tags, i) {
+export function endOf(tags, i) {
   const t = tags[i];
   if (t.self) return t.end;
   let depth = 1;
@@ -54,7 +55,7 @@ function endOf(tags, i) {
 }
 
 // Every element carrying `attr` (or, with `names`, every element of those tag names): { ...tag, value, endAt }.
-function elementsWith(mk, attr, names) {
+export function elementsWith(mk, attr, names) {
   const out = [];
   mk.tags.forEach((t, i) => {
     if (t.close || (names && !names.includes(t.name))) return;
@@ -64,11 +65,27 @@ function elementsWith(mk, attr, names) {
   return out;
 }
 
-const within = (outer, inner) => inner.start >= outer.start && inner.endAt <= outer.endAt;
-const htmlOf = (mk, el) => mk.body.slice(el.start, el.endAt);
+// parent[i] = index of the tag that contains tag i (-1 at the top): the nesting a tolerant stack gives, as prose.mjs's tree does.
+export function parentIndex(mk) {
+  const parent = new Array(mk.tags.length).fill(-1);
+  const stack = [];
+  mk.tags.forEach((t, i) => {
+    if (t.close) {
+      const k = stack.findLastIndex(j => mk.tags[j].name === t.name);
+      if (k >= 0) stack.length = k;
+      return;
+    }
+    parent[i] = stack.length ? stack.at(-1) : -1;
+    if (!t.self) stack.push(i);
+  });
+  return parent;
+}
+
+export const within = (outer, inner) => inner.start >= outer.start && inner.endAt <= outer.endAt;
+export const htmlOf = (mk, el) => mk.body.slice(el.start, el.endAt);
 const NAMED = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' };
-const textOf = (fragment) => fragment.replace(/<[^>]*>/g, ' ').replace(/&(#x[0-9a-f]+|#\d+|[a-z][a-z0-9]*);/gi, (m, e) => NAMED[e.toLowerCase()] ?? ' ').replace(/\s+/g, ' ').trim();
-const clip = (s, n = 18) => (s.length > n ? `${s.slice(0, n)}…` : s);
+export const textOf = (fragment) => fragment.replace(/<[^>]*>/g, ' ').replace(/&(#x[0-9a-f]+|#\d+|[a-z][a-z0-9]*);/gi, (m, e) => NAMED[e.toLowerCase()] ?? ' ').replace(/\s+/g, ' ').trim();
+export const clip = (s, n = 18) => (s.length > n ? `${s.slice(0, n)}…` : s);
 const r1 = (x) => Math.round(x * 10) / 10;
 
 // `70` · `70%` · `1,200` → number; anything else (`—`, `N/A`, a leftover slot) → null (not checked).

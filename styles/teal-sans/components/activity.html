@@ -9,6 +9,7 @@
 @use 판단 지점에서 흐름이 갈라진다: 승인/반려, 충분/부족, 조건별 처리, 재시도, "아무것도 하지 않음"도 정당한 결말인 흐름.
 @avoid 분기 없이 일직선 → process-row. 누가 다음에 행동하는지가 핵심 → swimlane. 상태값의 전이가 핵심 → state-machine.
 @limits 판단 1–2개, 결말 2–5개
+@limits-x decisions=1..2 outcomes=2..5
 @data start: 시작 | actions: 행동 → 행동 | decision: 질문? | outcomes: [라벨] 결말(target|normal|negative), … | loop?: 결말 → 되돌아갈 곳 | end?: 종료
 HOW TO FILL
   1. 위에서 아래로: 시작 → 행동(1–3개) → 판단(마름모) → 결말 칸들 → (선택) 합류 → 종료.

@@ -143,20 +143,25 @@ each section whose shape is not `none` contains a `data-component` the shape all
   the marked segments add up to 100);
 - an AS-IS zone (`data-zone="as-is"`: the `before-after` AS-IS column, a `gantt` legacy bar, the `layer-map` legacy layer) that uses the
   style's accent **fails**, and so does a TO-BE zone (`data-zone="to-be"`) whose background fills are mostly warn or slate family
-  (`zone-colors`; the roles come from the active style's tokens, only fills count, one slate chip inside a TO-BE zone is allowed).
+  (`zone-colors`; the roles come from the active style's tokens, only fills count, one slate chip inside a TO-BE zone is allowed);
+- an element marked `data-f` (§4 "Numbers come from the plan") whose id is not a row of the plan's `facts.md`, or that shows a numeral
+  none of the cited rows states in its 값 or 사실, **fails** (`numbers-traced`). A number without `data-f` is still held to set
+  membership: it must appear somewhere in the plan or the ledger.
 
-Both checks run only where the markers are (§4 "Figure markers"); a figure without them passes as before and the gate prints a `NOTE`
-saying how many it could not check.
+`chart-proportions` and `zone-colors` run only where the markers are (§4 "Figure markers"), and the `data-f` check only on elements
+that carry it; a figure without markers passes as before and the gate prints a `NOTE` saying how many it could not check.
 
 Warnings (non-blocking): fewer than 3 distinct figure components in a document with ≥5 numbered
 sections; more than one third of numbered sections with shape `none`; a section with **more than 2**
 main figures (the gate warns above 2 — one idea per figure); a section lead whose count word ("세 가지", "다섯 단계", "7개" — a number
 plus 가지·단계·곳·개·층·갈래·구간·축·종; 1 and 10+ never count) matches none of the `data-item` markers of the section's first marked
-figure (`figures:lead-count`). Plan-time warnings from
+figure (`figures:lead-count`); an element whose `data-f` cites a fact with 상태 `designed` or `planned` and that carries no planned
+marker within 3 ancestor levels — 계획·예정·미구현·미설계·제안·요청·대기 in its text or `data-state="planned|caveat"` (`planned:unmarked`). Plan-time warnings from
 `plan-schema`: more than 2 `decision` sections, and for `audience: executive` more than 12 numbered
 sections (group into acts — the section count follows the content, §5), a developer-grade shape
 (`code-structure`, `interaction`, `entity-relations`, `rule-table`), a first section that is not
-`headline-metric` or `decision`, or a last section that is not `decision`.
+`headline-metric` or `decision`, a last section that is not `decision`, or a figure-data that holds more of something than its
+component's `@limits-x` allows (a tree child with six leaves, a use-case actor with six goals).
 
 ---
 
@@ -164,12 +169,15 @@ sections (group into acts — the section count follows the content, §5), a dev
 
 - **Keep the root marker.** The outer `<div data-component="…">` attribute stays exactly as pasted —
   the gate and reviewers find figures by it. Do not add CSS classes (inline styles only).
-- **Figure markers.** Templates carry three small attributes, appended after the element's `style`, that the gate reads: `data-value`
+- **Figure markers.** Templates carry four small attributes, appended after the element's `style`, that the gate reads: `data-value`
   on a bar, row or segment (`bar-chart`, `hbar-chart`, `stacked-bar`, `status-board` rows that have a bar), `data-item` on one counted
   item (`card-grid` card, `process-row` step, `pipeline` stage column, `kpi-row` tile — never an arrow cell), and `data-zone="as-is|to-be"`
-  on a current-state or target zone (`before-after` columns, `gantt` legacy and new-system bars, the `layer-map` legacy layer). Keep
+  on a current-state or target zone (`before-after` columns, `gantt` legacy and new-system bars, the `layer-map` legacy layer), and
+  `data-state="planned"` on a not-built variant or `data-state="caveat"` on a built-with-caveat (state chip) variant (`layer-map`,
+  `pipeline`, `tree`, `timeline`, `sequence`, `before-after`). Keep
   them: copy a unit and its marker goes along, delete a unit and it goes too, and a unit you add gets one. `data-value` is filled with
-  the number the unit's label shows; `data-zone` follows the unit's meaning (a legacy bar is `as-is` whatever its text says). Never
+  the number the unit's label shows; `data-zone` follows the unit's meaning (a legacy bar is `as-is` whatever its text says);
+  `data-state` follows the variant, so changing a variant changes it. Never
   remove a marker to pass a check — an unmarked figure is simply not checked.
 - **Replace every `⟦…⟧`.** The text inside is an example, not a default. Unknown values become the
   style's placeholder (`O` + muted "(추후 확정)"), never invented facts.
@@ -203,6 +211,12 @@ sections (group into acts — the section count follows the content, §5), a dev
   plan has no number for a slot, use the `O … (추후 확정)` placeholder. A **number chip** (the `card-grid`
   item badge) is a bare integer — 1, 2, 3 in card order — never a `2.1` / `5.3` section.item decimal; the gate's
   `numbers-traced` reads a decimal as a number the plan never supplied.
+  **Bind a number to its fact with `data-f`.** The element that shows a number the plan cites to a ledger row (`[F07]`) carries
+  `data-f="F07"` (`data-f="F06 F07"` for two rows), appended after its `style` like the other markers — the narrowest element that
+  shows it (a tile's value, a hero token, the sub-line that states a count, a table cell), because every numeral inside the element
+  is checked. The gate then asks whether the numeral is one the cited row states (its 값 or a number in its 사실 sentence) instead of
+  whether it appears anywhere in the plan, so a wrong-but-existing number fails and an unknown id fails. Bound text leaves the
+  set-membership pool; numbers without `data-f` stay in it.
 - **Terms and first use.** A concept the plan's term sheet (`## T — 용어` in `facts.md`) names is written in one form
   only: its `처음 나올 때` form the first time the reader meets it, the bare term afterwards. **The hero thesis counts as
   the first occurrence** — a term the thesis uses carries its first-use form there; a term the thesis does not use gets
@@ -213,8 +227,8 @@ sections (group into acts — the section count follows the content, §5), a dev
 - **What the gate reads in pasted figures** (`verify-doc`): `no-role-placeholders`, `palette` (with
   `--style`: every color literal must be in the style's `design.md` — no invented colors),
   `grid-consistency`, `chart-proportions` and `zone-colors` (where the figure carries its markers; `zone-colors` reads the
-  style's accent and warn/slate tokens, so its TO-BE half needs `--style`), `figures:lead-count` (warning), and
-  `numbers-traced` (with `--plan`).
+  style's accent and warn/slate tokens, so its TO-BE half needs `--style`), `figures:lead-count` and `planned:unmarked` (warnings), and
+  `numbers-traced` (with `--plan`, including every `data-f` binding).
 - **Text-safe muted ink.** Small informative text — a sub-line under a number or node, a footnote (`*`), legend and
   axis labels, a footer or field label, a state chip, the `(추정)` / `(추후 확정)` suffixes — is set in the style's
   text-safe muted role `⟨muted-text⟩` (≥4.5:1 on white). The faint roles `⟨muted-500⟩` / `⟨muted-400⟩` / `⟨muted-300⟩` are for
@@ -266,7 +280,9 @@ sections (group into acts — the section count follows the content, §5), a dev
   variant: `layer-map`, `pipeline`, `tree`, `timeline`, `sequence`, and `before-after` (a planned cell inside the
   **TO-BE** zone only — the muted dashed look is neutral, so it does not break the zone's color rule; the AS-IS zone
   has no planned things); any other figure draws a planned thing the same way. A planned thing is never given the key-node, accent or success look — passing a design off as
-  an existing system is the most common overstatement a diagram makes.
+  an existing system is the most common overstatement a diagram makes. The same rule covers a number: an element whose `data-f` cites a
+  fact with 상태 `designed` or `planned` is marked within 3 ancestor levels — the planned variant's `data-state="planned"`, a state-chip
+  variant's `data-state="caveat"`, or one of the words 계획·예정·미구현·미설계·제안·요청·대기 in the text — and the gate's `planned:unmarked` warns when it is not.
 - **figure-data arrows.** Flow-shaped figure-data (`sequence`, `swimlane`, `state-machine`, `activity`,
   `pipeline`, `process-row`, …) may use the glyphs `→ ⇢ ↻` or ASCII: `->` for a request or transition,
   two hyphens followed by `>` for a response, `(self)` for internal processing. The plan validator

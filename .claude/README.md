@@ -27,6 +27,11 @@ The gate itself is zero-dependency Node under `.claude/lib/`:
 - `.claude/lib/figures.mjs` — the figure half of the gate, also pure: `chart-proportions`, `zone-colors` and
   `figures:lead-count`, read from the `data-value` / `data-item` / `data-zone` markers the component templates carry
   (see **Figure markers** below). `gate.mjs` imports it; it imports two palette helpers back from `gate.mjs`.
+- `.claude/lib/facts.mjs` — fact bindings, also pure: the `facts.md` F-table parser (`parseFacts`), the numeral helpers
+  `numbers-traced` shares, and the `data-f` / `planned:unmarked` checks (see **Fact bindings** below). `gate.mjs` imports it; it
+  reads the tag index of `figures.mjs`.
+- `.claude/lib/figure-counts.mjs` — the plan-time counter registry: for each component, how to count each of its `@limits-x`
+  keys in that component's figure-data format (see **Plan checks**). `plan-schema.mjs` imports it.
 - `.claude/lib/verify-doc.mjs` — CLI entry that runs the gate against a `.dc.html`
   (`<doc> --canonical-support <support.js> [--style <id>] [--accent <hex>] [--plan <content-plan.md>] [--no-visual] [--local-assets <dir>]`),
   checks the `support.js` sidecar is byte-identical to the canonical copy, runs the visual tier (see
@@ -43,7 +48,7 @@ The gate itself is zero-dependency Node under `.claude/lib/`:
   `build [--style <id>]` regenerates, `check` exits 1 if anything committed is stale, `list` / `shapes`
   print the catalog. Outputs are committed so documents need no build step. `parseMeta` also exposes
   `dataKeys` (`[{key, optional}]`, from each template's `@data` line), which `plan-schema.mjs` matches
-  a section's `figure-data` against.
+  a section's `figure-data` against, and `limitsX` (`{key: {min, max}}`, from the `@limits-x` line).
 - `.claude/lib/test/*.test.mjs` — the test suite for the above (`node --test .claude/lib/test/*.test.mjs`),
   including: generated outputs up to date, every template renders in every style with no unresolved
   token, `core/` carries zero HEX, `core/components.md` §1 matches the templates' `@shape` metadata,
@@ -54,7 +59,10 @@ The gate itself is zero-dependency Node under `.claude/lib/`:
   path with spaces/Korean and through a symlink (they once exited 0 without running), the worked
   example (`test/fixtures/example-brief/`) passes every plan-aware check, and the text half of the gate
   (`prose.test.mjs`: visible-text blocks, the term-sheet parser, `terms-consistent` / sref exemption, each `prose:*`
-  heuristic positive and negative).
+  heuristic positive and negative), the fact bindings (`facts.test.mjs`: ledger parsing, `data-f` passes and failures, the
+  set-membership fallback, `planned:unmarked` with markers at each ancestor level), and the plan-time counts (`plan-schema.test.mjs`:
+  every `@limits-x` key has a counter with an at-limit and an over-limit case, and a drift test holds each `@limits-x` range to the
+  `min–max` in its template's `@limits` prose).
 
 ### The GATE line
 
@@ -96,11 +104,13 @@ Every check is hard-fail unless marked non-blocking.
 | `known-components` | every `data-component` is a template id |
 | `plan-alignment` (`--plan`) | plan sections map to ids — a numbered title `N.` → `sN`, an unnumbered title → `sref` — and every one exists in the document; the document has no numbered `sN` the plan lacks. Act dividers must be `<div>`, never `<section>` |
 | `plan-shapes` (`--plan`) | each section (looked up by id) carries the component its shape requires |
-| `numbers-traced` (`--plan`) | every numeral a reader sees is traceable — next section |
+| `numbers-traced` (`--plan`) | every numeral a reader sees is traceable, and a number marked `data-f` is a number of the facts row it cites — next sections |
 | `terms-consistent` (`--plan` + a facts file with a `## T — 용어` table) | no `쓰지 않을 말` variant of the term sheet appears in the visible text outside the `sref` appendix — see **Term sheet** below. Without a T table the gate prints `NOTE  terms-consistent  not checked …` |
 
 Non-blocking `figures:*` rows report per-section coverage, low variety, bare sections, more
-than 2 main figures in one section, and a lead whose count disagrees with its figure (`figures:lead-count`). Non-blocking
+than 2 main figures in one section, and a lead whose count disagrees with its figure (`figures:lead-count`). The non-blocking
+`planned:unmarked` row reports an element whose `data-f` cites a `designed` / `planned` fact with no planned marker near it
+(an `INFO` row says when every such element is marked). Non-blocking
 `prose:*` and `terms:first-use` rows report Korean-writing problems — see **Prose warnings** below.
 
 **`numbers-traced`** exists so nothing in the document can be a number nobody supplied (template
@@ -116,9 +126,27 @@ full, so a made-up hero token fails. Failure lists up to 8 untraced numbers with
 context each; fix it by putting the real number in the plan (with its citation) or removing it
 from the document — never by editing the check.
 
-**Figure markers (`chart-proportions`, `zone-colors`, `figures:lead-count`).** The component templates carry three attributes,
-appended after the element's `style="…"` (`core/components.md` §4 "Figure markers" is the authoring contract), and `figures.mjs`
-reads them from the live markup (comments and `<script>` are ignored). A check has a row only where its markers are; a figure that
+**Fact bindings (`data-f`, `planned:unmarked`).** Set membership alone cannot tell a right number from a wrong one that happens to
+exist elsewhere in the ledger, so a number can be bound to its row. An element that shows a number from the facts ledger carries
+`data-f="F03"` (several rows: `data-f="F03 F07"`); `core/components.md` §4 "Numbers come from the plan" is the authoring contract.
+`facts.mjs` reads the F tables of the facts file named by the plan (every `F\d+` row of every table whose header has `id` and
+`사실` or `값`, columns found by header name, so the order may differ and the table may be split under sub-headings) and, for each
+`data-f` element: an id that is not a ledger row **fails**; a numeral the element shows (thousands commas and leading zeros
+normalized, `F`/`Q`/`C` ids and `L12` refs dropped) that is in none of the cited rows' `값` or `사실` **fails** — the `사실`
+sentence counts because the ledger states 16,796 and 15,768 in the sentence of F04, whose `값` is the ratio 1.07. Both are folded into the
+`numbers-traced` row. The element's text is then removed from the set-membership fallback, which still reads every number
+without `data-f` exactly as before, so a document without `data-f` passes unchanged. Put `data-f` on the narrowest element that shows
+the number (the value span of a tile, the sub-line that states the count): everything the element shows is checked.
+`planned:unmarked` (warning) covers the other half of the ledger's `상태`: an element citing a row whose 상태 is `designed` or
+`planned` must not read as built, so it needs `계획` / `예정` / `미구현` / `미설계` / `제안` / `요청` / `대기` in its own text or in an ancestor's text within 3
+levels, or `data-state="planned"` / `"caveat"` on itself or on an ancestor within 3 levels (the planned and state-chip variants of
+`layer-map`, `pipeline`, `tree`, `timeline`, `sequence` and `before-after` carry `data-state`). An ancestor that holds other `data-f` elements
+is a shared container, so only its `data-state` counts — its text belongs to all of them. The row never fails the gate.
+
+**Figure markers (`chart-proportions`, `zone-colors`, `figures:lead-count`).** The component templates carry four attributes,
+appended after the element's `style="…"` (`core/components.md` §4 "Figure markers" is the authoring contract); `figures.mjs`
+reads three of them from the live markup (comments and `<script>` are ignored) and `facts.mjs` the fourth, `data-state`
+(**Fact bindings** above). A check has a row only where its markers are; a figure that
 could carry them but does not prints `NOTE  <check>  not checked — N figure(s) carry no …`, so a document built before the markers
 existed passes unchanged.
 
@@ -209,11 +237,17 @@ INVALID.
 - **Warnings:** more than 2 sections with shape `decision`; `audience: executive` with more than 12
   numbered sections (the text suggests grouping into acts — the section count follows the content, and a document that
   covers several products/systems gives each its own section set; `core/components.md` §5), any of `code-structure|interaction|entity-relations|rule-table`, a first
-  numbered section that is not `headline-metric|decision`, or a last one that is not `decision`. Three **countable
-  limits** also warn (never error; `COUNT_LIMITS` in `plan-schema.mjs`, the same numbers as each component's `@limits`): more than 5
-  goals for one actor in an `actor-goals` figure-data (`actors: A: 목표, 목표 ‖ B: …`), more than 5 modules in one layer of a
-  `layered-structure` figure-data (bracket tags such as `[planned]` and a bare `key` marker do not count), and more rows in a
-  `text-table` (`rows:` split on `;`) than `table.html` allows: more than 7 in a body table, more than 10 in the `sref` appendix.
+  numbered section that is not `headline-metric|decision`, or a last one that is not `decision`. **Countable
+  limits** also warn (never error): every component whose countable parts have a limit states it twice, as the prose `@limits`
+  line and as machine-readable `@limits-x` tokens (`key=min..max`, e.g. `layers=2..5 modules-per-layer=1..5`; `parseLimitsX` in
+  `components.mjs`). For a section whose shape maps to such a component, `figure-counts.mjs` counts each key in the component's
+  figure-data format (`COUNTERS`: component → key → counter) and warns on a count **above `max`** only, naming the section, the
+  thing counted and the limit — `s2 (hierarchy): "분석 공간" has 6 leaves (>5) — tree shows 0–5 per child; …`. Counters read
+  top-level separators only (a comma inside `( )`, `[ ]` or a number such as `1,200` is not a separator) and under-count what
+  they cannot tell apart, so an ambiguous format yields a missed warning rather than a false one. `COUNT_LIMITS` in `plan-schema.mjs`
+  (goals per actor, modules per layer, table rows 7, `sref` appendix rows 10) is derived from `@limits-x`. A new countable
+  part gets its `@limits-x` token **and** a counter; a drift test fails when a range differs from the `min–max` in the prose, when a
+  prose range has no token, or when a token has no counter.
 
 ## Prerequisites
 
