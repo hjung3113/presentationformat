@@ -29,9 +29,11 @@ HOW TO FILL
   7. 두 칸의 data-zone="as-is" · data-zone="to-be" 속성은 지우지 않는다(3번 규칙을 게이트가 읽는 표지다). 게이트의 zone-colors 가 AS-IS 칸에 강조색이 없는지, TO-BE 칸의 배경이 경고·slate 색 위주가 아닌지(칩 하나는 허용) 본다.
   8. 가운데 화살표는 두 개(→ · ↓)이고 둘 다 남긴다. 두 칸이 한 줄에 들어가는 폭(570px 이상 = 칸 기준폭 260 × 2 + 화살표 50)에서는 → 만, 칸이 위아래로 쌓이는
      좁은 폭에서는 ↓ 만 보인다. 안 보이는 쪽은 너비와 글자 크기가 0 이 된다 — flex-basis·font-size 의 clamp(calc(… 100cqw …)) 가 갈아 끼우므로 미디어 쿼리가 없고,
-     두 칸을 담은 flex 줄의 container-type:inline-size 가 100cqw 의 기준이다. 칸의 flex-basis(260px)를 바꾸면 570 / 569 도 같이 바꾼다.
+     두 칸을 담은 flex 줄의 container-type:inline-size 가 100cqw 의 기준이다. 칸의 flex-basis(260px)를 바꾸면 570 도 같이 바꾼다(→ 의 calc 두 곳과 ↓ 의 calc 두 곳 — 모두 같은 값).
+     → 의 "+ 50px" · "+ 17px" 는 그 칸의 크기(clamp 의 맨 위 값)다: 570px 바로 아래의 1/999px 에서 0 이 되어, 소수 폭(확대한 화면)에서도 두 화살표가 함께 보이지 않는다.
+     루트의 width:100% · box-sizing:border-box 는 지우지 않는다 — 안쪽 줄이 container-type 이라 루트에는 고유 폭이 없고, 내용 폭을 따르는 상자(flex 열의 flex-start·center)에서 padding 만 남기고 접히기 때문이다(core/components.md §4).
 -->
-<div data-component="before-after" style="border:1px solid #E7E9F3; border-radius:12px; padding:28px; background:#FCFCFE; overflow-wrap:anywhere;">
+<div data-component="before-after" style="border:1px solid #E7E9F3; border-radius:12px; padding:28px; background:#FCFCFE; overflow-wrap:anywhere; width:100%; box-sizing:border-box;">
   <div style="display:flex; flex-wrap:wrap; justify-content:center; align-items:stretch; container-type:inline-size;">
     <!-- AS-IS column -->
     <div style="display:flex; flex-direction:column; justify-content:center; flex:1 1 260px; min-width:0;" data-zone="as-is">
@@ -54,7 +56,7 @@ HOW TO FILL
       </div>
     </div>
     <!-- pivot arrow, side by side: → is 50px wide while both columns fit in one row (row width ≥ 570px = 2 × 260 + 50), 0px wide (font-size 0 too) otherwise -->
-    <div style="display:flex; align-items:center; justify-content:center; flex:0 0 clamp(0px,calc((100cqw - 569px) * 999),50px); min-width:0; padding:8px 0;"><div style="width:36px; max-width:100%; height:36px; border-radius:50%; background:#0F766E; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font:400 clamp(0px,calc((100cqw - 569px) * 999),17px)/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif;">→</div></div>
+    <div style="display:flex; align-items:center; justify-content:center; flex:0 0 clamp(0px,calc((100cqw - 570px) * 999 + 50px),50px); min-width:0; padding:8px 0;"><div style="width:36px; max-width:100%; height:36px; border-radius:50%; background:#0F766E; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font:400 clamp(0px,calc((100cqw - 570px) * 999 + 17px),17px)/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif;">→</div></div>
     <!-- pivot arrow, stacked: ↓ takes a row of its own between the columns when they wrap, 0px wide otherwise -->
     <div style="display:flex; align-items:center; justify-content:center; flex:0 0 clamp(0px,calc((570px - 100cqw) * 999),100cqw); min-width:0; padding:8px 0;"><div style="width:36px; max-width:100%; height:36px; border-radius:50%; background:#0F766E; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font:400 clamp(0px,calc((570px - 100cqw) * 999),17px)/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif;">↓</div></div>
     <!-- TO-BE column -->

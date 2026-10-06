@@ -58,7 +58,7 @@
           <span style="font:500 11px/1 'IBM Plex Mono','IBM Plex Sans KR',monospace; color:#8A91A6;">shape: before-after</span>
         </div>
         <div style="display:flex; gap:10px; background:#ECFDF8; border-radius:12px; padding:11px 14px; margin:10px 0 18px;"><span style="font:700 11px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; letter-spacing:.03em; color:#0F766E; white-space:nowrap;">언제 쓰나</span><span style="font:400 12.5px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">지금의 구조·방식과 바꾸려는 구조·방식을 나란히 대비한다. "현재는 한 덩어리 → 목표는 분리" 같은 구조 대비가 섹션의 주장일 때. <span style="color:#9AA0B2;">· 쓰지 않을 때: 현재 상태가 없는 신규 설계 → layer-map 또는 pipeline. 수치만 바뀐다 → kpi-row.</span></span></div>
-        <div data-component="before-after" style="border:1px solid #E7E9F3; border-radius:12px; padding:28px; background:#FCFCFE; overflow-wrap:anywhere;">
+        <div data-component="before-after" style="border:1px solid #E7E9F3; border-radius:12px; padding:28px; background:#FCFCFE; overflow-wrap:anywhere; width:100%; box-sizing:border-box;">
   <div style="display:flex; flex-wrap:wrap; justify-content:center; align-items:stretch; container-type:inline-size;">
     <!-- AS-IS column -->
     <div style="display:flex; flex-direction:column; justify-content:center; flex:1 1 260px; min-width:0;" data-zone="as-is">
@@ -81,7 +81,7 @@
       </div>
     </div>
     <!-- pivot arrow, side by side: → is 50px wide while both columns fit in one row (row width ≥ 570px = 2 × 260 + 50), 0px wide (font-size 0 too) otherwise -->
-    <div style="display:flex; align-items:center; justify-content:center; flex:0 0 clamp(0px,calc((100cqw - 569px) * 999),50px); min-width:0; padding:8px 0;"><div style="width:36px; max-width:100%; height:36px; border-radius:50%; background:#0F766E; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font:400 clamp(0px,calc((100cqw - 569px) * 999),17px)/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif;">→</div></div>
+    <div style="display:flex; align-items:center; justify-content:center; flex:0 0 clamp(0px,calc((100cqw - 570px) * 999 + 50px),50px); min-width:0; padding:8px 0;"><div style="width:36px; max-width:100%; height:36px; border-radius:50%; background:#0F766E; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font:400 clamp(0px,calc((100cqw - 570px) * 999 + 17px),17px)/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif;">→</div></div>
     <!-- pivot arrow, stacked: ↓ takes a row of its own between the columns when they wrap, 0px wide otherwise -->
     <div style="display:flex; align-items:center; justify-content:center; flex:0 0 clamp(0px,calc((570px - 100cqw) * 999),100cqw); min-width:0; padding:8px 0;"><div style="width:36px; max-width:100%; height:36px; border-radius:50%; background:#0F766E; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font:400 clamp(0px,calc((570px - 100cqw) * 999),17px)/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif;">↓</div></div>
     <!-- TO-BE column -->
@@ -157,7 +157,7 @@
           <span style="font:500 11px/1 'IBM Plex Mono','IBM Plex Sans KR',monospace; color:#8A91A6;">shape: branching-flow</span>
         </div>
         <div style="display:flex; gap:10px; background:#ECFDF8; border-radius:12px; padding:11px 14px; margin:10px 0 18px;"><span style="font:700 11px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; letter-spacing:.03em; color:#0F766E; white-space:nowrap;">언제 쓰나</span><span style="font:400 12.5px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">판단 지점에서 흐름이 갈라진다: 승인/반려, 충분/부족, 조건별 처리, 재시도, "아무것도 하지 않음"도 정당한 결말인 흐름. <span style="color:#9AA0B2;">· 쓰지 않을 때: 분기 없이 일직선 → process-row. 누가 다음에 행동하는지가 핵심 → swimlane. 상태값의 전이가 핵심 → state-machine.</span></span></div>
-        <div data-component="activity" style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:26px 24px; overflow-x:auto; overflow-wrap:anywhere;">
+        <div data-component="activity" style="background:#FAFBFE; border:1px solid #EEF0F6; border-radius:12px; padding:26px 24px; overflow-x:auto; overflow-wrap:anywhere; width:100%; box-sizing:border-box;">
   <div style="max-width:700px; margin:0 auto; display:flex; flex-direction:column; align-items:center; min-width:min-content;">
     <!-- start -->
     <div style="font:600 12px/1 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#FFFFFF; background:#15172B; border-radius:100px; padding:10px 18px;">● 시작 상태</div>
@@ -1210,11 +1210,11 @@
           <span style="font:500 11px/1 'IBM Plex Mono','IBM Plex Sans KR',monospace; color:#8A91A6;">shape: status</span>
         </div>
         <div style="display:flex; gap:10px; background:#ECFDF8; border-radius:12px; padding:11px 14px; margin:10px 0 18px;"><span style="font:700 11px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; letter-spacing:.03em; color:#0F766E; white-space:nowrap;">언제 쓰나</span><span style="font:400 12.5px/1.6 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">여러 작업 흐름(워크스트림·마일스톤·팀)의 현재 상태를 한눈에 보고한다. 주간·월간 상태 보고, 프로젝트 현황. <span style="color:#9AA0B2;">· 쓰지 않을 때: 날짜별 사건 → timeline. 일정 계획 → gantt. 상태 전이 규칙 → state-machine.</span></span></div>
-        <div data-component="status-board" style="border:1px solid #E7E9F3; border-radius:12px; overflow-x:auto; background:#FFFFFF; overflow-wrap:anywhere; container-type:inline-size;">
+        <div data-component="status-board" style="border:1px solid #E7E9F3; border-radius:12px; overflow-x:auto; background:#FFFFFF; overflow-wrap:anywhere; container-type:inline-size; width:100%; box-sizing:border-box;">
   <div style="min-width:min-content;">
     <!-- header: its four labels sit over the four columns while the rows keep them on one line (box ≥ 502px); below that the rows wrap into two lines
-         and the header collapses to 0px (padding and font-size clamp to 0 — nothing is cut off). 501 appears twice: keep both equal. -->
-    <div style="display:flex; flex-wrap:wrap; gap:0 14px; padding:clamp(0px,calc((100cqw - 501px) * 999),11px) 18px; background:#EFF5F4; font:600 clamp(0px,calc((100cqw - 501px) * 999),12px)/1.3 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#3A4255;">
+         and the header collapses to 0px (padding and font-size clamp to 0 — nothing is cut off). 502 appears twice (padding and font-size): keep both equal. -->
+    <div style="display:flex; flex-wrap:wrap; gap:0 14px; padding:clamp(0px,calc((100cqw - 502px) * 999 + 11px),11px) 18px; background:#EFF5F4; font:600 clamp(0px,calc((100cqw - 502px) * 999 + 12px),12px)/1.3 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#3A4255;">
       <span style="flex:1.5 1 0px; min-width:96px;">작업 흐름</span><span style="flex:0 0 88px;">상태</span><span style="flex:1 1 0px; min-width:120px;">진척</span><span style="flex:1.8 1 0px; min-width:120px;">메모</span>
     </div>
     <!-- VARIANT 차단 (blocked) -->
@@ -1254,8 +1254,8 @@
       <span style="flex:1.8 1 0px; min-width:120px; font:400 12.5px/1.5 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#5A6175;">착수 조건 한 줄</span>
     </div>
     <!-- VARIANT no progress column (the sources give statuses but no progress figure): use this header and this row for the whole board.
-         Header (its 367px appears twice: keep both equal):
-    <div style="display:flex; flex-wrap:wrap; gap:0 14px; padding:clamp(0px,calc((100cqw - 367px) * 999),11px) 18px; background:#EFF5F4; font:600 clamp(0px,calc((100cqw - 367px) * 999),12px)/1.3 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#3A4255;">
+         Header (its 368px appears twice: keep both equal):
+    <div style="display:flex; flex-wrap:wrap; gap:0 14px; padding:clamp(0px,calc((100cqw - 368px) * 999 + 11px),11px) 18px; background:#EFF5F4; font:600 clamp(0px,calc((100cqw - 368px) * 999 + 12px),12px)/1.3 'IBM Plex Sans','IBM Plex Sans KR',sans-serif; color:#3A4255;">
       <span style="flex:1.5 1 0px; min-width:96px;">작업 흐름</span><span style="flex:0 0 88px;">상태</span><span style="flex:1.8 1 0px; min-width:120px;">메모</span>
     </div>
          Row (no progress cell, no data-value; the status chip colours stay as in step 2):

@@ -192,6 +192,32 @@ const analyze = () => {
     });
     return hasTable || hasConnector || hasFigurePanel;
   };
+  // Figure width, at any viewport: a figure whose layout reads 100cqw (container-type:inline-size) has no intrinsic width, so in a host that
+  // sizes to its content (a flex column with align-items:flex-start|center, an inline-block, width:fit-content, a grid auto track) the root
+  // folds to its padding — before-after 58px wide and 1,950px tall — while nothing overflows and nothing is clipped. A figure that renders
+  // under half the width of its parent's content box is reported, unless another visible child of that parent shares its row (a grid
+  // cell, a figure beside a figure or a paragraph legitimately takes a share of the frame).
+  const collapsedFigures = () => {
+    const px = (v) => parseFloat(v) || 0;
+    const found = new Map(); // data-component id → { n, width, frame } of the narrowest root of that id
+    for (const fig of document.querySelectorAll('[data-component]')) {
+      if (!visible(fig) || !fig.parentElement) continue;
+      const parent = fig.parentElement, ps = getComputedStyle(parent);
+      const frame = parent.getBoundingClientRect().width - px(ps.borderLeftWidth) - px(ps.borderRightWidth) - px(ps.paddingLeft) - px(ps.paddingRight);
+      const r = fig.getBoundingClientRect();
+      if (frame < 120 || r.width >= frame / 2) continue;
+      const sharesRow = [...parent.children].some(o => o !== fig && visible(o) && (b => b.top < r.bottom - 1 && b.bottom > r.top + 1)(o.getBoundingClientRect()));
+      if (sharesRow) continue;
+      const id = fig.getAttribute('data-component');
+      const f = found.get(id) || { n: 0, width: Infinity, frame: 0 };
+      f.n++;
+      if (r.width < f.width) { f.width = r.width; f.frame = frame; }
+      found.set(id, f);
+    }
+    if (!found.size) return null;
+    const list = [...found].sort((a, b) => b[1].n - a[1].n || a[1].width / a[1].frame - b[1].width / b[1].frame).map(([id, f]) => id + '×' + f.n + ' (' + Math.round(f.width) + 'px of ' + Math.round(f.frame) + 'px)').join(', ');
+    return { name: 'composition:figure-collapsed', detail: list + ' render narrower than half their frame at ' + window.innerWidth + 'px (a container-type figure in a host that sizes to its content — give the root width:100% or paste it in normal block flow; core/components.md §4)' };
+  };
   const topLevelBlocks = (section) => [...section.children].filter(el => visible(el) && !/^SCRIPT|STYLE$/i.test(el.tagName));
   // Narrow probe: does the page scroll sideways at this width, and which figures / elements cause it?
   const narrowProbe = () => {
@@ -296,6 +322,8 @@ const analyze = () => {
       const inner = [fig, ...fig.querySelectorAll('*')].some(n => /^(auto|scroll)$/.test(getComputedStyle(n).overflowX) && n.scrollWidth > n.clientWidth + 2);
       if (inner) scrolling.set(fig.getAttribute('data-component'), (scrolling.get(fig.getAttribute('data-component')) || 0) + 1);
     }
+    const collapsed = collapsedFigures();
+    if (collapsed) rows.push(collapsed);
     if (scrolling.size) rows.push({ level: 'INFO', name: 'composition:mobile-scroll-figure', detail: [...scrolling].map(([id, n]) => id + '×' + n).join(', ') + ' scroll sideways inside their own box at ' + vw + 'px (the narrow-width fallback, not page overflow)' });
     return rows;
   };
@@ -354,6 +382,8 @@ const analyze = () => {
       }
     }
   }
+  const collapsed = collapsedFigures();
+  if (collapsed) warnings.push(collapsed);
   return warnings;
 };
 (async () => {

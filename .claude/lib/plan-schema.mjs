@@ -290,14 +290,14 @@ async function main() {
     console.error(`cannot read plan: ${path} (${e.code || e.message})`);
     process.exit(2);
   }
-  let result;
+  let templates;
   try {
-    result = validatePlan(md, { planDir: dirname(resolve(path)) });
+    templates = listTemplates();
   } catch (e) { // a component template that cannot be read (a malformed @limits-x, a missing marker) — not a plan error
     console.error(`cannot read the component templates: ${e.message}`);
     process.exit(2);
   }
-  const { ok, errors, warnings } = result;
+  const { ok, errors, warnings } = validatePlan(md, { planDir: dirname(resolve(path)), templates }); // a bug in here keeps its stack
   const warn = ok ? console.log : console.error;
   if (ok) {
     const { sections } = parsePlan(md);

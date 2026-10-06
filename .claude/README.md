@@ -39,7 +39,8 @@ The gate itself is zero-dependency Node under `.claude/lib/`:
 - `.claude/lib/plan-schema.mjs` — schema/shape checks for `content-plan.md`. CLI entry
   (`node .claude/lib/plan-schema.mjs <content-plan.md>`): exit `0` valid (prints each section's id,
   shape and title, then any `WARN` lines), `1` malformed (lists header and per-section errors — see
-  **Plan checks**), `2` usage or read error. `/plan` runs it to self-check its emitted plan before
+  **Plan checks**), `2` usage error, an unreadable plan or an unreadable component template (only the template read is reported that
+  way — a bug inside the check itself surfaces with its stack). `/plan` runs it to self-check its emitted plan before
   Gate 2; `/build` runs it as a fail-fast at Step 1 ingest.
 - `.claude/lib/components.mjs` — the **component generator**. Reads `core/components/*.html`
   (structure, role placeholders) and each style's `design.tokens.md` (`colors`, `rounded`,
@@ -54,7 +55,7 @@ The gate itself is zero-dependency Node under `.claude/lib/`:
   token, `core/` carries zero HEX, `core/components.md` §1 matches the templates' `@shape` metadata,
   each template's first `@data` key matches the figure-data contract, no template hard-codes an English label
   outside a `⟦slot⟧` (label language), the figure markers (`figures.test.mjs`: each check with a positive, a negative and its
-  false-positive probes; `components.test.mjs`: the exact marker counts and zero findings on every rendered template and gallery in every style), the visual tier's local-asset routing (`localAssetFor`: hosts, scoped packages, misses, path traversal) and its 390px probe (page overflow, figure overflow, silent clipping; the three component galleries must be clean at 390px), the narrow-width template contract (no bare `Nfr` track outside `minmax()`, `overflow-wrap:anywhere` on every root, a scrolling root has its `min-width:min-content` box; per component in a browser at the 343px a phone leaves: `activity` outcomes wrap in pairs with the rail over the first row and nothing scrolls, the `use-case` system label never touches a use case, a `decision-table` key and a `sequence` label are not split mid-word and those two scroll inside their box, a `status-board` row wraps to two lines with its memo in view, with or without the progress column — `components.test.mjs`; the gallery's `mobile-scroll-figure` row names exactly which figures scroll — `verify-doc.test.mjs`), informative text uses `⟨muted-text⟩` and every style's `muted-text` is ≥4.5:1 on
+  false-positive probes; `components.test.mjs`: the exact marker counts and zero findings on every rendered template and gallery in every style), the visual tier's local-asset routing (`localAssetFor`: hosts, scoped packages, misses, path traversal) and its 390px probe (page overflow, figure overflow, silent clipping; the three component galleries must be clean at 390px), the narrow-width template contract (no bare `Nfr` track outside `minmax()`, `overflow-wrap:anywhere` on every root, a scrolling root has its `min-width:min-content` box; per component in a browser at the 343px a phone leaves: `activity` outcomes wrap in pairs with the rail over the first row and nothing scrolls, the `use-case` system label never touches a use case, a `decision-table` key and a `sequence` label are not split mid-word and those two scroll inside their box, a `status-board` row wraps to two lines with its memo in view, with or without the progress column — also at the fractional width of a zoomed page, where the `before-after` pivot shows one arrow and the `status-board` header folds with its rows; `before-after`, `activity` and `status-board` keep their host's width in a flex column (flex-start, center) and a flex row — `components.test.mjs`; `composition:figure-collapsed`, with a collapsed figure, a grid, a flex row and a figure beside text as probes, and the three roots without their `width:100%` — `verify-doc.test.mjs`; the gallery's `mobile-scroll-figure` row names exactly which figures scroll — `verify-doc.test.mjs`), informative text uses `⟨muted-text⟩` and every style's `muted-text` is ≥4.5:1 on
   white with a mono stack that ends in its Korean body font, the optional `labels: en|ko` plan key, the three CLIs run from a
   path with spaces/Korean and through a symlink (they once exited 0 without running), the worked
   example (`test/fixtures/example-brief/`) passes every plan-aware check, and the text half of the gate
@@ -155,15 +156,20 @@ existed passes unchanged.
 
 - `chart-proportions` (hard) — over the `data-value` elements of each chart component (a non-numeric value such as `—` is skipped).
   One scale per chart, read off its largest-value mark (k = size ÷ value): `bar-chart` — the bar's own `height:N%` is within ±2 of
-  value × k, and the largest bar's size is at most 102 (it must fit the plot), so a chart drawn to its maximum (k = 100 ÷ max) and a
+  value × k, and the largest bar's size is more than 2 (a largest bar drawn at ~0 gives no scale — every other bar would be "proportional"
+  to nothing, as would a chart of all-0 bars with one drawn: with a largest value of 0 every bar must be drawn at 0) and at most 102 (it must
+  fit the plot), so a chart drawn to its maximum (k = 100 ÷ max) and a
   percent chart on an absolute 0–100 axis (k = 1) both pass while a bar off the proportion fails. `hbar-chart` and `status-board` —
-  the first `width:N%` inside the row is within ±2 of the value when the row's text shows `value%` (or `value％`), else within ±2 of
+  the first `width:N%` inside the row is within ±2 of the value when the row's text shows `value%` (or `value％`) — and at most 102, like
+  the largest proportional bar (`120%` drawn at 120% fails) — else within ±2 of
   value × k over the rows that show no `%` (`70/100건` drawn at 70% passes; the `status-board` 대기 row has no bar and no marker). `stacked-bar`: each
   segment's `width:N%` is within ±2 of its value and the marked segments add up to 100 ±2. In all four, `data-value` must equal a
   numeral the element shows (±0.5; an element with no digits, like a textless segment, is skipped). A marked element with no
   `height`/`width` percentage to compare fails — the marker sits on the wrong element. A chart that marks some of its bars and not
   others prints `NOTE  chart-proportions  partly checked …` naming how many `height:N%` / `width:N%` bars carry no marker (the
-  fills inside a marked row and the columns that wrap a marked bar are not bars). Entities in a label (`&#55;`, `&#x37;`) read as the
+  fills inside a marked row and the columns that wrap a marked bar are not bars). A chart that marks nothing prints
+  `NOTE  chart-proportions  not checked — N figure(s) carry no data-value` whatever its bars are drawn in (a `bar-chart` in px
+  included); only a `status-board` that draws no bar at all (built without its progress column) is left out. Entities in a label (`&#55;`, `&#x37;`) read as the
   character they name.
 - `zone-colors` (hard) — over the `data-zone` elements. `as-is` fails when any hex inside it (a `style`, `fill`, `stroke`, `color` or
   `bgcolor` attribute) is the style's accent or any other color of the accent family — `accent` and every `accent-*` token, e.g.
@@ -295,13 +301,14 @@ INVALID.
   if a document uses JSX. A request the directory cannot answer, or a package at another version, is
   printed as a `local-assets:*` row below, and a page that then renders nothing is `UNVERIFIED`.
 
-  Rows that come from the 390px viewport and from `--local-assets`. The 390px viewport skips the desktop
-  height and stacking rows, so these are the only rows it prints:
+  Rows that come from the 390px viewport and from `--local-assets` (`composition:figure-collapsed` is the one 390px row the desktop
+  viewports print too). The 390px viewport skips the desktop height and stacking rows, so these are the only rows it prints:
 
   | row | level | printed when |
   |---|---|---|
   | `composition:mobile-overflow` | WARN | at 390px the page scrolls sideways (`scrollWidth` > viewport + 2). Lists the offending `data-component` ids as `id×n (+Npx)` (n figures with an overflowing node, N the largest overshoot), then non-figure offenders as `<section> <tag>×n "text"`. A node inside an ancestor with `overflow-x` auto, scroll, hidden or clip is clipped or scrolls, so it is not an offender. Page level only — the next row covers a figure that is too wide without making the page scroll |
   | `composition:figure-overflow` | WARN | at 390px a `data-component` root is wider than its frame — also when the page itself does not scroll sideways — or silently loses content. Two parts, each `id×n (+Npx)`: `wider than their frame:` — the root's border box extends past its parent's content box (so it ends inside the sheet's side padding), or its own contents spill out of it (`overflow-x` visible and `scrollWidth` > `clientWidth` + 2); `content clipped by overflow:hidden:` — the root or a node inside it has `overflow-x` hidden or clip and `scrollWidth` > `clientWidth` + 2 (a `text-overflow: ellipsis` truncation is intended and ignored). A root whose parent scrolls, or that scrolls itself (`overflow-x` auto or scroll), is not reported here: that is `composition:mobile-scroll-figure` |
+  | `composition:figure-collapsed` | WARN | a `data-component` root renders narrower than half the content width of its parent — at **any** of the three viewports, so the desktop ones print it too. Lists `id×n (Wpx of Fpx)` (n roots, W the narrowest, F its frame) then `render narrower than half their frame at Npx`. It is the failure the two overflow rows cannot see: a figure whose layout reads `100cqw` (`container-type:inline-size`) has no intrinsic width, so in a host that sizes to its content (a flex column with `align-items:flex-start` or `center`, an `inline-block`, `width:fit-content`, a grid `auto` track) it folds to its padding while nothing overflows and nothing is clipped (`before-after` 58px wide and ~1,950px tall). A figure that shares its row with another visible child of the same parent (a grid cell, a figure beside a figure or a paragraph) takes a share of the frame on purpose and is skipped, as is a frame under 120px. `core/components.md` §4 "Narrow widths" is the contract |
   | `composition:mobile-scroll-figure` | INFO | a figure root, or a node inside it, has `overflow-x` auto or scroll and really scrolls at 390px — the intended narrow fallback, listed so it is visible rather than counted as overflow |
   | `composition:narrow-metrics` | INFO | the 390px viewport rendered; carries the section count and the document `scrollWidth` |
   | `local-assets` | INFO | `--local-assets` is active; names the directory and any host that was blocked |

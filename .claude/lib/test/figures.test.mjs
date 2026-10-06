@@ -77,6 +77,7 @@ test('chart-proportions: a chart that marks some bars and not others is reported
 test('chart-proportions: a full-width ％ is a percent sign, and numeric character entities (&#55; &#x37;) read as the character they name', () => {
   assert.match(viol(chart('hbar-chart', hrow(70, 90, '90％')))[0], /width 70% but the label shows 90%/); // 90％ is a percentage row, drawn at 90
   assert.deepEqual(viol(chart('hbar-chart', hrow(90, 90, '90％'), hrow(70, '70％', '70％'))), []);
+  assert.equal(viol(chart('hbar-chart', hrow(60, '70％', '70％'))).length, 1); // a data-value of "70％" is 70 (valueOf drops the full-width sign): a bar drawn at 60 fails; if the sign were kept it would be skipped as non-numeric
   assert.deepEqual(viol(chart('bar-chart', bar(100, 100), bar(70, 70, '&#55;0'), bar(50, 50, '&#x35;0'))), []); // "70" and "50", not " 0"
   assert.equal(textOf('a&#55;b &#x37; &#0; &#xD800; &#1114112; &foo; &amp; &nbsp;c'), 'a7b 7 & c');
 });
@@ -114,6 +115,39 @@ test('chart-proportions probe: the 대기 row has no bar and no marker, a non-nu
   assert.equal(none.charts, 0);
   assert.deepEqual(none.unmarked, ['bar-chart', 'hbar-chart']);
   assert.match(viol(chart('status-board', srow(50, 35)))[0], /row 1 .*width 50% but the label shows 35%/);
+});
+
+test('chart-proportions: a zero scale is not a proportion — a largest value drawn at ~0%, or a chart whose values are all 0 with a bar drawn, fails', () => {
+  const zero = viol(chart('bar-chart', bar(0, 100), bar(0, 70))); // every bar drawn at 0 used to be "proportional" (k = 0, want 0)
+  assert.equal(zero.length, 1);
+  assert.match(zero[0], /^bar-chart#1 bar 1 "100": the largest value 100 is drawn at 0%/);
+  assert.match(viol(chart('bar-chart', bar(0, 70)))[0], /bar 1 "70": the largest value 70 is drawn at 0%/); // one bar, drawn at nothing
+  assert.match(viol(chart('hbar-chart', hrow(0, 70, '70건')))[0], /row 1 "항목 70건": the largest value 70 is drawn at 0%/);
+  assert.match(viol(chart('status-board', srow(0, 70, '70건'), srow(0, 35, '35건')))[0], /the largest value 70 is drawn at 0%/);
+  assert.match(viol(chart('bar-chart', bar(1, 100), bar(1, 70), bar(1, 50)))[0], /the largest value 100 is drawn at 1%/); // ±2 at k ≈ 0 says nothing
+  assert.match(viol(chart('bar-chart', bar(80, 0), bar(0, 0)))[0], /bar 1 "0": height 80% but 0 of max 0 \(drawn at 80%\) is 0%/); // all values 0: the "largest" is one of them and is checked too
+  assert.equal(viol(chart('bar-chart', bar(0, 0), bar(80, 0))).length, 1); // wherever the drawn one sits
+  // controls: a value of 0 drawn at 0 beside a drawn largest, and a chart that is only 0s drawn at nothing, pass
+  assert.deepEqual(viol(chart('bar-chart', bar(100, 100), bar(0, 0))), []);
+  assert.deepEqual(viol(chart('bar-chart', bar(0, 0), bar(0, 0))), []);
+  assert.deepEqual(viol(chart('hbar-chart', hrow(0, 0, '0건'))), []);
+  assert.deepEqual(viol(chart('bar-chart', bar(10, 100), bar(7, 70))), []); // a small scale that is still drawn (k = 0.1) is fine
+});
+
+test('chart-proportions: a percent row (label `N%`) that is drawn past the track fails like a proportional one — the largest must not run past 102%', () => {
+  assert.match(viol(chart('status-board', srow(120, 120, '120%')))[0], /^status-board#1 row 1 "작업 120%": width 120% runs out of the track/);
+  assert.match(viol(chart('hbar-chart', hrow(130, 130, '130％'), hrow(60, 60, '60%')))[0], /row 1 .*width 130% runs out of the track/);
+  assert.deepEqual(viol(chart('hbar-chart', hrow(100, 100, '100%'), hrow(102, 102, '102%'))), []); // rounding of the largest, as for a proportional row
+  assert.deepEqual(viol(chart('status-board', srow(100, 100), srow(35, 35))), []);
+  assert.match(viol(chart('hbar-chart', hrow(120, 100, '100%')))[0], /width 120% but the label shows 100%/); // the existing mismatch message still wins over a second one
+  assert.equal(viol(chart('hbar-chart', hrow(120, 100, '100%'))).length, 1);
+});
+
+test('chart-proportions: a bar-chart, hbar-chart or stacked-bar drawn in px with no data-value is noted as unmarked — only a status-board with no bar at all is exempt', () => {
+  for (const id of ['bar-chart', 'hbar-chart', 'stacked-bar'])
+    assert.deepEqual(chartProportions(chart(id, '<div style="height:50px; width:30px;">70</div>')).unmarked, [id], id); // nothing marked, nothing it can read: say so
+  assert.deepEqual(chartProportions(chart('status-board', '<div style="display:flex;"><div>작업 F</div><span>다음 행동</span></div>')).unmarked, []);
+  assert.equal(figureChecks(chart('bar-chart', '<div style="height:50px;">70</div>')).notes.length, 1);
 });
 
 test('chart-proportions: a status-board without its progress column draws no bar, so it has nothing to mark — not unmarked, no NOTE; the same board with a bar and no data-value still is', () => {

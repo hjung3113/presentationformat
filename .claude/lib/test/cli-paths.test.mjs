@@ -77,6 +77,25 @@ test('through a symlinked directory the CLIs still run (realpath-based entry gua
   }
 });
 
+test('plan-schema: a bug inside the plan check is not reported as an unreadable component template — only the template read is wrapped, so the stack survives', () => {
+  const { base, root, lib } = repoCopy();
+  try {
+    const counts = join(lib, 'figure-counts.mjs');
+    const src = readFileSync(counts, 'utf8');
+    const bugged = src.replace('export function countWarnings(component, limits, figureData, section) {', "export function countWarnings(component, limits, figureData, section) {\n  throw new Error('boom in the plan check');");
+    assert.notEqual(bugged, src, 'the fixture found the function to break');
+    writeFileSync(counts, bugged);
+    const p = run(join(lib, 'plan-schema.mjs'), [fixture('plan-valid.md')]);
+    assert.notEqual(p.status, 0, p.stdout);
+    assert.match(p.stderr, /boom in the plan check/);
+    assert.match(p.stderr, /\n\s+at .*countWarnings/); // the stack points at the bug
+    assert.doesNotMatch(p.stderr, /cannot read the component templates/);
+    assert.notEqual(p.status, 2, 'exit 2 is for an unreadable template or a usage error, not for a bug');
+  } finally {
+    rmSync(base, { recursive: true, force: true });
+  }
+});
+
 test('a malformed @limits-x in a component template exits 2 with one clean message from plan-schema and verify-doc — never a stack trace out of an import', () => {
   const { base, root, lib } = repoCopy();
   try {

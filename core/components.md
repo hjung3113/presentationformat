@@ -140,8 +140,8 @@ each section whose shape is not `none` contains a `data-component` the shape all
 - a bar, row or segment marked `data-value` that is drawn at a size its number does not say, or whose label shows another number than its
   `data-value`, **fails** (`chart-proportions`, ±2 points: a chart has one scale, read off its largest-value bar — every `bar-chart` height and every
   `hbar-chart` / `status-board` width (rows whose label carries `%` are drawn at the value itself) must be value × that scale, and the
-  largest must not run past 102%, so a chart drawn to its maximum and one on an absolute 0–100 axis both pass; `stacked-bar` width ≈ value
-  and the marked segments add up to 100);
+  largest must not run past 102% (a `%` row included) nor be drawn at 2% or less — a bar that is not drawn gives no scale — so a chart
+  drawn to its maximum and one on an absolute 0–100 axis both pass; `stacked-bar` width ≈ value and the marked segments add up to 100);
 - an AS-IS zone (`data-zone="as-is"`: the `before-after` AS-IS column, a `gantt` legacy bar, the `layer-map` legacy layer) that uses the
   style's accent or any tint of it (`accent-*` tokens) **fails**, and so does a TO-BE zone (`data-zone="to-be"`) whose background fills are mostly warn or slate family
   (`zone-colors`; the roles come from the active style's tokens, only fills count, one slate chip inside a TO-BE zone is allowed);
@@ -214,7 +214,12 @@ component's `@limits-x` allows (a tree child with seven leaves, a use-case actor
   stacked; the `activity` branch rail, 50 / K % over K outcomes in one row, 25% over the first pair when they wrap) is switched without a
   media query: its `flex-basis`, `font-size`, `margin` or the grid floor is `clamp(…, calc(… 100cqw … * 999), …)` — one value on each side
   of the switch width — over an ancestor that is a `container-type:inline-size`; the pivot is pasted twice (each copy 0 outside its
-  layout). Keep the switch and the container.
+  layout). Keep the switch and the container. `before-after`, `activity` and `status-board` read that `100cqw` from a container with no
+  intrinsic width of its own, so each root carries `width:100%; box-sizing:border-box` (keep it) and the three go only in normal block flow
+  or in a stretched or `1fr` grid cell. A flex column (`align-items:flex-start` or `center`) or a flex row hands them their host's width
+  through that `width:100%`; an `inline-block`, `width:fit-content` or a grid `auto` track still sizes the root to its content and folds it
+  to its padding (a `before-after` 58px wide and 1,900px tall), and the visual tier warns `composition:figure-collapsed` when a figure
+  renders narrower than half its frame.
 - **Percentages are slots tied to their label.** A bar's `width`/`height` slot and the value shown on
   it (`35` and `35%`) are filled with the same value, and the bar's `data-value` carries that value a third time (the gate's
   `chart-proportions` compares the drawn size, the label and `data-value`); a matrix cell glyph (`✓`/`✕`/short text) is a slot

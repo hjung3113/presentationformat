@@ -119,14 +119,17 @@ const ordinal = (comps, c) => `${c.value}#${comps.filter(x => x.value === c.valu
 
 // Every marked bar, row and segment must be drawn at the size its number says, and must show that number. A chart has one
 // scale, k = size ÷ value, read off its largest-value mark; every other mark must sit at value × k (±2), and the largest must fit
-// its track (value_max × k ≤ 102). A chart drawn to its largest value (k = 100 ÷ max) and a chart on an absolute axis (percent
-// bars on 0–100, k = 1) both pass; a mark that breaks the proportion fails.
+// its track (value_max × k ≤ 102) and be drawn at more than TOLERANCE percent (at ~0 there is no scale: every other bar would be
+// "proportional" to nothing; a chart whose values are all 0 must draw nothing). A chart drawn to its largest value (k = 100 ÷ max)
+// and a chart on an absolute axis (percent bars on 0–100, k = 1) both pass; a mark that breaks the proportion fails. A row whose
+// label shows `N%` is drawn at N and, like the largest proportional bar, at most OVERFLOW.
 //   bar-chart     height%: proportional to the value
 //   hbar-chart · status-board   width%: equal to the value when the row's label carries `value%`, else proportional to it
 //   stacked-bar   width% ≈ value, and the marked segments add up to 100
 // The label test is the same everywhere: data-value must equal a numeral the element shows (a textless segment is skipped).
 // A chart that marks some of its bars and not others is reported in `partial` (the unmarked ones are not read).
-// A chart that draws no bar at all (a `status-board` built without its progress column) has nothing to mark and is not counted as `unmarked`.
+// A `status-board` that draws no bar at all (built without its progress column) has nothing to mark and is not counted as `unmarked`;
+// any other chart with nothing marked is, whatever its bars are drawn in (a px height included).
 // → { charts, values, unmarked: [component id…], partial: [string…], violations: [string…] }
 export const OVERFLOW = 102; // percent a bar may reach: 100 + the rounding of the largest one
 const SIZE_PROP = { 'bar-chart': 'height', 'hbar-chart': 'width', 'status-board': 'width', 'stacked-bar': 'width' };
@@ -138,16 +141,20 @@ const scaleOf = (items) => {
 };
 
 // Proportionality of one chart's marks: the largest-value mark sets k, each other mark must sit within TOLERANCE of value × k, and the
-// largest must not overflow its track. `say(e, size, want, top)` words the disagreement.
-function proportional(items, say, overflow) {
+// largest must not overflow its track. `say(e, size, want, top)` words the disagreement, `overflow(e, size)` the largest running out of
+// its track, `blank(e, size)` the largest drawn at ≈ nothing: a zero (or ≤ TOLERANCE) scale makes every other mark "proportional"
+// whatever it shows (k = 0 → want 0), so it is not a scale at all. When the largest value is itself 0 there is no scale to read —
+// every mark, the largest included, must be drawn at 0.
+function proportional(items, say, overflow, blank) {
   const scale = scaleOf(items);
   if (!scale) return;
   const { top, k } = scale;
   for (const x of items) {
     const want = x.e.v * k;
-    if (x !== top && Math.abs(x.size - want) > TOLERANCE) say(x.e, x.size, want, top);
+    if ((x !== top || top.e.v === 0) && Math.abs(x.size - want) > TOLERANCE) say(x.e, x.size, want, top);
   }
-  if (top.e.v > 0 && top.e.v * k > OVERFLOW) overflow(top.e, top.size);
+  if (top.e.v > 0 && top.size <= TOLERANCE) blank(top.e, top.size);
+  else if (top.e.v > 0 && top.e.v * k > OVERFLOW) overflow(top.e, top.size);
 }
 
 // Elements of a chart that are drawn by a percentage size (`height:N%` / `width:N%`) yet carry no data-value and neither sit inside a
@@ -169,8 +176,8 @@ export function chartProportions(html) {
       const fragment = htmlOf(mk, m);
       return { v: valueOf(m.value), raw: m.value, own: attrOf(m.attrs, 'style'), fragment, text: textOf(fragment) };
     });
-    if (!mine.length) { // nothing marked: a chart that draws bars the gate cannot read is noted; one that draws none (a status-board without its 진척 column) has nothing to mark
-      if (unmarkedBars(mk, c, marked, SIZE_PROP[c.value]).length) res.unmarked.push(c.value);
+    if (!mine.length) { // nothing marked: a chart is noted as unmarked — except a status-board that draws no bar at all (built without its 진척 column), which has nothing to mark
+      if (c.value !== 'status-board' || unmarkedBars(mk, c, marked, SIZE_PROP[c.value]).length) res.unmarked.push(c.value);
       continue;
     }
     res.charts++;
@@ -193,7 +200,8 @@ export function chartProportions(html) {
       }
       proportional(sized,
         (e, h, want, top) => bad(e.k, e, `height ${h}% but ${e.v} of max ${top.e.v} (drawn at ${top.size}%) is ${r1(want)}%`),
-        (e, h) => bad(e.k, e, `height ${h}% runs out of the plot (a bar is at most 100%)`));
+        (e, h) => bad(e.k, e, `height ${h}% runs out of the plot (a bar is at most 100%)`),
+        (e, h) => bad(e.k, e, `the largest value ${e.v} is drawn at ${h}% — a bar that is not drawn gives no scale to check the others against`));
     } else if (c.value === 'stacked-bar') {
       let sum = 0;
       for (const e of numeric) {
@@ -210,12 +218,15 @@ export function chartProportions(html) {
         const size = firstWidthPct(e.fragment);
         const pct = [...e.text.matchAll(/(\d+(?:,\d{3})*(?:\.\d+)?)\s*[%％]/g)].some(m => Math.abs(Number(m[1].replace(/,/g, '')) - e.v) <= 0.5);
         if (size === null) bad(e.k, e, `data-value ${e.raw} but no width:N% inside the row`);
-        else if (pct) { if (Math.abs(size - e.v) > TOLERANCE) bad(e.k, e, `width ${size}% but the label shows ${e.v}%`); }
-        else sized.push({ e, size });
+        else if (pct) { // a percentage is drawn at its value, and no bar runs past its track (the same limit as the largest proportional one)
+          if (Math.abs(size - e.v) > TOLERANCE) bad(e.k, e, `width ${size}% but the label shows ${e.v}%`);
+          else if (size > OVERFLOW) bad(e.k, e, `width ${size}% runs out of the track (a bar is at most 100%)`);
+        } else sized.push({ e, size });
       }
       proportional(sized,
         (e, w, want, top) => bad(e.k, e, `width ${w}% but ${e.v} of max ${top.e.v} (drawn at ${top.size}%) is ${r1(want)}%`),
-        (e, w) => bad(e.k, e, `width ${w}% runs out of the track (a bar is at most 100%)`));
+        (e, w) => bad(e.k, e, `width ${w}% runs out of the track (a bar is at most 100%)`),
+        (e, w) => bad(e.k, e, `the largest value ${e.v} is drawn at ${w}% — a bar that is not drawn gives no scale to check the others against`));
     }
   }
   return res;

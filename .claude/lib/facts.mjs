@@ -82,7 +82,8 @@ export function withoutBound(html) {
   for (const el of elementsWith(mk, 'data-f').sort((a, b) => a.start - b.start))
     if (!outer.length || el.start >= outer.at(-1).endAt) outer.push(el); // an element inside one already taken goes with it
   let out = mk.body;
-  for (const el of outer.reverse()) out = out.slice(0, el.start) + out.slice(el.endAt);
+  // a space where an element was: "1<i data-f>…</i>3건" must not read as 13건 (the text either side is not one number)
+  for (const el of outer.reverse()) out = out.slice(0, el.start) + ' ' + out.slice(el.endAt);
   return out;
 }
 

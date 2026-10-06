@@ -85,6 +85,15 @@ test('withoutBound: removes every data-f element once, the outer of two nested o
   assert.match(out, /그대로 99/);
 });
 
+test('withoutBound: the text either side of a removed element is not glued into one number — 1 + <i data-f> + 3 reads 1 and 3, never 13', () => {
+  assert.doesNotMatch(withoutBound(doc('<p>1<i data-f="F04">1.07</i>3건</p>')), /13/);
+  // the nested case that made it matter: F01 owns "1" and "8" (the i between them is F04's), and a ledger row stating 18 must not excuse "18일"
+  const r = bind('<b data-f="F01">1<i data-f="F04">1.07</i>8일</b>');
+  assert.equal(r.violations.length, 1, JSON.stringify(r.violations));
+  assert.match(r.violations[0], /^data-f="F01" on "1.*": shows 1, 8, which F01 does not state/);
+  assert.deepEqual(bind('<b data-f="F01">18일<i data-f="F04">1.07</i></b>').violations, []); // the real nesting still passes
+});
+
 // ---- planned markers: a designed/planned fact must not read as built ----
 
 const planned = (inner) => bind(inner).planned;

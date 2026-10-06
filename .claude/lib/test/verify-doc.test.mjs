@@ -452,6 +452,48 @@ test('visual tier 390px probe: content silently cut off by overflow:hidden raise
   assert.match(res.warnings.find(w => w.name === 'composition:mobile-scroll-figure')?.detail || '', /^scrolls×1 /);
 });
 
+// A figure whose layout reads 100cqw (container-type:inline-size) has no intrinsic width: in a host that sizes to its content it folds to
+// its padding while nothing overflows and nothing is clipped — the one failure the overflow rows cannot see.
+const rendered = (file) => readFileSync(join(REPO, 'styles', STYLE, 'components', file), 'utf8').replace(/<!--[\s\S]*?-->/g, '').replace(/⟦([^⟧]*)⟧/g, '$1').trim();
+const FLEX_START = `<div style="display:flex; flex-direction:column; align-items:flex-start;">`;
+test('visual tier: a figure rendered under half the width of its frame raises composition:figure-collapsed (the container-type collapse); a figure that fills it, shares its row, or sits in a grid does not', async (t) => {
+  if (!hasHeadlessChrome()) return t.skip('no headless browser');
+  const box = (id) => `<div data-component="${id}" style="padding:28px; border:1px solid #ccc;"><div style="container-type:inline-size;"><div style="height:40px;">content</div></div></div>`;
+  const doc = analyze(wrap(`<section id="s1"><h2>x</h2>
+    ${FLEX_START}${box('collapsed-fig')}</div>
+    <div style="display:flex; flex-direction:column; align-items:center;">${box('centred-fig')}</div>
+    <div>${box('block-fig')}</div>
+    <div style="display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px;"><div data-component="cell-a" style="height:40px;">a</div><div data-component="cell-b" style="height:40px;">b</div></div>
+    <div style="display:flex; gap:20px;"><div data-component="row-a" style="flex:1; height:40px;">a</div><div data-component="row-b" style="flex:1; height:40px;">b</div><div data-component="row-c" style="flex:1; height:40px;">c</div></div>
+    <div style="display:flex; gap:20px;"><div data-component="beside-text" style="width:30%; height:40px;">figure</div><p style="margin:0;">text next to it</p></div></section>`));
+  const res = await doc;
+  if (browserDead(res) || res.unverified) return t.skip(`browser cannot analyze here: ${res?.unverified}`);
+  const rows = res.warnings.filter(w => w.name === 'composition:figure-collapsed');
+  assert.ok(rows.length >= 2, 'one row per viewport that measured it');
+  for (const r of rows) {
+    assert.equal(r.level, undefined); // a WARN
+    assert.match(r.detail, /collapsed-fig×1 \(58px of \d+px\)/); // the figure's own box: 28px padding twice and a 1px border twice
+    assert.match(r.detail, /centred-fig×1 \(58px of \d+px\)/);
+    assert.match(r.detail, /narrower than half their frame at \d+px/);
+    assert.doesNotMatch(r.detail, /block-fig|cell-|row-|beside-text/);
+  }
+  assert.ok(rows.some(r => /at 390px/.test(r.detail)) && rows.some(r => /at 1[34]\d\dpx/.test(r.detail)), 'the desktop viewports and the phone each report it');
+});
+
+test('visual tier: the pasted before-after, activity and status-board collapse in a flex-start column only without their root width:100% — the pasted templates do not raise composition:figure-collapsed', async (t) => {
+  if (!hasHeadlessChrome()) return t.skip('no headless browser');
+  const ids = ['before-after', 'activity', 'status-board'];
+  const unfixed = (html) => html.replace(/ width:100%; box-sizing:border-box;/, ''); // the template as it was before the root fix
+  const fixed = analyze(wrap(`<section id="s1"><h2>x</h2>${ids.map(id => `${FLEX_START}${rendered(`${id}.html`)}</div>`).join('')}</section>`));
+  const old = analyze(wrap(`<section id="s1"><h2>x</h2>${ids.map(id => `${FLEX_START}${unfixed(rendered(`${id}.html`))}</div>`).join('')}</section>`));
+  const [good, bad] = [await fixed, await old];
+  if (browserDead(bad) || bad.unverified) return t.skip(`browser cannot analyze here: ${bad?.unverified}`);
+  assert.deepEqual(good.warnings.filter(w => w.name === 'composition:figure-collapsed'), []);
+  const rows = bad.warnings.filter(w => w.name === 'composition:figure-collapsed');
+  assert.ok(rows.length >= 2);
+  for (const id of ids) assert.ok(rows.some(r => r.detail.includes(`${id}×1`)), `${id} is reported at some viewport`);
+});
+
 test('visual tier: the real feedbackops-light gallery renders offline through DC_LOCAL_ASSETS at all three viewports', async (t) => {
   const localAssets = process.env.DC_LOCAL_ASSETS;
   if (!localAssets || !existsSync(localAssets)) return t.skip('DC_LOCAL_ASSETS not set (a directory whose node_modules holds react, react-dom and pretendard)');
@@ -469,7 +511,7 @@ test('visual tier: the real feedbackops-light gallery renders offline through DC
 // The narrow-width contract (core/components.md §4 "Narrow widths"): every pasted component fits a 390px page. The galleries hold every
 // component rendered with its own example content, so they are the oracle — no mobile-overflow (page) and no figure-overflow (a figure wider
 // than its frame, or content cut off by overflow:hidden); a figure that scrolls inside itself is the allowed fallback (INFO).
-test('narrow width: every style\'s component gallery has no mobile-overflow and no figure-overflow at 390px', async (t) => {
+test('narrow width: every style\'s component gallery has no mobile-overflow, no figure-overflow at 390px and no figure-collapsed at any viewport', async (t) => {
   const localAssets = process.env.DC_LOCAL_ASSETS;
   if (!localAssets || !existsSync(localAssets)) return t.skip('DC_LOCAL_ASSETS not set (a directory whose node_modules holds react, react-dom and pretendard)');
   if (!hasHeadlessChrome()) return t.skip('no headless browser');
@@ -478,8 +520,8 @@ test('narrow width: every style\'s component gallery has no mobile-overflow and 
     if (browserDead(res)) return t.skip(`browser cannot run here: ${res?.unverified}`);
     assert.equal(res.unverified, null, `${style}: ${JSON.stringify(res.assetNotes)}`);
     assert.ok(res.warnings.some(w => w.name === 'composition:narrow-metrics' && /at 390x844/.test(w.detail)), `${style}: the 390px viewport rendered`);
-    const bad = res.warnings.filter(w => /^composition:(mobile|figure)-overflow$/.test(w.name));
-    assert.deepEqual(bad.map(w => `${w.name} ${w.detail}`), [], `${style} overflows at 390px`);
+    const bad = res.warnings.filter(w => /^composition:(mobile-overflow|figure-overflow|figure-collapsed)$/.test(w.name));
+    assert.deepEqual(bad.map(w => `${w.name} ${w.detail}`), [], `${style} overflows or collapses at some viewport`);
     // Which figures scroll inside their own box at 390px (the INFO row) is part of the contract: activity, status-board and use-case
     // reflow — a scroll there hides an outcome or the memo — while decision-table and sequence scroll rather than crush a key or a label.
     const scrolling = (res.warnings.find(w => w.name === 'composition:mobile-scroll-figure')?.detail.match(/^(.*?) scroll sideways/)?.[1] || '').split(', ').map(x => x.replace(/×\d+$/, ''));
